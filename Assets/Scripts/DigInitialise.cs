@@ -67,7 +67,7 @@ namespace DragginzWorldEditor
 
 			_iCurShapeType      = 0;
 			_iCurShapeSizeIndex = 2;
-			_iCurDigSizeIndex   = 1;
+			_iCurDigSizeIndex   = -1;
 
 			_iMinLevelCoord = -50;
 			_iMaxLevelCoord = 50;
@@ -158,8 +158,11 @@ namespace DragginzWorldEditor
 
 		//
 		private void setLaserSphereSize() {
-			
-			float fSphereSize = (float)(_iCurDigSizeIndex+1) * prefabsSizes [_iCurShapeType][_iCurShapeSizeIndex];
+
+			float fSphereSize = 0.1f;
+			if (_iCurDigSizeIndex != -1) {
+				fSphereSize = (float)(_iCurDigSizeIndex+1) * prefabsSizes [_iCurShapeType][_iCurShapeSizeIndex];
+			}
 			laserSphere.transform.localScale = new Vector3 (fSphereSize, fSphereSize, fSphereSize);
 		}
 
@@ -313,7 +316,7 @@ namespace DragginzWorldEditor
 			// keep track of parent objects that had children removed
 			List<Transform> listcubeTransforms = new List<Transform> ();
 
-			if (_iCurDigSizeIndex == 0 && _goHit != null)
+			if (_iCurDigSizeIndex == -1 && _goHit != null)
 			{
 				if (_goHit.tag == "DigAndDestroy") {
 					listcubeTransforms.Add (_goHit.transform.parent);

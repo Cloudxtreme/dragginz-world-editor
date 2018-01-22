@@ -25,6 +25,7 @@ namespace DragginzWorldEditor
 		public Button btnShapeSizeMedium;
 		public Button btnShapeSizeLarge;
 
+		public Button btnDigSizeBlock;
 		public Button btnDigSizeSmall;
 		public Button btnDigSizeMedium;
 		public Button btnDigSizeLarge;
@@ -43,6 +44,7 @@ namespace DragginzWorldEditor
 		}
 
 		public void setDigSizeButtons(int size) {
+			btnDigSizeBlock.interactable  = (size != -1);
 			btnDigSizeSmall.interactable  = (size != 0);
 			btnDigSizeMedium.interactable = (size != 1);
 			btnDigSizeLarge.interactable  = (size != 2);
@@ -75,6 +77,9 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public void onButtonDigBlockClicked() {
+			DigInitialise.Instance.setDigSize(-1);
+		}
 		public void onButtonDigSmallClicked() {
 			DigInitialise.Instance.setDigSize(0);
 		}
