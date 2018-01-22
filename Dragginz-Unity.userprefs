@@ -1,0 +1,21 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Utils\MonoSingleton.cs">
+    <Files>
+      <File FileName="Assets\Scripts\DigInitialise.cs" Line="10" Column="30" />
+      <File FileName="Assets\Scripts\DigMainMenu.cs" Line="12" Column="30" />
+      <File FileName="Assets\Scripts\Globals.cs" Line="8" Column="30" />
+      <File FileName="Assets\Scripts\SphereObjects.cs" Line="9" Column="30" />
+      <File FileName="Assets\Scripts\Utils\Singleton.cs" Line="8" Column="30" />
+      <File FileName="Assets\Scripts\Utils\ReparentGameObject.cs" Line="8" Column="30" />
+      <File FileName="Assets\Scripts\Utils\MonoSingleton.cs" Line="8" Column="30" />
+      <File FileName="Assets\Scripts\Utils\DataTypeVector3.cs" Line="9" Column="30" />
+      <File FileName="Assets\Scripts\Utils\DataTypeVector2.cs" Line="9" Column="30" />
+      <File FileName="Assets\Scripts\Utils\DataTypeQuaternion.cs" Line="9" Column="30" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
