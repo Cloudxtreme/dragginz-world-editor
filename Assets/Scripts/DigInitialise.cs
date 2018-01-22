@@ -41,6 +41,8 @@ namespace DragginzWorldEditor
 		private int _iMinLevelCoord;
 		private int _iMaxLevelCoord;
 
+		private GameObject _goLastShaderChange;
+
 		#region SystemMethods
 
 		/// <summary>
@@ -106,6 +108,8 @@ namespace DragginzWorldEditor
 				
 				laserSphere.transform.position = _hit.point;
 				_goHit = _hit.collider.gameObject;
+				changeShader (_goHit, "Legacy Shaders/Transparent/Diffuse");
+
 				if (Input.GetButtonDown ("Fire1")) {
 					if (Screen.height - Input.mousePosition.y > 40) {
 						digIt (_hit.point);
@@ -113,6 +117,7 @@ namespace DragginzWorldEditor
 				}
 			}
 			else {
+				changeShader (_goLastShaderChange);
 				laserSphere.transform.position = new Vector3(9999,9999,9999);
 				_goHit = null;
 			}
@@ -156,10 +161,35 @@ namespace DragginzWorldEditor
 
 		#region PrivateMethods
 
+		private void changeShader(GameObject go, string shader = "Standard")
+		{
+			if (go == null) {
+				return;
+			}
+
+			Renderer renderer;
+
+			if (_goLastShaderChange != null && go != _goLastShaderChange) {
+				renderer = _goLastShaderChange.GetComponent<Renderer> ();
+				if (renderer != null) {
+					renderer.material.shader = Shader.Find ("Standard");
+				}
+				_goLastShaderChange = null;
+			}
+
+			if (_iCurDigSizeIndex == -1) {
+				renderer = go.GetComponent<Renderer> ();
+				if (renderer != null) {
+					renderer.material.shader = Shader.Find (shader);
+					_goLastShaderChange = go;
+				}
+			}
+		}
+
 		//
 		private void setLaserSphereSize() {
 
-			float fSphereSize = 0.1f;
+			float fSphereSize = 0.05f;
 			if (_iCurDigSizeIndex != -1) {
 				fSphereSize = (float)(_iCurDigSizeIndex+1) * prefabsSizes [_iCurShapeType][_iCurShapeSizeIndex];
 			}

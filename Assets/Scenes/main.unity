@@ -246,8 +246,8 @@ Light:
   serializedVersion: 8
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 2.5
-  m_Range: 4
+  m_Intensity: 3
+  m_Range: 5
   m_SpotAngle: 100
   m_CookieSize: 10
   m_Shadows:
@@ -318,7 +318,7 @@ MonoBehaviour:
   - {fileID: 1072441444908540, guid: f3d269d88ccafa54ab390d8b4d100a08, type: 2}
   materialsWalls:
   - {fileID: 2100000, guid: 6bd787e00820ed64ab274fa05081fdc7, type: 2}
-  - {fileID: 2100000, guid: 1ba12bfe1d73d1f4da71e796c3b65ef3, type: 2}
+  - {fileID: 2100000, guid: ddbe2f82e7629ec4ba468529561ae0c2, type: 2}
   lineCamera: {fileID: 1561795719}
   laserPointer: {fileID: 0}
   laserSphere: {fileID: 1209775551}
