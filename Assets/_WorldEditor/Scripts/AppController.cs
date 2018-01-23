@@ -100,6 +100,8 @@ namespace DragginzWorldEditor
 			if (_appState == AppState.Edit) {
 				if (Input.GetKeyDown (KeyCode.Escape)) {
 					LevelEditor.Instance.resetFlyCam ();
+				} else if (Input.GetKeyDown (KeyCode.X)) {
+					LevelEditor.Instance.toggleFlyCamOffset ();
 				}
 			}
             else if (_appState == AppState.Play) {

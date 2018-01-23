@@ -177,6 +177,11 @@ namespace DragginzWorldEditor
 			mainCam.gameObject.GetComponent<FlyCam> ().reset ();
 		}
 
+		public void toggleFlyCamOffset()
+		{
+			mainCam.gameObject.GetComponent<FlyCam> ().toggleOffset ();
+		}
+
 		#endregion
 
 		#region PrivateMethods
