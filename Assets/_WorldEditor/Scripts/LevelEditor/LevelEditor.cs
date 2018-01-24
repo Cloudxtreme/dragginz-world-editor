@@ -144,46 +144,22 @@ namespace DragginzWorldEditor
 		//
 		public void customUpdateDig() {
 
-			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (_ray, out _hit, 500f)) {
-
-				laserSphere.transform.position = _hit.point;
-				_goHit = _hit.collider.gameObject;
-				changeShader (_goHit, "Legacy Shaders/Transparent/Diffuse");
-
-				if (_mouseIsDown) {
-					if (Screen.height - Input.mousePosition.y > 90) {
-						digIt (_hit.point);
-						_mouseIsDown = false;
-					}
+			doRayCast ();
+			if (_mouseIsDown && _goHit != null) {
+				if (Screen.height - Input.mousePosition.y > 90) {
+					digIt (_hit.point);
+					_mouseIsDown = false;
 				}
-			}
-			else {
-				changeShader (_goLastShaderChange);
-				laserSphere.transform.position = new Vector3(9999,9999,9999);
-				_goHit = null;
 			}
 		}
 
 		public void customUpdatePaint() {
 			
-			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (_ray, out _hit, 500f)) {
-
-				laserSphere.transform.position = _hit.point;
-				_goHit = _hit.collider.gameObject;
-				changeShader (_goHit, "Legacy Shaders/Transparent/Diffuse");
-
-				if (_mouseIsDown) {
-					if (Screen.height - Input.mousePosition.y > 90) {
-						paintIt (_goHit);
-					}
+			doRayCast ();
+			if (_mouseIsDown && _goHit != null) {
+				if (Screen.height - Input.mousePosition.y > 90) {
+					paintIt (_goHit);
 				}
-			}
-			else {
-				changeShader (_goLastShaderChange);
-				laserSphere.transform.position = new Vector3(9999,9999,9999);
-				_goHit = null;
 			}
 		}
 
@@ -244,6 +220,23 @@ namespace DragginzWorldEditor
 
 		#region PrivateMethods
 
+		private void doRayCast()
+		{
+			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
+			if (Physics.Raycast (_ray, out _hit, 500f)) {
+
+				laserSphere.transform.position = _hit.point;
+				_goHit = _hit.collider.gameObject;
+				changeShader (_goHit, "Legacy Shaders/Transparent/Diffuse");
+			}
+			else {
+				changeShader (_goLastShaderChange);
+				laserSphere.transform.position = new Vector3(9999,9999,9999);
+				_goHit = null;
+			}
+		}
+
+		//
 		private void changeShader(GameObject go, string shader = "Standard")
 		{
 			if (go == null) {
