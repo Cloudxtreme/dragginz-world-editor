@@ -27,6 +27,10 @@ namespace DragginzWorldEditor
         public Transform blocker;
         public Transform panelPopup;
 
+		public Button btnModeDig;
+		public Button btnModePaint;
+		public Button btnModePlay;
+
 		public Button btnDigSizeBlock;
 		public Button btnDigSizeSmall;
 		public Button btnDigSizeMedium;
@@ -122,11 +126,21 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void setDigSizeButtons(int size) {
-			btnDigSizeBlock.interactable  = (size != -1);
-			btnDigSizeSmall.interactable  = (size != 0);
-			btnDigSizeMedium.interactable = (size != 1);
-			btnDigSizeLarge.interactable  = (size != 2);
+		public void onButtonModeDigClicked() {
+			LevelEditor.Instance.setMode(AppState.Dig);
+		}
+		public void onButtonModePaintClicked() {
+			LevelEditor.Instance.setMode(AppState.Paint);
+		}
+		public void onButtonModePlayClicked() {
+			LevelEditor.Instance.setMode(AppState.Play);
+		}
+
+		//
+		public void setModeButtons(AppState mode) {
+			btnModeDig.interactable   = (mode != AppState.Dig);
+			btnModePaint.interactable = (mode != AppState.Paint);
+			btnModePlay.interactable  = (mode != AppState.Play);
 		}
 
 		//
@@ -141,6 +155,14 @@ namespace DragginzWorldEditor
 		}
 		public void onButtonDigLargeClicked() {
 			LevelEditor.Instance.setDigSize(2);
+		}
+
+		//
+		public void setDigSizeButtons(int size) {
+			btnDigSizeBlock.interactable  = (size != -1);
+			btnDigSizeSmall.interactable  = (size != 0);
+			btnDigSizeMedium.interactable = (size != 1);
+			btnDigSizeLarge.interactable  = (size != 2);
 		}
 
 		#region PrivateMethods
@@ -300,14 +322,14 @@ namespace DragginzWorldEditor
             _popup.hide();
         }
 
-        public void onButtonPlayClicked() {
+        /*public void onButtonPlayClicked() {
 
             if (_gizmoSystem) {
                 _gizmoSystem.TurnOffGizmos();
             }
 
             AppController.Instance.switchToPlayMode();
-        }
+        }*/
 
 		/// <summary>
 		/// ...

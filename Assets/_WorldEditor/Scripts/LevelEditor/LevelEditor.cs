@@ -107,6 +107,7 @@ namespace DragginzWorldEditor
 		//
 		void Start() {
 
+			MainMenu.Instance.setModeButtons (AppController.Instance.appState);
 			//MainMenu.Instance.setShapeTypeButtons (_iCurShapeType);
 			//MainMenu.Instance.setShapeSizeButtons (_iCurShapeSizeIndex);
 			MainMenu.Instance.setDigSizeButtons (_iCurDigSizeIndex);
@@ -162,6 +163,14 @@ namespace DragginzWorldEditor
 				setLaserSphereSize ();
 			}
 		}*/
+
+		public void setMode(AppState mode) {
+
+			if (mode != AppController.Instance.appState) {
+				AppController.Instance.setAppState (mode);
+				MainMenu.Instance.setModeButtons (mode);
+			}
+		}
 
 		public void setDigSize(int size) {
 

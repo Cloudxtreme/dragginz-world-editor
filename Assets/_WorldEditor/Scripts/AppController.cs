@@ -10,15 +10,16 @@ using RTEditor;
 
 namespace DragginzWorldEditor
 {
-	/// <summary>
-	/// ...
-	/// </summary>
+	//
+	public enum AppState {
+		Dig,
+		Paint,
+		Play
+	};
+
+	//
     public class AppController : MonoSingletonBase<AppController>
     {
-        public enum AppState {
-            Edit,
-            Play
-        };
         private AppState _appState;
 
         //private GameObject _goLightsContainer;
@@ -28,6 +29,10 @@ namespace DragginzWorldEditor
         private Popup _popup;
 
 		#region Getters
+
+		public AppState appState {
+			get { return _appState; }
+		}
 
 		public GameObject goWorldContainer {
 			get { return _goWorldContainer; }
@@ -64,7 +69,7 @@ namespace DragginzWorldEditor
                 }
             }*/
 
-            _appState = AppState.Edit;
+			_appState = AppState.Dig;
         }
 
         /*
@@ -97,7 +102,7 @@ namespace DragginzWorldEditor
         /// </summary>
         void Update() {
 
-			if (_appState == AppState.Edit) {
+			if (_appState == AppState.Dig) {
 				if (Input.GetKeyDown (KeyCode.Escape)) {
 					LevelEditor.Instance.resetFlyCam ();
 				} else if (Input.GetKeyDown (KeyCode.X)) {
@@ -106,27 +111,27 @@ namespace DragginzWorldEditor
 			}
             else if (_appState == AppState.Play) {
                 if (Input.GetKeyDown(KeyCode.Escape)) {
-                    switchToEditMode();
+					setAppState(AppState.Dig);
                 }
             }
         }
 
-        /// <summary>
-        /// ...
-        /// </summary>
-        public void switchToPlayMode() {
-            if (_appState != AppState.Play) {
-                _appState = AppState.Play;
-                SceneManager.LoadScene(1);
-            }
-        }
-
-        public void switchToEditMode() {
-            if (_appState != AppState.Edit) {
-                _appState = AppState.Edit;
-                SceneManager.LoadScene(0);
-            }
-        }
+		//
+		public void setAppState(AppState state) {
+			
+			if (_appState != state) {
+				_appState = state;
+				if (_appState == AppState.Dig) {
+					//SceneManager.LoadScene(0);
+				}
+				else if (_appState == AppState.Paint) {
+					//
+				}
+				else if (_appState == AppState.Play) {
+					//SceneManager.LoadScene(1);
+				}
+			}
+		}
 
         /// <summary>
         /// ...
