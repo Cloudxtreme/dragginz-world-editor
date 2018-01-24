@@ -21,10 +21,6 @@ namespace DragginzWorldEditor
         public GameObject btnYes;
         public GameObject btnNo;
 
-        public enum PopupMode {
-            Notification, Confirmation
-        }
-
         private Action<int> _callback;
 
         //
@@ -89,15 +85,19 @@ namespace DragginzWorldEditor
         //
         public void onBtnOkayClick() {
 
-            if (_callback != null) {
-                _callback.Invoke(0);
-            }
+			if (_callback != null) {
+				_callback.Invoke (0);
+			} else {
+				hide ();
+			}
         }
 
         public void onBtnYesClick() {
 
             if (_callback != null) {
                 _callback.Invoke(1);
+			} else {
+				hide ();
             }
         }
 
@@ -105,6 +105,8 @@ namespace DragginzWorldEditor
 
             if (_callback != null) {
                 _callback.Invoke(2);
+			} else {
+				hide ();
             }
         }
     }

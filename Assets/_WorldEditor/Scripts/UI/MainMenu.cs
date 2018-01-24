@@ -21,8 +21,9 @@ namespace DragginzWorldEditor
 	/// </summary>
 	public class MainMenu : MonoSingleton<MainMenu>
     {
-        public Transform panelFileInfo;
-        public Transform panelTools;
+		public GameObject goMaterialSelection;
+		public GameObject goDigButtons;
+
         public Transform panelMenu;
         public Transform blocker;
         public Transform panelPopup;
@@ -30,6 +31,8 @@ namespace DragginzWorldEditor
 		public Button btnModeDig;
 		public Button btnModePaint;
 		public Button btnModePlay;
+
+		public RawImage imgSelectedMaterial;
 
 		public Button btnDigSizeBlock;
 		public Button btnDigSizeSmall;
@@ -52,10 +55,16 @@ namespace DragginzWorldEditor
 
         private int _iSelectedTool = -1;
 
+		private int _iSelectedMaterial = 0;
+		public int iSelectedMaterial {
+			get { return _iSelectedMaterial; }
+		}
+
         private Popup _popup;
         public Popup popup {
             get { return _popup; }
         }
+
 
 		#region SystemMethods
 
@@ -105,9 +114,7 @@ namespace DragginzWorldEditor
 
         void Start() {
 			onSelectTransformTool(0);
-			if (_popup) {
-				_popup.showPopup(Popup.PopupMode.Notification, "Controls", "Normal movement: AWSD\nUp and down: QE - rotate: ZC\n\nMovement Speed can be changed by\nusing the mouse wheel.\nPress ESC to reset speed and position.", popupCallback);
-			}
+			onSelectMaterial (0);
         }
 
 		#endregion
@@ -165,6 +172,20 @@ namespace DragginzWorldEditor
 			btnDigSizeLarge.interactable  = (size != 2);
 		}
 
+		//
+		public void showMaterialBox(bool state) {
+			if (goMaterialSelection != null) {
+				goMaterialSelection.SetActive (state);
+			}
+		}
+
+		//
+		public void showDigButtons(bool state) {
+			if (goDigButtons != null) {
+				goDigButtons.SetActive (state);
+			}
+		}
+
 		#region PrivateMethods
 
 		/// <summary>
@@ -212,9 +233,7 @@ namespace DragginzWorldEditor
 		/// </summary>
         private void showLoadFileDialog() {
 
-            if (_popup) {
-                _popup.showPopup(Popup.PopupMode.Notification, "Sorry!", "This section is currently under construction!", popupCallback);
-            }
+			AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
 
 			/*
 			if (AppController.Instance.goWorldContainer == null) {
@@ -255,9 +274,7 @@ namespace DragginzWorldEditor
 		/// </summary>
         private void showSaveFileDialog() {
 
-            if (_popup) {
-                _popup.showPopup(Popup.PopupMode.Notification, "Sorry!", "This section is currently under construction!", popupCallback);
-            }
+			AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
             
 			/*
             if (AppController.Instance.goWorldContainer == null) {
@@ -280,8 +297,18 @@ namespace DragginzWorldEditor
 		/// </summary>
 		private void changeMaterial(int materialIndex) {
 
-			Debug.Log ("materialIndex " + materialIndex);
 			if (materialIndex >= 0 && materialIndex < Globals.materials.Length) {
+
+				_iSelectedMaterial = materialIndex;
+
+				if (goMaterialSelection != null && imgSelectedMaterial != null) {
+
+					Transform child = goMaterialSelection.transform.Find ("Material-" + (materialIndex + 1).ToString ());
+					if (child != null) {
+						imgSelectedMaterial.texture = child.GetComponent<RawImage> ().texture;
+					}
+				}
+
 				/*List<GameObject> allSelectedObjects = new List<GameObject> (EditorObjectSelection.Instance.SelectedGameObjects);
 				foreach (GameObject selectedObject in allSelectedObjects) {
 
@@ -313,14 +340,6 @@ namespace DragginzWorldEditor
         }
 
         #endregion
-
-        /// <summary>
-        /// ...
-        /// </summary>
-        public void popupCallback(int buttonId) {
-
-            _popup.hide();
-        }
 
         /*public void onButtonPlayClicked() {
 

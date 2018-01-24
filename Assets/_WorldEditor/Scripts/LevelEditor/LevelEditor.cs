@@ -44,6 +44,8 @@ namespace DragginzWorldEditor
 
 		private GameObject _goLastShaderChange;
 
+		private bool _mouseIsDown;
+
 		#region SystemMethods
 
 		/// <summary>
@@ -53,6 +55,8 @@ namespace DragginzWorldEditor
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
+
+			_mouseIsDown = false;
 
 			/*if (GetComponent<Light>() != null) {
 				GetComponent<Light>().enabled = false; // turn off lights!
@@ -107,17 +111,38 @@ namespace DragginzWorldEditor
 		//
 		void Start() {
 
-			MainMenu.Instance.setModeButtons (AppController.Instance.appState);
-			//MainMenu.Instance.setShapeTypeButtons (_iCurShapeType);
-			//MainMenu.Instance.setShapeSizeButtons (_iCurShapeSizeIndex);
-			MainMenu.Instance.setDigSizeButtons (_iCurDigSizeIndex);
+			setMode (AppState.Null, true);
 
 			createWorld ();
-			setLaserSphereSize ();
+
+			AppController.Instance.showPopup(
+				PopupMode.Notification,
+				"Controls",
+				"Normal movement: AWSD\nUp and down: QE - rotate: ZC\n\nMovement Speed can be changed by\nusing the mouse wheel.\nPress ESC to reset speed and position.",
+				startUpPopupCallback
+			);
+		}
+
+		#endregion
+
+		#region PublicMethods
+
+		//
+		public void customUpdateCheckControls() {
+
+			if (!_mouseIsDown) {
+				if (Input.GetButtonDown ("Fire1")) {
+					_mouseIsDown = true;
+				}
+			} else {
+				if (Input.GetButtonUp ("Fire1")) {
+					_mouseIsDown = false;
+				}
+			}
 		}
 
 		//
-		void Update() {
+		public void customUpdateDig() {
 
 			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast (_ray, out _hit, 500f)) {
@@ -126,9 +151,10 @@ namespace DragginzWorldEditor
 				_goHit = _hit.collider.gameObject;
 				changeShader (_goHit, "Legacy Shaders/Transparent/Diffuse");
 
-				if (Input.GetButtonDown ("Fire1")) {
+				if (_mouseIsDown) {
 					if (Screen.height - Input.mousePosition.y > 90) {
 						digIt (_hit.point);
+						_mouseIsDown = false;
 					}
 				}
 			}
@@ -139,36 +165,59 @@ namespace DragginzWorldEditor
 			}
 		}
 
-		#endregion
+		public void customUpdatePaint() {
+			
+			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
+			if (Physics.Raycast (_ray, out _hit, 500f)) {
 
-		#region PublicMethods
+				laserSphere.transform.position = _hit.point;
+				_goHit = _hit.collider.gameObject;
+				changeShader (_goHit, "Legacy Shaders/Transparent/Diffuse");
+
+				if (_mouseIsDown) {
+					if (Screen.height - Input.mousePosition.y > 90) {
+						paintIt (_goHit);
+					}
+				}
+			}
+			else {
+				changeShader (_goLastShaderChange);
+				laserSphere.transform.position = new Vector3(9999,9999,9999);
+				_goHit = null;
+			}
+		}
 
 		//
-		/*public void setShapeType(int type) {
+		public void startUpPopupCallback(int buttonId) {
 
-			if (type != _iCurShapeType) {
-				_iCurShapeType = type;
-				MainMenu.Instance.setShapeTypeButtons (_iCurShapeType);
-				swapShapes ();
-				setLaserSphereSize ();
-			}
-		}*/
+			AppController.Instance.hidePopup ();
+			setMode (AppState.Dig);
+		}
 
-		/*public void setShapeSize(int size) {
+		public void setMode(AppState mode, bool forceMode = false) {
 
-			if (size != _iCurShapeSizeIndex) {
-				_iCurShapeSizeIndex = size;
-				MainMenu.Instance.setShapeSizeButtons (_iCurShapeSizeIndex);
-				createWorld ();
-				setLaserSphereSize ();
-			}
-		}*/
-
-		public void setMode(AppState mode) {
-
-			if (mode != AppController.Instance.appState) {
+			if (forceMode || (mode != AppController.Instance.appState))
+			{
 				AppController.Instance.setAppState (mode);
 				MainMenu.Instance.setModeButtons (mode);
+				resetFlyCam ();
+
+				if (mode == AppState.Dig) {
+					MainMenu.Instance.showDigButtons (true);
+					MainMenu.Instance.setDigSizeButtons (_iCurDigSizeIndex);
+					MainMenu.Instance.showMaterialBox (false);
+				}
+				else if (mode == AppState.Paint) {
+					MainMenu.Instance.showDigButtons (false);
+					MainMenu.Instance.showMaterialBox (true);
+				}
+				else {
+					MainMenu.Instance.showDigButtons (false);
+					MainMenu.Instance.showMaterialBox (false);
+				}
+
+				_iCurDigSizeIndex = -1;
+				setLaserSphereSize ();
 			}
 		}
 
@@ -433,6 +482,22 @@ namespace DragginzWorldEditor
 			}
 
 			return adjacentCubes;
+		}
+
+		/// <summary>
+		/// Paints it.
+		/// </summary>
+		/// <param name="go">Go.</param>
+		private void paintIt (GameObject go)
+		{
+			if (go == null) {
+				return;
+			}
+
+			MeshRenderer renderer = go.GetComponent<MeshRenderer> ();
+			if (renderer != null) {
+				renderer.material = Resources.Load<Material> ("Materials/" + Globals.materials [MainMenu.Instance.iSelectedMaterial]);
+			}
 		}
 
 		#endregion

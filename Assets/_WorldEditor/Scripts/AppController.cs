@@ -3,6 +3,8 @@
 // Company : Decentralised Team of Developers
 //
 
+using System;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,11 +12,16 @@ using RTEditor;
 
 namespace DragginzWorldEditor
 {
-	//
 	public enum AppState {
+		Null,
 		Dig,
 		Paint,
 		Play
+	};
+
+	public enum PopupMode {
+		Notification,
+		Confirmation
 	};
 
 	//
@@ -42,34 +49,9 @@ namespace DragginzWorldEditor
 
 		#region PublicMethods
 
-		/// <summary>
-		/// ...
-		/// </summary>
         void Awake() {
 
-            /*GameObject lightsPrefab = Resources.Load<GameObject>("Prefabs/" + Globals.lightsContainerName);
-            if (lightsPrefab != null) {
-                _goLightsContainer = GameObject.Instantiate(lightsPrefab);
-                _goLightsContainer.name = Globals.lightsContainerName;
-                _goLightsContainer.transform.SetParent(transform);
-            }
-
-            GameObject worldPrefab = Resources.Load<GameObject>("Prefabs/" + Globals.worldContainerName);
-            if (worldPrefab != null) {
-                _goWorldContainer = GameObject.Instantiate(worldPrefab);
-                _goWorldContainer.name = Globals.worldContainerName;
-                _goWorldContainer.transform.SetParent(transform);
-            }
-
-            GameObject goMainMenu = GameObject.Find(Globals.mainMenuContainerName);
-            if (goMainMenu) {
-                _mainMenu = goMainMenu.GetComponent<MainMenu>();
-                if (_mainMenu) {
-                    _popup = _mainMenu.popup;
-                }
-            }*/
-
-			_appState = AppState.Dig;
+			_appState = AppState.Null;
         }
 
         /*
@@ -97,24 +79,39 @@ namespace DragginzWorldEditor
         }
         */
 
-        /// <summary>
-        /// ...
-        /// </summary>
+		//
         void Update() {
 
-			if (_appState == AppState.Dig) {
+			LevelEditor.Instance.customUpdateCheckControls ();
+
+			if (_appState == AppState.Dig)
+			{
 				if (Input.GetKeyDown (KeyCode.Escape)) {
 					LevelEditor.Instance.resetFlyCam ();
-				} else if (Input.GetKeyDown (KeyCode.X)) {
-					LevelEditor.Instance.toggleFlyCamOffset ();
 				}
 			}
-            else if (_appState == AppState.Play) {
+            else if (_appState == AppState.Play)
+			{
                 if (Input.GetKeyDown(KeyCode.Escape)) {
-					setAppState(AppState.Dig);
+					//setAppState(AppState.Dig);
+				} else if (Input.GetKeyDown (KeyCode.X)) {
+					LevelEditor.Instance.toggleFlyCamOffset ();
                 }
             }
         }
+
+		//
+		void LateUpdate()
+		{
+			if (_appState == AppState.Dig)
+			{
+				LevelEditor.Instance.customUpdateDig ();
+			}
+			else if (_appState == AppState.Paint)
+			{
+				LevelEditor.Instance.customUpdatePaint ();
+			}
+		}
 
 		//
 		public void setAppState(AppState state) {
@@ -136,10 +133,18 @@ namespace DragginzWorldEditor
         /// <summary>
         /// ...
         /// </summary>
-        public void showWarning(string message) {
+		public void showPopup(PopupMode mode, string header, string message, Action<int> callback = null) {
 
 			if (MainMenu.Instance.popup != null) {
-				MainMenu.Instance.popup.showPopup(Popup.PopupMode.Notification, "Warning", message, popupCallback);
+				MainMenu.Instance.popup.showPopup(mode, header, message, callback);
+			}
+
+		}
+
+		public void hidePopup() {
+
+			if (MainMenu.Instance.popup != null) {
+				MainMenu.Instance.popup.hide();
 			}
 
 		}

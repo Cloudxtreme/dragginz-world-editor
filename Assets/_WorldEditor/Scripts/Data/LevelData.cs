@@ -34,7 +34,7 @@ namespace DragginzWorldEditor
 			}
 			catch (System.Exception e) {
 				Debug.LogWarning (e.Message);
-				AppController.Instance.showWarning (Globals.warningInvalidFileFormat);
+				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat);
 			}
 
 			file.Close();
@@ -47,7 +47,7 @@ namespace DragginzWorldEditor
 		private void createObjects(LevelFile levelFile, GameObject parent) {
 			
 			if (levelFile.fileFormatVersion != Globals.levelSaveFormatVersion) {
-				AppController.Instance.showWarning (Globals.warningObsoleteFileFormat);
+				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningObsoleteFileFormat);
 				return;
 			}
 

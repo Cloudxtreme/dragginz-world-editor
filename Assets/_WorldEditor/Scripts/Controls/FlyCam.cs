@@ -19,11 +19,11 @@ namespace DragginzWorldEditor
 
 		private Vector3 camOffset;
 
-		void Start() {
+		void Awake()
+		{
 			player = transform.parent;
 			initialPos = player.position;
 			initialRotation = player.eulerAngles;
-			reset ();
 		}
 
 		void Update () {
