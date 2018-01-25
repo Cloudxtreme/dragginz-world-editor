@@ -23,6 +23,7 @@ namespace DragginzWorldEditor
     {
 		public GameObject goMaterialSelection;
 		public GameObject goDigButtons;
+		public GameObject goDigSettings;
 
         public Transform panelMenu;
         public Transform blocker;
@@ -39,6 +40,10 @@ namespace DragginzWorldEditor
 		public Button btnDigSizeMedium;
 		public Button btnDigSizeLarge;
 
+		public Slider sliderDigWidth;
+		public Slider sliderDigHeight;
+		public Slider sliderDigDepth;
+
 		public Text txtFileInfo;
 		public Text txtMovementSpeed;
 		public Text txtCameraPosition;
@@ -54,6 +59,11 @@ namespace DragginzWorldEditor
         private int _iDropDownFileOptions = 0;
 
         private int _iSelectedTool = -1;
+
+		private Vector3 _v3DigSettings = new Vector3(1,1,1);
+		public Vector3 v3DigSettings {
+			get { return _v3DigSettings; }
+		}
 
 		private int _iSelectedMaterial = 0;
 		public int iSelectedMaterial {
@@ -152,16 +162,16 @@ namespace DragginzWorldEditor
 
 		//
 		public void onButtonDigBlockClicked() {
-			LevelEditor.Instance.setDigSize(-1);
+			//LevelEditor.Instance.setDigSize(-1);
 		}
 		public void onButtonDigSmallClicked() {
-			LevelEditor.Instance.setDigSize(0);
+			//LevelEditor.Instance.setDigSize(0);
 		}
 		public void onButtonDigMediumClicked() {
-			LevelEditor.Instance.setDigSize(1);
+			//LevelEditor.Instance.setDigSize(1);
 		}
 		public void onButtonDigLargeClicked() {
-			LevelEditor.Instance.setDigSize(2);
+			//LevelEditor.Instance.setDigSize(2);
 		}
 
 		//
@@ -182,7 +192,10 @@ namespace DragginzWorldEditor
 		//
 		public void showDigButtons(bool state) {
 			if (goDigButtons != null) {
-				goDigButtons.SetActive (state);
+				goDigButtons.SetActive (false);
+			}
+			if (goDigSettings != null) {
+				goDigSettings.SetActive (state);
 			}
 		}
 
@@ -374,18 +387,50 @@ namespace DragginzWorldEditor
             }
         }
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		// -------------------------------------------------------------------------------------
 		public void onSelectMaterial(int value) {
 			//if (_gizmoSystem) {
 				changeMaterial (value);
 			//}
 		}
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		// -------------------------------------------------------------------------------------
+		public void onSliderWidthChange(Single value) {
+			if (sliderDigWidth != null) {
+				updateSliderValueText (sliderDigWidth.transform.parent, sliderDigWidth.value);
+				_v3DigSettings.x = (int)sliderDigWidth.value;
+				LevelEditor.Instance.updateDigSettings(_v3DigSettings);
+				//Debug.Log ("slider width value: "+(int)sliderDigWidth.value);
+			}
+		}
+		public void onSliderHeightChange(Single value) {
+			if (sliderDigHeight != null) {
+				updateSliderValueText (sliderDigHeight.transform.parent, sliderDigHeight.value);
+				_v3DigSettings.y = (int)sliderDigHeight.value;
+				LevelEditor.Instance.updateDigSettings(_v3DigSettings);
+				//Debug.Log ("slider height value: "+(int)sliderDigHeight.value);
+			}
+		}
+		public void onSliderDepthChange(Single value) {
+			if (sliderDigDepth != null) {
+				updateSliderValueText (sliderDigDepth.transform.parent, sliderDigDepth.value);
+				_v3DigSettings.z = (int)sliderDigDepth.value;
+				LevelEditor.Instance.updateDigSettings(_v3DigSettings);
+				//Debug.Log ("slider depth value: "+(int)sliderDigDepth.value);
+			}
+		}
+		//
+		private void updateSliderValueText(Transform parent, float value) {
+			if (parent == null) {
+				return;
+			}
+			Transform trfmText = parent.Find ("Value");
+			if (trfmText != null) {
+				trfmText.GetComponent<Text> ().text = ((int)value).ToString ();
+			}
+		}
+
+		// -------------------------------------------------------------------------------------
         public void onPointerDown(BaseEventData data) {
             if (_trfmDropDownFile) {
                 resetDropDown(_trfmDropDownFile);

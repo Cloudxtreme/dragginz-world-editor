@@ -17,22 +17,15 @@ namespace DragginzWorldEditor
 		public Camera mainCam;
 		public GameObject goWorld;
 		public GameObject goPlayer;
+		public GameObject goPlayerEdit;
 
-		public List<GameObject> cubePrefabs;
-		public List<GameObject> spherePrefabs;
-		public List<GameObject> rockPrefabs;
+		public GameObject cubePrefab;
 
 		public List<Material> materialsWalls;
 
 		public Camera lineCamera;
 		public LineRenderer laserPointer;
 		public GameObject laserSphere;
-
-		private List<List<float>> prefabsSizes;
-
-		private int _iCurShapeType;
-		private int _iCurShapeSizeIndex;
-		private int _iCurDigSizeIndex;
 
 		private Ray _ray;
 		private RaycastHit _hit;
@@ -43,6 +36,7 @@ namespace DragginzWorldEditor
 		private int _iMaxLevelCoord;
 
 		private GameObject _goLastShaderChange;
+		private List<GameObject> _aGoShaderChanged;
 
 		private bool _mouseIsDown;
 
@@ -56,6 +50,9 @@ namespace DragginzWorldEditor
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
 
+			_goLastShaderChange = null;
+			_aGoShaderChanged = new List<GameObject> ();
+
 			_mouseIsDown = false;
 
 			/*if (GetComponent<Light>() != null) {
@@ -68,27 +65,6 @@ namespace DragginzWorldEditor
 				DontDestroyOnLoad(goAppController);
 				goAppController.AddComponent<AppController>();
 			}
-
-			prefabsSizes = new List<List<float>> (3);
-			prefabsSizes.Add (new List<float> ()); // cubes
-			prefabsSizes [0].Add (0.125f);
-			prefabsSizes [0].Add (0.2f);
-			prefabsSizes [0].Add (0.25f);
-			prefabsSizes [0].Add (0.334f);
-			prefabsSizes.Add (new List<float> ()); // spheres
-			prefabsSizes [1].Add (0.125f);
-			prefabsSizes [1].Add (0.2f);
-			prefabsSizes [1].Add (0.25f);
-			prefabsSizes [1].Add (0.334f);
-			prefabsSizes.Add (new List<float> ()); // rocks
-			prefabsSizes [2].Add (0.125f);
-			prefabsSizes [2].Add (0.2f);
-			prefabsSizes [2].Add (0.25f);
-			prefabsSizes [2].Add (0.334f);
-
-			_iCurShapeType      = 0;
-			_iCurShapeSizeIndex = 2;
-			_iCurDigSizeIndex   = -1;
 
 			_iMinLevelCoord = -50;
 			_iMaxLevelCoord = 50;
@@ -115,10 +91,12 @@ namespace DragginzWorldEditor
 
 			createWorld ();
 
+			setLaserSphereSize ();
+
 			AppController.Instance.showPopup(
 				PopupMode.Notification,
 				"Controls",
-				"Normal movement: AWSD\nUp and down: QE - rotate: ZC\n\nMovement Speed can be changed by\nusing the mouse wheel.\nPress ESC to reset speed and position.",
+				"Normal movement: AWSD\nUp and down: QE - rotate: ZC\nSlow walk: Mouse wheel\nAdjust movement speed: -/+\n\nPress ESC to reset speed and position.",
 				startUpPopupCallback
 			);
 		}
@@ -180,7 +158,7 @@ namespace DragginzWorldEditor
 
 				if (mode == AppState.Dig) {
 					MainMenu.Instance.showDigButtons (true);
-					MainMenu.Instance.setDigSizeButtons (_iCurDigSizeIndex);
+					//MainMenu.Instance.setDigSizeButtons (_iCurDigSizeIndex);
 					MainMenu.Instance.showMaterialBox (false);
 				}
 				else if (mode == AppState.Paint) {
@@ -192,18 +170,23 @@ namespace DragginzWorldEditor
 					MainMenu.Instance.showMaterialBox (false);
 				}
 
-				_iCurDigSizeIndex = -1;
-				setLaserSphereSize ();
+				if (goPlayer != null && goPlayerEdit != null) {
+					goPlayer.SetActive ((mode == AppState.Play));
+					goPlayerEdit.SetActive (!goPlayer.activeSelf);
+				}
 			}
 		}
 
-		public void setDigSize(int size) {
-
+		/*public void setDigSize(int size) {
 			if (size != _iCurDigSizeIndex) {
 				_iCurDigSizeIndex = size;
 				MainMenu.Instance.setDigSizeButtons (_iCurDigSizeIndex);
 				setLaserSphereSize ();
 			}
+		}*/
+
+		public void updateDigSettings(Vector3 v3DigSettings) {
+			
 		}
 
 		public void resetFlyCam()
@@ -245,30 +228,48 @@ namespace DragginzWorldEditor
 
 			Renderer renderer;
 
+			// reset current shaders
 			if (_goLastShaderChange != null && go != _goLastShaderChange) {
-				renderer = _goLastShaderChange.GetComponent<Renderer> ();
+				setShaders ("Standard");
+				/*renderer = _goLastShaderChange.GetComponent<Renderer> ();
 				if (renderer != null) {
-					renderer.material.shader = Shader.Find ("Standard");
-				}
+					if (renderer.material.shader.name != "Standard") {
+						renderer.material.shader = Shader.Find ("Standard");
+					}
+				}*/
 				_goLastShaderChange = null;
+				_aGoShaderChanged.Clear ();
 			}
 
-			if (_iCurDigSizeIndex == -1) {
-				renderer = go.GetComponent<Renderer> ();
-				if (renderer != null) {
+			// set new shaders
+			renderer = go.GetComponent<Renderer> ();
+			if (renderer != null) {
+				if (renderer.material.shader.name != shader) {
 					renderer.material.shader = Shader.Find (shader);
-					_goLastShaderChange = go;
+				}
+				_goLastShaderChange = go;
+				_aGoShaderChanged.Add (go);
+			}
+		}
+
+		private void setShaders(string sShader)
+		{
+			Shader shader = Shader.Find (sShader);
+			Renderer renderer;
+			int i, len = _aGoShaderChanged.Count;
+			for (i = 0; i < len; ++i) {
+				if (_aGoShaderChanged [i] != null) {
+					renderer = _aGoShaderChanged [i].GetComponent<Renderer> ();
+					if (renderer != null && renderer.material.shader.name != sShader) {
+						renderer.material.shader = shader;
+					}
 				}
 			}
 		}
 
 		//
 		private void setLaserSphereSize() {
-
 			float fSphereSize = 0.05f;
-			if (_iCurDigSizeIndex != -1) {
-				fSphereSize = (float)(_iCurDigSizeIndex+1) * prefabsSizes [_iCurShapeType][_iCurShapeSizeIndex];
-			}
 			laserSphere.transform.localScale = new Vector3 (fSphereSize, fSphereSize, fSphereSize);
 		}
 
@@ -314,7 +315,7 @@ namespace DragginzWorldEditor
 		}
 
 		// - //
-		private void swapShapes() {
+		/*private void swapShapes() {
 
 			//GameObject go;
 			string name;
@@ -339,7 +340,7 @@ namespace DragginzWorldEditor
 					}
 				}
 			}
-		}
+		}*/
 
 		//
 		private void createRockCube (Vector3 v3CubePos)
@@ -349,7 +350,7 @@ namespace DragginzWorldEditor
 				return;
 			}
 
-			GameObject cubeParent = new GameObject("cube__"+v3CubePos.x.ToString()+"_"+v3CubePos.y.ToString()+"_"+v3CubePos.z.ToString());
+			GameObject cubeParent = new GameObject(Globals.containerGameObjectPrepend+v3CubePos.x.ToString()+"_"+v3CubePos.y.ToString()+"_"+v3CubePos.z.ToString());
 			cubeParent.transform.SetParent(goWorld.transform);
 			cubeParent.transform.localPosition = v3CubePos;
 
@@ -359,7 +360,7 @@ namespace DragginzWorldEditor
 			Vector3 pos = Vector3.zero;
 			int count = 0;
 
-			float fRockSize = prefabsSizes [_iCurShapeType][_iCurShapeSizeIndex];
+			float fRockSize = 0.25f; //prefabsSizes [_iCurShapeType][_iCurShapeSizeIndex];
 			int len = Mathf.RoundToInt(1f / fRockSize);
 
 			pos.x = -0.5f + (fRockSize * 0.5f);
@@ -368,7 +369,7 @@ namespace DragginzWorldEditor
 				for (int y = 0; y < len; ++y) {
 					pos.z = -0.5f + (fRockSize * 0.5f);
 					for (int z = 0; z < len; ++z) {
-						createRock(pos, cubeParent, Globals.rockGameObjectPrepend + _iCurShapeType.ToString() + "-" + count.ToString());
+						createRock(pos, cubeParent, Globals.rockGameObjectPrepend + count.ToString()); //_iCurShapeType.ToString() + "-" +
 						count++;
 						pos.z += fRockSize;
 					}
@@ -387,7 +388,7 @@ namespace DragginzWorldEditor
 			GameObject prefab = null;
 			Vector3 rotation = Vector3.zero;
 
-			if (_iCurShapeType == 0) {
+			/*if (_iCurShapeType == 0) {
 				prefab = cubePrefabs [_iCurShapeSizeIndex];
 				//rotation = new Vector3(Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f));
 			}
@@ -397,8 +398,9 @@ namespace DragginzWorldEditor
 			else if (_iCurShapeType == 2) {
 				prefab = rockPrefabs [_iCurShapeSizeIndex];
 				rotation = new Vector3(Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
-			}
+			}*/
 
+			prefab = cubePrefab;
 			if (prefab) {
 				go = GameObject.Instantiate(prefab);
 				go.name = name;
@@ -422,7 +424,7 @@ namespace DragginzWorldEditor
 			// keep track of parent objects that had children removed
 			List<Transform> listcubeTransforms = new List<Transform> ();
 
-			if (_iCurDigSizeIndex == -1 && _goHit != null)
+			if (_goHit != null)
 			{
 				if (_goHit.tag == "DigAndDestroy") {
 					listcubeTransforms.Add (_goHit.transform.parent);
@@ -432,7 +434,7 @@ namespace DragginzWorldEditor
 			}
 			else
 			{
-				float digSize = (float)(_iCurDigSizeIndex + 1) * prefabsSizes [_iCurShapeType] [_iCurShapeSizeIndex];
+				/*float digSize = (float)(_iCurDigSizeIndex + 1) * prefabsSizes [_iCurShapeType] [_iCurShapeSizeIndex];
 				Collider[] hitColliders = Physics.OverlapSphere (v3Pos, digSize * 0.5f);
 
 				len = hitColliders.Length;
@@ -445,7 +447,7 @@ namespace DragginzWorldEditor
 
 						Destroy (hitColliders [i].gameObject);
 					}
-				}
+				}*/
 			}
 
 			// extend level if necessary

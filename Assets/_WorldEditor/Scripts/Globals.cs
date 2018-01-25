@@ -25,7 +25,8 @@ namespace DragginzWorldEditor
 		static public readonly string warningObsoleteFileFormat = "Can't load level:\nFile format is obsolete!";
 		static public readonly string warningInvalidFileFormat  = "Can't load level:\nFile format is invalid!";
 
-		static public readonly string rockGameObjectPrepend = "rock_type";
+		static public readonly string containerGameObjectPrepend = "quadrant_";
+		static public readonly string rockGameObjectPrepend = "rock_";
 
 		/// <summary>
 		/// ...

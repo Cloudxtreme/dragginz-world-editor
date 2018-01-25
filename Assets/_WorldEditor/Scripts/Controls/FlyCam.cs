@@ -19,6 +19,8 @@ namespace DragginzWorldEditor
 
 		private Vector3 camOffset;
 
+		private float mouseWheel;
+
 		void Awake()
 		{
 			player = transform.parent;
@@ -26,12 +28,26 @@ namespace DragginzWorldEditor
 			initialRotation = player.eulerAngles;
 		}
 
-		void Update () {
-			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
-				movementSpeed = Mathf.Max (movementSpeed += (Input.GetAxis ("Mouse ScrollWheel") * 0.5f), 0.05f);
+		void Update ()
+		{
+			if (Input.GetKeyDown(KeyCode.Equals)) {
+				movementSpeed = Mathf.Max (movementSpeed += 0.5f, 0.05f);
 				MainMenu.Instance.setMovementSpeedText (movementSpeed);
+			} else if (Input.GetKeyDown(KeyCode.Minus)) {
+				movementSpeed = Mathf.Max (movementSpeed -= 0.5f, 0.05f);
+				MainMenu.Instance.setMovementSpeedText (movementSpeed);
+			}	
+
+			mouseWheel = Input.GetAxis ("Mouse ScrollWheel");
+			if (mouseWheel != 0) {
+				mouseWheel = (mouseWheel < 0 ? -0.1f : 0.1f);
+				player.position += transform.forward * mouseWheel;// * movementSpeed;
+				//movementSpeed = Mathf.Max (movementSpeed += (Input.GetAxis ("Mouse ScrollWheel") * 0.5f), 0.05f);
+				//MainMenu.Instance.setMovementSpeedText (movementSpeed);
+			} else {
+				player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
 			}
-			player.position += (transform.right * Input.GetAxis("Horizontal") + transform.forward * Input.GetAxis("Vertical") + transform.up * Input.GetAxis("Depth")) * movementSpeed;
+		
 			player.eulerAngles += new Vector3(-Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), Input.GetAxis("Rotation"));
 			MainMenu.Instance.setCameraPositionText (player.position);
 		}
