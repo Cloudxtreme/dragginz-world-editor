@@ -255,9 +255,7 @@ MonoBehaviour:
   materialsWalls:
   - {fileID: 2100000, guid: 6bd787e00820ed64ab274fa05081fdc7, type: 2}
   - {fileID: 2100000, guid: ddbe2f82e7629ec4ba468529561ae0c2, type: 2}
-  lineCamera: {fileID: 1561795719}
-  laserPointer: {fileID: 0}
-  laserSphere: {fileID: 1209775551}
+  laserAim: {fileID: 1209775551}
 --- !u!4 &361061324
 Transform:
   m_ObjectHideFlags: 0
@@ -380,16 +378,6 @@ Prefab:
       propertyPath: m_AnchorMax.y
       value: 0.8133329
       objectReference: {fileID: 0}
-    - target: {fileID: 224465340556703038, guid: c891010f2fd945b488775603e1678256,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 224465340556703038, guid: c891010f2fd945b488775603e1678256,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 65
-      objectReference: {fileID: 0}
     - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchorMax.y
@@ -423,7 +411,7 @@ Prefab:
     - target: {fileID: 224498844831470654, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000019073486
+      value: 0.000022888184
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c891010f2fd945b488775603e1678256, type: 2}
@@ -512,7 +500,7 @@ GameObject:
   - component: {fileID: 1209775553}
   - component: {fileID: 1209775552}
   m_Layer: 0
-  m_Name: LaserSphere
+  m_Name: LaserAim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -570,7 +558,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1209775551}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &1209775555
 Transform:
   m_ObjectHideFlags: 0
@@ -579,7 +567,7 @@ Transform:
   m_GameObject: {fileID: 1209775551}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -756,11 +744,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d3242e8f834d31540b14f644706fa782, type: 2}
   m_IsPrefabParent: 0
---- !u!20 &1561795719 stripped
-Camera:
-  m_PrefabParentObject: {fileID: 20217116372562830, guid: 9e0147da119608f499faacbb40b42059,
-    type: 2}
-  m_PrefabInternal: {fileID: 2101850562}
 --- !u!1 &1608281686 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1758180832807370, guid: d3242e8f834d31540b14f644706fa782,

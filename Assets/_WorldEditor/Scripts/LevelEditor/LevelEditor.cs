@@ -23,9 +23,7 @@ namespace DragginzWorldEditor
 
 		public List<Material> materialsWalls;
 
-		public Camera lineCamera;
-		public LineRenderer laserPointer;
-		public GameObject laserSphere;
+		public GameObject laserAim;
 
 		private Ray _ray;
 		private RaycastHit _hit;
@@ -37,6 +35,8 @@ namespace DragginzWorldEditor
 
 		private GameObject _goLastShaderChange;
 		private List<GameObject> _aGoShaderChanged;
+
+		private float _fRockSize;
 
 		private bool _mouseIsDown;
 
@@ -52,6 +52,8 @@ namespace DragginzWorldEditor
 
 			_goLastShaderChange = null;
 			_aGoShaderChanged = new List<GameObject> ();
+
+			_fRockSize = 0.25f;
 
 			_mouseIsDown = false;
 
@@ -91,7 +93,7 @@ namespace DragginzWorldEditor
 
 			createWorld ();
 
-			setLaserSphereSize ();
+			updateDigSettings (new Vector3(1,1,1));
 
 			AppController.Instance.showPopup(
 				PopupMode.Notification,
@@ -125,7 +127,7 @@ namespace DragginzWorldEditor
 			doRayCast ();
 			if (_mouseIsDown && _goHit != null) {
 				if (Screen.height - Input.mousePosition.y > 90) {
-					digIt (_hit.point);
+					digIt (_goHit.transform.position);//_hit.point);
 					_mouseIsDown = false;
 				}
 			}
@@ -177,16 +179,12 @@ namespace DragginzWorldEditor
 			}
 		}
 
-		/*public void setDigSize(int size) {
-			if (size != _iCurDigSizeIndex) {
-				_iCurDigSizeIndex = size;
-				MainMenu.Instance.setDigSizeButtons (_iCurDigSizeIndex);
-				setLaserSphereSize ();
+		public void updateDigSettings(Vector3 v3DigSettings)
+		{
+			if (laserAim != null) {
+				float _fHalf = _fRockSize * .5f;
+				laserAim.transform.localScale = v3DigSettings * _fHalf;
 			}
-		}*/
-
-		public void updateDigSettings(Vector3 v3DigSettings) {
-			
 		}
 
 		public void resetFlyCam()
@@ -208,13 +206,14 @@ namespace DragginzWorldEditor
 			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast (_ray, out _hit, 500f)) {
 
-				laserSphere.transform.position = _hit.point;
 				_goHit = _hit.collider.gameObject;
+				laserAim.transform.position = _hit.point;
+				laserAim.transform.forward  = _hit.normal;
 				changeShader (_goHit, "Legacy Shaders/Transparent/Diffuse");
 			}
 			else {
 				changeShader (_goLastShaderChange);
-				laserSphere.transform.position = new Vector3(9999,9999,9999);
+				laserAim.transform.position = new Vector3(9999,9999,9999);
 				_goHit = null;
 			}
 		}
@@ -226,30 +225,21 @@ namespace DragginzWorldEditor
 				return;
 			}
 
+			int i, len;
 			Renderer renderer;
 
 			// reset current shaders
 			if (_goLastShaderChange != null && go != _goLastShaderChange) {
 				setShaders ("Standard");
-				/*renderer = _goLastShaderChange.GetComponent<Renderer> ();
-				if (renderer != null) {
-					if (renderer.material.shader.name != "Standard") {
-						renderer.material.shader = Shader.Find ("Standard");
-					}
-				}*/
 				_goLastShaderChange = null;
 				_aGoShaderChanged.Clear ();
 			}
 
+			_goLastShaderChange = go;
+
 			// set new shaders
-			renderer = go.GetComponent<Renderer> ();
-			if (renderer != null) {
-				if (renderer.material.shader.name != shader) {
-					renderer.material.shader = Shader.Find (shader);
-				}
-				_goLastShaderChange = go;
-				_aGoShaderChanged.Add (go);
-			}
+			_aGoShaderChanged = getOverlappingObjects(go.transform.position);
+			setShaders (shader);
 		}
 
 		private void setShaders(string sShader)
@@ -268,10 +258,10 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void setLaserSphereSize() {
+		/*private void setLaserSphereSize() {
 			float fSphereSize = 0.05f;
-			laserSphere.transform.localScale = new Vector3 (fSphereSize, fSphereSize, fSphereSize);
-		}
+			laserAim.transform.localScale = new Vector3 (fSphereSize, fSphereSize, fSphereSize);
+		}*/
 
 		//
 		private void resetWorld() {
@@ -314,34 +304,6 @@ namespace DragginzWorldEditor
 			}
 		}
 
-		// - //
-		/*private void swapShapes() {
-
-			//GameObject go;
-			string name;
-
-			foreach (Transform cube in goWorld.transform) {
-
-				List<Transform> rocks = new List<Transform>();
-				foreach (Transform rock in cube) {
-					rocks.Add(rock);
-				}
-
-				int count = 0;
-				int len = rocks.Count;
-				for (int i = 0; i < len; ++i) {
-					if (rocks[i].name.IndexOf (Globals.rockGameObjectPrepend) == 0) {
-
-						name = Globals.rockGameObjectPrepend + _iCurShapeType.ToString () + "-" + count.ToString ();
-						createRock(rocks[i].localPosition, rocks[i].parent.gameObject, name);
-						count++;
-
-						Destroy (rocks[i].gameObject);
-					}
-				}
-			}
-		}*/
-
 		//
 		private void createRockCube (Vector3 v3CubePos)
 		{
@@ -360,22 +322,21 @@ namespace DragginzWorldEditor
 			Vector3 pos = Vector3.zero;
 			int count = 0;
 
-			float fRockSize = 0.25f; //prefabsSizes [_iCurShapeType][_iCurShapeSizeIndex];
-			int len = Mathf.RoundToInt(1f / fRockSize);
+			int len = Mathf.RoundToInt(1f / _fRockSize);
 
-			pos.x = -0.5f + (fRockSize * 0.5f);
+			pos.x = -0.5f + (_fRockSize * 0.5f);
 			for (int x = 0; x < len; ++x) {
-				pos.y = 0.5f - (fRockSize * 0.5f);
+				pos.y = 0.5f - (_fRockSize * 0.5f);
 				for (int y = 0; y < len; ++y) {
-					pos.z = -0.5f + (fRockSize * 0.5f);
+					pos.z = -0.5f + (_fRockSize * 0.5f);
 					for (int z = 0; z < len; ++z) {
-						createRock(pos, cubeParent, Globals.rockGameObjectPrepend + count.ToString()); //_iCurShapeType.ToString() + "-" +
+						createRock(pos, cubeParent, Globals.rockGameObjectPrepend + count.ToString());
 						count++;
-						pos.z += fRockSize;
+						pos.z += _fRockSize;
 					}
-					pos.y -= fRockSize;
+					pos.y -= _fRockSize;
 				}
-				pos.x += fRockSize;
+				pos.x += _fRockSize;
 			}
 		}
 
@@ -388,25 +349,12 @@ namespace DragginzWorldEditor
 			GameObject prefab = null;
 			Vector3 rotation = Vector3.zero;
 
-			/*if (_iCurShapeType == 0) {
-				prefab = cubePrefabs [_iCurShapeSizeIndex];
-				//rotation = new Vector3(Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f));
-			}
-			else if (_iCurShapeType == 1) {
-				prefab = spherePrefabs [_iCurShapeSizeIndex];
-			}
-			else if (_iCurShapeType == 2) {
-				prefab = rockPrefabs [_iCurShapeSizeIndex];
-				rotation = new Vector3(Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
-			}*/
-
 			prefab = cubePrefab;
 			if (prefab) {
 				go = GameObject.Instantiate(prefab);
 				go.name = name;
 				go.transform.SetParent(parent.transform);
 				go.transform.localPosition = pos;
-
 				go.transform.localRotation = Quaternion.Euler (rotation);
 				go.GetComponent<MeshRenderer> ().material = materialsWalls[Random.Range (0, materialsWalls.Count)];
 			}
@@ -422,33 +370,21 @@ namespace DragginzWorldEditor
 			int i, len;
 
 			// keep track of parent objects that had children removed
-			List<Transform> listcubeTransforms = new List<Transform> ();
+			List<Transform> listcubeTransforms = new List<Transform>();
 
-			if (_goHit != null)
-			{
-				if (_goHit.tag == "DigAndDestroy") {
-					listcubeTransforms.Add (_goHit.transform.parent);
-					Destroy (_goHit);
-					_goHit = null;
+			if (laserAim != null) {
+				v3Pos = laserAim.transform.position;
+			}
+			List<GameObject> listCollidingObjects = getOverlappingObjects(v3Pos);
+			len = listCollidingObjects.Count;
+			for (i = 0; i < len; ++i) {
+				if (!listcubeTransforms.Contains (listCollidingObjects [i].transform.parent)) {
+					listcubeTransforms.Add (listCollidingObjects [i].transform.parent);
 				}
+				Destroy (listCollidingObjects [i]);
 			}
-			else
-			{
-				/*float digSize = (float)(_iCurDigSizeIndex + 1) * prefabsSizes [_iCurShapeType] [_iCurShapeSizeIndex];
-				Collider[] hitColliders = Physics.OverlapSphere (v3Pos, digSize * 0.5f);
-
-				len = hitColliders.Length;
-				for (i = 0; i < len; ++i) {
-					if (hitColliders [i].tag == "DigAndDestroy") {
-
-						if (!listcubeTransforms.Contains (hitColliders [i].transform.parent)) {
-							listcubeTransforms.Add (hitColliders [i].transform.parent);
-						}
-
-						Destroy (hitColliders [i].gameObject);
-					}
-				}*/
-			}
+			listCollidingObjects.Clear ();
+			listCollidingObjects = null;
 
 			// extend level if necessary
 			len = listcubeTransforms.Count;
@@ -461,8 +397,31 @@ namespace DragginzWorldEditor
 					createRockCube (adjacentCubes [j]);
 				}
 			}
+			listcubeTransforms.Clear ();
+			listcubeTransforms = null;
 		}
 
+		//
+		private List<GameObject> getOverlappingObjects(Vector3 v3Pos)
+		{
+			List<GameObject> listCollidingObjects = new List<GameObject>();
+
+			int i, len;
+
+			Vector3 pos = MainMenu.Instance.v3DigSettings * (_fRockSize * .5f) * .5f;
+			Collider[] hitColliders = Physics.OverlapBox (v3Pos, pos);
+
+			len = hitColliders.Length;
+			for (i = 0; i < len; ++i) {
+				if (hitColliders [i].tag == "DigAndDestroy") {
+					listCollidingObjects.Add (hitColliders [i].gameObject);
+				}
+			}
+
+			return listCollidingObjects;
+		}
+
+		//
 		private List<Vector3> getAdjacentCubes(Vector3 v3CubePos) {
 
 			List<Vector3> adjacentCubes = new List<Vector3> ();

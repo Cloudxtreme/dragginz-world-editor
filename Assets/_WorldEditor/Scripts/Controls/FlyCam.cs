@@ -11,7 +11,7 @@ namespace DragginzWorldEditor
 {
 	public class FlyCam : MonoBehaviour {
 
-		private static float movementSpeed = 0.05f;
+		private static float movementSpeed = 0.15f;
 
 		private Transform player;
 		private Vector3 initialPos;
@@ -31,10 +31,10 @@ namespace DragginzWorldEditor
 		void Update ()
 		{
 			if (Input.GetKeyDown(KeyCode.Equals)) {
-				movementSpeed = Mathf.Max (movementSpeed += 0.5f, 0.05f);
+				movementSpeed = Mathf.Max (movementSpeed += 0.05f, 0.15f);
 				MainMenu.Instance.setMovementSpeedText (movementSpeed);
 			} else if (Input.GetKeyDown(KeyCode.Minus)) {
-				movementSpeed = Mathf.Max (movementSpeed -= 0.5f, 0.05f);
+				movementSpeed = Mathf.Max (movementSpeed -= 0.05f, 0.15f);
 				MainMenu.Instance.setMovementSpeedText (movementSpeed);
 			}	
 
@@ -61,7 +61,7 @@ namespace DragginzWorldEditor
 
 		public void reset()
 		{
-			movementSpeed = 0.05f;
+			movementSpeed = 0.15f;
 
 			camOffset = Vector3.zero;
 			transform.localPosition = camOffset;

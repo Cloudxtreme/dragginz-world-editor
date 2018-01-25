@@ -104,6 +104,19 @@ namespace DragginzWorldEditor
                     }
                 }
             }
+
+			if (sliderDigWidth != null) {
+				sliderDigWidth.value = sliderDigWidth.minValue = 1;
+				sliderDigWidth.maxValue = 5;
+			}
+			if (sliderDigHeight != null) {
+				sliderDigHeight.value = sliderDigHeight.minValue = 1;
+				sliderDigHeight.maxValue = 5;
+			}
+			if (sliderDigDepth != null) {
+				sliderDigDepth.value = sliderDigDepth.minValue = 1;
+				sliderDigDepth.maxValue = 5;
+			}
         }
 
 		void OnEnable() {
