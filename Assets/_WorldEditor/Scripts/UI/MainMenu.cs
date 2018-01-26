@@ -46,6 +46,7 @@ namespace DragginzWorldEditor
 		public Slider sliderDigDepth;
 
 		public Text txtFileInfo;
+		public Text txtCubeCount;
 		public Text txtMovementSpeed;
 		public Text txtCameraPosition;
 
@@ -153,6 +154,13 @@ namespace DragginzWorldEditor
 		public void setMovementSpeedText(float speed) {
 			if (txtMovementSpeed != null) {
 				txtMovementSpeed.text = "Movement Speed: " + speed.ToString("F2");
+			}
+		}
+
+		public void setCubeCountText(int count)
+		{
+			if (txtCubeCount != null) {
+				txtCubeCount.text = "Cubes: " + String.Format("{0:0,0}", count);//count.ToString();
 			}
 		}
 

@@ -37,6 +37,7 @@ namespace DragginzWorldEditor
 		private List<GameObject> _aGoShaderChanged;
 
 		private float _fRockSize;
+		private int _numCubes;
 
 		private bool _mouseIsDown;
 
@@ -54,6 +55,7 @@ namespace DragginzWorldEditor
 			_aGoShaderChanged = new List<GameObject> ();
 
 			_fRockSize = 0.25f;
+			_numCubes = 0;
 
 			_mouseIsDown = false;
 
@@ -160,7 +162,6 @@ namespace DragginzWorldEditor
 
 				if (mode == AppState.Dig) {
 					MainMenu.Instance.showDigButtons (true);
-					//MainMenu.Instance.setDigSizeButtons (_iCurDigSizeIndex);
 					MainMenu.Instance.showMaterialBox (false);
 				}
 				else if (mode == AppState.Paint) {
@@ -264,7 +265,9 @@ namespace DragginzWorldEditor
 		}*/
 
 		//
-		private void resetWorld() {
+		private void resetWorld()
+		{
+			_numCubes = 0;
 
 			foreach (Transform child in goWorld.transform) {
 				Destroy (child.gameObject);
@@ -302,6 +305,8 @@ namespace DragginzWorldEditor
 					}
 				}
 			}
+
+			MainMenu.Instance.setCubeCountText (_numCubes);
 		}
 
 		//
@@ -357,6 +362,7 @@ namespace DragginzWorldEditor
 				go.transform.localPosition = pos;
 				go.transform.localRotation = Quaternion.Euler (rotation);
 				go.GetComponent<MeshRenderer> ().material = materialsWalls[Random.Range (0, materialsWalls.Count)];
+				_numCubes++;
 			}
 
 			return go;
@@ -382,9 +388,12 @@ namespace DragginzWorldEditor
 					listcubeTransforms.Add (listCollidingObjects [i].transform.parent);
 				}
 				Destroy (listCollidingObjects [i]);
+				_numCubes--;
 			}
 			listCollidingObjects.Clear ();
 			listCollidingObjects = null;
+
+			MainMenu.Instance.setCubeCountText (_numCubes);
 
 			// extend level if necessary
 			len = listcubeTransforms.Count;
