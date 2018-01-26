@@ -54,7 +54,7 @@ namespace DragginzWorldEditor
 			_goLastShaderChange = null;
 			_aGoShaderChanged = new List<GameObject> ();
 
-			_fRockSize = 0.25f;
+			_fRockSize = 0.4f;
 			_numCubes = 0;
 
 			_mouseIsDown = false;
@@ -289,6 +289,8 @@ namespace DragginzWorldEditor
 
 			resetWorld ();
 
+			int count = 0;
+			float quadrantSize = 1.2f;
 			// create hollow cube of cubes :)
 			int size = 2; // actual size will be size*2+1
 			int height = 3;
@@ -298,13 +300,15 @@ namespace DragginzWorldEditor
 					for (int z = -size; z <= size; ++z) {
 
 						if (Mathf.Abs (x) == size || y == -1 || y == height || Mathf.Abs (z) == size) {
-							createRockCube (new Vector3 (x, y, z));
+							createRockCube (new Vector3 (x*quadrantSize, y*quadrantSize, z*quadrantSize));
+							count++;
 						} else {
 							_levelCubeFlags [x] [y] [z] = 1;
 						}
 					}
 				}
 			}
+			Debug.Log ("quadrants: "+count.ToString());
 
 			MainMenu.Instance.setCubeCountText (_numCubes);
 		}
@@ -327,13 +331,14 @@ namespace DragginzWorldEditor
 			Vector3 pos = Vector3.zero;
 			int count = 0;
 
-			int len = Mathf.RoundToInt(1f / _fRockSize);
+			int len = 3;//Mathf.RoundToInt(1f / _fRockSize);
+			float startPos = (int)len * _fRockSize * .5f;
 
-			pos.x = -0.5f + (_fRockSize * 0.5f);
+			pos.x = -startPos + (_fRockSize * 0.5f);
 			for (int x = 0; x < len; ++x) {
-				pos.y = 0.5f - (_fRockSize * 0.5f);
+				pos.y = startPos - (_fRockSize * 0.5f);
 				for (int y = 0; y < len; ++y) {
-					pos.z = -0.5f + (_fRockSize * 0.5f);
+					pos.z = -startPos + (_fRockSize * 0.5f);
 					for (int z = 0; z < len; ++z) {
 						createRock(pos, cubeParent, Globals.rockGameObjectPrepend + count.ToString());
 						count++;
@@ -435,11 +440,13 @@ namespace DragginzWorldEditor
 
 			List<Vector3> adjacentCubes = new List<Vector3> ();
 
+			float quadrantSize = 1.2f;
+
 			int len = 1;
 			for (int x = -len; x <= len; ++x) {
 				for (int y = -len; y <= len; ++y) {
 					for (int z = -len; z <= len; ++z) {
-						adjacentCubes.Add (new Vector3(v3CubePos.x+x, v3CubePos.y+y, v3CubePos.z+z));
+						adjacentCubes.Add (new Vector3(v3CubePos.x+(x*quadrantSize), v3CubePos.y+(y*quadrantSize), v3CubePos.z+(z*quadrantSize)));
 					}
 				}
 			}
