@@ -29,6 +29,7 @@ namespace DragginzWorldEditor
         public Transform blocker;
         public Transform panelPopup;
 
+		public Button btnModeLook;
 		public Button btnModeDig;
 		public Button btnModePaint;
 		public Button btnModePlay;
@@ -156,6 +157,9 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public void onButtonModeLookClicked() {
+			LevelEditor.Instance.setMode(AppState.Look);
+		}
 		public void onButtonModeDigClicked() {
 			LevelEditor.Instance.setMode(AppState.Dig);
 		}
@@ -168,6 +172,7 @@ namespace DragginzWorldEditor
 
 		//
 		public void setModeButtons(AppState mode) {
+			btnModeLook.interactable  = (mode != AppState.Look);
 			btnModeDig.interactable   = (mode != AppState.Dig);
 			btnModePaint.interactable = (mode != AppState.Paint);
 			btnModePlay.interactable  = (mode != AppState.Play);

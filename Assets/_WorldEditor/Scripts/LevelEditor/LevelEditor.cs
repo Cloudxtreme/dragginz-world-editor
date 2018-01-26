@@ -156,7 +156,7 @@ namespace DragginzWorldEditor
 			{
 				AppController.Instance.setAppState (mode);
 				MainMenu.Instance.setModeButtons (mode);
-				resetFlyCam ();
+				//resetFlyCam ();
 
 				if (mode == AppState.Dig) {
 					MainMenu.Instance.showDigButtons (true);
