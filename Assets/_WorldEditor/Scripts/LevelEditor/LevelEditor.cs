@@ -20,8 +20,9 @@ namespace DragginzWorldEditor
 		public GameObject goPlayerEdit;
 
 		public GameObject cubePrefab;
+        public GameObject cubePrefab2;
 
-		public List<Material> materialsWalls;
+        public List<Material> materialsWalls;
 
 		public GameObject laserAim;
 
@@ -37,7 +38,11 @@ namespace DragginzWorldEditor
 		private List<GameObject> _aGoShaderChanged;
 
 		private float _fRockSize;
-		private int _numCubes;
+        private int _cubesPerQuadrant;
+        private float _fQuadrantSize;
+        private int _cubeIndex;
+
+        private int _numCubes;
 
 		private bool _mouseIsDown;
 
@@ -54,8 +59,10 @@ namespace DragginzWorldEditor
 			_goLastShaderChange = null;
 			_aGoShaderChanged = new List<GameObject> ();
 
-			_fRockSize = 0.4f;
-			_numCubes = 0;
+            _cubeIndex = 1;
+            toggleCubeSizes();
+
+            _numCubes = 0;
 
 			_mouseIsDown = false;
 
@@ -105,12 +112,21 @@ namespace DragginzWorldEditor
 			);
 		}
 
-		#endregion
+        #endregion
 
-		#region PublicMethods
+        // ----------------------------------------------------------------------------------------
 
-		//
-		public void customUpdateCheckControls() {
+        #region PublicMethods
+
+        public void toggleCubes() {
+
+            toggleCubeSizes();
+
+            createWorld();
+        }
+
+        //
+        public void customUpdateCheckControls() {
 
 			if (!_mouseIsDown) {
 				if (Input.GetButtonDown ("Fire1")) {
@@ -200,9 +216,27 @@ namespace DragginzWorldEditor
 
 		#endregion
 
+        // ----------------------------------------------------------------------------------------
+
 		#region PrivateMethods
 
-		private void doRayCast()
+        private void toggleCubeSizes() {
+
+            _cubeIndex = (_cubeIndex == 1 ? 0 : 1);
+
+            if (_cubeIndex == 0) {
+                _fRockSize = 0.5f;
+                _cubesPerQuadrant = 2;
+            }
+            else {
+                _fRockSize = 1.0f;
+                _cubesPerQuadrant = 1;
+            }
+
+            _fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
+        }
+
+        private void doRayCast()
 		{
 			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast (_ray, out _hit, 500f)) {
@@ -226,8 +260,8 @@ namespace DragginzWorldEditor
 				return;
 			}
 
-			int i, len;
-			Renderer renderer;
+			//int i, len;
+			//Renderer renderer;
 
 			// reset current shaders
 			if (_goLastShaderChange != null && go != _goLastShaderChange) {
@@ -290,7 +324,7 @@ namespace DragginzWorldEditor
 			resetWorld ();
 
 			int count = 0;
-			float quadrantSize = 1.2f;
+			
 			// create hollow cube of cubes :)
 			int size = 2; // actual size will be size*2+1
 			int height = 3;
@@ -300,7 +334,7 @@ namespace DragginzWorldEditor
 					for (int z = -size; z <= size; ++z) {
 
 						if (Mathf.Abs (x) == size || y == -1 || y == height || Mathf.Abs (z) == size) {
-							createRockCube (new Vector3 (x*quadrantSize, y*quadrantSize, z*quadrantSize));
+							createRockCube (new Vector3 (x * _fQuadrantSize, y * _fQuadrantSize, z * _fQuadrantSize));
 							count++;
 						} else {
 							_levelCubeFlags [x] [y] [z] = 1;
@@ -331,7 +365,7 @@ namespace DragginzWorldEditor
 			Vector3 pos = Vector3.zero;
 			int count = 0;
 
-			int len = 3;//Mathf.RoundToInt(1f / _fRockSize);
+			int len = _cubesPerQuadrant;
 			float startPos = (int)len * _fRockSize * .5f;
 
 			pos.x = -startPos + (_fRockSize * 0.5f);
@@ -359,7 +393,7 @@ namespace DragginzWorldEditor
 			GameObject prefab = null;
 			Vector3 rotation = Vector3.zero;
 
-			prefab = cubePrefab;
+			prefab = (_cubeIndex == 0 ? cubePrefab : cubePrefab2);
 			if (prefab) {
 				go = GameObject.Instantiate(prefab);
 				go.name = name;
@@ -440,13 +474,11 @@ namespace DragginzWorldEditor
 
 			List<Vector3> adjacentCubes = new List<Vector3> ();
 
-			float quadrantSize = 1.2f;
-
 			int len = 1;
 			for (int x = -len; x <= len; ++x) {
 				for (int y = -len; y <= len; ++y) {
 					for (int z = -len; z <= len; ++z) {
-						adjacentCubes.Add (new Vector3(v3CubePos.x+(x*quadrantSize), v3CubePos.y+(y*quadrantSize), v3CubePos.z+(z*quadrantSize)));
+						adjacentCubes.Add (new Vector3(v3CubePos.x+(x*_fQuadrantSize), v3CubePos.y+(y*_fQuadrantSize), v3CubePos.z+(z*_fQuadrantSize)));
 					}
 				}
 			}

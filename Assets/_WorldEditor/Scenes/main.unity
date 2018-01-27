@@ -256,6 +256,8 @@ MonoBehaviour:
   goPlayer: {fileID: 725634865}
   goPlayerEdit: {fileID: 1608281686}
   cubePrefab: {fileID: 1025387082872192, guid: 2a7b586c77ed6c14bafc60094e325eba, type: 2}
+  cubePrefab2: {fileID: 1025387082872192, guid: 4b1c4d762a0602c46950ee7b1fa6fbdc,
+    type: 2}
   materialsWalls:
   - {fileID: 2100000, guid: 6bd787e00820ed64ab274fa05081fdc7, type: 2}
   - {fileID: 2100000, guid: 1ba12bfe1d73d1f4da71e796c3b65ef3, type: 2}
@@ -1129,12 +1131,27 @@ Prefab:
     - target: {fileID: 224465340556703038, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0.81333333
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224498844831470654, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000038146973
+      value: 0.00004005432
+      objectReference: {fileID: 0}
+    - target: {fileID: 224596482665375506, guid: c891010f2fd945b488775603e1678256,
+        type: 2}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224596482665375506, guid: c891010f2fd945b488775603e1678256,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224596482665375506, guid: c891010f2fd945b488775603e1678256,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: -17
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c891010f2fd945b488775603e1678256, type: 2}

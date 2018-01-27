@@ -85,18 +85,22 @@ namespace DragginzWorldEditor
 
 			LevelEditor.Instance.customUpdateCheckControls ();
 
-			if (_appState == AppState.Dig)
-			{
-				if (Input.GetKeyDown (KeyCode.Escape)) {
-					LevelEditor.Instance.resetFlyCam ();
-				}
-			}
-            else if (_appState == AppState.Play)
-			{
-                if (Input.GetKeyDown(KeyCode.Escape)) {
-					//setAppState(AppState.Dig);
-				} else if (Input.GetKeyDown (KeyCode.X)) {
-					LevelEditor.Instance.toggleFlyCamOffset ();
+            if (Input.GetKeyDown(KeyCode.B)) {
+                LevelEditor.Instance.toggleCubes();
+            }
+            else {
+                if (_appState == AppState.Dig) {
+                    if (Input.GetKeyDown(KeyCode.Escape)) {
+                        LevelEditor.Instance.resetFlyCam();
+                    }
+                }
+                else if (_appState == AppState.Play) {
+                    if (Input.GetKeyDown(KeyCode.Escape)) {
+                        //setAppState(AppState.Dig);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.X)) {
+                        LevelEditor.Instance.toggleFlyCamOffset();
+                    }
                 }
             }
         }
