@@ -12,7 +12,7 @@ namespace DragginzWorldEditor
 	/// </summary>
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v01.29.0a";
+		static public readonly string version = "Level Editor v01.29.1a";
 		static public readonly int levelSaveFormatVersion = 2;
 
         static public readonly string appContainerName      = "{AppController}";
@@ -20,7 +20,7 @@ namespace DragginzWorldEditor
         static public readonly string worldContainerName    = "[World]";
         static public readonly string mainMenuContainerName = "[MainMenu]";
 
-        static public readonly string[] materials = {"Cliff Face", "Cliff Face Mossy", "Dirt", "Tile Roof"};
+        static public readonly string[] materials = {"Marble", "Moss", "Shape", "Stone"};
 
 		static public readonly string warningObsoleteFileFormat = "Can't load level:\nFile format is obsolete!";
 		static public readonly string warningInvalidFileFormat  = "Can't load level:\nFile format is invalid!";

@@ -275,23 +275,22 @@ namespace DragginzWorldEditor
 
 		private IEnumerator updateQuadrantVisibility()
 		{
-			//int len = _aQuadrantChangedVisibility.Count;
-			while (_aQuadrantChangedVisibility.Count > 0) {
+			int len = _aQuadrantChangedVisibility.Count;
+			while (len > 0) {
 
 				_coroutineIsRunning = true;
 
-				//Debug.Log ("updateQuadrantVisibility - len: "+_aQuadrantChangedVisibility.Count);
-				GameObject go = _aQuadrantChangedVisibility [0];// [len - 1];
-				bool visible = _visibleQuadrants [go];
-				//Debug.Log ("    ->go: "+go.name+" - set visible to "+visible);
-				_aQuadrantChangedVisibility.RemoveAt (0);//len - 1);
-				foreach (Transform cube in go.transform) {
-					if (cube.tag != "QuadrantCenter") {
-						if (cube.gameObject.activeSelf == visible) {
-							//Debug.Log ("    ->children already set to correct visibility!");
-							break;
-						}
-						cube.gameObject.SetActive (visible);
+				int i;
+				for (i = 0; i < 5; ++i) {
+					
+					GameObject go = _aQuadrantChangedVisibility [0];
+					bool visible = _visibleQuadrants [go];
+					_aQuadrantChangedVisibility.RemoveAt (0);
+					go.transform.Find ("container").gameObject.SetActive (visible);
+
+					len = _aQuadrantChangedVisibility.Count;
+					if (len <= 0) {
+						break;
 					}
 				}
 
@@ -335,7 +334,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void changeShader(GameObject go, string shader = "Standard")
+		private void changeShader(GameObject go, string shader = "Mobile/Diffuse") //"Standard"
 		{
 			if (go == null) {
 				return;
@@ -346,7 +345,7 @@ namespace DragginzWorldEditor
 
 			// reset current shaders
 			if (_goLastShaderChange != null && go != _goLastShaderChange) {
-				setShaders ("Standard");
+				setShaders ("Mobile/Diffuse");
 				_goLastShaderChange = null;
 				_aGoShaderChanged.Clear ();
 			}
@@ -440,6 +439,10 @@ namespace DragginzWorldEditor
 			}
 
 			GameObject cubeParent = createQuadrant (v3CubePos);
+			GameObject container = new GameObject ();
+			container.name = "container";
+			container.transform.SetParent (cubeParent.transform);
+			container.transform.localPosition = Vector3.zero;
 
 			Vector3 pos = Vector3.zero;
 			int count = 0;
@@ -453,7 +456,7 @@ namespace DragginzWorldEditor
 				for (int y = 0; y < len; ++y) {
 					pos.z = -startPos + (_fRockSize * 0.5f);
 					for (int z = 0; z < len; ++z) {
-						createRock(pos, cubeParent, Globals.rockGameObjectPrepend + count.ToString());
+						createRock(pos, container, Globals.rockGameObjectPrepend + count.ToString());
 						count++;
 						pos.z += _fRockSize;
 					}

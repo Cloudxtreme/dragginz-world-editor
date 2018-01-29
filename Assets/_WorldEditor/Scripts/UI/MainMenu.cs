@@ -67,6 +67,7 @@ namespace DragginzWorldEditor
 			get { return _v3DigSettings; }
 		}
 
+		private float _lastMaterialChange;
 		private int _iSelectedMaterial = 0;
 		public int iSelectedMaterial {
 			get { return _iSelectedMaterial; }
@@ -119,6 +120,8 @@ namespace DragginzWorldEditor
 				sliderDigDepth.value = sliderDigDepth.minValue = 1;
 				sliderDigDepth.maxValue = 5;
 			}
+
+			_lastMaterialChange = 0;
         }
 
 		void OnEnable() {
@@ -333,14 +336,19 @@ namespace DragginzWorldEditor
 
 		public void toggleMaterial(float toggle)
 		{
-			int materialIndex = _iSelectedMaterial;
-			if (toggle < 0) {
-				materialIndex = (materialIndex > 0 ? materialIndex - 1 : Globals.materials.Length - 1);
-			} else {
-				materialIndex = (materialIndex < (Globals.materials.Length - 1) ? materialIndex + 1 : 0);
-			}
+			if (Time.realtimeSinceStartup > _lastMaterialChange) {
 
-			changeMaterial (materialIndex);
+				_lastMaterialChange = Time.realtimeSinceStartup + 0.2f;
+
+				int materialIndex = _iSelectedMaterial;
+				if (toggle < 0) {
+					materialIndex = (materialIndex > 0 ? materialIndex - 1 : Globals.materials.Length - 1);
+				} else {
+					materialIndex = (materialIndex < (Globals.materials.Length - 1) ? materialIndex + 1 : 0);
+				}
+
+				changeMaterial (materialIndex);
+			}
 		}
 
 		//

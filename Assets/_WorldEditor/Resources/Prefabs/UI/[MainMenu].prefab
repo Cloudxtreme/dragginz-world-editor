@@ -1759,7 +1759,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 224465340556703038}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.81333375
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4018,7 +4018,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 2800000, guid: 9a85ef6fde43ebe489939544000ef713, type: 3}
+  m_Texture: {fileID: 2800000, guid: afcc6b5d09e4eef4ea164879b4c447eb, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -4044,7 +4044,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 2800000, guid: 98fa15bab05d622489f1baa55c23278e, type: 3}
+  m_Texture: {fileID: 2800000, guid: 982f1dbdb1caaff44b46556274599d10, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -4070,7 +4070,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 2800000, guid: 45ee5cc47f7bac644a3929b43897dfc6, type: 3}
+  m_Texture: {fileID: 2800000, guid: 4535a10e41be71541b2a400eed5dbfc1, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -4208,7 +4208,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 2800000, guid: 45ee5cc47f7bac644a3929b43897dfc6, type: 3}
+  m_Texture: {fileID: 2800000, guid: 982f1dbdb1caaff44b46556274599d10, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -5191,7 +5191,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 2800000, guid: a4a6578365dbfd74eb5dbceebc9f9d72, type: 3}
+  m_Texture: {fileID: 2800000, guid: 1d93dc61600710f48a94852e60727f43, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -6621,7 +6621,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 97, y: 64}
+  m_AnchoredPosition: {x: 10, y: 65}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224469134105609954
