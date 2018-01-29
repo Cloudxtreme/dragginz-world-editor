@@ -21,6 +21,7 @@ namespace DragginzWorldEditor
 
 		public GameObject cubePrefab;
         public GameObject cubePrefab2;
+		public GameObject cubePrefabCenter;
 
         public List<Material> materialsWalls;
 
@@ -30,12 +31,18 @@ namespace DragginzWorldEditor
 		private RaycastHit _hit;
 		private GameObject _goHit;
 
-		private Dictionary<int, Dictionary<int, Dictionary<int, int>>> _levelCubeFlags;
+		private Dictionary<int, Dictionary<int, Dictionary<int, int>>> _quadrantFlags;
 		private int _iMinLevelCoord;
 		private int _iMaxLevelCoord;
 
 		private GameObject _goLastShaderChange;
 		private List<GameObject> _aGoShaderChanged;
+
+		private Dictionary<GameObject, bool> _visibleQuadrants;
+		private List<GameObject> _aQuadrantChangedVisibility;
+
+		private float _nextQuadrantVisibilityCheck;
+		private bool _coroutineIsRunning;
 
 		private float _fRockSize;
         private int _cubesPerQuadrant;
@@ -59,16 +66,17 @@ namespace DragginzWorldEditor
 			_goLastShaderChange = null;
 			_aGoShaderChanged = new List<GameObject> ();
 
+			_visibleQuadrants = new Dictionary<GameObject, bool> ();
+			_nextQuadrantVisibilityCheck = Time.realtimeSinceStartup + 1.0f;
+			_aQuadrantChangedVisibility = new List<GameObject> ();
+			_coroutineIsRunning = false;
+
             _cubeIndex = 1;
             toggleCubeSizes();
 
             _numCubes = 0;
 
 			_mouseIsDown = false;
-
-			/*if (GetComponent<Light>() != null) {
-				GetComponent<Light>().enabled = false; // turn off lights!
-			}*/
 
 			// Instantiate app controller singleton
 			if (GameObject.Find(Globals.appContainerName) == null) {
@@ -82,14 +90,14 @@ namespace DragginzWorldEditor
 
 			_goHit = null;
 
-			_levelCubeFlags = new Dictionary<int, Dictionary<int, Dictionary<int, int>>> ();
+			_quadrantFlags = new Dictionary<int, Dictionary<int, Dictionary<int, int>>> ();
 
 			for (int x = _iMinLevelCoord; x <= _iMaxLevelCoord; ++x) {
-				_levelCubeFlags.Add(x, new Dictionary<int, Dictionary<int, int>> ());
+				_quadrantFlags.Add(x, new Dictionary<int, Dictionary<int, int>> ());
 				for (int y = _iMinLevelCoord; y <= _iMaxLevelCoord; ++y) {
-					_levelCubeFlags [x].Add(y, new Dictionary<int, int> ());
+					_quadrantFlags [x].Add(y, new Dictionary<int, int> ());
 					for (int z = _iMinLevelCoord; z <= _iMaxLevelCoord; ++z) {
-						_levelCubeFlags [x] [y].Add(z, 0);
+						_quadrantFlags [x] [y].Add(z, 0);
 					}
 				}
 			}
@@ -107,7 +115,7 @@ namespace DragginzWorldEditor
 			AppController.Instance.showPopup(
 				PopupMode.Notification,
 				"Controls",
-				"Normal movement: AWSD\nUp and down: QE - rotate: ZC\nSlow walk: Mouse wheel\nAdjust movement speed: -/+\n\nPress ESC to reset speed and position.",
+				"Normal movement: AWSD\nUp and down: QE - rotate: ZC\nToggle tools: Mouse wheel\nAdjust movement speed: -/+\n\nPress ESC to reset speed and position.",
 				startUpPopupCallback
 			);
 		}
@@ -120,13 +128,45 @@ namespace DragginzWorldEditor
 
         public void toggleCubes() {
 
-            toggleCubeSizes();
-
-            createWorld();
+            //toggleCubeSizes();
+            //createWorld();
         }
 
+		//
+		public void setQuadrantVisibilityFlag(GameObject quadrant, bool visible)
+		{
+			//Debug.Log (quadrant.name+".visible = "+visible);
+
+			_visibleQuadrants [quadrant] = visible;
+
+			if (_aQuadrantChangedVisibility.Contains (quadrant)) {
+				_aQuadrantChangedVisibility.Remove (quadrant);
+			}
+
+			_aQuadrantChangedVisibility.Add (quadrant);
+		}
+
         //
-        public void customUpdateCheckControls() {
+        public void customUpdateCheckControls()
+		{
+			if (Input.GetKeyDown(KeyCode.Alpha1)) {
+				if (!MainMenu.Instance.popup.isVisible ()) {
+					setMode (AppState.Look);
+				}
+			}
+			else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+				if (!MainMenu.Instance.popup.isVisible ()) {
+					setMode (AppState.Dig);
+				}
+			}
+			else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+				if (!MainMenu.Instance.popup.isVisible ()) {
+					setMode (AppState.Paint);
+				}
+			}
+			//else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+			//	setMode(AppState.Play);
+			//}
 
 			if (!_mouseIsDown) {
 				if (Input.GetButtonDown ("Fire1")) {
@@ -137,6 +177,15 @@ namespace DragginzWorldEditor
 					_mouseIsDown = false;
 				}
 			}
+
+			if (!_coroutineIsRunning && _visibleQuadrants.Count > 0) {
+				StartCoroutine("updateQuadrantVisibility");
+			}
+
+			/*if (Time.realtimeSinceStartup > _nextQuadrantVisibilityCheck) {
+				_nextQuadrantVisibilityCheck = Time.realtimeSinceStartup + 0.05f; // check 20 times a second
+				updateQuadrantVisibility ();
+			}*/
 		}
 
 		//
@@ -153,6 +202,10 @@ namespace DragginzWorldEditor
 
 		public void customUpdatePaint() {
 			
+			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
+				MainMenu.Instance.toggleMaterial (Input.GetAxis ("Mouse ScrollWheel"));
+			}
+
 			doRayCast ();
 			if (_mouseIsDown && _goHit != null) {
 				if (Screen.height - Input.mousePosition.y > 90) {
@@ -219,6 +272,34 @@ namespace DragginzWorldEditor
         // ----------------------------------------------------------------------------------------
 
 		#region PrivateMethods
+
+		private IEnumerator updateQuadrantVisibility()
+		{
+			//int len = _aQuadrantChangedVisibility.Count;
+			while (_aQuadrantChangedVisibility.Count > 0) {
+
+				_coroutineIsRunning = true;
+
+				//Debug.Log ("updateQuadrantVisibility - len: "+_aQuadrantChangedVisibility.Count);
+				GameObject go = _aQuadrantChangedVisibility [0];// [len - 1];
+				bool visible = _visibleQuadrants [go];
+				//Debug.Log ("    ->go: "+go.name+" - set visible to "+visible);
+				_aQuadrantChangedVisibility.RemoveAt (0);//len - 1);
+				foreach (Transform cube in go.transform) {
+					if (cube.tag != "QuadrantCenter") {
+						if (cube.gameObject.activeSelf == visible) {
+							//Debug.Log ("    ->children already set to correct visibility!");
+							break;
+						}
+						cube.gameObject.SetActive (visible);
+					}
+				}
+
+				yield return new WaitForEndOfFrame();
+			}
+
+			_coroutineIsRunning = false;
+		}
 
         private void toggleCubeSizes() {
 
@@ -307,12 +388,15 @@ namespace DragginzWorldEditor
 				Destroy (child.gameObject);
 			}
 
+			_visibleQuadrants.Clear ();
+			_aQuadrantChangedVisibility.Clear ();
+
 			goPlayer.transform.position = new Vector3(0, 0.6f, -0.75f);
 
 			for (int x = _iMinLevelCoord; x <= _iMaxLevelCoord; ++x) {
 				for (int y = _iMinLevelCoord; y <= _iMaxLevelCoord; ++y) {
 					for (int z = _iMinLevelCoord; z <= _iMaxLevelCoord; ++z) {
-						_levelCubeFlags [x] [y] [z] = 0;
+						_quadrantFlags [x] [y] [z] = 0;
 					}
 				}
 			}
@@ -337,7 +421,7 @@ namespace DragginzWorldEditor
 							createRockCube (new Vector3 (x * _fQuadrantSize, y * _fQuadrantSize, z * _fQuadrantSize));
 							count++;
 						} else {
-							_levelCubeFlags [x] [y] [z] = 1;
+							_quadrantFlags [x] [y] [z] = 1;
 						}
 					}
 				}
@@ -351,16 +435,11 @@ namespace DragginzWorldEditor
 		private void createRockCube (Vector3 v3CubePos)
 		{
 			// cube already created at that position
-			if (_levelCubeFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] == 1) {
+			if (_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] == 1) {
 				return;
 			}
 
-			GameObject cubeParent = new GameObject(Globals.containerGameObjectPrepend+v3CubePos.x.ToString()+"_"+v3CubePos.y.ToString()+"_"+v3CubePos.z.ToString());
-			cubeParent.transform.SetParent(goWorld.transform);
-			cubeParent.transform.localPosition = v3CubePos;
-
-			_levelCubeFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] = 1;
-			//Debug.Log ("create cube " + cubeParent.name);
+			GameObject cubeParent = createQuadrant (v3CubePos);
 
 			Vector3 pos = Vector3.zero;
 			int count = 0;
@@ -382,6 +461,31 @@ namespace DragginzWorldEditor
 				}
 				pos.x += _fRockSize;
 			}
+		}
+
+		//
+		private GameObject createQuadrant(Vector3 v3CubePos)
+		{
+			string sPos = v3CubePos.x.ToString () + "_" + v3CubePos.y.ToString () + "_" + v3CubePos.z.ToString ();
+
+			GameObject quadrant = new GameObject(Globals.containerGameObjectPrepend + sPos);
+			quadrant.transform.SetParent(goWorld.transform);
+			quadrant.transform.localPosition = v3CubePos;
+
+			if (cubePrefabCenter != null) {
+				GameObject go = GameObject.Instantiate(cubePrefabCenter);
+				go.name = "center_" + sPos;
+				go.transform.SetParent(quadrant.transform);
+				go.transform.localPosition = Vector3.zero;
+				Block blockScript = go.AddComponent<Block> ();
+				blockScript.init ();
+			}
+
+			_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] = 1;
+
+			_visibleQuadrants.Add (quadrant, true);
+
+			return quadrant;
 		}
 
 		/// <summary>

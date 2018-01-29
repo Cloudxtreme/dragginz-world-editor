@@ -331,9 +331,19 @@ namespace DragginzWorldEditor
             */
         }
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		public void toggleMaterial(float toggle)
+		{
+			int materialIndex = _iSelectedMaterial;
+			if (toggle < 0) {
+				materialIndex = (materialIndex > 0 ? materialIndex - 1 : Globals.materials.Length - 1);
+			} else {
+				materialIndex = (materialIndex < (Globals.materials.Length - 1) ? materialIndex + 1 : 0);
+			}
+
+			changeMaterial (materialIndex);
+		}
+
+		//
 		private void changeMaterial(int materialIndex) {
 
 			if (materialIndex >= 0 && materialIndex < Globals.materials.Length) {

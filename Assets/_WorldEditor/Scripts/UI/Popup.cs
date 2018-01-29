@@ -59,7 +59,7 @@ namespace DragginzWorldEditor
             if (blocker) {
                 blocker.SetActive(true);
             }
-            transform.gameObject.SetActive(true);
+            gameObject.SetActive(true);
         }
 
         public void hide() {
@@ -68,8 +68,14 @@ namespace DragginzWorldEditor
             if (blocker) {
                 blocker.SetActive(false);
             }
-            transform.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
+
+		//
+		public bool isVisible()
+		{
+			return (gameObject.activeSelf);
+		}
 
         //
         // Private methods

@@ -50,7 +50,7 @@ namespace DragginzWorldEditor
 
 		void Update ()
 		{
-			_mouseWheel = Input.GetAxis ("Mouse ScrollWheel");
+			_mouseWheel = (AppController.Instance.appState == AppState.Look ? Input.GetAxis ("Mouse ScrollWheel") : 0);
 
 			if (_mouseWheel != 0) {
 				_mouseWheel = (_mouseWheel < 0 ? -0.1f : 0.1f);
