@@ -236,23 +236,31 @@ namespace DragginzWorldEditor
 				AppController.Instance.setAppState (mode);
 				MainMenu.Instance.setModeButtons (mode);
 				resetAim ();
-				laserAim.SetActive (false);
 
-				if (mode == AppState.Dig) {
+				if (mode == AppState.Dig)
+				{
 					MainMenu.Instance.showDigButtons (true);
 					MainMenu.Instance.showMaterialBox (false);
-				} else if (mode == AppState.Paint) {
+					laserAim.SetActive (true);
+				}
+				else if (mode == AppState.Paint)
+				{
 					MainMenu.Instance.showDigButtons (false);
 					MainMenu.Instance.showMaterialBox (true);
-				} else if (mode == AppState.Build) {
+					laserAim.SetActive (true);
+				}
+				else if (mode == AppState.Build) {
 					MainMenu.Instance.showDigButtons (false);
 					MainMenu.Instance.showMaterialBox (false);
 					laserAim.SetActive (true);
 					laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
 				}
-				else {
+				else
+				{
 					MainMenu.Instance.showDigButtons (false);
 					MainMenu.Instance.showMaterialBox (false);
+					laserAim.SetActive (false);
+
 				}
 
 				if (goPlayer != null && goPlayerEdit != null) {
@@ -264,13 +272,14 @@ namespace DragginzWorldEditor
 
 		public void updateDigSettings(Vector3 v3DigSettings)
 		{
-			float _fHalf = _fRockSize * .5f;
-			laserAim.transform.localScale = v3DigSettings * _fHalf;
+			float _fScale = _fRockSize * .75f;
+			laserAim.transform.localScale = v3DigSettings * _fScale;
 		}
 
 		public void resetFlyCam()
 		{
 			mainCam.gameObject.GetComponent<FlyCam> ().reset ();
+			PlayerEditCollision.Instance.isColliding = false;
 		}
 
 		public void toggleFlyCamOffset()
@@ -366,6 +375,7 @@ namespace DragginzWorldEditor
 		//
 		private void changeShader(GameObject go, string shader = "Mobile/Diffuse") //"Standard"
 		{
+			return;
 			if (go == null) {
 				return;
 			}
@@ -380,7 +390,7 @@ namespace DragginzWorldEditor
 			_goLastShaderChange = go;
 
 			// set new shaders
-			_aGoShaderChanged = getOverlappingObjects(go.transform.position);
+			_aGoShaderChanged = getOverlappingObjects(laserAim.transform.position);//go.transform.position);
 			setShaders (shader);
 		}
 
@@ -596,7 +606,7 @@ namespace DragginzWorldEditor
 
 			int i, len;
 
-			Vector3 pos = MainMenu.Instance.v3DigSettings * (_fRockSize * .5f) * .5f;
+			Vector3 pos = MainMenu.Instance.v3DigSettings * (_fRockSize * .75f) * .5f;
 			Collider[] hitColliders = Physics.OverlapBox (v3Pos, pos);
 
 			len = hitColliders.Length;

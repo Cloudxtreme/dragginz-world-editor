@@ -59,6 +59,7 @@
      <Compile Include="Assets\_WorldEditor\Scripts\Globals.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Block.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Player\PlayerEditCollision.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\UI\DigMainMenu.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\UI\Popup.cs" />

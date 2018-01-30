@@ -50,6 +50,10 @@ namespace DragginzWorldEditor
 
 		void Update ()
 		{
+			//if (PlayerEditCollision.Instance.isColliding) {
+			//	return;
+			//}
+
 			_mouseWheel = (AppController.Instance.appState == AppState.Look ? Input.GetAxis ("Mouse ScrollWheel") : 0);
 
 			if (_mouseWheel != 0) {
