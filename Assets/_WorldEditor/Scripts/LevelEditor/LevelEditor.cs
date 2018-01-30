@@ -3,8 +3,10 @@
 // Company : Decentralised Team of Developers
 //
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace DragginzWorldEditor
@@ -213,7 +215,7 @@ namespace DragginzWorldEditor
 			doRayCastBuild ();
 			if (_mouseIsDown && _goHit != null) {
 				if (Screen.height - Input.mousePosition.y > 90) {
-					buildIt (_goHit.transform.position, _hit.normal);
+					buildIt (laserAim.transform.position);
 					_mouseIsDown = false;
 				}
 			}
@@ -435,12 +437,15 @@ namespace DragginzWorldEditor
 				for (int y = -1; y <= height; ++y) {
 					for (int z = -size; z <= size; ++z) {
 
+						pos = new Vector3 (x * _fQuadrantSize, y * _fQuadrantSize, z * _fQuadrantSize);
+
 						if (Mathf.Abs (x) == size || y == -1 || y == height || Mathf.Abs (z) == size) {
-							createRockCube (new Vector3 (x * _fQuadrantSize, y * _fQuadrantSize, z * _fQuadrantSize));
-							count++;
+							createRockCube (pos);
 						} else {
-							_quadrantFlags [x] [y] [z] = 1;
+							createRockCube (pos, false);
 						}
+
+						count++;
 					}
 				}
 			}
@@ -450,7 +455,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void createRockCube (Vector3 v3CubePos)
+		private void createRockCube (Vector3 v3CubePos, bool fillQuadrant = true)
 		{
 			// cube already created at that position
 			if (_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] == 1) {
@@ -463,23 +468,29 @@ namespace DragginzWorldEditor
 			container.transform.SetParent (cubeParent.transform);
 			container.transform.localPosition = Vector3.zero;
 
+			if (!fillQuadrant) {
+				return;
+			}
+
 			Vector3 pos = Vector3.zero;
 			int count = 0;
 
 			int len = _cubesPerQuadrant;
 			float startPos = 0;//(int)len * _fRockSize * .5f;
+			string sName = "";
 
-			pos.x = -startPos;// + (_fRockSize * 0.5f);
+			pos.x = startPos;// + (_fRockSize * 0.5f);
 			for (int x = 0; x < len; ++x) {
 				pos.y = startPos;// - (_fRockSize * 0.5f);
 				for (int y = 0; y < len; ++y) {
-					pos.z = -startPos;// + (_fRockSize * 0.5f);
+					pos.z = startPos;// + (_fRockSize * 0.5f);
 					for (int z = 0; z < len; ++z) {
-						createRock(pos, container, Globals.rockGameObjectPrepend + count.ToString());
-						count++;
+						sName = "r-" + x.ToString () + "-" + y.ToString () + "-" + z.ToString (); // Globals.rockGameObjectPrepend + count.ToString ();
+						createRock (pos, container, sName);
+						//count++;
 						pos.z += _fRockSize;
 					}
-					pos.y -= _fRockSize;
+					pos.y += _fRockSize;
 				}
 				pos.x += _fRockSize;
 			}
@@ -526,7 +537,7 @@ namespace DragginzWorldEditor
 				go.transform.SetParent(parent.transform);
 				go.transform.localPosition = pos;
 				go.transform.localRotation = Quaternion.Euler (rotation);
-				go.GetComponent<MeshRenderer> ().material = materialsWalls[Random.Range (0, materialsWalls.Count)];
+				go.GetComponent<MeshRenderer> ().material = materialsWalls[UnityEngine.Random.Range (0, materialsWalls.Count)];
 				_numCubes++;
 			}
 
@@ -538,6 +549,9 @@ namespace DragginzWorldEditor
 		/// </summary>
 		private void digIt (Vector3 v3Pos)
 		{
+			//Debug.LogWarning ("DIG:");
+			//Debug.Log (_goHit.name);
+
 			int i, len;
 
 			// keep track of parent objects that had children removed
@@ -626,14 +640,42 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void buildIt(Vector3 pos, Vector3 normal)
+		private void buildIt(Vector3 v3Pos)
 		{
-			Vector3 newBlockPos = pos + (normal * _fRockSize);
-			int x = (int)newBlockPos.x;
-			int y = (int)newBlockPos.y;
-			int z = (int)newBlockPos.z;
+			int x = (int)(v3Pos.x < 0 ? Math.Round(v3Pos.x, MidpointRounding.AwayFromZero) : v3Pos.x);
+			int y = (int)(v3Pos.y < 0 ? Math.Round(v3Pos.y, MidpointRounding.AwayFromZero) : v3Pos.y);
+			int z = (int)(v3Pos.z < 0 ? Math.Round(v3Pos.z, MidpointRounding.AwayFromZero) : v3Pos.z);
 
-			Vector3 finalPos = new Vector3 (x, y, z);
+			//Debug.LogWarning ("BUILD:");
+
+			// get quadrant
+
+			Vector3 v3QuadrantPos = new Vector3 ((float)x / 1f, (float)y / 1f, (float)z / 1f);
+			string sPos = v3QuadrantPos.x.ToString () + "_" + v3QuadrantPos.y.ToString () + "_" + v3QuadrantPos.z.ToString ();
+			string sQuadrantName = Globals.containerGameObjectPrepend + sPos;
+			Transform trfmQuadrant = goWorld.transform.Find (sQuadrantName);
+
+			//Debug.Log ("quadrant: "+trfmQuadrant+" - "+trfmQuadrant.name);
+
+			// get cild
+			Vector3 v3LocalBlockPos = new Vector3 (
+					Mathf.Abs(v3QuadrantPos.x-v3Pos.x),
+					Mathf.Abs(v3QuadrantPos.y-v3Pos.y),
+					Mathf.Abs(v3QuadrantPos.z-v3Pos.z)
+				);
+
+			string sName = "r";
+			sName += "-" + ((int)(v3LocalBlockPos.x / _fRockSize)).ToString ();
+			sName += "-" + ((int)(v3LocalBlockPos.y / _fRockSize)).ToString ();
+			sName += "-" + ((int)(v3LocalBlockPos.z / _fRockSize)).ToString ();
+
+			Transform container = trfmQuadrant.Find ("container");
+			Transform trfmChild = container.Find (sName);
+			if (trfmChild != null) {
+				Debug.LogError ("child "+sName+" exists!");
+			} else {
+				createRock (v3LocalBlockPos, container.gameObject, sName);
+			}
 		}
 
 		#endregion
