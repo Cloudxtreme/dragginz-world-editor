@@ -17,6 +17,7 @@ namespace DragginzWorldEditor
 		Look,
 		Dig,
 		Paint,
+		Build,
 		Play
 	};
 
@@ -89,7 +90,7 @@ namespace DragginzWorldEditor
                 LevelEditor.Instance.toggleCubes();
             }
             else {
-                if (_appState == AppState.Dig) {
+				if (_appState == AppState.Dig || _appState == AppState.Paint || _appState == AppState.Build) {
                     if (Input.GetKeyDown(KeyCode.Escape)) {
                         LevelEditor.Instance.resetFlyCam();
                     }
@@ -108,13 +109,12 @@ namespace DragginzWorldEditor
 		//
 		void LateUpdate()
 		{
-			if (_appState == AppState.Dig)
-			{
+			if (_appState == AppState.Dig) {
 				LevelEditor.Instance.customUpdateDig ();
-			}
-			else if (_appState == AppState.Paint)
-			{
+			} else if (_appState == AppState.Paint) {
 				LevelEditor.Instance.customUpdatePaint ();
+			} else if (_appState == AppState.Build) {
+				LevelEditor.Instance.customUpdateBuild ();
 			}
 		}
 
@@ -123,15 +123,14 @@ namespace DragginzWorldEditor
 			
 			if (_appState != state) {
 				_appState = state;
-				if (_appState == AppState.Dig) {
-					//SceneManager.LoadScene(0);
+				/*if (_appState == AppState.Dig) {
 				}
 				else if (_appState == AppState.Paint) {
-					//
+				}
+				else if (_appState == AppState.Build) {
 				}
 				else if (_appState == AppState.Play) {
-					//SceneManager.LoadScene(1);
-				}
+				}*/
 			}
 		}
 

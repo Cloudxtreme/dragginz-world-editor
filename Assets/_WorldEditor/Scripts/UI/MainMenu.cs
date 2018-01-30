@@ -32,6 +32,7 @@ namespace DragginzWorldEditor
 		public Button btnModeLook;
 		public Button btnModeDig;
 		public Button btnModePaint;
+		public Button btnModeBuild;
 		public Button btnModePlay;
 
 		public RawImage imgSelectedMaterial;
@@ -177,6 +178,9 @@ namespace DragginzWorldEditor
 		public void onButtonModePaintClicked() {
 			LevelEditor.Instance.setMode(AppState.Paint);
 		}
+		public void onButtonModeBuildClicked() {
+			LevelEditor.Instance.setMode(AppState.Build);
+		}
 		public void onButtonModePlayClicked() {
 			LevelEditor.Instance.setMode(AppState.Play);
 		}
@@ -186,7 +190,8 @@ namespace DragginzWorldEditor
 			btnModeLook.interactable  = (mode != AppState.Look);
 			btnModeDig.interactable   = (mode != AppState.Dig);
 			btnModePaint.interactable = (mode != AppState.Paint);
-			btnModePlay.interactable  = (mode != AppState.Play);
+			btnModeBuild.interactable = (mode != AppState.Build);
+			//btnModePlay.interactable  = (mode != AppState.Play);
 		}
 
 		//

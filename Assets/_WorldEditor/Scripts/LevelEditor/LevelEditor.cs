@@ -9,9 +9,6 @@ using UnityEngine;
 
 namespace DragginzWorldEditor
 {
-	/// <summary>
-	/// ...
-	/// </summary>
 	public class LevelEditor : MonoSingleton<LevelEditor>
 	{
 		public Camera mainCam;
@@ -40,8 +37,6 @@ namespace DragginzWorldEditor
 
 		private Dictionary<GameObject, bool> _visibleQuadrants;
 		private List<GameObject> _aQuadrantChangedVisibility;
-
-		private float _nextQuadrantVisibilityCheck;
 		private bool _coroutineIsRunning;
 
 		private float _fRockSize;
@@ -67,7 +62,6 @@ namespace DragginzWorldEditor
 			_aGoShaderChanged = new List<GameObject> ();
 
 			_visibleQuadrants = new Dictionary<GameObject, bool> ();
-			_nextQuadrantVisibilityCheck = Time.realtimeSinceStartup + 1.0f;
 			_aQuadrantChangedVisibility = new List<GameObject> ();
 			_coroutineIsRunning = false;
 
@@ -164,7 +158,12 @@ namespace DragginzWorldEditor
 					setMode (AppState.Paint);
 				}
 			}
-			//else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+			else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+				if (!MainMenu.Instance.popup.isVisible ()) {
+					setMode (AppState.Build);
+				}
+			}
+			//else if (Input.GetKeyDown(KeyCode.Alpha5)) {
 			//	setMode(AppState.Play);
 			//}
 
@@ -181,11 +180,6 @@ namespace DragginzWorldEditor
 			if (!_coroutineIsRunning && _visibleQuadrants.Count > 0) {
 				StartCoroutine("updateQuadrantVisibility");
 			}
-
-			/*if (Time.realtimeSinceStartup > _nextQuadrantVisibilityCheck) {
-				_nextQuadrantVisibilityCheck = Time.realtimeSinceStartup + 0.05f; // check 20 times a second
-				updateQuadrantVisibility ();
-			}*/
 		}
 
 		//
@@ -214,6 +208,17 @@ namespace DragginzWorldEditor
 			}
 		}
 
+		public void customUpdateBuild() {
+
+			doRayCastBuild ();
+			if (_mouseIsDown && _goHit != null) {
+				if (Screen.height - Input.mousePosition.y > 90) {
+					buildIt (_goHit.transform.position, _hit.normal);
+					_mouseIsDown = false;
+				}
+			}
+		}
+
 		//
 		public void startUpPopupCallback(int buttonId) {
 
@@ -221,21 +226,27 @@ namespace DragginzWorldEditor
 			setMode (AppState.Dig);
 		}
 
+		//
 		public void setMode(AppState mode, bool forceMode = false) {
 
 			if (forceMode || (mode != AppController.Instance.appState))
 			{
 				AppController.Instance.setAppState (mode);
 				MainMenu.Instance.setModeButtons (mode);
-				//resetFlyCam ();
+				resetAim ();
+				laserAim.SetActive (false);
 
 				if (mode == AppState.Dig) {
 					MainMenu.Instance.showDigButtons (true);
 					MainMenu.Instance.showMaterialBox (false);
-				}
-				else if (mode == AppState.Paint) {
+				} else if (mode == AppState.Paint) {
 					MainMenu.Instance.showDigButtons (false);
 					MainMenu.Instance.showMaterialBox (true);
+				} else if (mode == AppState.Build) {
+					MainMenu.Instance.showDigButtons (false);
+					MainMenu.Instance.showMaterialBox (false);
+					laserAim.SetActive (true);
+					laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
 				}
 				else {
 					MainMenu.Instance.showDigButtons (false);
@@ -251,10 +262,8 @@ namespace DragginzWorldEditor
 
 		public void updateDigSettings(Vector3 v3DigSettings)
 		{
-			if (laserAim != null) {
-				float _fHalf = _fRockSize * .5f;
-				laserAim.transform.localScale = v3DigSettings * _fHalf;
-			}
+			float _fHalf = _fRockSize * .5f;
+			laserAim.transform.localScale = v3DigSettings * _fHalf;
 		}
 
 		public void resetFlyCam()
@@ -319,7 +328,7 @@ namespace DragginzWorldEditor
         private void doRayCast()
 		{
 			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (_ray, out _hit, 500f)) {
+			if (Physics.Raycast (_ray, out _hit, 20f)) {
 
 				_goHit = _hit.collider.gameObject;
 				laserAim.transform.position = _hit.point;
@@ -327,10 +336,29 @@ namespace DragginzWorldEditor
 				changeShader (_goHit, "Legacy Shaders/Transparent/Diffuse");
 			}
 			else {
-				changeShader (_goLastShaderChange);
-				laserAim.transform.position = new Vector3(9999,9999,9999);
-				_goHit = null;
+				resetAim ();
 			}
+		}
+
+		private void doRayCastBuild()
+		{
+			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
+			if (Physics.Raycast (_ray, out _hit, 20f)) {
+
+				_goHit = _hit.collider.gameObject;
+				laserAim.transform.position = _goHit.transform.position + (_hit.normal * _fRockSize);
+			}
+			else {
+				resetAim ();
+			}
+		}
+
+		//
+		private void resetAim()
+		{
+			changeShader (_goLastShaderChange);
+			laserAim.transform.position = new Vector3(9999,9999,9999);
+			_goHit = null;
 		}
 
 		//
@@ -339,9 +367,6 @@ namespace DragginzWorldEditor
 			if (go == null) {
 				return;
 			}
-
-			//int i, len;
-			//Renderer renderer;
 
 			// reset current shaders
 			if (_goLastShaderChange != null && go != _goLastShaderChange) {
@@ -371,12 +396,6 @@ namespace DragginzWorldEditor
 				}
 			}
 		}
-
-		//
-		/*private void setLaserSphereSize() {
-			float fSphereSize = 0.05f;
-			laserAim.transform.localScale = new Vector3 (fSphereSize, fSphereSize, fSphereSize);
-		}*/
 
 		//
 		private void resetWorld()
@@ -448,13 +467,13 @@ namespace DragginzWorldEditor
 			int count = 0;
 
 			int len = _cubesPerQuadrant;
-			float startPos = (int)len * _fRockSize * .5f;
+			float startPos = 0;//(int)len * _fRockSize * .5f;
 
-			pos.x = -startPos + (_fRockSize * 0.5f);
+			pos.x = -startPos;// + (_fRockSize * 0.5f);
 			for (int x = 0; x < len; ++x) {
-				pos.y = startPos - (_fRockSize * 0.5f);
+				pos.y = startPos;// - (_fRockSize * 0.5f);
 				for (int y = 0; y < len; ++y) {
-					pos.z = -startPos + (_fRockSize * 0.5f);
+					pos.z = -startPos;// + (_fRockSize * 0.5f);
 					for (int z = 0; z < len; ++z) {
 						createRock(pos, container, Globals.rockGameObjectPrepend + count.ToString());
 						count++;
@@ -593,10 +612,7 @@ namespace DragginzWorldEditor
 			return adjacentCubes;
 		}
 
-		/// <summary>
-		/// Paints it.
-		/// </summary>
-		/// <param name="go">Go.</param>
+		//
 		private void paintIt (GameObject go)
 		{
 			if (go == null) {
@@ -607,6 +623,17 @@ namespace DragginzWorldEditor
 			if (renderer != null) {
 				renderer.material = Resources.Load<Material> ("Materials/" + Globals.materials [MainMenu.Instance.iSelectedMaterial]);
 			}
+		}
+
+		//
+		private void buildIt(Vector3 pos, Vector3 normal)
+		{
+			Vector3 newBlockPos = pos + (normal * _fRockSize);
+			int x = (int)newBlockPos.x;
+			int y = (int)newBlockPos.y;
+			int z = (int)newBlockPos.z;
+
+			Vector3 finalPos = new Vector3 (x, y, z);
 		}
 
 		#endregion
