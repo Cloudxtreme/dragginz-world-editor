@@ -68,7 +68,8 @@ namespace DragginzWorldEditor
 			get { return _v3DigSettings; }
 		}
 
-		private float _lastMaterialChange;
+		private float _lastMouseWheelUpdate;
+
 		private int _iSelectedMaterial = 0;
 		public int iSelectedMaterial {
 			get { return _iSelectedMaterial; }
@@ -122,7 +123,7 @@ namespace DragginzWorldEditor
 				sliderDigDepth.maxValue = 5;
 			}
 
-			_lastMaterialChange = 0;
+			_lastMouseWheelUpdate = 0;
         }
 
 		void OnEnable() {
@@ -341,9 +342,9 @@ namespace DragginzWorldEditor
 
 		public void toggleMaterial(float toggle)
 		{
-			if (Time.realtimeSinceStartup > _lastMaterialChange) {
+			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {
 
-				_lastMaterialChange = Time.realtimeSinceStartup + 0.2f;
+				_lastMouseWheelUpdate = Time.realtimeSinceStartup + 0.2f;
 
 				int materialIndex = _iSelectedMaterial;
 				if (toggle < 0) {
@@ -371,6 +372,8 @@ namespace DragginzWorldEditor
 					}
 				}
 
+				LevelEditor.Instance.newMaterialSelected (_iSelectedMaterial);
+
 				/*List<GameObject> allSelectedObjects = new List<GameObject> (EditorObjectSelection.Instance.SelectedGameObjects);
 				foreach (GameObject selectedObject in allSelectedObjects) {
 
@@ -383,6 +386,43 @@ namespace DragginzWorldEditor
 			}
 		}
 
+		public void toggleDigSize(float toggle)
+		{
+			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {
+
+				_lastMouseWheelUpdate = Time.realtimeSinceStartup + 0.2f;
+
+				float value;
+
+				if (sliderDigWidth != null) {
+					value = sliderDigWidth.value + (toggle < 0 ? -1 : 1);
+					if (value > sliderDigWidth.maxValue) {
+						value = sliderDigWidth.minValue;
+					} else if (value < sliderDigWidth.minValue) {
+						value = sliderDigWidth.maxValue;
+					}
+					sliderDigWidth.value = value;
+					_v3DigSettings.x = (int)sliderDigWidth.value;
+					updateSliderValueText (sliderDigWidth.transform.parent, sliderDigWidth.value);
+				}
+
+				if (sliderDigHeight != null) {
+					value = sliderDigHeight.value + (toggle < 0 ? -1 : 1);
+					if (value > sliderDigHeight.maxValue) {
+						value = sliderDigHeight.minValue;
+					} else if (value < sliderDigHeight.minValue) {
+						value = sliderDigHeight.maxValue;
+					}
+					sliderDigHeight.value = value;
+					_v3DigSettings.y = (int)sliderDigHeight.value;
+					updateSliderValueText (sliderDigHeight.transform.parent, sliderDigHeight.value);
+				}
+
+				LevelEditor.Instance.updateDigSettings(_v3DigSettings);
+			}
+		}
+
+		//
 		private void onGizmoChanged(GizmoType newGizmoType) {
 
 			if (newGizmoType == GizmoType.Translation) {

@@ -25,6 +25,7 @@ namespace DragginzWorldEditor
         public List<Material> materialsWalls;
 
 		public GameObject laserAim;
+		public Material laserAimMaterial;
 
 		private Ray _ray;
 		private RaycastHit _hit;
@@ -203,6 +204,10 @@ namespace DragginzWorldEditor
 		//
 		public void customUpdateDig() {
 
+			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
+				MainMenu.Instance.toggleDigSize (Input.GetAxis ("Mouse ScrollWheel"));
+			}
+
 			doRayCastDig ();
 			if (_mouseIsDown && _goHit != null) {
 				if (Screen.height - Input.mousePosition.y > 90) {
@@ -228,6 +233,10 @@ namespace DragginzWorldEditor
 
 		public void customUpdateBuild() {
 
+			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
+				MainMenu.Instance.toggleMaterial (Input.GetAxis ("Mouse ScrollWheel"));
+			}
+
 			doRayCastBuild ();
 			if (_mouseIsDown && _goHit != null) {
 				if (Screen.height - Input.mousePosition.y > 90) {
@@ -251,6 +260,7 @@ namespace DragginzWorldEditor
 			{
 				AppController.Instance.setAppState (mode);
 				MainMenu.Instance.setModeButtons (mode);
+				setSingleMaterial (laserAim, laserAimMaterial);
 				resetAim ();
 				resetMaterial ();
 
@@ -269,9 +279,10 @@ namespace DragginzWorldEditor
 				}
 				else if (mode == AppState.Build) {
 					MainMenu.Instance.showDigButtons (false);
-					MainMenu.Instance.showMaterialBox (false);
+					MainMenu.Instance.showMaterialBox (true);
 					laserAim.SetActive (true);
 					laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
+					setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial]);
 				}
 				else
 				{
@@ -292,6 +303,13 @@ namespace DragginzWorldEditor
 		{
 			float _fScale = _fRockSize * .75f;
 			laserAim.transform.localScale = v3DigSettings * _fScale;
+		}
+
+		public void newMaterialSelected (int iSelectedMaterial)
+		{
+			if (AppController.Instance.appState == AppState.Build) {
+				setSingleMaterial (laserAim, _aMaterials [MainMenu.Instance.iSelectedMaterial]);
+			}
 		}
 
 		public void resetFlyCam()
@@ -438,7 +456,7 @@ namespace DragginzWorldEditor
 				if (renderer != null && renderer.sharedMaterial.name != material.name) {
 					_tempMaterial = renderer.sharedMaterial;
 					renderer.sharedMaterial = material;
-					Debug.Log ("changing material for game object " + go.name + " to " + material.name);
+					//Debug.Log ("changing material for game object " + go.name + " to " + material.name);
 				}
 			}
 		}
@@ -792,7 +810,8 @@ namespace DragginzWorldEditor
 			if (trfmChild != null) {
 				Debug.LogError ("child "+sName+" exists!");
 			} else {
-				createRock (v3LocalBlockPos, container.gameObject, sName);
+				GameObject goNew = createRock (v3LocalBlockPos, container.gameObject, sName);
+				setSingleMaterial (goNew, _aMaterials[MainMenu.Instance.iSelectedMaterial]);
 			}
 		}
 

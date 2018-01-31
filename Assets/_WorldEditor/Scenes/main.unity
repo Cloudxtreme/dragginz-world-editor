@@ -264,6 +264,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 6bd787e00820ed64ab274fa05081fdc7, type: 2}
   - {fileID: 2100000, guid: 30134efa1826c0648b3e40394960a8f1, type: 2}
   laserAim: {fileID: 1209775551}
+  laserAimMaterial: {fileID: 2100000, guid: 3877836b3e3455d4a831a75fb9f5691a, type: 2}
 --- !u!4 &361061324
 Transform:
   m_ObjectHideFlags: 0
