@@ -62,24 +62,24 @@ namespace DragginzWorldEditor
 			}
 
 			// Looking around with the mouse
+			if (Input.GetMouseButton (1)) {
+
+				player.Rotate(-2f * Input.GetAxis("Mouse Y"), 2f * Input.GetAxis("Mouse X"), 0);
+				playerEuler = player.eulerAngles;
+				playerEuler.z = 0;
+				player.eulerAngles = playerEuler;
+			}
+
 			if (AppController.Instance.appState == AppState.Look) {
-
-				if (Input.GetMouseButton (0)) {
-
-					player.Rotate(-2f * Input.GetAxis("Mouse Y"), 2f * Input.GetAxis("Mouse X"), 0);
-					playerEuler = player.eulerAngles;
-					playerEuler.z = 0;
-					player.eulerAngles = playerEuler;
-				}
-
-				if (Input.GetMouseButtonDown(1))
+				
+				if (Input.GetMouseButtonDown(0))
 				{
 					mousePos = Input.mousePosition;
 					mousePos.z = 10;
 					dragOrigin = myCam.ScreenToWorldPoint(mousePos);
 				}
 
-				if (Input.GetMouseButton (1)) {
+				if (Input.GetMouseButton (0)) {
 					
 					mousePos = Input.mousePosition;
 					mousePos.z = 10;
@@ -103,7 +103,7 @@ namespace DragginzWorldEditor
 					//player.position += (transform.up * Input.GetAxis ("Depth")) * movementSpeed;
 				}
 
-				player.eulerAngles += new Vector3 (-Input.GetAxis ("Mouse Y"), Input.GetAxis ("Mouse X"), Input.GetAxis ("Rotation"));
+				//player.eulerAngles += new Vector3 (-Input.GetAxis ("Mouse Y"), Input.GetAxis ("Mouse X"), Input.GetAxis ("Rotation"));
 			}
 
 			if (Time.realtimeSinceStartup > _nextPosUpdate) {

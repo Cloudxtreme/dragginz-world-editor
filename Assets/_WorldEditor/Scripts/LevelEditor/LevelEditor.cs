@@ -35,6 +35,10 @@ namespace DragginzWorldEditor
 		private int _iMaxLevelCoord;
 
 		private Dictionary<string, Shader> _aUsedShaders;
+		private List<Material> _aMaterials;
+
+		private GameObject _goLastMaterialChanged;
+		private Material _tempMaterial;
 
 		private GameObject _goLastShaderChange;
 		private List<GameObject> _aGoShaderChanged;
@@ -61,6 +65,15 @@ namespace DragginzWorldEditor
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
+
+			_aMaterials = new List<Material> ();
+			int i, len = Globals.materials.Length;
+			for (i = 0; i < len; ++i) {
+				_aMaterials.Add(Resources.Load<Material> ("Materials/" + Globals.materials [i]));
+			}
+
+			_goLastMaterialChanged = null;
+			_tempMaterial = null;
 
 			_aUsedShaders = new Dictionary<string, Shader> ();
 			_goLastShaderChange = null;
@@ -114,7 +127,7 @@ namespace DragginzWorldEditor
 			AppController.Instance.showPopup(
 				PopupMode.Notification,
 				"Controls",
-				"Normal movement: AWSD\nUp and down: QE - rotate: ZC\nToggle tools: Mouse wheel\nAdjust movement speed: -/+\n\nPress ESC to reset speed and position.",
+				"Normal movement: AWSD\nUp and down: QE\nLook around: Right mouse button\nToggle tools: Mouse wheel\nAdjust movement speed: -/+\n\nPress ESC to reset speed and position.",
 				startUpPopupCallback
 			);
 		}
@@ -239,6 +252,7 @@ namespace DragginzWorldEditor
 				AppController.Instance.setAppState (mode);
 				MainMenu.Instance.setModeButtons (mode);
 				resetAim ();
+				resetMaterial ();
 
 				if (mode == AppState.Dig)
 				{
@@ -361,7 +375,10 @@ namespace DragginzWorldEditor
 			if (Physics.Raycast (_ray, out _hit, 20f)) {
 
 				_goHit = _hit.collider.gameObject;
-				changeSingleShader (_goHit, Globals.highlightShaderName);
+				//changeSingleShader (_goHit, Globals.highlightShaderName);
+				changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);
+			} else {
+				resetMaterial ();
 			}
 		}
 
@@ -387,6 +404,45 @@ namespace DragginzWorldEditor
 			_goHit = null;
 		}
 
+		//
+		private void resetMaterial()
+		{
+			setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
+			_goLastMaterialChanged = null;
+			_tempMaterial = null;
+		}
+
+		//
+		private void changeSingleMaterial(GameObject go, int materialIndex)
+		{
+			if (go == null) {
+				return;
+			}
+
+			// reset current material
+			if (_goLastMaterialChanged != null && go != _goLastMaterialChanged) {
+				setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
+				_goLastMaterialChanged = null;
+				_tempMaterial = null;
+			}
+
+			_goLastMaterialChanged = go;
+			setSingleMaterial (_goLastMaterialChanged, _aMaterials[materialIndex]);
+		}
+
+		//
+		private void setSingleMaterial(GameObject go, Material material)
+		{
+			if (go != null && material != null) {
+				Renderer renderer = go.GetComponent<Renderer> ();
+				if (renderer != null && renderer.sharedMaterial.name != material.name) {
+					_tempMaterial = renderer.sharedMaterial;
+					renderer.sharedMaterial = material;
+					Debug.Log ("changing material for game object " + go.name + " to " + material.name);
+				}
+			}
+		}
+		//
 		private void changeSingleShader(GameObject go, string shaderName = Globals.defaultShaderName)
 		{
 			if (go == null) {
@@ -694,8 +750,11 @@ namespace DragginzWorldEditor
 
 			MeshRenderer renderer = go.GetComponent<MeshRenderer> ();
 			if (renderer != null) {
-				renderer.material = Resources.Load<Material> ("Materials/" + Globals.materials [MainMenu.Instance.iSelectedMaterial]);
+				renderer.sharedMaterial = _aMaterials[MainMenu.Instance.iSelectedMaterial];
 			}
+
+			_goLastMaterialChanged = null;
+			_tempMaterial = null;
 		}
 
 		//
