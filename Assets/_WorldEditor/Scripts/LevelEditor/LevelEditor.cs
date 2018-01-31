@@ -245,6 +245,7 @@ namespace DragginzWorldEditor
 					MainMenu.Instance.showDigButtons (true);
 					MainMenu.Instance.showMaterialBox (false);
 					laserAim.SetActive (true);
+					updateDigSettings (MainMenu.Instance.v3DigSettings);
 				}
 				else if (mode == AppState.Paint)
 				{
@@ -380,13 +381,13 @@ namespace DragginzWorldEditor
 		//
 		private void resetAim()
 		{
-			setSingleShader (_goLastShaderChange, "Mobile/Diffuse");
+			setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
 			changeShaders ();
 			laserAim.transform.position = new Vector3(9999,9999,9999);
 			_goHit = null;
 		}
 
-		private void changeSingleShader(GameObject go, string shader = "Mobile/Diffuse") //"Standard"
+		private void changeSingleShader(GameObject go, string shaderName = Globals.defaultShaderName)
 		{
 			if (go == null) {
 				return;
@@ -394,12 +395,12 @@ namespace DragginzWorldEditor
 
 			// reset current shader
 			if (_goLastShaderChange != null && go != _goLastShaderChange) {
-				setSingleShader (_goLastShaderChange, "Mobile/Diffuse");
+				setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
 				_goLastShaderChange = null;
 			}
 
 			_goLastShaderChange = go;
-			setSingleShader (_goLastShaderChange, shader);
+			setSingleShader (_goLastShaderChange, shaderName);
 		}
 
 		private void setSingleShader(GameObject go, string shaderName)
@@ -409,21 +410,21 @@ namespace DragginzWorldEditor
 				Renderer renderer = go.GetComponent<Renderer> ();
 				if (renderer != null && renderer.material.shader.name != shaderName) {
 					renderer.material.shader = shader;
-					;
+					//Debug.Log ("changing shader for game object " + go.name + " to " + shader.name);
 				}
 			}
 		}
 
 		//
-		private void changeShaders(string shader = "Mobile/Diffuse") //"Standard"
+		private void changeShaders(string shaderName = Globals.defaultShaderName)
 		{
 			// reset current shaders
-			setShaders ("Mobile/Diffuse");
+			setShaders (Globals.defaultShaderName);
 			_aGoShaderChanged.Clear ();
 
 			// set new shaders
 			_aGoShaderChanged = getOverlappingObjects(laserAim.transform.position);
-			setShaders (shader);
+			setShaders (shaderName);
 		}
 
 		private void setShaders(string shaderName)
@@ -446,6 +447,7 @@ namespace DragginzWorldEditor
 		{
 			if (!_aUsedShaders.ContainsKey(shaderName)) {
 				_aUsedShaders.Add(shaderName, Shader.Find (shaderName));
+				//Debug.Log ("added shader " + shaderName);
 			}
 
 			return _aUsedShaders[shaderName];
