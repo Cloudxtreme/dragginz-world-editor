@@ -34,6 +34,8 @@ namespace DragginzWorldEditor
 		private int _iMinLevelCoord;
 		private int _iMaxLevelCoord;
 
+		private Dictionary<string, Shader> _aUsedShaders;
+
 		private GameObject _goLastShaderChange;
 		private List<GameObject> _aGoShaderChanged;
 
@@ -60,6 +62,7 @@ namespace DragginzWorldEditor
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
 
+			_aUsedShaders = new Dictionary<string, Shader> ();
 			_goLastShaderChange = null;
 			_aGoShaderChanged = new List<GameObject> ();
 
@@ -187,7 +190,7 @@ namespace DragginzWorldEditor
 		//
 		public void customUpdateDig() {
 
-			doRayCast ();
+			doRayCastDig ();
 			if (_mouseIsDown && _goHit != null) {
 				if (Screen.height - Input.mousePosition.y > 90) {
 					digIt (_goHit.transform.position);//_hit.point);
@@ -202,7 +205,7 @@ namespace DragginzWorldEditor
 				MainMenu.Instance.toggleMaterial (Input.GetAxis ("Mouse ScrollWheel"));
 			}
 
-			doRayCast ();
+			doRayCastPaint ();
 			if (_mouseIsDown && _goHit != null) {
 				if (Screen.height - Input.mousePosition.y > 90) {
 					paintIt (_goHit);
@@ -247,7 +250,7 @@ namespace DragginzWorldEditor
 				{
 					MainMenu.Instance.showDigButtons (false);
 					MainMenu.Instance.showMaterialBox (true);
-					laserAim.SetActive (true);
+					laserAim.SetActive (false);
 				}
 				else if (mode == AppState.Build) {
 					MainMenu.Instance.showDigButtons (false);
@@ -336,7 +339,7 @@ namespace DragginzWorldEditor
             _fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
         }
 
-        private void doRayCast()
+        private void doRayCastDig()
 		{
 			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast (_ray, out _hit, 20f)) {
@@ -344,10 +347,20 @@ namespace DragginzWorldEditor
 				_goHit = _hit.collider.gameObject;
 				laserAim.transform.position = _hit.point;
 				laserAim.transform.forward  = _hit.normal;
-				changeShader (_goHit, "Legacy Shaders/Transparent/Diffuse");
+				changeShaders (Globals.highlightShaderName);
 			}
 			else {
 				resetAim ();
+			}
+		}
+
+		private void doRayCastPaint()
+		{
+			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
+			if (Physics.Raycast (_ray, out _hit, 20f)) {
+
+				_goHit = _hit.collider.gameObject;
+				changeSingleShader (_goHit, Globals.highlightShaderName);
 			}
 		}
 
@@ -367,46 +380,75 @@ namespace DragginzWorldEditor
 		//
 		private void resetAim()
 		{
-			changeShader (_goLastShaderChange);
+			setSingleShader (_goLastShaderChange, "Mobile/Diffuse");
+			changeShaders ();
 			laserAim.transform.position = new Vector3(9999,9999,9999);
 			_goHit = null;
 		}
 
-		//
-		private void changeShader(GameObject go, string shader = "Mobile/Diffuse") //"Standard"
+		private void changeSingleShader(GameObject go, string shader = "Mobile/Diffuse") //"Standard"
 		{
-			return;
 			if (go == null) {
 				return;
 			}
 
-			// reset current shaders
+			// reset current shader
 			if (_goLastShaderChange != null && go != _goLastShaderChange) {
-				setShaders ("Mobile/Diffuse");
+				setSingleShader (_goLastShaderChange, "Mobile/Diffuse");
 				_goLastShaderChange = null;
-				_aGoShaderChanged.Clear ();
 			}
 
 			_goLastShaderChange = go;
+			setSingleShader (_goLastShaderChange, shader);
+		}
+
+		private void setSingleShader(GameObject go, string shaderName)
+		{
+			if (go != null) {
+				Shader shader = getShader (shaderName);
+				Renderer renderer = go.GetComponent<Renderer> ();
+				if (renderer != null && renderer.material.shader.name != shaderName) {
+					renderer.material.shader = shader;
+					;
+				}
+			}
+		}
+
+		//
+		private void changeShaders(string shader = "Mobile/Diffuse") //"Standard"
+		{
+			// reset current shaders
+			setShaders ("Mobile/Diffuse");
+			_aGoShaderChanged.Clear ();
 
 			// set new shaders
-			_aGoShaderChanged = getOverlappingObjects(laserAim.transform.position);//go.transform.position);
+			_aGoShaderChanged = getOverlappingObjects(laserAim.transform.position);
 			setShaders (shader);
 		}
 
-		private void setShaders(string sShader)
+		private void setShaders(string shaderName)
 		{
-			Shader shader = Shader.Find (sShader);
+			Shader shader = getShader(shaderName);
+
 			Renderer renderer;
 			int i, len = _aGoShaderChanged.Count;
 			for (i = 0; i < len; ++i) {
 				if (_aGoShaderChanged [i] != null) {
 					renderer = _aGoShaderChanged [i].GetComponent<Renderer> ();
-					if (renderer != null && renderer.material.shader.name != sShader) {
+					if (renderer != null && renderer.material.shader.name != shaderName) {
 						renderer.material.shader = shader;
 					}
 				}
 			}
+		}
+
+		private Shader getShader(string shaderName)
+		{
+			if (!_aUsedShaders.ContainsKey(shaderName)) {
+				_aUsedShaders.Add(shaderName, Shader.Find (shaderName));
+			}
+
+			return _aUsedShaders[shaderName];
 		}
 
 		//
@@ -456,6 +498,11 @@ namespace DragginzWorldEditor
 						}
 
 						count++;
+						/*if (count == 1) {
+							x = size+1;
+							y = height+1;
+							z = size+1;
+						}*/
 					}
 				}
 			}
@@ -519,7 +566,7 @@ namespace DragginzWorldEditor
 				GameObject go = GameObject.Instantiate(cubePrefabCenter);
 				go.name = "center_" + sPos;
 				go.transform.SetParent(quadrant.transform);
-				go.transform.localPosition = Vector3.zero;
+				go.transform.localPosition = new Vector3(0.25f, 0.25f, 0.25f);
 				Block blockScript = go.AddComponent<Block> ();
 				blockScript.init ();
 			}
