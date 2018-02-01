@@ -16,14 +16,25 @@ namespace DragginzWorldEditor
 			//
 		}
 
-		public override void customUpdateControls(float time, float timeDelta)
-		{
-			//
-		}
-
 		public override void customUpdate(float time, float timeDelta)
 		{
-			//
+			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
+				MainMenu.Instance.toggleMaterial (Input.GetAxis ("Mouse ScrollWheel"));
+			}
+
+			doRayCast ();
+
+			if (_goHit != null)
+			{
+				LevelEditor.Instance.changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);
+
+				if (_mouseIsDown) {
+					LevelEditor.Instance.paintIt (_goHit);
+				}
+			}
+			else {
+				LevelEditor.Instance.resetMaterial ();
+			}
 		}
 	}
 }

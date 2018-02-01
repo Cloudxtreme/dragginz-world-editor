@@ -58,7 +58,13 @@ namespace DragginzWorldEditor
 
         private int _numCubes;
 
-		private bool _mouseIsDown;
+		#region Getters
+
+		public float fRockSize {
+			get { return _fRockSize; }
+		}
+
+		#endregion
 
 		#region SystemMethods
 
@@ -91,8 +97,6 @@ namespace DragginzWorldEditor
             toggleCubeSizes();
 
             _numCubes = 0;
-
-			_mouseIsDown = false;
 
 			// Instantiate app controller singleton
 			if (GameObject.Find(Globals.appContainerName) == null) {
@@ -150,11 +154,10 @@ namespace DragginzWorldEditor
 
         #region PublicMethods
 
-        public void toggleCubes() {
-
-            //toggleCubeSizes();
-            //createWorld();
-        }
+        /*public void toggleCubes() {
+            toggleCubeSizes();
+            createWorld();
+        }*/
 
 		//
 		public void setQuadrantVisibilityFlag(GameObject quadrant, bool visible)
@@ -175,7 +178,12 @@ namespace DragginzWorldEditor
 		{
 			if (!MainMenu.Instance.popup.isVisible ())
 			{
-				if (Input.GetKeyDown(KeyCode.Alpha1)) {
+				if (Input.GetKeyDown(KeyCode.Escape)) {
+					if (AppController.Instance.appState == AppState.Dig || AppController.Instance.appState == AppState.Paint || AppController.Instance.appState == AppState.Build) {
+						resetFlyCam();
+					}
+				}
+				else if (Input.GetKeyDown(KeyCode.Alpha1)) {
 					setMode (AppState.Look);
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha2)) {
@@ -190,16 +198,6 @@ namespace DragginzWorldEditor
 				//else if (Input.GetKeyDown(KeyCode.Alpha5)) {
 				//	setMode(AppState.Play);
 				//}
-			}
-
-			if (!_mouseIsDown) {
-				if (Input.GetButtonDown ("Fire1")) {
-					_mouseIsDown = true;
-				}
-			} else {
-				if (Input.GetButtonUp ("Fire1")) {
-					_mouseIsDown = false;
-				}
 			}
 
 			if (_curEditorTool != null) {
@@ -220,51 +218,6 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void customUpdateDig() {
-
-			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
-				MainMenu.Instance.toggleDigSize (Input.GetAxis ("Mouse ScrollWheel"));
-			}
-
-			doRayCastDig ();
-			if (_mouseIsDown && _goHit != null) {
-				if (Screen.height - Input.mousePosition.y > 90) {
-					digIt (_goHit.transform.position);//_hit.point);
-					_mouseIsDown = false;
-				}
-			}
-		}
-
-		public void customUpdatePaint() {
-			
-			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
-				MainMenu.Instance.toggleMaterial (Input.GetAxis ("Mouse ScrollWheel"));
-			}
-
-			doRayCastPaint ();
-			if (_mouseIsDown && _goHit != null) {
-				if (Screen.height - Input.mousePosition.y > 90) {
-					paintIt (_goHit);
-				}
-			}
-		}
-
-		public void customUpdateBuild() {
-
-			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
-				MainMenu.Instance.toggleMaterial (Input.GetAxis ("Mouse ScrollWheel"));
-			}
-
-			doRayCastBuild ();
-			if (_mouseIsDown && _goHit != null) {
-				if (Screen.height - Input.mousePosition.y > 90) {
-					buildIt (laserAim.transform.position);
-					_mouseIsDown = false;
-				}
-			}
-		}
-
-		//
 		public void startUpPopupCallback(int buttonId) {
 
 			AppController.Instance.hidePopup ();
@@ -276,6 +229,8 @@ namespace DragginzWorldEditor
 
 			if (forceMode || (mode != AppController.Instance.appState))
 			{
+				_curEditorTool = null;
+
 				AppController.Instance.setAppState (mode);
 				MainMenu.Instance.setModeButtons (mode);
 				setSingleMaterial (laserAim, laserAimMaterial);
@@ -288,19 +243,23 @@ namespace DragginzWorldEditor
 					MainMenu.Instance.showMaterialBox (false);
 					laserAim.SetActive (true);
 					updateDigSettings (MainMenu.Instance.v3DigSettings);
+					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_DIG];
 				}
 				else if (mode == AppState.Paint)
 				{
 					MainMenu.Instance.showDigButtons (false);
 					MainMenu.Instance.showMaterialBox (true);
 					laserAim.SetActive (false);
+					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_PAINT];
 				}
-				else if (mode == AppState.Build) {
+				else if (mode == AppState.Build)
+				{
 					MainMenu.Instance.showDigButtons (false);
 					MainMenu.Instance.showMaterialBox (true);
 					laserAim.SetActive (true);
 					laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
 					setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial]);
+					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_BUILD];
 				}
 				else
 				{
@@ -308,6 +267,9 @@ namespace DragginzWorldEditor
 					MainMenu.Instance.showMaterialBox (false);
 					laserAim.SetActive (false);
 
+					if (mode == AppState.Look) {
+						_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_LOOK];
+					}
 				}
 
 				if (goPlayer != null && goPlayerEdit != null) {
@@ -374,6 +336,7 @@ namespace DragginzWorldEditor
 			_coroutineIsRunning = false;
 		}
 
+		//
         private void toggleCubeSizes() {
 
             _cubeIndex = (_cubeIndex == 1 ? 0 : 1);
@@ -390,49 +353,8 @@ namespace DragginzWorldEditor
             _fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
         }
 
-        private void doRayCastDig()
-		{
-			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (_ray, out _hit, 20f)) {
-
-				_goHit = _hit.collider.gameObject;
-				laserAim.transform.position = _hit.point;
-				laserAim.transform.forward  = _hit.normal;
-				changeShaders (Globals.highlightShaderName);
-			}
-			else {
-				resetAim ();
-			}
-		}
-
-		private void doRayCastPaint()
-		{
-			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (_ray, out _hit, 20f)) {
-
-				_goHit = _hit.collider.gameObject;
-				//changeSingleShader (_goHit, Globals.highlightShaderName);
-				changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);
-			} else {
-				resetMaterial ();
-			}
-		}
-
-		private void doRayCastBuild()
-		{
-			_ray = mainCam.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (_ray, out _hit, 20f)) {
-
-				_goHit = _hit.collider.gameObject;
-				laserAim.transform.position = _goHit.transform.position + (_hit.normal * _fRockSize);
-			}
-			else {
-				resetAim ();
-			}
-		}
-
 		//
-		private void resetAim()
+		public void resetAim()
 		{
 			setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
 			changeShaders ();
@@ -441,7 +363,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void resetMaterial()
+		public void resetMaterial()
 		{
 			setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
 			_goLastMaterialChanged = null;
@@ -449,7 +371,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void changeSingleMaterial(GameObject go, int materialIndex)
+		public void changeSingleMaterial(GameObject go, int materialIndex)
 		{
 			if (go == null) {
 				return;
@@ -508,7 +430,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void changeShaders(string shaderName = Globals.defaultShaderName)
+		public void changeShaders(string shaderName = Globals.defaultShaderName)
 		{
 			// reset current shaders
 			setShaders (Globals.defaultShaderName);
@@ -698,19 +620,13 @@ namespace DragginzWorldEditor
 		/// <summary>
 		/// Destroy game objects within a 0.5f radius of the hit point
 		/// </summary>
-		private void digIt (Vector3 v3Pos)
+		public void digIt (Vector3 v3Pos)
 		{
-			//Debug.LogWarning ("DIG:");
-			//Debug.Log (_goHit.name);
-
 			int i, len;
 
 			// keep track of parent objects that had children removed
 			List<Transform> listcubeTransforms = new List<Transform>();
 
-			if (laserAim != null) {
-				v3Pos = laserAim.transform.position;
-			}
 			List<GameObject> listCollidingObjects = getOverlappingObjects(v3Pos);
 			len = listCollidingObjects.Count;
 			for (i = 0; i < len; ++i) {
@@ -778,7 +694,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void paintIt (GameObject go)
+		public void paintIt (GameObject go)
 		{
 			if (go == null) {
 				return;
@@ -794,7 +710,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void buildIt(Vector3 v3Pos)
+		public void buildIt(Vector3 v3Pos)
 		{
 			int x = (int)(v3Pos.x < 0 ? Math.Round(v3Pos.x, MidpointRounding.AwayFromZero) : v3Pos.x);
 			int y = (int)(v3Pos.y < 0 ? Math.Round(v3Pos.y, MidpointRounding.AwayFromZero) : v3Pos.y);

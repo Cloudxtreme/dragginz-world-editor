@@ -16,11 +16,6 @@ namespace DragginzWorldEditor
 			//
 		}
 
-		public override void customUpdateControls(float time, float timeDelta)
-		{
-			//
-		}
-
 		public override void customUpdate(float time, float timeDelta)
 		{
 			//
