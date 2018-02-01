@@ -31,20 +31,13 @@ namespace DragginzWorldEditor
     {
         private AppState _appState;
 
-        //private GameObject _goLightsContainer;
-        private GameObject _goWorldContainer;
-
-        private MainMenu _mainMenu;
-        private Popup _popup;
+		private float time;
+		private float timeDelta;
 
 		#region Getters
 
 		public AppState appState {
 			get { return _appState; }
-		}
-
-		public GameObject goWorldContainer {
-			get { return _goWorldContainer; }
 		}
 
 		#endregion
@@ -84,7 +77,10 @@ namespace DragginzWorldEditor
 		//
         void Update() {
 
-			LevelEditor.Instance.customUpdateCheckControls ();
+			time = Time.realtimeSinceStartup;
+			timeDelta = Time.deltaTime;
+
+			LevelEditor.Instance.customUpdateCheckControls (time, timeDelta);
 
             if (Input.GetKeyDown(KeyCode.B)) {
                 LevelEditor.Instance.toggleCubes();
@@ -109,6 +105,8 @@ namespace DragginzWorldEditor
 		//
 		void LateUpdate()
 		{
+			LevelEditor.Instance.customUpdate (time, timeDelta);
+
 			if (_appState == AppState.Dig) {
 				LevelEditor.Instance.customUpdateDig ();
 			} else if (_appState == AppState.Paint) {

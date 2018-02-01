@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace DragginzWorldEditor
 {
-	public class FlyCam : MonoBehaviour {
+	public class FlyCam : MonoSingleton<FlyCam> {
 
 		private static float movementSpeed = 0.15f;
 

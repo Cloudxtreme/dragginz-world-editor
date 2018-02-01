@@ -35,6 +35,9 @@ namespace DragginzWorldEditor
 		private int _iMinLevelCoord;
 		private int _iMaxLevelCoord;
 
+		private List<EditorTool> _aEditorTools;
+		private EditorTool _curEditorTool;
+
 		private Dictionary<string, Shader> _aUsedShaders;
 		private List<Material> _aMaterials;
 
@@ -123,6 +126,14 @@ namespace DragginzWorldEditor
 
 			createWorld ();
 
+			_aEditorTools = new List<EditorTool> (Globals.NUM_EDITOR_TOOLS);
+			_aEditorTools.Add(new EditorToolLook());
+			_aEditorTools.Add(new EditorToolDig());
+			_aEditorTools.Add(new EditorToolPaint());
+			_aEditorTools.Add(new EditorToolBuild());
+
+			_curEditorTool = null;
+
 			updateDigSettings (new Vector3(1,1,1));
 
 			AppController.Instance.showPopup(
@@ -160,31 +171,26 @@ namespace DragginzWorldEditor
 		}
 
         //
-        public void customUpdateCheckControls()
+		public void customUpdateCheckControls(float time, float timeDelta)
 		{
-			if (Input.GetKeyDown(KeyCode.Alpha1)) {
-				if (!MainMenu.Instance.popup.isVisible ()) {
+			if (!MainMenu.Instance.popup.isVisible ())
+			{
+				if (Input.GetKeyDown(KeyCode.Alpha1)) {
 					setMode (AppState.Look);
 				}
-			}
-			else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-				if (!MainMenu.Instance.popup.isVisible ()) {
+				else if (Input.GetKeyDown(KeyCode.Alpha2)) {
 					setMode (AppState.Dig);
 				}
-			}
-			else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-				if (!MainMenu.Instance.popup.isVisible ()) {
+				else if (Input.GetKeyDown(KeyCode.Alpha3)) {
 					setMode (AppState.Paint);
 				}
-			}
-			else if (Input.GetKeyDown(KeyCode.Alpha4)) {
-				if (!MainMenu.Instance.popup.isVisible ()) {
+				else if (Input.GetKeyDown(KeyCode.Alpha4)) {
 					setMode (AppState.Build);
 				}
+				//else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+				//	setMode(AppState.Play);
+				//}
 			}
-			//else if (Input.GetKeyDown(KeyCode.Alpha5)) {
-			//	setMode(AppState.Play);
-			//}
 
 			if (!_mouseIsDown) {
 				if (Input.GetButtonDown ("Fire1")) {
@@ -196,8 +202,20 @@ namespace DragginzWorldEditor
 				}
 			}
 
+			if (_curEditorTool != null) {
+				_curEditorTool.customUpdateControls (time, timeDelta);
+			}
+
 			if (!_coroutineIsRunning && _visibleQuadrants.Count > 0) {
 				StartCoroutine("updateQuadrantVisibility");
+			}
+		}
+
+		//
+		public void customUpdate(float time, float timeDelta)
+		{
+			if (_curEditorTool != null) {
+				_curEditorTool.customUpdate (time, timeDelta);
 			}
 		}
 
@@ -314,13 +332,13 @@ namespace DragginzWorldEditor
 
 		public void resetFlyCam()
 		{
-			mainCam.gameObject.GetComponent<FlyCam> ().reset ();
+			FlyCam.Instance.reset ();
 			PlayerEditCollision.Instance.isColliding = false;
 		}
 
 		public void toggleFlyCamOffset()
 		{
-			mainCam.gameObject.GetComponent<FlyCam> ().toggleOffset ();
+			FlyCam.Instance.toggleOffset ();
 		}
 
 		#endregion
@@ -606,7 +624,7 @@ namespace DragginzWorldEditor
 			}
 
 			Vector3 pos = Vector3.zero;
-			int count = 0;
+			//int count = 0;
 
 			int len = _cubesPerQuadrant;
 			float startPos = 0;//(int)len * _fRockSize * .5f;

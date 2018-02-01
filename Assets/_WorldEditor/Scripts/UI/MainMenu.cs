@@ -312,7 +312,7 @@ namespace DragginzWorldEditor
 
 			FileBrowser.OpenFilePanel("Open file Title", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), null, null, (bool canceled, string filePath) => {
 				if (!canceled) {
-					LevelData.Instance.loadLevelData(AppController.Instance.goWorldContainer, filePath);
+					LevelData.Instance.loadLevelData(LevelEditor.Instance.goWorld, filePath);
 				}
 			});
 		}

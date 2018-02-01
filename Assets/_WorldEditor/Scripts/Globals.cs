@@ -20,6 +20,12 @@ namespace DragginzWorldEditor
         static public readonly string worldContainerName    = "[World]";
         static public readonly string mainMenuContainerName = "[MainMenu]";
 
+		static public readonly int EDITOR_TOOL_LOOK  = 0;
+		static public readonly int EDITOR_TOOL_DIG   = 1;
+		static public readonly int EDITOR_TOOL_PAINT = 2;
+		static public readonly int EDITOR_TOOL_BUILD = 3;
+		static public readonly int NUM_EDITOR_TOOLS  = 4;
+
 		public const string defaultShaderName   = "Mobile/Diffuse"; // "Standard"
 		public const string highlightShaderName = "Legacy Shaders/Reflective/Diffuse";
 
@@ -30,6 +36,9 @@ namespace DragginzWorldEditor
 
 		static public readonly string containerGameObjectPrepend = "quadrant_";
 		static public readonly string rockGameObjectPrepend = "rock_";
+
+		static public readonly float RAYCAST_DISTANCE_EDIT = 20.0f;
+
 
 		/// <summary>
 		/// ...

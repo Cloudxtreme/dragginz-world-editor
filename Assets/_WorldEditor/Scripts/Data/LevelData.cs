@@ -87,7 +87,7 @@ namespace DragginzWorldEditor
 		private void createNewGameObject(LevelObject obj) {
 
 			GameObject go = new GameObject (obj.name);
-			go.transform.SetParent (AppController.Instance.goWorldContainer.transform);
+			go.transform.SetParent (LevelEditor.Instance.goWorld.transform);
 
 			MeshFilter meshFilter = go.AddComponent<MeshFilter> ();
 			Mesh mesh = new Mesh ();
