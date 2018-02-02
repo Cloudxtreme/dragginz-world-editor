@@ -35,9 +35,6 @@ namespace DragginzWorldEditor
 		private Dictionary<string, Shader> _aUsedShaders;
 		private List<Material> _aMaterials;
 
-		//private GameObject _goLastMaterialChanged;
-		//private Material _tempMaterial;
-
 		private GameObject _goLastShaderChange;
 		private List<GameObject> _aGoShaderChanged;
 
@@ -82,9 +79,6 @@ namespace DragginzWorldEditor
 			for (i = 0; i < len; ++i) {
 				_aMaterials.Add(Resources.Load<Material> ("Materials/" + Globals.materials [i]));
 			}
-
-			//_goLastMaterialChanged = null;
-			//_tempMaterial = null;
 
 			_aUsedShaders = new Dictionary<string, Shader> ();
 			_goLastShaderChange = null;
@@ -192,7 +186,7 @@ namespace DragginzWorldEditor
 				MainMenu.Instance.setModeButtons (mode);
 
 				if (_curEditorTool != null) {
-					_curEditorTool.setSingleMaterial (laserAim, laserAimMaterial);
+					_curEditorTool.setSingleMaterial (laserAim, laserAimMaterial, false);
 					_curEditorTool.resetMaterial ();
 				}
 					
@@ -222,7 +216,7 @@ namespace DragginzWorldEditor
 					laserAim.SetActive (true);
 					laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
 					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_BUILD];
-					_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial]);
+					_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
 				}
 				else
 				{
@@ -250,8 +244,11 @@ namespace DragginzWorldEditor
 
 		public void newMaterialSelected (int iSelectedMaterial)
 		{
-			if (AppController.Instance.appState == AppState.Build) {
-				_curEditorTool.setSingleMaterial (laserAim, _aMaterials [MainMenu.Instance.iSelectedMaterial]);
+			if (AppController.Instance.appState == AppState.Paint) {
+				_curEditorTool.resetMaterial();
+			}
+			else if (AppController.Instance.appState == AppState.Build) {
+				_curEditorTool.setSingleMaterial (laserAim, _aMaterials [MainMenu.Instance.iSelectedMaterial], false);
 			}
 		}
 
@@ -272,36 +269,7 @@ namespace DragginzWorldEditor
 			setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
 			changeShaders ();
 			laserAim.transform.position = new Vector3(9999,9999,9999);
-			//_goHit = null;
 		}
-
-		/*
-		//
-		public void resetMaterial()
-		{
-			setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
-			_goLastMaterialChanged = null;
-			_tempMaterial = null;
-		}
-
-		//
-		public void changeSingleMaterial(GameObject go, int materialIndex)
-		{
-			if (go == null) {
-				return;
-			}
-
-			// reset current material
-			if (_goLastMaterialChanged != null && go != _goLastMaterialChanged) {
-				setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
-				_goLastMaterialChanged = null;
-				_tempMaterial = null;
-			}
-
-			_goLastMaterialChanged = go;
-			setSingleMaterial (_goLastMaterialChanged, _aMaterials[materialIndex]);
-		}
-		*/
 
 		#endregion
 
@@ -309,21 +277,6 @@ namespace DragginzWorldEditor
 
 		#region PrivateMethods
 
-		/*
-		private void setSingleMaterial(GameObject go, Material material)
-		{
-			if (go != null && material != null) {
-				Renderer renderer = go.GetComponent<Renderer> ();
-				if (renderer != null && renderer.sharedMaterial.name != material.name) {
-					_tempMaterial = renderer.sharedMaterial;
-					renderer.sharedMaterial = material;
-					//Debug.Log ("changing material for game object " + go.name + " to " + material.name);
-				}
-			}
-		}
-		*/
-
-		//
 		private void changeSingleShader(GameObject go, string shaderName = Globals.defaultShaderName)
 		{
 			if (go == null) {
@@ -512,7 +465,7 @@ namespace DragginzWorldEditor
 				Debug.LogError ("child "+sName+" exists!");
 			} else {
 				GameObject goNew = _World.createRock (v3LocalBlockPos, container.gameObject, sName);
-				_curEditorTool.setSingleMaterial (goNew, _aMaterials[MainMenu.Instance.iSelectedMaterial]);
+				_curEditorTool.setSingleMaterial (goNew, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
 			}
 		}
 

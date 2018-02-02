@@ -101,23 +101,23 @@ namespace DragginzWorldEditor
 
 			// reset current material
 			if (_goLastMaterialChanged != null && go != _goLastMaterialChanged) {
-				setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
-				_goLastMaterialChanged = null;
-				_tempMaterial = null;
+				resetMaterial ();
 			}
 
 			_goLastMaterialChanged = go;
 			setSingleMaterial (_goLastMaterialChanged, LevelEditor.Instance.aMaterials[materialIndex]);
 		}
 
-		public void setSingleMaterial(GameObject go, Material material)
+		//
+		public void setSingleMaterial(GameObject go, Material material, bool setTempMaterial = true)
 		{
 			if (go != null && material != null) {
 				Renderer renderer = go.GetComponent<Renderer> ();
 				if (renderer != null && renderer.sharedMaterial.name != material.name) {
-					_tempMaterial = renderer.sharedMaterial;
+					if (setTempMaterial) {
+						_tempMaterial = renderer.sharedMaterial;
+					}
 					renderer.sharedMaterial = material;
-					//Debug.Log ("changing material for game object " + go.name + " to " + material.name);
 				}
 			}
 		}
