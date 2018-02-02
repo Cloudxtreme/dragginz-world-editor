@@ -22,6 +22,10 @@ namespace DragginzWorldEditor
 		protected static RaycastHit _hit;
 		protected static GameObject _goHit;
 
+		protected static Dictionary<string, Shader> _aUsedShaders;
+		protected static GameObject _goLastShaderChange;
+		protected static List<GameObject> _aGoShaderChanged;
+
 		protected static GameObject _goLastMaterialChanged;
 		protected static Material _tempMaterial;
 
@@ -51,6 +55,10 @@ namespace DragginzWorldEditor
 				_flycam = FlyCam.Instance;
 
 				_trfmAimTool = LevelEditor.Instance.laserAim.transform;
+
+				_aUsedShaders = new Dictionary<string, Shader> ();
+				_goLastShaderChange = null;
+				_aGoShaderChanged = new List<GameObject> ();
 
 				_goLastMaterialChanged = null;
 				_tempMaterial = null;
@@ -85,11 +93,84 @@ namespace DragginzWorldEditor
 		// PUBLIC METHODS
 		//
 
+		public void resetAim()
+		{
+			setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
+			changeShaders ();
+			_trfmAimTool.position = new Vector3(9999,9999,9999);
+		}
+
 		public void resetMaterial()
 		{
 			setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
 			_goLastMaterialChanged = null;
 			_tempMaterial = null;
+		}
+
+		private void changeSingleShader(GameObject go, string shaderName = Globals.defaultShaderName)
+		{
+			if (go == null) {
+				return;
+			}
+
+			// reset current shader
+			if (_goLastShaderChange != null && go != _goLastShaderChange) {
+				setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
+				_goLastShaderChange = null;
+			}
+
+			_goLastShaderChange = go;
+			setSingleShader (_goLastShaderChange, shaderName);
+		}
+
+		private void setSingleShader(GameObject go, string shaderName)
+		{
+			if (go != null) {
+				Shader shader = getShader (shaderName);
+				Renderer renderer = go.GetComponent<Renderer> ();
+				if (renderer != null && renderer.material.shader.name != shaderName) {
+					renderer.material.shader = shader;
+					//Debug.Log ("changing shader for game object " + go.name + " to " + shader.name);
+				}
+			}
+		}
+
+		//
+		public void changeShaders(string shaderName = Globals.defaultShaderName)
+		{
+			// reset current shaders
+			setShaders (Globals.defaultShaderName);
+			_aGoShaderChanged.Clear ();
+
+			// set new shaders
+			_aGoShaderChanged = LevelEditor.Instance.getOverlappingObjects(_trfmAimTool.position);
+			setShaders (shaderName);
+		}
+
+		private void setShaders(string shaderName)
+		{
+			Shader shader = getShader(shaderName);
+
+			Renderer renderer;
+			int i, len = _aGoShaderChanged.Count;
+			for (i = 0; i < len; ++i) {
+				if (_aGoShaderChanged [i] != null) {
+					renderer = _aGoShaderChanged [i].GetComponent<Renderer> ();
+					if (renderer != null && renderer.material.shader.name != shaderName) {
+						renderer.material.shader = shader;
+					}
+				}
+			}
+		}
+
+		private Shader getShader(string shaderName)
+		{
+			if (!_aUsedShaders.ContainsKey(shaderName)) {
+				_aUsedShaders.Add(shaderName, Shader.Find (shaderName));
+				//Debug.Log ("added shader " + shaderName);
+			}
+
+			return _aUsedShaders[shaderName];
 		}
 
 		//

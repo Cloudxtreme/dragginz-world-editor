@@ -28,16 +28,56 @@ namespace DragginzWorldEditor
 			{
 				_trfmAimTool.position = _hit.point;
 				_trfmAimTool.forward = _hit.normal;
-				LevelEditor.Instance.changeShaders (Globals.highlightShaderName);
+				changeShaders (Globals.highlightShaderName);
 
 				if (_mouseIsDown) {
-					LevelEditor.Instance.digIt (_trfmAimTool.position);
+					digIt (_trfmAimTool.position);
 					_mouseIsDown = false;
 				}
 			}
 			else {
-				LevelEditor.Instance.resetAim ();
+				resetAim ();
 			}
+		}
+
+		private void digIt (Vector3 v3Pos)
+		{
+			int i, len;
+			int addedCubes = 0;
+
+			World world = World.Instance;
+
+			// keep track of parent objects that had children removed
+			List<Transform> listcubeTransforms = new List<Transform>();
+
+			List<GameObject> listCollidingObjects = LevelEditor.Instance.getOverlappingObjects(v3Pos);
+			len = listCollidingObjects.Count;
+			for (i = 0; i < len; ++i) {
+				if (!listcubeTransforms.Contains (listCollidingObjects [i].transform.parent)) {
+					listcubeTransforms.Add (listCollidingObjects [i].transform.parent);
+				}
+				GameObject.Destroy (listCollidingObjects [i]);
+				addedCubes++;
+			}
+			listCollidingObjects.Clear ();
+			listCollidingObjects = null;
+
+			world.numCubes -= addedCubes;
+			MainMenu.Instance.setCubeCountText (world.numCubes);
+
+			// extend level if necessary
+			len = listcubeTransforms.Count;
+			for (i = 0; i < len; ++i) {
+
+				List<Vector3> adjacentCubes = LevelEditor.Instance.getAdjacentCubes (listcubeTransforms [i].position);
+
+				int j, len2 = adjacentCubes.Count;
+				for (j = 0; j < len2; ++j) {
+					world.createRockCube (adjacentCubes [j]);
+				}
+			}
+			listcubeTransforms.Clear ();
+			listcubeTransforms = null;
 		}
 	}
 }

@@ -32,11 +32,7 @@ namespace DragginzWorldEditor
 		private List<EditorTool> _aEditorTools;
 		private EditorTool _curEditorTool;
 
-		private Dictionary<string, Shader> _aUsedShaders;
 		private List<Material> _aMaterials;
-
-		private GameObject _goLastShaderChange;
-		private List<GameObject> _aGoShaderChanged;
 
 		private float _fRockSize;
         private int _cubesPerQuadrant;
@@ -79,10 +75,6 @@ namespace DragginzWorldEditor
 			for (i = 0; i < len; ++i) {
 				_aMaterials.Add(Resources.Load<Material> ("Materials/" + Globals.materials [i]));
 			}
-
-			_aUsedShaders = new Dictionary<string, Shader> ();
-			_goLastShaderChange = null;
-			_aGoShaderChanged = new List<GameObject> ();
 
 			_fRockSize = 0.5f;
 			_cubesPerQuadrant = 2;
@@ -188,9 +180,8 @@ namespace DragginzWorldEditor
 				if (_curEditorTool != null) {
 					_curEditorTool.setSingleMaterial (laserAim, laserAimMaterial, false);
 					_curEditorTool.resetMaterial ();
+					_curEditorTool.resetAim ();
 				}
-					
-				resetAim ();
 
 				_curEditorTool = null;
 
@@ -252,136 +243,21 @@ namespace DragginzWorldEditor
 			}
 		}
 
+		//
 		public void resetFlyCam()
 		{
 			FlyCam.Instance.reset ();
 			PlayerEditCollision.Instance.isColliding = false;
 		}
 
+		//
 		public void toggleFlyCamOffset()
 		{
 			FlyCam.Instance.toggleOffset ();
 		}
 
 		//
-		public void resetAim()
-		{
-			setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
-			changeShaders ();
-			laserAim.transform.position = new Vector3(9999,9999,9999);
-		}
-
-		#endregion
-
-		// ----------------------------------------------------------------------------------------
-
-		#region PrivateMethods
-
-		private void changeSingleShader(GameObject go, string shaderName = Globals.defaultShaderName)
-		{
-			if (go == null) {
-				return;
-			}
-
-			// reset current shader
-			if (_goLastShaderChange != null && go != _goLastShaderChange) {
-				setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
-				_goLastShaderChange = null;
-			}
-
-			_goLastShaderChange = go;
-			setSingleShader (_goLastShaderChange, shaderName);
-		}
-
-		private void setSingleShader(GameObject go, string shaderName)
-		{
-			if (go != null) {
-				Shader shader = getShader (shaderName);
-				Renderer renderer = go.GetComponent<Renderer> ();
-				if (renderer != null && renderer.material.shader.name != shaderName) {
-					renderer.material.shader = shader;
-					//Debug.Log ("changing shader for game object " + go.name + " to " + shader.name);
-				}
-			}
-		}
-
-		//
-		public void changeShaders(string shaderName = Globals.defaultShaderName)
-		{
-			// reset current shaders
-			setShaders (Globals.defaultShaderName);
-			_aGoShaderChanged.Clear ();
-
-			// set new shaders
-			_aGoShaderChanged = getOverlappingObjects(laserAim.transform.position);
-			setShaders (shaderName);
-		}
-
-		private void setShaders(string shaderName)
-		{
-			Shader shader = getShader(shaderName);
-
-			Renderer renderer;
-			int i, len = _aGoShaderChanged.Count;
-			for (i = 0; i < len; ++i) {
-				if (_aGoShaderChanged [i] != null) {
-					renderer = _aGoShaderChanged [i].GetComponent<Renderer> ();
-					if (renderer != null && renderer.material.shader.name != shaderName) {
-						renderer.material.shader = shader;
-					}
-				}
-			}
-		}
-
-		private Shader getShader(string shaderName)
-		{
-			if (!_aUsedShaders.ContainsKey(shaderName)) {
-				_aUsedShaders.Add(shaderName, Shader.Find (shaderName));
-				//Debug.Log ("added shader " + shaderName);
-			}
-
-			return _aUsedShaders[shaderName];
-		}
-
-		//
-		public void digIt (Vector3 v3Pos)
-		{
-			int i, len;
-
-			// keep track of parent objects that had children removed
-			List<Transform> listcubeTransforms = new List<Transform>();
-
-			List<GameObject> listCollidingObjects = getOverlappingObjects(v3Pos);
-			len = listCollidingObjects.Count;
-			for (i = 0; i < len; ++i) {
-				if (!listcubeTransforms.Contains (listCollidingObjects [i].transform.parent)) {
-					listcubeTransforms.Add (listCollidingObjects [i].transform.parent);
-				}
-				Destroy (listCollidingObjects [i]);
-				_numCubes--;
-			}
-			listCollidingObjects.Clear ();
-			listCollidingObjects = null;
-
-			MainMenu.Instance.setCubeCountText (_numCubes);
-
-			// extend level if necessary
-			len = listcubeTransforms.Count;
-			for (i = 0; i < len; ++i) {
-
-				List<Vector3> adjacentCubes = getAdjacentCubes (listcubeTransforms [i].position);
-
-				int j, len2 = adjacentCubes.Count;
-				for (j = 0; j < len2; ++j) {
-					_World.createRockCube (adjacentCubes [j]);
-				}
-			}
-			listcubeTransforms.Clear ();
-			listcubeTransforms = null;
-		}
-
-		//
-		private List<GameObject> getOverlappingObjects(Vector3 v3Pos)
+		public List<GameObject> getOverlappingObjects(Vector3 v3Pos)
 		{
 			List<GameObject> listCollidingObjects = new List<GameObject>();
 
@@ -401,7 +277,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private List<Vector3> getAdjacentCubes(Vector3 v3CubePos) {
+		public List<Vector3> getAdjacentCubes(Vector3 v3CubePos) {
 
 			List<Vector3> adjacentCubes = new List<Vector3> ();
 
@@ -415,58 +291,6 @@ namespace DragginzWorldEditor
 			}
 
 			return adjacentCubes;
-		}
-
-		//
-		/*public void paintIt (GameObject go)
-		{
-			MeshRenderer renderer = go.GetComponent<MeshRenderer> ();
-			if (renderer != null) {
-				renderer.sharedMaterial = _aMaterials[MainMenu.Instance.iSelectedMaterial];
-			}
-
-			_goLastMaterialChanged = null;
-			_tempMaterial = null;
-		}*/
-
-		//
-		public void buildIt(Vector3 v3Pos)
-		{
-			int x = (int)(v3Pos.x < 0 ? Math.Round(v3Pos.x, MidpointRounding.AwayFromZero) : v3Pos.x);
-			int y = (int)(v3Pos.y < 0 ? Math.Round(v3Pos.y, MidpointRounding.AwayFromZero) : v3Pos.y);
-			int z = (int)(v3Pos.z < 0 ? Math.Round(v3Pos.z, MidpointRounding.AwayFromZero) : v3Pos.z);
-
-			//Debug.LogWarning ("BUILD:");
-
-			// get quadrant
-
-			Vector3 v3QuadrantPos = new Vector3 ((float)x / 1f, (float)y / 1f, (float)z / 1f);
-			string sPos = v3QuadrantPos.x.ToString () + "_" + v3QuadrantPos.y.ToString () + "_" + v3QuadrantPos.z.ToString ();
-			string sQuadrantName = Globals.containerGameObjectPrepend + sPos;
-			Transform trfmQuadrant = goWorld.transform.Find (sQuadrantName);
-
-			//Debug.Log ("quadrant: "+trfmQuadrant+" - "+trfmQuadrant.name);
-
-			// get cild
-			Vector3 v3LocalBlockPos = new Vector3 (
-					Mathf.Abs(v3QuadrantPos.x-v3Pos.x),
-					Mathf.Abs(v3QuadrantPos.y-v3Pos.y),
-					Mathf.Abs(v3QuadrantPos.z-v3Pos.z)
-				);
-
-			string sName = "r";
-			sName += "-" + ((int)(v3LocalBlockPos.x / _fRockSize)).ToString ();
-			sName += "-" + ((int)(v3LocalBlockPos.y / _fRockSize)).ToString ();
-			sName += "-" + ((int)(v3LocalBlockPos.z / _fRockSize)).ToString ();
-
-			Transform container = trfmQuadrant.Find ("container");
-			Transform trfmChild = container.Find (sName);
-			if (trfmChild != null) {
-				Debug.LogError ("child "+sName+" exists!");
-			} else {
-				GameObject goNew = _World.createRock (v3LocalBlockPos, container.gameObject, sName);
-				_curEditorTool.setSingleMaterial (goNew, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
-			}
 		}
 
 		#endregion

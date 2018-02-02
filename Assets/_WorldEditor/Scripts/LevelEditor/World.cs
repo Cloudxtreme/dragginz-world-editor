@@ -24,7 +24,15 @@ namespace DragginzWorldEditor
 
 		private bool _coroutineIsRunning;
 
-		//
+		#region Getters
+
+		public int numCubes {
+			get { return _numCubes; }
+			set { _numCubes = value; }
+		}
+
+		#endregion
+
 		public void init()
 		{
 			_iMinLevelCoord = -50;

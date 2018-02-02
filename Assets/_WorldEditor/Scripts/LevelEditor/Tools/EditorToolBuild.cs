@@ -3,8 +3,10 @@
 // Company : Decentralised Team of Developers
 //
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace DragginzWorldEditor
@@ -29,12 +31,51 @@ namespace DragginzWorldEditor
 				_trfmAimTool.position = _goHit.transform.position + (_hit.normal * LevelEditor.Instance.fRockSize);
 
 				if (_mouseIsDown) {
-					LevelEditor.Instance.buildIt (_trfmAimTool.position);
+					buildIt (_trfmAimTool.position);
 					_mouseIsDown = false;
 				}
 			}
 			else {
-				LevelEditor.Instance.resetAim ();
+				resetAim ();
+			}
+		}
+
+		public void buildIt(Vector3 v3Pos)
+		{
+			int x = (int)(v3Pos.x < 0 ? Math.Round(v3Pos.x, MidpointRounding.AwayFromZero) : v3Pos.x);
+			int y = (int)(v3Pos.y < 0 ? Math.Round(v3Pos.y, MidpointRounding.AwayFromZero) : v3Pos.y);
+			int z = (int)(v3Pos.z < 0 ? Math.Round(v3Pos.z, MidpointRounding.AwayFromZero) : v3Pos.z);
+
+			//Debug.LogWarning ("BUILD:");
+
+			// get quadrant
+
+			Vector3 v3QuadrantPos = new Vector3 ((float)x / 1f, (float)y / 1f, (float)z / 1f);
+			string sPos = v3QuadrantPos.x.ToString () + "_" + v3QuadrantPos.y.ToString () + "_" + v3QuadrantPos.z.ToString ();
+			string sQuadrantName = Globals.containerGameObjectPrepend + sPos;
+			Transform trfmQuadrant = LevelEditor.Instance.goWorld.transform.Find (sQuadrantName);
+
+			//Debug.Log ("quadrant: "+trfmQuadrant+" - "+trfmQuadrant.name);
+
+			// get cild
+			Vector3 v3LocalBlockPos = new Vector3 (
+				Mathf.Abs(v3QuadrantPos.x-v3Pos.x),
+				Mathf.Abs(v3QuadrantPos.y-v3Pos.y),
+				Mathf.Abs(v3QuadrantPos.z-v3Pos.z)
+			);
+
+			string sName = "r";
+			sName += "-" + ((int)(v3LocalBlockPos.x / LevelEditor.Instance.fRockSize)).ToString ();
+			sName += "-" + ((int)(v3LocalBlockPos.y / LevelEditor.Instance.fRockSize)).ToString ();
+			sName += "-" + ((int)(v3LocalBlockPos.z / LevelEditor.Instance.fRockSize)).ToString ();
+
+			Transform container = trfmQuadrant.Find ("container");
+			Transform trfmChild = container.Find (sName);
+			if (trfmChild != null) {
+				Debug.LogError ("child "+sName+" exists!");
+			} else {
+				GameObject goNew = World.Instance.createRock (v3LocalBlockPos, container.gameObject, sName);
+				setSingleMaterial (goNew, LevelEditor.Instance.aMaterials[MainMenu.Instance.iSelectedMaterial], false);
 			}
 		}
 	}
