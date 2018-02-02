@@ -26,14 +26,17 @@ namespace DragginzWorldEditor
 
 			if (_goHit != null)
 			{
-				LevelEditor.Instance.changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);
+				changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);
 
 				if (_mouseIsDown) {
-					LevelEditor.Instance.paintIt (_goHit);
+					//LevelEditor.Instance.paintIt (_goHit);
+					setSingleMaterial (_goHit, LevelEditor.Instance.aMaterials[MainMenu.Instance.iSelectedMaterial]);
+					_goLastMaterialChanged = null;
+					_tempMaterial = null;
 				}
 			}
 			else {
-				LevelEditor.Instance.resetMaterial ();
+				resetMaterial ();
 			}
 		}
 	}

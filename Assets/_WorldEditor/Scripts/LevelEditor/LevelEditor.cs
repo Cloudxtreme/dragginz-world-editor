@@ -27,13 +27,7 @@ namespace DragginzWorldEditor
 		public GameObject laserAim;
 		public Material laserAimMaterial;
 
-		private Ray _ray;
-		private RaycastHit _hit;
-		private GameObject _goHit;
-
-		private Dictionary<int, Dictionary<int, Dictionary<int, int>>> _quadrantFlags;
-		private int _iMinLevelCoord;
-		private int _iMaxLevelCoord;
+		private World _World;
 
 		private List<EditorTool> _aEditorTools;
 		private EditorTool _curEditorTool;
@@ -41,20 +35,15 @@ namespace DragginzWorldEditor
 		private Dictionary<string, Shader> _aUsedShaders;
 		private List<Material> _aMaterials;
 
-		private GameObject _goLastMaterialChanged;
-		private Material _tempMaterial;
+		//private GameObject _goLastMaterialChanged;
+		//private Material _tempMaterial;
 
 		private GameObject _goLastShaderChange;
 		private List<GameObject> _aGoShaderChanged;
 
-		private Dictionary<GameObject, bool> _visibleQuadrants;
-		private List<GameObject> _aQuadrantChangedVisibility;
-		private bool _coroutineIsRunning;
-
 		private float _fRockSize;
         private int _cubesPerQuadrant;
         private float _fQuadrantSize;
-        private int _cubeIndex;
 
         private int _numCubes;
 
@@ -64,17 +53,29 @@ namespace DragginzWorldEditor
 			get { return _fRockSize; }
 		}
 
+		public int cubesPerQuadrant {
+			get { return _cubesPerQuadrant; }
+		}
+
+		public float fQuadrantSize {
+			get { return _fQuadrantSize; }
+		}
+
+		public List<Material> aMaterials {
+			get { return _aMaterials; }
+		}
+
 		#endregion
 
 		#region SystemMethods
 
-		/// <summary>
-		/// System methods
-		/// </summary>
 		void Awake()
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
+
+			gameObject.AddComponent<World> ();
+			_World = World.Instance;
 
 			_aMaterials = new List<Material> ();
 			int i, len = Globals.materials.Length;
@@ -82,44 +83,22 @@ namespace DragginzWorldEditor
 				_aMaterials.Add(Resources.Load<Material> ("Materials/" + Globals.materials [i]));
 			}
 
-			_goLastMaterialChanged = null;
-			_tempMaterial = null;
+			//_goLastMaterialChanged = null;
+			//_tempMaterial = null;
 
 			_aUsedShaders = new Dictionary<string, Shader> ();
 			_goLastShaderChange = null;
 			_aGoShaderChanged = new List<GameObject> ();
 
-			_visibleQuadrants = new Dictionary<GameObject, bool> ();
-			_aQuadrantChangedVisibility = new List<GameObject> ();
-			_coroutineIsRunning = false;
-
-            _cubeIndex = 1;
-            toggleCubeSizes();
-
-            _numCubes = 0;
+			_fRockSize = 0.5f;
+			_cubesPerQuadrant = 2;
+			_fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
 
 			// Instantiate app controller singleton
 			if (GameObject.Find(Globals.appContainerName) == null) {
 				GameObject goAppController = new GameObject(Globals.appContainerName);
 				DontDestroyOnLoad(goAppController);
 				goAppController.AddComponent<AppController>();
-			}
-
-			_iMinLevelCoord = -50;
-			_iMaxLevelCoord = 50;
-
-			_goHit = null;
-
-			_quadrantFlags = new Dictionary<int, Dictionary<int, Dictionary<int, int>>> ();
-
-			for (int x = _iMinLevelCoord; x <= _iMaxLevelCoord; ++x) {
-				_quadrantFlags.Add(x, new Dictionary<int, Dictionary<int, int>> ());
-				for (int y = _iMinLevelCoord; y <= _iMaxLevelCoord; ++y) {
-					_quadrantFlags [x].Add(y, new Dictionary<int, int> ());
-					for (int z = _iMinLevelCoord; z <= _iMaxLevelCoord; ++z) {
-						_quadrantFlags [x] [y].Add(z, 0);
-					}
-				}
 			}
 		}
 
@@ -128,7 +107,9 @@ namespace DragginzWorldEditor
 
 			setMode (AppState.Null, true);
 
-			createWorld ();
+			_World.init ();
+
+			goPlayer.transform.position = new Vector3(0, 0.6f, -0.75f);
 
 			_aEditorTools = new List<EditorTool> (Globals.NUM_EDITOR_TOOLS);
 			_aEditorTools.Add(new EditorToolLook());
@@ -154,26 +135,6 @@ namespace DragginzWorldEditor
 
         #region PublicMethods
 
-        /*public void toggleCubes() {
-            toggleCubeSizes();
-            createWorld();
-        }*/
-
-		//
-		public void setQuadrantVisibilityFlag(GameObject quadrant, bool visible)
-		{
-			//Debug.Log (quadrant.name+".visible = "+visible);
-
-			_visibleQuadrants [quadrant] = visible;
-
-			if (_aQuadrantChangedVisibility.Contains (quadrant)) {
-				_aQuadrantChangedVisibility.Remove (quadrant);
-			}
-
-			_aQuadrantChangedVisibility.Add (quadrant);
-		}
-
-        //
 		public void customUpdateCheckControls(float time, float timeDelta)
 		{
 			if (!MainMenu.Instance.popup.isVisible ())
@@ -204,9 +165,7 @@ namespace DragginzWorldEditor
 				_curEditorTool.customUpdateControls (time, timeDelta);
 			}
 
-			if (!_coroutineIsRunning && _visibleQuadrants.Count > 0) {
-				StartCoroutine("updateQuadrantVisibility");
-			}
+			_World.customUpdate ();
 		}
 
 		//
@@ -229,13 +188,17 @@ namespace DragginzWorldEditor
 
 			if (forceMode || (mode != AppController.Instance.appState))
 			{
-				_curEditorTool = null;
-
 				AppController.Instance.setAppState (mode);
 				MainMenu.Instance.setModeButtons (mode);
-				setSingleMaterial (laserAim, laserAimMaterial);
+
+				if (_curEditorTool != null) {
+					_curEditorTool.setSingleMaterial (laserAim, laserAimMaterial);
+					_curEditorTool.resetMaterial ();
+				}
+					
 				resetAim ();
-				resetMaterial ();
+
+				_curEditorTool = null;
 
 				if (mode == AppState.Dig)
 				{
@@ -258,8 +221,8 @@ namespace DragginzWorldEditor
 					MainMenu.Instance.showMaterialBox (true);
 					laserAim.SetActive (true);
 					laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
-					setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial]);
 					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_BUILD];
+					_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial]);
 				}
 				else
 				{
@@ -288,7 +251,7 @@ namespace DragginzWorldEditor
 		public void newMaterialSelected (int iSelectedMaterial)
 		{
 			if (AppController.Instance.appState == AppState.Build) {
-				setSingleMaterial (laserAim, _aMaterials [MainMenu.Instance.iSelectedMaterial]);
+				_curEditorTool.setSingleMaterial (laserAim, _aMaterials [MainMenu.Instance.iSelectedMaterial]);
 			}
 		}
 
@@ -303,65 +266,16 @@ namespace DragginzWorldEditor
 			FlyCam.Instance.toggleOffset ();
 		}
 
-		#endregion
-
-        // ----------------------------------------------------------------------------------------
-
-		#region PrivateMethods
-
-		private IEnumerator updateQuadrantVisibility()
-		{
-			int len = _aQuadrantChangedVisibility.Count;
-			while (len > 0) {
-
-				_coroutineIsRunning = true;
-
-				int i;
-				for (i = 0; i < 5; ++i) {
-					
-					GameObject go = _aQuadrantChangedVisibility [0];
-					bool visible = _visibleQuadrants [go];
-					_aQuadrantChangedVisibility.RemoveAt (0);
-					go.transform.Find ("container").gameObject.SetActive (visible);
-
-					len = _aQuadrantChangedVisibility.Count;
-					if (len <= 0) {
-						break;
-					}
-				}
-
-				yield return new WaitForEndOfFrame();
-			}
-
-			_coroutineIsRunning = false;
-		}
-
-		//
-        private void toggleCubeSizes() {
-
-            _cubeIndex = (_cubeIndex == 1 ? 0 : 1);
-
-            if (_cubeIndex == 0) {
-                _fRockSize = 0.5f;
-                _cubesPerQuadrant = 2;
-            }
-            else {
-                _fRockSize = 1.0f;
-                _cubesPerQuadrant = 1;
-            }
-
-            _fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
-        }
-
 		//
 		public void resetAim()
 		{
 			setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
 			changeShaders ();
 			laserAim.transform.position = new Vector3(9999,9999,9999);
-			_goHit = null;
+			//_goHit = null;
 		}
 
+		/*
 		//
 		public void resetMaterial()
 		{
@@ -387,8 +301,15 @@ namespace DragginzWorldEditor
 			_goLastMaterialChanged = go;
 			setSingleMaterial (_goLastMaterialChanged, _aMaterials[materialIndex]);
 		}
+		*/
 
-		//
+		#endregion
+
+		// ----------------------------------------------------------------------------------------
+
+		#region PrivateMethods
+
+		/*
 		private void setSingleMaterial(GameObject go, Material material)
 		{
 			if (go != null && material != null) {
@@ -400,6 +321,8 @@ namespace DragginzWorldEditor
 				}
 			}
 		}
+		*/
+
 		//
 		private void changeSingleShader(GameObject go, string shaderName = Globals.defaultShaderName)
 		{
@@ -468,158 +391,6 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void resetWorld()
-		{
-			_numCubes = 0;
-
-			foreach (Transform child in goWorld.transform) {
-				Destroy (child.gameObject);
-			}
-
-			_visibleQuadrants.Clear ();
-			_aQuadrantChangedVisibility.Clear ();
-
-			goPlayer.transform.position = new Vector3(0, 0.6f, -0.75f);
-
-			for (int x = _iMinLevelCoord; x <= _iMaxLevelCoord; ++x) {
-				for (int y = _iMinLevelCoord; y <= _iMaxLevelCoord; ++y) {
-					for (int z = _iMinLevelCoord; z <= _iMaxLevelCoord; ++z) {
-						_quadrantFlags [x] [y] [z] = 0;
-					}
-				}
-			}
-		}
-
-		//
-		private void createWorld() {
-
-			resetWorld ();
-
-			int count = 0;
-			
-			// create hollow cube of cubes :)
-			int size = 2; // actual size will be size*2+1
-			int height = 3;
-			Vector3 pos = Vector3.zero;
-			for (int x = -size; x <= size; ++x) {
-				for (int y = -1; y <= height; ++y) {
-					for (int z = -size; z <= size; ++z) {
-
-						pos = new Vector3 (x * _fQuadrantSize, y * _fQuadrantSize, z * _fQuadrantSize);
-
-						if (Mathf.Abs (x) == size || y == -1 || y == height || Mathf.Abs (z) == size) {
-							createRockCube (pos);
-						} else {
-							createRockCube (pos, false);
-						}
-
-						count++;
-						/*if (count == 1) {
-							x = size+1;
-							y = height+1;
-							z = size+1;
-						}*/
-					}
-				}
-			}
-			Debug.Log ("quadrants: "+count.ToString());
-
-			MainMenu.Instance.setCubeCountText (_numCubes);
-		}
-
-		//
-		private void createRockCube (Vector3 v3CubePos, bool fillQuadrant = true)
-		{
-			// cube already created at that position
-			if (_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] == 1) {
-				return;
-			}
-
-			GameObject cubeParent = createQuadrant (v3CubePos);
-			GameObject container = new GameObject ();
-			container.name = "container";
-			container.transform.SetParent (cubeParent.transform);
-			container.transform.localPosition = Vector3.zero;
-
-			if (!fillQuadrant) {
-				return;
-			}
-
-			Vector3 pos = Vector3.zero;
-			//int count = 0;
-
-			int len = _cubesPerQuadrant;
-			float startPos = 0;//(int)len * _fRockSize * .5f;
-			string sName = "";
-
-			pos.x = startPos;// + (_fRockSize * 0.5f);
-			for (int x = 0; x < len; ++x) {
-				pos.y = startPos;// - (_fRockSize * 0.5f);
-				for (int y = 0; y < len; ++y) {
-					pos.z = startPos;// + (_fRockSize * 0.5f);
-					for (int z = 0; z < len; ++z) {
-						sName = "r-" + x.ToString () + "-" + y.ToString () + "-" + z.ToString (); // Globals.rockGameObjectPrepend + count.ToString ();
-						createRock (pos, container, sName);
-						//count++;
-						pos.z += _fRockSize;
-					}
-					pos.y += _fRockSize;
-				}
-				pos.x += _fRockSize;
-			}
-		}
-
-		//
-		private GameObject createQuadrant(Vector3 v3CubePos)
-		{
-			string sPos = v3CubePos.x.ToString () + "_" + v3CubePos.y.ToString () + "_" + v3CubePos.z.ToString ();
-
-			GameObject quadrant = new GameObject(Globals.containerGameObjectPrepend + sPos);
-			quadrant.transform.SetParent(goWorld.transform);
-			quadrant.transform.localPosition = v3CubePos;
-
-			if (cubePrefabCenter != null) {
-				GameObject go = GameObject.Instantiate(cubePrefabCenter);
-				go.name = "center_" + sPos;
-				go.transform.SetParent(quadrant.transform);
-				go.transform.localPosition = new Vector3(0.25f, 0.25f, 0.25f);
-				Block blockScript = go.AddComponent<Block> ();
-				blockScript.init ();
-			}
-
-			_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] = 1;
-
-			_visibleQuadrants.Add (quadrant, true);
-
-			return quadrant;
-		}
-
-		/// <summary>
-		/// ...
-		/// </summary>
-		private GameObject createRock(Vector3 pos, GameObject parent, string name) {
-
-			GameObject go = null;
-			GameObject prefab = null;
-			Vector3 rotation = Vector3.zero;
-
-			prefab = (_cubeIndex == 0 ? cubePrefab : cubePrefab2);
-			if (prefab) {
-				go = GameObject.Instantiate(prefab);
-				go.name = name;
-				go.transform.SetParent(parent.transform);
-				go.transform.localPosition = pos;
-				go.transform.localRotation = Quaternion.Euler (rotation);
-				go.GetComponent<MeshRenderer> ().material = materialsWalls[UnityEngine.Random.Range (0, materialsWalls.Count)];
-				_numCubes++;
-			}
-
-			return go;
-		}
-
-		/// <summary>
-		/// Destroy game objects within a 0.5f radius of the hit point
-		/// </summary>
 		public void digIt (Vector3 v3Pos)
 		{
 			int i, len;
@@ -649,7 +420,7 @@ namespace DragginzWorldEditor
 
 				int j, len2 = adjacentCubes.Count;
 				for (j = 0; j < len2; ++j) {
-					createRockCube (adjacentCubes [j]);
+					_World.createRockCube (adjacentCubes [j]);
 				}
 			}
 			listcubeTransforms.Clear ();
@@ -694,12 +465,8 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void paintIt (GameObject go)
+		/*public void paintIt (GameObject go)
 		{
-			if (go == null) {
-				return;
-			}
-
 			MeshRenderer renderer = go.GetComponent<MeshRenderer> ();
 			if (renderer != null) {
 				renderer.sharedMaterial = _aMaterials[MainMenu.Instance.iSelectedMaterial];
@@ -707,7 +474,7 @@ namespace DragginzWorldEditor
 
 			_goLastMaterialChanged = null;
 			_tempMaterial = null;
-		}
+		}*/
 
 		//
 		public void buildIt(Vector3 v3Pos)
@@ -744,8 +511,8 @@ namespace DragginzWorldEditor
 			if (trfmChild != null) {
 				Debug.LogError ("child "+sName+" exists!");
 			} else {
-				GameObject goNew = createRock (v3LocalBlockPos, container.gameObject, sName);
-				setSingleMaterial (goNew, _aMaterials[MainMenu.Instance.iSelectedMaterial]);
+				GameObject goNew = _World.createRock (v3LocalBlockPos, container.gameObject, sName);
+				_curEditorTool.setSingleMaterial (goNew, _aMaterials[MainMenu.Instance.iSelectedMaterial]);
 			}
 		}
 

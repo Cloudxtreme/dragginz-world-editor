@@ -13,16 +13,21 @@ namespace DragginzWorldEditor
 
 		protected int _type;
 
-		protected Camera _curCam;
-		protected FlyCam _flycam;
+		protected static Camera _curCam;
+		protected static FlyCam _flycam;
 
 		protected static Transform _trfmAimTool;
 
-		protected Ray _ray;
-		protected RaycastHit _hit;
-		protected GameObject _goHit;
+		protected static Ray _ray;
+		protected static RaycastHit _hit;
+		protected static GameObject _goHit;
 
-		protected bool _mouseIsDown;
+		protected static GameObject _goLastMaterialChanged;
+		protected static Material _tempMaterial;
+
+		protected static bool _mouseIsDown;
+
+		private static bool _initialised = false;
 
 		//
 		// GETTERS
@@ -38,12 +43,20 @@ namespace DragginzWorldEditor
 		{
 			_type = type;
 
-			_curCam = LevelEditor.Instance.mainCam;
-			_flycam = FlyCam.Instance;
+			if (!_initialised) {
 
-			_trfmAimTool = LevelEditor.Instance.laserAim.transform;
+				_initialised = true;
 
-			_mouseIsDown = false;
+				_curCam = LevelEditor.Instance.mainCam;
+				_flycam = FlyCam.Instance;
+
+				_trfmAimTool = LevelEditor.Instance.laserAim.transform;
+
+				_goLastMaterialChanged = null;
+				_tempMaterial = null;
+
+				_mouseIsDown = false;
+			}
 		}
 
 		//
@@ -66,6 +79,47 @@ namespace DragginzWorldEditor
 		public virtual void customUpdate(float time, float timeDelta)
 		{
 			//
+		}
+
+		//
+		// PUBLIC METHODS
+		//
+
+		public void resetMaterial()
+		{
+			setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
+			_goLastMaterialChanged = null;
+			_tempMaterial = null;
+		}
+
+		//
+		public void changeSingleMaterial(GameObject go, int materialIndex)
+		{
+			if (go == null) {
+				return;
+			}
+
+			// reset current material
+			if (_goLastMaterialChanged != null && go != _goLastMaterialChanged) {
+				setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
+				_goLastMaterialChanged = null;
+				_tempMaterial = null;
+			}
+
+			_goLastMaterialChanged = go;
+			setSingleMaterial (_goLastMaterialChanged, LevelEditor.Instance.aMaterials[materialIndex]);
+		}
+
+		public void setSingleMaterial(GameObject go, Material material)
+		{
+			if (go != null && material != null) {
+				Renderer renderer = go.GetComponent<Renderer> ();
+				if (renderer != null && renderer.sharedMaterial.name != material.name) {
+					_tempMaterial = renderer.sharedMaterial;
+					renderer.sharedMaterial = material;
+					//Debug.Log ("changing material for game object " + go.name + " to " + material.name);
+				}
+			}
 		}
 
 		//

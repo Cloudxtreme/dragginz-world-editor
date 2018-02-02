@@ -64,6 +64,7 @@
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolDig.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolLook.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolPaint.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\World.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Player\PlayerEditCollision.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\UI\DigMainMenu.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" />
