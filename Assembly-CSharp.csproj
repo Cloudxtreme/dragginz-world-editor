@@ -56,6 +56,7 @@
      <Compile Include="Assets\_WorldEditor\Scripts\Data\LevelData.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Data\LevelFile.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Data\LevelObject.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Data\LevelQuadrant.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Globals.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Block.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" />

@@ -140,6 +140,16 @@ namespace DragginzWorldEditor
 
         #region PublicMethods
 
+		public void resetAll() {
+
+			if (_curEditorTool != null) {
+				_curEditorTool.resetAll ();
+			}
+
+			World.Instance.resetAll ();
+		}
+
+		//
 		public void customUpdateCheckControls(float time, float timeDelta)
 		{
 			if (!MainMenu.Instance.popup.isVisible ())
@@ -257,7 +267,7 @@ namespace DragginzWorldEditor
 				undo.name = go.name;
 				undo.position = go.transform.localPosition;
 				undo.parent = go.transform.parent;
-				undo.material = go.GetComponent<Renderer> ().sharedMaterial;
+				undo.material = go.GetComponent<Renderer> ().material;
 			}
 
 			_undoActions.Add(undo);

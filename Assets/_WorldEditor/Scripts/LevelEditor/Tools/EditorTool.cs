@@ -93,6 +93,12 @@ namespace DragginzWorldEditor
 		// PUBLIC METHODS
 		//
 
+		public void resetAll() {
+			resetAim ();
+			_goLastShaderChange = null;
+			resetMaterial ();
+		}
+
 		public void resetAim()
 		{
 			setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
@@ -209,6 +215,9 @@ namespace DragginzWorldEditor
 		protected void doRayCast() {
 
 			_goHit = null;
+			if (MainMenu.Instance.popup.isVisible ()) {
+				return;
+			}
 
 			// no raycasting if mouse cursor is over top menu
 			if (Screen.height - Input.mousePosition.y < 90) {

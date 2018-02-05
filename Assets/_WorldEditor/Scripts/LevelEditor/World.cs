@@ -61,6 +61,17 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public void resetAll() {
+
+			resetWorld();
+
+			if (_coroutineIsRunning) {
+				StopCoroutine("updateQuadrantVisibility");
+				_coroutineIsRunning = false;
+			}
+		}
+
+		//
 		public void customUpdate()
 		{
 			if (!_coroutineIsRunning && _visibleQuadrants.Count > 0) {
@@ -90,13 +101,21 @@ namespace DragginzWorldEditor
 
 				_coroutineIsRunning = true;
 
+				GameObject go;
+				Transform container;
 				int i;
 				for (i = 0; i < 5; ++i) {
 
-					GameObject go = _aQuadrantChangedVisibility [0];
+					go = _aQuadrantChangedVisibility [0];
 					bool visible = _visibleQuadrants [go];
 					_aQuadrantChangedVisibility.RemoveAt (0);
-					go.transform.Find ("container").gameObject.SetActive (visible);
+
+					if (go != null) {
+						container = go.transform.Find ("container");
+						if (container != null) {
+							container.gameObject.SetActive (visible);
+						}
+					}
 
 					len = _aQuadrantChangedVisibility.Count;
 					if (len <= 0) {
@@ -173,10 +192,7 @@ namespace DragginzWorldEditor
 			}
 
 			GameObject cubeParent = createQuadrant (v3CubePos);
-			GameObject container = new GameObject ();
-			container.name = "container";
-			container.transform.SetParent (cubeParent.transform);
-			container.transform.localPosition = Vector3.zero;
+			GameObject container = createContainer (cubeParent.transform);
 
 			if (!fillQuadrant) {
 				return;
@@ -207,7 +223,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private GameObject createQuadrant(Vector3 v3CubePos)
+		public GameObject createQuadrant(Vector3 v3CubePos)
 		{
 			string sPos = v3CubePos.x.ToString () + "_" + v3CubePos.y.ToString () + "_" + v3CubePos.z.ToString ();
 
@@ -229,6 +245,16 @@ namespace DragginzWorldEditor
 			_visibleQuadrants.Add (quadrant, true);
 
 			return quadrant;
+		}
+
+		public GameObject createContainer(Transform parent) {
+			
+			GameObject container = new GameObject ();
+			container.name = "container";
+			container.transform.SetParent (parent);
+			container.transform.localPosition = Vector3.zero;
+
+			return container;
 		}
 
 		//

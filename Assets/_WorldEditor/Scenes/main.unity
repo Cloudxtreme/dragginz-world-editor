@@ -830,15 +830,20 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114847413086303156, guid: c891010f2fd945b488775603e1678256,
-        type: 2}
-      propertyPath: goDigButtons
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 224145464089200884, guid: c891010f2fd945b488775603e1678256,
         type: 2}

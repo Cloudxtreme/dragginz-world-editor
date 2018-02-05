@@ -261,22 +261,13 @@ namespace DragginzWorldEditor
 		/// </summary>
         private void showLoadFileDialog() {
 
-			AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
-
-			/*
-			if (AppController.Instance.goWorldContainer == null) {
-				if (_popup) {
-					_popup.showPopup(Popup.PopupMode.Notification, "Load Level", "World container is missing from scene!", popupCallback);
-				}
-				return;
-			}
+			//AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
 
 			if (_popup) {
-				_popup.showPopup (Popup.PopupMode.Confirmation, "Load Level", "Are you sure?\nAll unsaved changes will be lost!", showLoadFileBrowser);
+				_popup.showPopup (PopupMode.Confirmation, "Load Level", "Are you sure?\nAll unsaved changes will be lost!", showLoadFileBrowser);
 			} else {
 				showLoadFileBrowser (1);
 			}
-			*/
         }
         
 		/// <summary>
@@ -302,22 +293,13 @@ namespace DragginzWorldEditor
 		/// </summary>
         private void showSaveFileDialog() {
 
-			AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
+			//AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
             
-			/*
-            if (AppController.Instance.goWorldContainer == null) {
-				if (_popup) {
-					_popup.showPopup(Popup.PopupMode.Notification, "Save Level", "World container is missing from scene!", popupCallback);
-            	}
-				return;
-			}
-
-            FileBrowser.SaveFilePanel("Save Level", "Saving Level", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "kickasslevel", new string[] { "dat" }, null, (bool canceled, string filePath) => {
+			FileBrowser.SaveFilePanel("Save Level", "Saving Level", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "myLevel", new string[] { "dat" }, null, (bool canceled, string filePath) => {
                 if (!canceled) {
-					LevelData.Instance.saveLevelData(AppController.Instance.goWorldContainer, filePath);
+					LevelData.Instance.saveLevelData(filePath);
                 }
             });
-            */
         }
 
 		public void toggleMaterial(float toggle)
