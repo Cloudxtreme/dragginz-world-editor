@@ -7,9 +7,6 @@ using UnityEngine;
 
 namespace DragginzWorldEditor
 {
-	/// <summary>
-	/// ...
-	/// </summary>
 	public static class Globals
     {
 		static public readonly string version = "Level Editor v01.31.2a";

@@ -16,9 +16,6 @@ using RTEditor;
 
 namespace DragginzWorldEditor
 {
-	/// <summary>
-	/// ...
-	/// </summary>
 	public class MainMenu : MonoSingleton<MainMenu>
     {
 		public GameObject goMaterialSelection;
@@ -35,12 +32,9 @@ namespace DragginzWorldEditor
 		public Button btnModeBuild;
 		public Button btnModePlay;
 
-		public RawImage imgSelectedMaterial;
+		public Button btnUNDO;
 
-		public Button btnDigSizeBlock;
-		public Button btnDigSizeSmall;
-		public Button btnDigSizeMedium;
-		public Button btnDigSizeLarge;
+		public RawImage imgSelectedMaterial;
 
 		public Slider sliderDigWidth;
 		public Slider sliderDigHeight;
@@ -196,25 +190,11 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void onButtonDigBlockClicked() {
-			//LevelEditor.Instance.setDigSize(-1);
+		public void onButtonUNDOClicked() {
+			LevelEditor.Instance.undoLastActions ();
 		}
-		public void onButtonDigSmallClicked() {
-			//LevelEditor.Instance.setDigSize(0);
-		}
-		public void onButtonDigMediumClicked() {
-			//LevelEditor.Instance.setDigSize(1);
-		}
-		public void onButtonDigLargeClicked() {
-			//LevelEditor.Instance.setDigSize(2);
-		}
-
-		//
-		public void setDigSizeButtons(int size) {
-			btnDigSizeBlock.interactable  = (size != -1);
-			btnDigSizeSmall.interactable  = (size != 0);
-			btnDigSizeMedium.interactable = (size != 1);
-			btnDigSizeLarge.interactable  = (size != 2);
+		public void setUndoButton(bool state) {
+			btnUNDO.interactable = state;
 		}
 
 		//

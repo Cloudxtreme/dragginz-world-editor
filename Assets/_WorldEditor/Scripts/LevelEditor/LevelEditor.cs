@@ -11,6 +11,15 @@ using UnityEngine;
 
 namespace DragginzWorldEditor
 {
+	struct undoAction {
+		public AppState action;
+		public GameObject go;
+		public string name;
+		public Vector3 position;
+		public Transform parent;
+		public Material material;
+	};
+
 	public class LevelEditor : MonoSingleton<LevelEditor>
 	{
 		public Camera mainCam;
@@ -33,6 +42,8 @@ namespace DragginzWorldEditor
 		private EditorTool _curEditorTool;
 
 		private List<Material> _aMaterials;
+
+		private List<undoAction> _undoActions;
 
 		private float _fRockSize;
         private int _cubesPerQuadrant;
@@ -58,6 +69,10 @@ namespace DragginzWorldEditor
 			get { return _aMaterials; }
 		}
 
+		/*public List<undoAction> undoActions {
+			get { return _undoActions; }
+		}*/
+
 		#endregion
 
 		#region SystemMethods
@@ -76,6 +91,8 @@ namespace DragginzWorldEditor
 				_aMaterials.Add(Resources.Load<Material> ("Materials/" + Globals.materials [i]));
 			}
 
+			_undoActions = new List<undoAction> ();
+
 			_fRockSize = 0.5f;
 			_cubesPerQuadrant = 2;
 			_fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
@@ -92,6 +109,8 @@ namespace DragginzWorldEditor
 		void Start() {
 
 			setMode (AppState.Null, true);
+
+			MainMenu.Instance.setUndoButton (false);
 
 			_World.init ();
 
@@ -227,6 +246,63 @@ namespace DragginzWorldEditor
 			}
 		}
 
+		//
+		public void addUndoAction (AppState action, GameObject go)
+		{
+			undoAction undo = new undoAction();
+			undo.action = action;
+			if (go != null) {
+				undo.go = go;
+				undo.name = go.name;
+				undo.position = go.transform.localPosition;
+				undo.parent = go.transform.parent;
+				undo.material = go.GetComponent<Renderer> ().sharedMaterial;
+			}
+			_undoActions.Add(undo);
+			MainMenu.Instance.setUndoButton (true);
+		}
+
+		//
+		public void undoLastActions()
+		{
+			int effectedCubes = 0;
+
+			int i, len = _undoActions.Count;
+			for (i = 0; i < len; ++i)
+			{
+				undoAction undo = _undoActions [i];
+
+				// DIG
+				if (undo.action == AppState.Dig) {
+					if (undo.parent != null) {
+						GameObject go = World.Instance.createRock (undo.position, undo.parent.gameObject, undo.name);
+						undo.material.shader = Shader.Find (Globals.defaultShaderName);
+						go.GetComponent<MeshRenderer> ().material = undo.material;
+						effectedCubes++;
+					}
+				}
+				// PAINT
+				else if (undo.action == AppState.Build) {
+					if (undo.go != null) {
+						Destroy (undo.go);
+						effectedCubes--;
+					}
+				}
+
+				undo.go = null;
+				undo.parent = null;
+				undo.material = null;
+			}
+			_undoActions.Clear ();
+			MainMenu.Instance.setUndoButton (false);
+
+			if (effectedCubes != 0) {
+				World.Instance.numCubes += effectedCubes;
+				MainMenu.Instance.setCubeCountText (World.Instance.numCubes);
+			}
+		}
+
+		//
 		public void updateDigSettings(Vector3 v3DigSettings)
 		{
 			float _fScale = _fRockSize * .75f;

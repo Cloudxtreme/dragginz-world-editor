@@ -46,14 +46,14 @@ namespace DragginzWorldEditor
 			int y = (int)(v3Pos.y < 0 ? Math.Round(v3Pos.y, MidpointRounding.AwayFromZero) : v3Pos.y);
 			int z = (int)(v3Pos.z < 0 ? Math.Round(v3Pos.z, MidpointRounding.AwayFromZero) : v3Pos.z);
 
-			//Debug.LogWarning ("BUILD:");
+			LevelEditor levelEditor = LevelEditor.Instance;
 
 			// get quadrant
 
 			Vector3 v3QuadrantPos = new Vector3 ((float)x / 1f, (float)y / 1f, (float)z / 1f);
 			string sPos = v3QuadrantPos.x.ToString () + "_" + v3QuadrantPos.y.ToString () + "_" + v3QuadrantPos.z.ToString ();
 			string sQuadrantName = Globals.containerGameObjectPrepend + sPos;
-			Transform trfmQuadrant = LevelEditor.Instance.goWorld.transform.Find (sQuadrantName);
+			Transform trfmQuadrant = levelEditor.goWorld.transform.Find (sQuadrantName);
 
 			//Debug.Log ("quadrant: "+trfmQuadrant+" - "+trfmQuadrant.name);
 
@@ -65,9 +65,9 @@ namespace DragginzWorldEditor
 			);
 
 			string sName = "r";
-			sName += "-" + ((int)(v3LocalBlockPos.x / LevelEditor.Instance.fRockSize)).ToString ();
-			sName += "-" + ((int)(v3LocalBlockPos.y / LevelEditor.Instance.fRockSize)).ToString ();
-			sName += "-" + ((int)(v3LocalBlockPos.z / LevelEditor.Instance.fRockSize)).ToString ();
+			sName += "-" + ((int)(v3LocalBlockPos.x / levelEditor.fRockSize)).ToString ();
+			sName += "-" + ((int)(v3LocalBlockPos.y / levelEditor.fRockSize)).ToString ();
+			sName += "-" + ((int)(v3LocalBlockPos.z / levelEditor.fRockSize)).ToString ();
 
 			Transform container = trfmQuadrant.Find ("container");
 			Transform trfmChild = container.Find (sName);
@@ -75,7 +75,8 @@ namespace DragginzWorldEditor
 				Debug.LogError ("child "+sName+" exists!");
 			} else {
 				GameObject goNew = World.Instance.createRock (v3LocalBlockPos, container.gameObject, sName);
-				setSingleMaterial (goNew, LevelEditor.Instance.aMaterials[MainMenu.Instance.iSelectedMaterial], false);
+				setSingleMaterial (goNew, levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial], false);
+				levelEditor.addUndoAction (AppState.Build, goNew);
 			}
 		}
 	}

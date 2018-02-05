@@ -43,33 +43,41 @@ namespace DragginzWorldEditor
 		private void digIt (Vector3 v3Pos)
 		{
 			int i, len;
-			int addedCubes = 0;
+			int destroyedCubes = 0;
 
 			World world = World.Instance;
+			LevelEditor levelEditor = LevelEditor.Instance;
 
 			// keep track of parent objects that had children removed
 			List<Transform> listcubeTransforms = new List<Transform>();
 
-			List<GameObject> listCollidingObjects = LevelEditor.Instance.getOverlappingObjects(v3Pos);
+			List<GameObject> listCollidingObjects = levelEditor.getOverlappingObjects(v3Pos);
 			len = listCollidingObjects.Count;
 			for (i = 0; i < len; ++i) {
 				if (!listcubeTransforms.Contains (listCollidingObjects [i].transform.parent)) {
 					listcubeTransforms.Add (listCollidingObjects [i].transform.parent);
 				}
+
+				levelEditor.addUndoAction (AppState.Dig, listCollidingObjects [i]);
+
 				GameObject.Destroy (listCollidingObjects [i]);
-				addedCubes++;
+				destroyedCubes++;
 			}
 			listCollidingObjects.Clear ();
 			listCollidingObjects = null;
 
-			world.numCubes -= addedCubes;
+			if (destroyedCubes > 0) {
+				MainMenu.Instance.setUndoButton (true);
+			}
+
+			world.numCubes -= destroyedCubes;
 			MainMenu.Instance.setCubeCountText (world.numCubes);
 
 			// extend level if necessary
 			len = listcubeTransforms.Count;
 			for (i = 0; i < len; ++i) {
 
-				List<Vector3> adjacentCubes = LevelEditor.Instance.getAdjacentCubes (listcubeTransforms [i].position);
+				List<Vector3> adjacentCubes = levelEditor.getAdjacentCubes (listcubeTransforms [i].position);
 
 				int j, len2 = adjacentCubes.Count;
 				for (j = 0; j < len2; ++j) {
