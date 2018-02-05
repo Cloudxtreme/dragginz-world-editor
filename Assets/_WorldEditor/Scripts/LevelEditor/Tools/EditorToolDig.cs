@@ -32,6 +32,7 @@ namespace DragginzWorldEditor
 
 				if (_mouseIsDown) {
 					digIt (_trfmAimTool.position);
+					resetAim ();
 					_mouseIsDown = false;
 				}
 			}
@@ -47,6 +48,8 @@ namespace DragginzWorldEditor
 
 			World world = World.Instance;
 			LevelEditor levelEditor = LevelEditor.Instance;
+
+			levelEditor.resetUndoActions ();
 
 			// keep track of parent objects that had children removed
 			List<Transform> listcubeTransforms = new List<Transform>();

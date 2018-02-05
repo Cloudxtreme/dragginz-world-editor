@@ -76,6 +76,7 @@ namespace DragginzWorldEditor
 			} else {
 				GameObject goNew = World.Instance.createRock (v3LocalBlockPos, container.gameObject, sName);
 				setSingleMaterial (goNew, levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial], false);
+				levelEditor.resetUndoActions ();
 				levelEditor.addUndoAction (AppState.Build, goNew);
 			}
 		}

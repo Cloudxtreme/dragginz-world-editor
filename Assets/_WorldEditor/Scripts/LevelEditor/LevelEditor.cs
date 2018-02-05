@@ -249,6 +249,7 @@ namespace DragginzWorldEditor
 		//
 		public void addUndoAction (AppState action, GameObject go)
 		{
+			//Debug.Log ("addUndoAction " + action);
 			undoAction undo = new undoAction();
 			undo.action = action;
 			if (go != null) {
@@ -258,8 +259,26 @@ namespace DragginzWorldEditor
 				undo.parent = go.transform.parent;
 				undo.material = go.GetComponent<Renderer> ().sharedMaterial;
 			}
+
 			_undoActions.Add(undo);
 			MainMenu.Instance.setUndoButton (true);
+		}
+
+		//
+		public void resetUndoActions()
+		{
+			undoAction undo;
+			int i, len = _undoActions.Count;
+			//Debug.Log ("resetUndoActions " + len);
+			for (i = 0; i < len; ++i) {
+				undo = _undoActions [i];
+				undo.go = null;
+				undo.parent = null;
+				undo.material = null;
+				_undoActions [i] = undo;
+			}
+
+			_undoActions.Clear ();
 		}
 
 		//
@@ -268,6 +287,7 @@ namespace DragginzWorldEditor
 			int effectedCubes = 0;
 
 			int i, len = _undoActions.Count;
+			//Debug.Log ("undoLastActions " + len);
 			for (i = 0; i < len; ++i)
 			{
 				undoAction undo = _undoActions [i];
@@ -292,6 +312,7 @@ namespace DragginzWorldEditor
 				undo.go = null;
 				undo.parent = null;
 				undo.material = null;
+				_undoActions [i] = undo;
 			}
 			_undoActions.Clear ();
 			MainMenu.Instance.setUndoButton (false);
