@@ -42,6 +42,7 @@ namespace DragginzWorldEditor
 		private EditorTool _curEditorTool;
 
 		private List<Material> _aMaterials;
+		private Dictionary<string, Material> _aDictMaterials;
 
 		private List<undoAction> _undoActions;
 
@@ -69,6 +70,10 @@ namespace DragginzWorldEditor
 			get { return _aMaterials; }
 		}
 
+		public Dictionary<string, Material> aDictMaterials {
+			get { return _aDictMaterials; }
+		}
+
 		/*public List<undoAction> undoActions {
 			get { return _undoActions; }
 		}*/
@@ -86,9 +91,11 @@ namespace DragginzWorldEditor
 			_World = World.Instance;
 
 			_aMaterials = new List<Material> ();
+			_aDictMaterials = new Dictionary<string, Material> ();
 			int i, len = Globals.materials.Length;
 			for (i = 0; i < len; ++i) {
 				_aMaterials.Add(Resources.Load<Material> ("Materials/" + Globals.materials [i]));
+				_aDictMaterials.Add(Globals.materials [i], _aMaterials[_aMaterials.Count-1]);
 			}
 
 			_undoActions = new List<undoAction> ();
@@ -142,6 +149,8 @@ namespace DragginzWorldEditor
 
 		public void resetAll() {
 
+			resetUndoActions ();
+
 			if (_curEditorTool != null) {
 				_curEditorTool.resetAll ();
 			}
@@ -155,7 +164,7 @@ namespace DragginzWorldEditor
 			if (!MainMenu.Instance.popup.isVisible ())
 			{
 				if (Input.GetKeyDown(KeyCode.Escape)) {
-					if (AppController.Instance.appState == AppState.Dig || AppController.Instance.appState == AppState.Paint || AppController.Instance.appState == AppState.Build) {
+					if (AppController.Instance.appState != AppState.Null) {
 						resetFlyCam();
 					}
 				}
@@ -289,12 +298,15 @@ namespace DragginzWorldEditor
 			}
 
 			_undoActions.Clear ();
+			MainMenu.Instance.setUndoButton (false);
 		}
 
 		//
 		public void undoLastActions()
 		{
 			int effectedCubes = 0;
+
+			Shader shader = Shader.Find (Globals.defaultShaderName);
 
 			int i, len = _undoActions.Count;
 			//Debug.Log ("undoLastActions " + len);
@@ -305,9 +317,9 @@ namespace DragginzWorldEditor
 				// DIG
 				if (undo.action == AppState.Dig) {
 					if (undo.parent != null) {
-						GameObject go = World.Instance.createRock (undo.position, undo.parent.gameObject, undo.name);
-						undo.material.shader = Shader.Find (Globals.defaultShaderName);
-						go.GetComponent<MeshRenderer> ().material = undo.material;
+						GameObject go = World.Instance.createRock (undo.position, undo.parent.gameObject, undo.name, undo.material);
+						undo.material.shader = shader;
+						//go.GetComponent<MeshRenderer> ().material = undo.material;
 						effectedCubes++;
 					}
 				}

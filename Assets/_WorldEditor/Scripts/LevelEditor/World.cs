@@ -258,7 +258,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public GameObject createRock(Vector3 pos, GameObject parent, string name) {
+		public GameObject createRock(Vector3 pos, GameObject parent, string name, Material material = null) {
 
 			GameObject go = null;
 			GameObject prefab = null;
@@ -271,7 +271,11 @@ namespace DragginzWorldEditor
 				go.transform.SetParent(parent.transform);
 				go.transform.localPosition = pos;
 				go.transform.localRotation = Quaternion.Euler (rotation);
-				go.GetComponent<MeshRenderer> ().material = LevelEditor.Instance.materialsWalls[UnityEngine.Random.Range (0, LevelEditor.Instance.materialsWalls.Count)];
+				if (material != null) {
+					go.GetComponent<MeshRenderer> ().material = material;
+				} else {
+					go.GetComponent<MeshRenderer> ().material = LevelEditor.Instance.materialsWalls [UnityEngine.Random.Range (0, LevelEditor.Instance.materialsWalls.Count)];
+				}
 				_numCubes++;
 			}
 

@@ -29,7 +29,7 @@ namespace DragginzWorldEditor
 			try {
 				levelFile = bf.Deserialize(file) as LevelFile;
 				if (levelFile != null) {
-					createObjects (levelFile, parent);
+					createLevel (levelFile, parent);
 				}
 			}
 			catch (System.Exception e) {
@@ -44,16 +44,17 @@ namespace DragginzWorldEditor
 		/// <summary>
 		/// ...
 		/// </summary>
-		private void createObjects(LevelFile levelFile, GameObject parent) {
+		private void createLevel(LevelFile levelFile, GameObject parent) {
 			
 			if (levelFile.fileFormatVersion != Globals.levelSaveFormatVersion) {
 				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningObsoleteFileFormat);
 				return;
 			}
 
-			LevelEditor.Instance.resetAll ();
-
+			LevelEditor levelEditor = LevelEditor.Instance;
 			World world = World.Instance;
+
+			levelEditor.resetAll ();
 
 			GameObject goQuadrant;
 			GameObject container;
@@ -69,8 +70,20 @@ namespace DragginzWorldEditor
 
 				container = world.createContainer (goQuadrant.transform);
 
-				//createNewGameObject (levelFile.levelQuadrants [i]);
+				Vector3 pos2 = Vector3.zero;
+				Material material;
+				int j, len2 = levelFile.levelQuadrants [i].levelObjects.Count;
+				for (j = 0; j < len2; ++j)
+				{
+					pos2.x = levelFile.levelQuadrants [i].levelObjects [j].position.x;
+					pos2.y = levelFile.levelQuadrants [i].levelObjects [j].position.y;
+					pos2.z = levelFile.levelQuadrants [i].levelObjects [j].position.z;
+					material = levelEditor.aDictMaterials [levelFile.levelQuadrants [i].levelObjects [j].material];
+					world.createRock (pos2, container, levelFile.levelQuadrants [i].levelObjects [j].name, material);
+				}
 			}
+
+			MainMenu.Instance.setCubeCountText (World.Instance.numCubes);
 		}
 
 		/// <summary>
@@ -92,10 +105,8 @@ namespace DragginzWorldEditor
 			file.Dispose();
 		}
 
-		/// <summary>
-		/// ...
-		/// </summary>
-		private void createNewGameObject(LevelQuadrant obj) {
+		//
+		/*private void createNewGameObject(LevelQuadrant obj) {
 
 			GameObject go = new GameObject (obj.name);
 			go.transform.SetParent (LevelEditor.Instance.goWorld.transform);
@@ -105,20 +116,18 @@ namespace DragginzWorldEditor
 			meshFilter.mesh = mesh;
 
 			MeshRenderer renderer = go.AddComponent<MeshRenderer> ();
-			/*if (obj.material == "Default-Material") {
+			if (obj.material == "Default-Material") {
 				renderer.material = new Material(Shader.Find("Standard"));
 			} else {
 				renderer.material = Resources.Load<Material> ("Materials/" + obj.material);
-			}*/
+			}
 
 			go.transform.localPosition = new Vector3 (obj.position.x, obj.position.y, obj.position.z);
 			//go.transform.localRotation = new Quaternion(obj.rotation.x, obj.rotation.y, obj.rotation.z, obj.rotation.w);
 			//go.transform.localScale    = new Vector3 (obj.scale.x, obj.scale.y, obj.scale.z);
-		}
+		}*/
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		//
 		private LevelFile createLevelInfo(GameObject parent) {
 
 			if (!parent) {
