@@ -21,12 +21,14 @@ namespace DragginzWorldEditor
 		static public readonly int EDITOR_TOOL_DIG   = 1;
 		static public readonly int EDITOR_TOOL_PAINT = 2;
 		static public readonly int EDITOR_TOOL_BUILD = 3;
-		static public readonly int NUM_EDITOR_TOOLS  = 4;
+		static public readonly int EDITOR_TOOL_ITEMS = 4;
+		static public readonly int NUM_EDITOR_TOOLS  = 5;
 
 		public const string defaultShaderName   = "Mobile/Diffuse"; // "Standard"
 		public const string highlightShaderName = "Legacy Shaders/Reflective/Diffuse";
 
         static public readonly string[] materials = {"Marble", "Moss", "Shape", "Stone"};
+		static public readonly string[] items = {"itemAltar", "itemBarrel", "itemChest", "itemSkull"};
 
 		static public readonly string warningObsoleteFileFormat = "Can't load level:\nFile format is obsolete!";
 		static public readonly string warningInvalidFileFormat  = "Can't load level:\nFile format is invalid!";

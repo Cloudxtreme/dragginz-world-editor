@@ -54,7 +54,10 @@ namespace DragginzWorldEditor
 			//	return;
 			//}
 
-			_mouseWheel = (AppController.Instance.appState == AppState.Look ? Input.GetAxis ("Mouse ScrollWheel") : 0);
+			_mouseWheel = 0;
+			if (!Input.GetKey (KeyCode.LeftShift)) {
+				_mouseWheel = (AppController.Instance.appState != AppState.Null ? Input.GetAxis ("Mouse ScrollWheel") : 0);
+			}
 
 			if (_mouseWheel != 0) {
 				_mouseWheel = (_mouseWheel < 0 ? -0.1f : 0.1f);

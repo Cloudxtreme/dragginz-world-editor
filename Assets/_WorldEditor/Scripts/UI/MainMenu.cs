@@ -19,7 +19,7 @@ namespace DragginzWorldEditor
 	public class MainMenu : MonoSingleton<MainMenu>
     {
 		public GameObject goMaterialSelection;
-		public GameObject goDigButtons;
+		public GameObject goItemsSelection;
 		public GameObject goDigSettings;
 
         public Transform panelMenu;
@@ -30,11 +30,13 @@ namespace DragginzWorldEditor
 		public Button btnModeDig;
 		public Button btnModePaint;
 		public Button btnModeBuild;
+		public Button btnModeItems;
 		public Button btnModePlay;
 
 		public Button btnUNDO;
 
 		public RawImage imgSelectedMaterial;
+		public RawImage imgSelectedItem;
 
 		public Slider sliderDigWidth;
 		public Slider sliderDigHeight;
@@ -67,6 +69,11 @@ namespace DragginzWorldEditor
 		private int _iSelectedMaterial = 0;
 		public int iSelectedMaterial {
 			get { return _iSelectedMaterial; }
+		}
+
+		private int _iSelectedItem = 0;
+		public int iSelectedItem {
+			get { return _iSelectedItem; }
 		}
 
         private Popup _popup;
@@ -139,6 +146,7 @@ namespace DragginzWorldEditor
         void Start() {
 			onSelectTransformTool(0);
 			onSelectMaterial (0);
+			onSelectItem (0);
         }
 
 		#endregion
@@ -179,6 +187,9 @@ namespace DragginzWorldEditor
 		public void onButtonModePlayClicked() {
 			LevelEditor.Instance.setMode(AppState.Play);
 		}
+		public void onButtonModeItemsClicked() {
+			LevelEditor.Instance.setMode(AppState.Items);
+		}
 
 		//
 		public void setModeButtons(AppState mode) {
@@ -186,6 +197,7 @@ namespace DragginzWorldEditor
 			btnModeDig.interactable   = (mode != AppState.Dig);
 			btnModePaint.interactable = (mode != AppState.Paint);
 			btnModeBuild.interactable = (mode != AppState.Build);
+			btnModeItems.interactable = (mode != AppState.Items);
 			//btnModePlay.interactable  = (mode != AppState.Play);
 		}
 
@@ -204,11 +216,14 @@ namespace DragginzWorldEditor
 			}
 		}
 
+		public void showItemsBox(bool state) {
+			if (goItemsSelection != null) {
+				goItemsSelection.SetActive (state);
+			}
+		}
+
 		//
 		public void showDigButtons(bool state) {
-			if (goDigButtons != null) {
-				goDigButtons.SetActive (false);
-			}
 			if (goDigSettings != null) {
 				goDigSettings.SetActive (state);
 			}
@@ -302,6 +317,9 @@ namespace DragginzWorldEditor
             });
         }
 
+		/// <summary>
+		/// Toggles the material.
+		/// </summary>
 		public void toggleMaterial(float toggle)
 		{
 			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {
@@ -348,6 +366,45 @@ namespace DragginzWorldEditor
 			}
 		}
 
+		public void toggleItem(float toggle)
+		{
+			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {
+
+				_lastMouseWheelUpdate = Time.realtimeSinceStartup + 0.2f;
+
+				int itemIndex = _iSelectedItem;
+				if (toggle < 0) {
+					itemIndex = (itemIndex > 0 ? itemIndex - 1 : Globals.items.Length - 1);
+				} else {
+					itemIndex = (itemIndex < (Globals.items.Length - 1) ? itemIndex + 1 : 0);
+				}
+
+				changeItem (itemIndex);
+			}
+		}
+
+		//
+		private void changeItem(int itemIndex) {
+
+			if (itemIndex >= 0 && itemIndex < Globals.items.Length) {
+
+				_iSelectedItem = itemIndex;
+
+				if (goItemsSelection != null && imgSelectedItem != null) {
+
+					Transform child = goItemsSelection.transform.Find ("Item-" + (itemIndex + 1).ToString ());
+					if (child != null) {
+						imgSelectedItem.texture = child.GetComponent<RawImage> ().texture;
+					}
+				}
+
+				LevelEditor.Instance.newItemSelected (_iSelectedItem);
+			}
+		}
+
+		/// <summary>
+		/// Toggles the size of the dig.
+		/// </summary>
 		public void toggleDigSize(float toggle)
 		{
 			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {
@@ -440,9 +497,11 @@ namespace DragginzWorldEditor
 
 		// -------------------------------------------------------------------------------------
 		public void onSelectMaterial(int value) {
-			//if (_gizmoSystem) {
-				changeMaterial (value);
-			//}
+			changeMaterial (value);
+		}
+
+		public void onSelectItem(int value) {
+			changeItem (value);
 		}
 
 		// -------------------------------------------------------------------------------------

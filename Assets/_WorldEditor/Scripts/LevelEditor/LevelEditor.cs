@@ -28,9 +28,9 @@ namespace DragginzWorldEditor
 		public GameObject goPlayerEdit;
 
 		public GameObject cubePrefab;
-        public GameObject cubePrefab2;
 		public GameObject cubePrefabCenter;
 
+		public List<GameObject> itemPrefabs;
         public List<Material> materialsWalls;
 
 		public GameObject laserAim;
@@ -128,6 +128,7 @@ namespace DragginzWorldEditor
 			_aEditorTools.Add(new EditorToolDig());
 			_aEditorTools.Add(new EditorToolPaint());
 			_aEditorTools.Add(new EditorToolBuild());
+			_aEditorTools.Add(new EditorToolItem());
 
 			_curEditorTool = null;
 
@@ -136,7 +137,7 @@ namespace DragginzWorldEditor
 			AppController.Instance.showPopup(
 				PopupMode.Notification,
 				"Controls",
-				"Normal movement: AWSD\nUp and down: QE\nLook around: Right mouse button\nToggle tools: Mouse wheel\nAdjust movement speed: -/+\n\nPress ESC to reset speed and position.",
+				"Normal movement: AWSD\nUp and down: QE\nLook around: Right mouse button\nToggle tools: Shift+Mouse wheel\nAdjust movement speed: -/+\n\nPress ESC to reset speed and position.",
 				startUpPopupCallback
 			);
 		}
@@ -180,9 +181,9 @@ namespace DragginzWorldEditor
 				else if (Input.GetKeyDown(KeyCode.Alpha4)) {
 					setMode (AppState.Build);
 				}
-				//else if (Input.GetKeyDown(KeyCode.Alpha5)) {
-				//	setMode(AppState.Play);
-				//}
+				else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+					setMode(AppState.Items);
+				}
 			}
 
 			if (_curEditorTool != null) {
@@ -220,42 +221,41 @@ namespace DragginzWorldEditor
 					_curEditorTool.resetMaterial ();
 					_curEditorTool.resetAim ();
 				}
-
 				_curEditorTool = null;
 
-				if (mode == AppState.Dig)
+				MainMenu.Instance.showDigButtons (false);
+				MainMenu.Instance.showMaterialBox (false);
+				MainMenu.Instance.showItemsBox (false);
+				laserAim.SetActive (false);
+
+				if (mode == AppState.Look)
+				{
+					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_LOOK];
+				}
+				else if (mode == AppState.Dig)
 				{
 					MainMenu.Instance.showDigButtons (true);
-					MainMenu.Instance.showMaterialBox (false);
 					laserAim.SetActive (true);
 					updateDigSettings (MainMenu.Instance.v3DigSettings);
 					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_DIG];
 				}
 				else if (mode == AppState.Paint)
 				{
-					MainMenu.Instance.showDigButtons (false);
 					MainMenu.Instance.showMaterialBox (true);
-					laserAim.SetActive (false);
 					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_PAINT];
 				}
 				else if (mode == AppState.Build)
 				{
-					MainMenu.Instance.showDigButtons (false);
 					MainMenu.Instance.showMaterialBox (true);
 					laserAim.SetActive (true);
 					laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
 					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_BUILD];
 					_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
 				}
-				else
+				else if (mode == AppState.Items)
 				{
-					MainMenu.Instance.showDigButtons (false);
-					MainMenu.Instance.showMaterialBox (false);
-					laserAim.SetActive (false);
-
-					if (mode == AppState.Look) {
-						_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_LOOK];
-					}
+					MainMenu.Instance.showItemsBox (true);
+					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_ITEMS];
 				}
 
 				if (goPlayer != null && goPlayerEdit != null) {
@@ -352,6 +352,7 @@ namespace DragginzWorldEditor
 			laserAim.transform.localScale = v3DigSettings * _fScale;
 		}
 
+		//
 		public void newMaterialSelected (int iSelectedMaterial)
 		{
 			if (AppController.Instance.appState == AppState.Paint) {
@@ -359,6 +360,14 @@ namespace DragginzWorldEditor
 			}
 			else if (AppController.Instance.appState == AppState.Build) {
 				_curEditorTool.setSingleMaterial (laserAim, _aMaterials [MainMenu.Instance.iSelectedMaterial], false);
+			}
+		}
+
+		//
+		public void newItemSelected (int iSelectedItem)
+		{
+			if (AppController.Instance.appState == AppState.Items) {
+				//_curEditorTool.resetItem();
 			}
 		}
 
