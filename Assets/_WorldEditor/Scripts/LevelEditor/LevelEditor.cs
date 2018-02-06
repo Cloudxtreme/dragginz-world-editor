@@ -24,6 +24,7 @@ namespace DragginzWorldEditor
 	{
 		public Camera mainCam;
 		public GameObject goWorld;
+		public GameObject goItems;
 		public GameObject goPlayer;
 		public GameObject goPlayerEdit;
 
@@ -36,6 +37,8 @@ namespace DragginzWorldEditor
 		public GameObject laserAim;
 		public Material laserAimMaterial;
 
+		public GameObject itemAim;
+
 		private World _World;
 
 		private List<EditorTool> _aEditorTools;
@@ -45,6 +48,8 @@ namespace DragginzWorldEditor
 		private Dictionary<string, Material> _aDictMaterials;
 
 		private List<undoAction> _undoActions;
+
+		private GameObject _goCurItem;
 
 		private float _fRockSize;
         private int _cubesPerQuadrant;
@@ -74,10 +79,6 @@ namespace DragginzWorldEditor
 			get { return _aDictMaterials; }
 		}
 
-		/*public List<undoAction> undoActions {
-			get { return _undoActions; }
-		}*/
-
 		#endregion
 
 		#region SystemMethods
@@ -99,6 +100,8 @@ namespace DragginzWorldEditor
 			}
 
 			_undoActions = new List<undoAction> ();
+
+			_goCurItem = null;
 
 			_fRockSize = 0.5f;
 			_cubesPerQuadrant = 2;
@@ -134,10 +137,11 @@ namespace DragginzWorldEditor
 
 			updateDigSettings (new Vector3(1,1,1));
 
+			//Adjust movement speed: -/+
 			AppController.Instance.showPopup(
 				PopupMode.Notification,
 				"Controls",
-				"Normal movement: AWSD\nUp and down: QE\nLook around: Right mouse button\nToggle tools: Shift+Mouse wheel\nAdjust movement speed: -/+\n\nPress ESC to reset speed and position.",
+				"Normal movement: AWSD\nUp and down: QE\nLook around: Right mouse button\n\nToggle tools: Shift+Mouse wheel\n\nPress ESC to reset speed and position.",
 				startUpPopupCallback
 			);
 		}
@@ -220,13 +224,16 @@ namespace DragginzWorldEditor
 					_curEditorTool.setSingleMaterial (laserAim, laserAimMaterial, false);
 					_curEditorTool.resetMaterial ();
 					_curEditorTool.resetAim ();
+					_curEditorTool.resetItem ();
 				}
 				_curEditorTool = null;
 
 				MainMenu.Instance.showDigButtons (false);
 				MainMenu.Instance.showMaterialBox (false);
 				MainMenu.Instance.showItemsBox (false);
+
 				laserAim.SetActive (false);
+				itemAim.SetActive (false);
 
 				if (mode == AppState.Look)
 				{
@@ -256,6 +263,7 @@ namespace DragginzWorldEditor
 				{
 					MainMenu.Instance.showItemsBox (true);
 					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_ITEMS];
+					itemAim.SetActive (true);
 				}
 
 				if (goPlayer != null && goPlayerEdit != null) {
@@ -366,8 +374,18 @@ namespace DragginzWorldEditor
 		//
 		public void newItemSelected (int iSelectedItem)
 		{
-			if (AppController.Instance.appState == AppState.Items) {
-				//_curEditorTool.resetItem();
+			if (itemAim != null) {
+				if (_goCurItem != null) {
+					Destroy (_goCurItem);
+					_goCurItem = null;
+				}
+				_goCurItem = Instantiate (itemPrefabs [MainMenu.Instance.iSelectedItem]);
+				_goCurItem.transform.SetParent (itemAim.transform);
+				_goCurItem.transform.localPosition = Vector3.zero;
+			}
+
+			if (_curEditorTool != null) {
+				_curEditorTool.resetItem ();
 			}
 		}
 

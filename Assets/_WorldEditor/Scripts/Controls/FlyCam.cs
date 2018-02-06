@@ -93,13 +93,13 @@ namespace DragginzWorldEditor
 			// Key controls when editing level
 			else
 			{
-				if (Input.GetKeyDown (KeyCode.Equals)) {
+				/*if (Input.GetKeyDown (KeyCode.Equals)) {
 					movementSpeed = Mathf.Max (movementSpeed += 0.05f, 0.15f);
 					MainMenu.Instance.setMovementSpeedText (movementSpeed);
 				} else if (Input.GetKeyDown (KeyCode.Minus)) {
 					movementSpeed = Mathf.Max (movementSpeed -= 0.05f, 0.15f);
 					MainMenu.Instance.setMovementSpeedText (movementSpeed);
-				}	
+				}*/	
 
 				if (_mouseWheel == 0) {
 					player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;

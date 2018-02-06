@@ -17,6 +17,7 @@ namespace DragginzWorldEditor
 		protected static FlyCam _flycam;
 
 		protected static Transform _trfmAimTool;
+		protected static Transform _trfmAimItem;
 
 		protected static Ray _ray;
 		protected static RaycastHit _hit;
@@ -55,6 +56,7 @@ namespace DragginzWorldEditor
 				_flycam = FlyCam.Instance;
 
 				_trfmAimTool = LevelEditor.Instance.laserAim.transform;
+				_trfmAimItem = LevelEditor.Instance.itemAim.transform;
 
 				_aUsedShaders = new Dictionary<string, Shader> ();
 				_goLastShaderChange = null;
@@ -97,6 +99,7 @@ namespace DragginzWorldEditor
 			resetAim ();
 			_goLastShaderChange = null;
 			resetMaterial ();
+			resetItem ();
 		}
 
 		public void resetAim()
@@ -111,6 +114,11 @@ namespace DragginzWorldEditor
 			setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
 			_goLastMaterialChanged = null;
 			_tempMaterial = null;
+		}
+
+		public void resetItem()
+		{
+			_trfmAimItem.position = new Vector3(9999,9999,9999);
 		}
 
 		private void changeSingleShader(GameObject go, string shaderName = Globals.defaultShaderName)

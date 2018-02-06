@@ -30,15 +30,15 @@ namespace DragginzWorldEditor
 
 			if (_goHit != null)
 			{
-				/*_trfmAimTool.position = _goHit.transform.position + (_hit.normal * LevelEditor.Instance.fRockSize);
+				_trfmAimItem.position = _goHit.transform.position + (_hit.normal * LevelEditor.Instance.fRockSize);
 
 				if (_mouseIsDown) {
-					placeIt (_trfmAimTool.position);
+					//placeIt (_trfmAimTool.position);
 					_mouseIsDown = false;
-				}*/
+				}
 			}
 			else {
-				//resetAim ();
+				resetItem ();
 			}
 		}
 

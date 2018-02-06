@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 33424262078516192}
   - component: {fileID: 23439601923056130}
   - component: {fileID: 64338405249584594}
-  - component: {fileID: 111367768467667034}
   m_Layer: 0
   m_Name: ItemBarrel
   m_TagString: Untagged
@@ -38,7 +37,7 @@ Transform:
   m_GameObject: {fileID: 1542846363279082}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -92,23 +91,9 @@ MeshCollider:
   m_GameObject: {fileID: 1542846363279082}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300004, guid: be62a5d56cf5c5d40becb72e61632e2d, type: 3}
---- !u!111 &111367768467667034
-Animation:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1542846363279082}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations: []
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
