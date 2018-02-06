@@ -13,6 +13,7 @@ namespace DragginzWorldEditor
 
 		protected int _type;
 
+		protected static LevelEditor _levelEditor;
 		protected static Camera _curCam;
 		protected static FlyCam _flycam;
 
@@ -52,11 +53,12 @@ namespace DragginzWorldEditor
 
 				_initialised = true;
 
-				_curCam = LevelEditor.Instance.mainCam;
+				_levelEditor = LevelEditor.Instance;
+				_curCam = _levelEditor.mainCam;
 				_flycam = FlyCam.Instance;
 
-				_trfmAimTool = LevelEditor.Instance.laserAim.transform;
-				_trfmAimItem = LevelEditor.Instance.itemAim.transform;
+				_trfmAimTool = _levelEditor.laserAim.transform;
+				_trfmAimItem = _levelEditor.itemAim.transform;
 
 				_aUsedShaders = new Dictionary<string, Shader> ();
 				_goLastShaderChange = null;
@@ -119,6 +121,7 @@ namespace DragginzWorldEditor
 		public void resetItem()
 		{
 			_trfmAimItem.position = new Vector3(9999,9999,9999);
+			_trfmAimTool.position = new Vector3(9999,9999,9999);
 		}
 
 		private void changeSingleShader(GameObject go, string shaderName = Globals.defaultShaderName)
@@ -157,7 +160,7 @@ namespace DragginzWorldEditor
 			_aGoShaderChanged.Clear ();
 
 			// set new shaders
-			_aGoShaderChanged = LevelEditor.Instance.getOverlappingObjects(_trfmAimTool.position);
+			_aGoShaderChanged = _levelEditor.getOverlappingObjects(_trfmAimTool.position);
 			setShaders (shaderName);
 		}
 
@@ -200,7 +203,7 @@ namespace DragginzWorldEditor
 			}
 
 			_goLastMaterialChanged = go;
-			setSingleMaterial (_goLastMaterialChanged, LevelEditor.Instance.aMaterials[materialIndex]);
+			setSingleMaterial (_goLastMaterialChanged, _levelEditor.aMaterials[materialIndex]);
 		}
 
 		//

@@ -79,6 +79,10 @@ namespace DragginzWorldEditor
 			get { return _aDictMaterials; }
 		}
 
+		public GameObject goCurItem {
+			get { return _goCurItem; }
+		}
+
 		#endregion
 
 		#region SystemMethods
@@ -263,6 +267,7 @@ namespace DragginzWorldEditor
 				{
 					MainMenu.Instance.showItemsBox (true);
 					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_ITEMS];
+					laserAim.SetActive (true);
 					itemAim.SetActive (true);
 				}
 
@@ -325,9 +330,8 @@ namespace DragginzWorldEditor
 				// DIG
 				if (undo.action == AppState.Dig) {
 					if (undo.parent != null) {
-						GameObject go = World.Instance.createRock (undo.position, undo.parent.gameObject, undo.name, undo.material);
+						World.Instance.createRock (undo.position, undo.parent.gameObject, undo.name, undo.material);
 						undo.material.shader = shader;
-						//go.GetComponent<MeshRenderer> ().material = undo.material;
 						effectedCubes++;
 					}
 				}

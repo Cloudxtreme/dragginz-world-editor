@@ -49,21 +49,20 @@ namespace DragginzWorldEditor
 			int destroyedCubes = 0;
 
 			World world = World.Instance;
-			LevelEditor levelEditor = LevelEditor.Instance;
 
-			levelEditor.resetUndoActions ();
+			_levelEditor.resetUndoActions ();
 
 			// keep track of parent objects that had children removed
 			List<Transform> listcubeTransforms = new List<Transform>();
 
-			List<GameObject> listCollidingObjects = levelEditor.getOverlappingObjects(v3Pos);
+			List<GameObject> listCollidingObjects = _levelEditor.getOverlappingObjects(v3Pos);
 			len = listCollidingObjects.Count;
 			for (i = 0; i < len; ++i) {
 				if (!listcubeTransforms.Contains (listCollidingObjects [i].transform.parent)) {
 					listcubeTransforms.Add (listCollidingObjects [i].transform.parent);
 				}
 
-				levelEditor.addUndoAction (AppState.Dig, listCollidingObjects [i]);
+				_levelEditor.addUndoAction (AppState.Dig, listCollidingObjects [i]);
 
 				GameObject.Destroy (listCollidingObjects [i]);
 				destroyedCubes++;
@@ -82,7 +81,7 @@ namespace DragginzWorldEditor
 			len = listcubeTransforms.Count;
 			for (i = 0; i < len; ++i) {
 
-				List<Vector3> adjacentCubes = levelEditor.getAdjacentCubes (listcubeTransforms [i].position);
+				List<Vector3> adjacentCubes = _levelEditor.getAdjacentCubes (listcubeTransforms [i].position);
 
 				int j, len2 = adjacentCubes.Count;
 				for (j = 0; j < len2; ++j) {

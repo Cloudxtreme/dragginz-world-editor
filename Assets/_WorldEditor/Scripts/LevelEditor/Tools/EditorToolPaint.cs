@@ -31,7 +31,7 @@ namespace DragginzWorldEditor
 				changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);
 
 				if (_mouseIsDown) {
-					setSingleMaterial (_goHit, LevelEditor.Instance.aMaterials[MainMenu.Instance.iSelectedMaterial]);
+					setSingleMaterial (_goHit, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
 					_goLastMaterialChanged = null;
 					_tempMaterial = null;
 				}

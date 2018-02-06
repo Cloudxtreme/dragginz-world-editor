@@ -28,9 +28,21 @@ namespace DragginzWorldEditor
 
 			doRayCast ();
 
-			if (_goHit != null)
+			if (_goHit != null && _levelEditor.goCurItem != null)
 			{
-				_trfmAimItem.position = _goHit.transform.position + (_hit.normal * LevelEditor.Instance.fRockSize);
+				//_trfmAimItem.forward = _hit.normal;
+				//_trfmAimTool.forward = _hit.normal;
+
+				//Vector3 v3Bounds = _levelEditor.goCurItem.GetComponent<Renderer> ().bounds.extents;
+				//Vector3 v3Pos = _goHit.transform.position + _hit.normal;
+				//v3Pos.x += (_hit.normal.x * v3Bounds.x);
+				//v3Pos.y += (_hit.normal.y * v3Bounds.y);
+				//v3Pos.z += (_hit.normal.z * v3Bounds.z);
+
+				_trfmAimItem.position = _goHit.transform.position + _hit.normal;
+				_trfmAimTool.position = _trfmAimItem.position;
+
+				_trfmAimTool.localScale = _levelEditor.goCurItem.GetComponent<Renderer> ().bounds.extents * 2.0f;
 
 				if (_mouseIsDown) {
 					//placeIt (_trfmAimTool.position);
@@ -48,7 +60,7 @@ namespace DragginzWorldEditor
 			int y = (int)(v3Pos.y < 0 ? Math.Round(v3Pos.y, MidpointRounding.AwayFromZero) : v3Pos.y);
 			int z = (int)(v3Pos.z < 0 ? Math.Round(v3Pos.z, MidpointRounding.AwayFromZero) : v3Pos.z);
 
-			LevelEditor levelEditor = LevelEditor.Instance;
+			LevelEditor levelEditor = _levelEditor;
 
 			// get quadrant
 
