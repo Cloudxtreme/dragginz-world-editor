@@ -289,5 +289,19 @@ namespace DragginzWorldEditor
 
 			return go;
 		}
+
+		//
+		public GameObject createItem(int id, Vector3 v3Pos, string name, Transform parent, bool enableCollider = true)
+		{
+			GameObject goNew = GameObject.Instantiate (_levelEditor.itemPrefabs [id]);
+			goNew.transform.SetParent (parent);
+			goNew.transform.position = v3Pos;
+			goNew.name = name;
+
+			goNew.GetComponent<BoxCollider>().enabled  = enableCollider;
+			goNew.GetComponent<Rigidbody>().useGravity = enableCollider;
+
+			return goNew;
+		}
 	}
 }

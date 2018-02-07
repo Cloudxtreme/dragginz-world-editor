@@ -12,40 +12,33 @@ using UnityEngine;
 
 namespace DragginzWorldEditor
 {
-	/// <summary>
-	/// ...
-	/// </summary>
 	public class LevelData : Singleton<LevelData> {
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		//
 		public void loadLevelData(GameObject parent, string filename) {
 			
 			BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Open(filename, FileMode.Open);
 
 			LevelFile levelFile = null;
-			try {
+			//try {
 				levelFile = bf.Deserialize(file) as LevelFile;
 				if (levelFile != null) {
 					createLevel (levelFile, parent);
 				}
-			}
-			catch (System.Exception e) {
-				Debug.LogWarning (e.Message);
-				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat);
-			}
+			//}
+			//catch (System.Exception e) {
+			//	Debug.LogWarning (e.Message);
+			//	AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat);
+			//}
 
 			file.Close();
 			file.Dispose();
 		}
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		//
 		private void createLevel(LevelFile levelFile, GameObject parent) {
-			
+
 			if (levelFile.fileFormatVersion != Globals.levelSaveFormatVersion) {
 				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningObsoleteFileFormat);
 				return;
@@ -84,14 +77,36 @@ namespace DragginzWorldEditor
 			}
 
 			MainMenu.Instance.setCubeCountText (World.Instance.numCubes);
+
+			if (levelFile.levelItems != null) {
+				
+				LevelItem levelItem;
+				GameObject item;
+				Quaternion rotation = Quaternion.identity;
+
+				len = levelFile.levelItems.Count;
+				for (i = 0; i < len; ++i) {
+					levelItem = levelFile.levelItems [i];
+
+					pos.x = levelItem.position.x;
+					pos.y = levelItem.position.y;
+					pos.z = levelItem.position.z;
+
+					item = world.createItem (levelItem.id, pos, levelItem.name, levelEditor.goItems.transform); 
+
+					rotation.w = levelItem.rotation.w;
+					rotation.x = levelItem.rotation.x;
+					rotation.y = levelItem.rotation.y;
+					rotation.z = levelItem.rotation.z;
+					item.transform.rotation = rotation;
+				}
+			}
 		}
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		//
 		public void saveLevelData(string filename) {
 
-			LevelFile levelFile = createLevelInfo ();
+			LevelFile levelFile = createLevelData ();
 			if (levelFile == null) {
 				return;
 			}
@@ -106,29 +121,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		/*private void createNewGameObject(LevelQuadrant obj) {
-
-			GameObject go = new GameObject (obj.name);
-			go.transform.SetParent (LevelEditor.Instance.goWorld.transform);
-
-			MeshFilter meshFilter = go.AddComponent<MeshFilter> ();
-			Mesh mesh = new Mesh ();
-			meshFilter.mesh = mesh;
-
-			MeshRenderer renderer = go.AddComponent<MeshRenderer> ();
-			if (obj.material == "Default-Material") {
-				renderer.material = new Material(Shader.Find("Standard"));
-			} else {
-				renderer.material = Resources.Load<Material> ("Materials/" + obj.material);
-			}
-
-			go.transform.localPosition = new Vector3 (obj.position.x, obj.position.y, obj.position.z);
-			//go.transform.localRotation = new Quaternion(obj.rotation.x, obj.rotation.y, obj.rotation.z, obj.rotation.w);
-			//go.transform.localScale    = new Vector3 (obj.scale.x, obj.scale.y, obj.scale.z);
-		}*/
-
-		//
-		private LevelFile createLevelInfo() {
+		private LevelFile createLevelData() {
 
 			GameObject parent = LevelEditor.Instance.goWorld;
 			if (parent == null) {
@@ -190,14 +183,38 @@ namespace DragginzWorldEditor
 			parent = LevelEditor.Instance.goItems;
 			if (parent != null) {
 
-				foreach (Transform child in parent.transform) {
+				List<LevelItem> items = new List<LevelItem> ();
 
-					if (!child.gameObject.activeSelf) {
+				foreach (Transform item in parent.transform) {
+
+					if (!item.gameObject.activeSelf) {
 						continue;
 					}
 
-					// save item data
+					int itemId = Globals.getItemIndexFromName (item.name);
+					if (itemId == -1) {
+						continue;
+					}
+
+					LevelItem levelItem = new LevelItem ();
+					levelItem.id   = itemId;
+					levelItem.name = item.name;
+
+					levelItem.position   = new DataTypeVector3 ();
+					levelItem.position.x = item.position.x;
+					levelItem.position.y = item.position.y;
+					levelItem.position.z = item.position.z;
+
+					levelItem.rotation = new DataTypeQuaternion ();
+					levelItem.rotation.w = item.rotation.w;
+					levelItem.rotation.x = item.rotation.x;
+					levelItem.rotation.y = item.rotation.y;
+					levelItem.rotation.z = item.rotation.z;
+
+					items.Add (levelItem);
 				}
+
+				levelFile.levelItems = items;
 			}
 
 			return levelFile;

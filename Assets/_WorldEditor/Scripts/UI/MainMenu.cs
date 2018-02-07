@@ -374,9 +374,9 @@ namespace DragginzWorldEditor
 
 				int itemIndex = _iSelectedItem;
 				if (toggle < 0) {
-					itemIndex = (itemIndex > 0 ? itemIndex - 1 : Globals.items.Length - 1);
+					itemIndex = (itemIndex > 0 ? itemIndex - 1 : Globals.items.Count - 1);
 				} else {
-					itemIndex = (itemIndex < (Globals.items.Length - 1) ? itemIndex + 1 : 0);
+					itemIndex = (itemIndex < (Globals.items.Count - 1) ? itemIndex + 1 : 0);
 				}
 
 				changeItem (itemIndex);
@@ -386,7 +386,7 @@ namespace DragginzWorldEditor
 		//
 		private void changeItem(int itemIndex) {
 
-			if (itemIndex >= 0 && itemIndex < Globals.items.Length) {
+			if (itemIndex >= 0 && itemIndex < Globals.items.Count) {
 
 				_iSelectedItem = itemIndex;
 
@@ -544,6 +544,7 @@ namespace DragginzWorldEditor
         public void onPointerDown(BaseEventData data) {
             if (_trfmDropDownFile) {
                 resetDropDown(_trfmDropDownFile);
+				LevelEditor.Instance.setMode (AppState.Look);
             }
         }
 

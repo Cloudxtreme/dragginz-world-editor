@@ -163,6 +163,13 @@ namespace DragginzWorldEditor
 
         #region PublicMethods
 
+		public void startUpPopupCallback(int buttonId) {
+
+			AppController.Instance.hidePopup ();
+			setMode (AppState.Look);
+		}
+
+		//
 		public void resetAll() {
 
 			resetUndoActions ();
@@ -214,13 +221,6 @@ namespace DragginzWorldEditor
 			if (_curEditorTool != null) {
 				_curEditorTool.customUpdate (time, timeDelta);
 			}
-		}
-
-		//
-		public void startUpPopupCallback(int buttonId) {
-
-			AppController.Instance.hidePopup ();
-			setMode (AppState.Dig);
 		}
 
 		//
@@ -435,13 +435,8 @@ namespace DragginzWorldEditor
 					Destroy (_goCurItem);
 					_goCurItem = null;
 				}
-				_goCurItem = Instantiate (itemPrefabs [MainMenu.Instance.iSelectedItem]);
-				_goCurItem.transform.SetParent (itemAim.transform);
+				_goCurItem = _World.createItem (MainMenu.Instance.iSelectedItem, Vector3.zero, Globals.items [MainMenu.Instance.iSelectedItem], itemAim.transform, false); 
 				_goCurItem.transform.localPosition = Vector3.zero;
-				_goCurItem.name = Globals.items [MainMenu.Instance.iSelectedItem];
-				// turn off gravity and collider
-				_goCurItem.GetComponent<BoxCollider>().enabled = false;
-				_goCurItem.GetComponent<Rigidbody>().useGravity = false;
 			}
 
 			if (_curEditorTool != null) {
