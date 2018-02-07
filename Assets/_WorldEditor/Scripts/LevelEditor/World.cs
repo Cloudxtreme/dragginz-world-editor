@@ -13,6 +13,8 @@ namespace DragginzWorldEditor
 {
 	public class World : MonoSingleton<World> {
 
+		private LevelEditor _levelEditor;
+
 		private Dictionary<int, Dictionary<int, Dictionary<int, int>>> _quadrantFlags;
 		private int _iMinLevelCoord;
 		private int _iMaxLevelCoord;
@@ -35,6 +37,8 @@ namespace DragginzWorldEditor
 
 		public void init()
 		{
+			_levelEditor = LevelEditor.Instance;
+
 			_iMinLevelCoord = -50;
 			_iMaxLevelCoord = 50;
 
@@ -134,7 +138,7 @@ namespace DragginzWorldEditor
 
 			resetWorld ();
 
-			float fQuadrantSize = LevelEditor.Instance.fQuadrantSize;
+			float fQuadrantSize = _levelEditor.fQuadrantSize;
 			int count = 0;
 
 			// create hollow cube of cubes :)
@@ -167,7 +171,11 @@ namespace DragginzWorldEditor
 		{
 			_numCubes = 0;
 
-			foreach (Transform child in LevelEditor.Instance.goWorld.transform) {
+			foreach (Transform child in _levelEditor.goWorld.transform) {
+				Destroy (child.gameObject);
+			}
+
+			foreach (Transform child in _levelEditor.goItems.transform) {
 				Destroy (child.gameObject);
 			}
 
@@ -198,11 +206,11 @@ namespace DragginzWorldEditor
 				return;
 			}
 
-			float fRockSize = LevelEditor.Instance.fRockSize;
+			float fRockSize = _levelEditor.fRockSize;
 
 			Vector3 pos = Vector3.zero;
 
-			int len = LevelEditor.Instance.cubesPerQuadrant;
+			int len = _levelEditor.cubesPerQuadrant;
 			float startPos = 0;
 			string sName = "";
 
@@ -228,11 +236,11 @@ namespace DragginzWorldEditor
 			string sPos = v3CubePos.x.ToString () + "_" + v3CubePos.y.ToString () + "_" + v3CubePos.z.ToString ();
 
 			GameObject quadrant = new GameObject(Globals.containerGameObjectPrepend + sPos);
-			quadrant.transform.SetParent(LevelEditor.Instance.goWorld.transform);
+			quadrant.transform.SetParent(_levelEditor.goWorld.transform);
 			quadrant.transform.localPosition = v3CubePos;
 
-			if (LevelEditor.Instance.cubePrefabCenter != null) {
-				GameObject go = GameObject.Instantiate(LevelEditor.Instance.cubePrefabCenter);
+			if (_levelEditor.cubePrefabCenter != null) {
+				GameObject go = GameObject.Instantiate(_levelEditor.cubePrefabCenter);
 				go.name = "center_" + sPos;
 				go.transform.SetParent(quadrant.transform);
 				go.transform.localPosition = new Vector3(0.25f, 0.25f, 0.25f);
@@ -264,7 +272,7 @@ namespace DragginzWorldEditor
 			GameObject prefab = null;
 			Vector3 rotation = Vector3.zero;
 
-			prefab = LevelEditor.Instance.cubePrefab;//(_cubeIndex == 0 ? cubePrefab : cubePrefab2);
+			prefab = _levelEditor.cubePrefab;//(_cubeIndex == 0 ? cubePrefab : cubePrefab2);
 			if (prefab) {
 				go = GameObject.Instantiate(prefab);
 				go.name = name;
@@ -274,7 +282,7 @@ namespace DragginzWorldEditor
 				if (material != null) {
 					go.GetComponent<MeshRenderer> ().material = material;
 				} else {
-					go.GetComponent<MeshRenderer> ().material = LevelEditor.Instance.materialsWalls [UnityEngine.Random.Range (0, LevelEditor.Instance.materialsWalls.Count)];
+					go.GetComponent<MeshRenderer> ().material = _levelEditor.materialsWalls [UnityEngine.Random.Range (0, _levelEditor.materialsWalls.Count)];
 				}
 				_numCubes++;
 			}

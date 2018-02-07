@@ -91,7 +91,7 @@ namespace DragginzWorldEditor
 		/// </summary>
 		public void saveLevelData(string filename) {
 
-			LevelFile levelFile = createLevelInfo (LevelEditor.Instance.goWorld);
+			LevelFile levelFile = createLevelInfo ();
 			if (levelFile == null) {
 				return;
 			}
@@ -128,9 +128,10 @@ namespace DragginzWorldEditor
 		}*/
 
 		//
-		private LevelFile createLevelInfo(GameObject parent) {
+		private LevelFile createLevelInfo() {
 
-			if (!parent) {
+			GameObject parent = LevelEditor.Instance.goWorld;
+			if (parent == null) {
 				return null;
 			}
 
@@ -184,6 +185,19 @@ namespace DragginzWorldEditor
 				}
 
 				levelFile.levelQuadrants.Add (quadrant);
+			}
+
+			parent = LevelEditor.Instance.goItems;
+			if (parent != null) {
+
+				foreach (Transform child in parent.transform) {
+
+					if (!child.gameObject.activeSelf) {
+						continue;
+					}
+
+					// save item data
+				}
 			}
 
 			return levelFile;

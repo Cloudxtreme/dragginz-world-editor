@@ -342,6 +342,12 @@ namespace DragginzWorldEditor
 						effectedCubes--;
 					}
 				}
+				// ITEM
+				else if (undo.action == AppState.Items) {
+					if (undo.go != null) {
+						Destroy (undo.go);
+					}
+				}
 
 				undo.go = null;
 				undo.parent = null;
@@ -386,6 +392,10 @@ namespace DragginzWorldEditor
 				_goCurItem = Instantiate (itemPrefabs [MainMenu.Instance.iSelectedItem]);
 				_goCurItem.transform.SetParent (itemAim.transform);
 				_goCurItem.transform.localPosition = Vector3.zero;
+				_goCurItem.name = Globals.items [MainMenu.Instance.iSelectedItem];
+				// turn off gravity and collider
+				_goCurItem.GetComponent<BoxCollider>().enabled = false;
+				_goCurItem.GetComponent<Rigidbody>().useGravity = false;
 			}
 
 			if (_curEditorTool != null) {

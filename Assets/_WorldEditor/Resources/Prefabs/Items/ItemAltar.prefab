@@ -21,7 +21,8 @@ GameObject:
   - component: {fileID: 4543417021519344}
   - component: {fileID: 33096337606700372}
   - component: {fileID: 23282454344913506}
-  - component: {fileID: 64216052628268178}
+  - component: {fileID: 54392620391230126}
+  - component: {fileID: 65268103201732174}
   m_Layer: 0
   m_Name: ItemAltar
   m_TagString: Untagged
@@ -83,17 +84,30 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1135133013189630}
   m_Mesh: {fileID: 4300002, guid: 5d7ae08046221d441920fd5c0a8879d3, type: 3}
---- !u!64 &64216052628268178
-MeshCollider:
+--- !u!54 &54392620391230126
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1135133013189630}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &65268103201732174
+BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1135133013189630}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300002, guid: 5d7ae08046221d441920fd5c0a8879d3, type: 3}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.204026, y: 1.2315123, z: 1.4331304}
+  m_Center: {x: -0.0019470453, y: 0.0027709908, z: -0.28362104}

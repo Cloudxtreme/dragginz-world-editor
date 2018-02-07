@@ -24,6 +24,9 @@ namespace DragginzWorldEditor
 		protected static RaycastHit _hit;
 		protected static GameObject _goHit;
 
+		protected static Bounds _bounds;
+		protected static Vector3 _v3Pos;
+
 		protected static Dictionary<string, Shader> _aUsedShaders;
 		protected static GameObject _goLastShaderChange;
 		protected static List<GameObject> _aGoShaderChanged;
