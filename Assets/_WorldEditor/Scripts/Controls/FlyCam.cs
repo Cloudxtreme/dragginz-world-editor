@@ -73,6 +73,11 @@ namespace DragginzWorldEditor
 				player.eulerAngles = playerEuler;
 			}
 
+			if (_mouseWheel == 0) {
+				player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
+				//player.position += (transform.up * Input.GetAxis ("Depth")) * movementSpeed;
+			}
+
 			if (AppController.Instance.appState == AppState.Look) {
 				
 				if (Input.GetMouseButtonDown(0))
@@ -90,24 +95,13 @@ namespace DragginzWorldEditor
 					player.position = dragOrigin - dragDiff;
 				}
 			}
-			// Key controls when editing level
-			else
+			/*else
 			{
-				/*if (Input.GetKeyDown (KeyCode.Equals)) {
-					movementSpeed = Mathf.Max (movementSpeed += 0.05f, 0.15f);
-					MainMenu.Instance.setMovementSpeedText (movementSpeed);
-				} else if (Input.GetKeyDown (KeyCode.Minus)) {
-					movementSpeed = Mathf.Max (movementSpeed -= 0.05f, 0.15f);
-					MainMenu.Instance.setMovementSpeedText (movementSpeed);
-				}*/	
-
 				if (_mouseWheel == 0) {
 					player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
 					//player.position += (transform.up * Input.GetAxis ("Depth")) * movementSpeed;
 				}
-
-				//player.eulerAngles += new Vector3 (-Input.GetAxis ("Mouse Y"), Input.GetAxis ("Mouse X"), Input.GetAxis ("Rotation"));
-			}
+			}*/
 
 			if (Time.realtimeSinceStartup > _nextPosUpdate) {
 				_nextPosUpdate = Time.realtimeSinceStartup + 0.5f;

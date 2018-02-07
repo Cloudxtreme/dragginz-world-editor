@@ -11,6 +11,12 @@ using UnityEngine;
 
 namespace DragginzWorldEditor
 {
+	struct undoItem {
+		public GameObject go;
+		public Vector3 position;
+		public Quaternion rotation;
+	};
+
 	struct undoAction {
 		public AppState action;
 		public GameObject go;
@@ -18,6 +24,7 @@ namespace DragginzWorldEditor
 		public Vector3 position;
 		public Transform parent;
 		public Material material;
+		public List<undoItem> items;
 	};
 
 	public class LevelEditor : MonoSingleton<LevelEditor>
@@ -292,6 +299,17 @@ namespace DragginzWorldEditor
 				undo.material = go.GetComponent<Renderer> ().material;
 			}
 
+			// items
+			undo.items = new List<undoItem> ();
+			foreach (Transform child in goItems.transform) {
+				undoItem item = new undoItem ();
+				item.go = child.gameObject;
+				item.position = child.position;
+				item.rotation = child.rotation;
+				undo.items.Add (item);
+			}
+
+			// save undo step
 			_undoActions.Add(undo);
 			MainMenu.Instance.setUndoButton (true);
 		}
@@ -300,13 +318,24 @@ namespace DragginzWorldEditor
 		public void resetUndoActions()
 		{
 			undoAction undo;
+			undoItem item;
+
 			int i, len = _undoActions.Count;
-			//Debug.Log ("resetUndoActions " + len);
 			for (i = 0; i < len; ++i) {
 				undo = _undoActions [i];
 				undo.go = null;
 				undo.parent = null;
 				undo.material = null;
+
+				// items
+				int j, len2 = undo.items.Count;
+				for (j = 0; j < len2; ++j) {
+					item = undo.items[j];
+					item.go = null;
+					undo.items[j] = item;
+				}
+				undo.items.Clear ();
+
 				_undoActions [i] = undo;
 			}
 
@@ -321,11 +350,14 @@ namespace DragginzWorldEditor
 
 			Shader shader = Shader.Find (Globals.defaultShaderName);
 
+			undoAction undo;
+			undoItem item;
+
 			int i, len = _undoActions.Count;
 			//Debug.Log ("undoLastActions " + len);
 			for (i = 0; i < len; ++i)
 			{
-				undoAction undo = _undoActions [i];
+				undo = _undoActions [i];
 
 				// DIG
 				if (undo.action == AppState.Dig) {
@@ -352,8 +384,22 @@ namespace DragginzWorldEditor
 				undo.go = null;
 				undo.parent = null;
 				undo.material = null;
+
+				// items
+				int j, len2 = undo.items.Count;
+				for (j = 0; j < len2; ++j) {
+					item = undo.items[j];
+					if (item.go != null) {
+						item.go.transform.position = item.position;
+						item.go.transform.rotation = item.rotation;
+					}
+					item.go = null;
+				}
+				undo.items.Clear ();
+
 				_undoActions [i] = undo;
 			}
+
 			_undoActions.Clear ();
 			MainMenu.Instance.setUndoButton (false);
 
