@@ -22,9 +22,13 @@ namespace DragginzWorldEditor
 		private Vector3 playerEuler;
 		private Vector3 camOffset;
 
+		private PlayerEditCollision playerCollision;
+
 		private Vector3 mousePos;
 		private Vector3 dragOrigin;
 		private Vector3 dragDiff;
+
+		private Vector3 _playerPosSave;
 
 		private float _mouseWheel;
 		private float _inputH;
@@ -47,9 +51,16 @@ namespace DragginzWorldEditor
 			dragOrigin = Vector3.zero;
 			dragDiff   = Vector3.zero;
 
+			_playerPosSave = player.position;
+
 			_nextPosUpdate = 0;
 
 			drawWireframe = false;
+		}
+
+		void Start() {
+
+			playerCollision = PlayerEditCollision.Instance;
 		}
 
 		void OnPreRender() {
@@ -61,10 +72,6 @@ namespace DragginzWorldEditor
 
 		void Update ()
 		{
-			//if (PlayerEditCollision.Instance.isColliding) {
-			//	return;
-			//}
-
 			_mouseWheel = 0;
 			//if (!Input.GetKey (KeyCode.LeftShift)) {
 			//	_mouseWheel = (AppController.Instance.appState != AppState.Null ? Input.GetAxis ("Mouse ScrollWheel") : 0);
@@ -117,6 +124,13 @@ namespace DragginzWorldEditor
 			if (Time.realtimeSinceStartup > _nextPosUpdate) {
 				_nextPosUpdate = Time.realtimeSinceStartup + 0.5f;
 				MainMenu.Instance.setCameraPositionText (player.position);
+			}
+		}
+
+		void LateUpdate()
+		{
+			if (playerCollision.isColliding) {
+				player.position = playerCollision.lastSavePos;
 			}
 		}
 
