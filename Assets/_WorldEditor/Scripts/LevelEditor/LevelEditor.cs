@@ -148,13 +148,7 @@ namespace DragginzWorldEditor
 
 			updateDigSettings (new Vector3(1,1,1));
 
-			//Adjust movement speed: -/+
-			AppController.Instance.showPopup(
-				PopupMode.Notification,
-				"Controls",
-				"Normal movement: AWSD\nUp and down: QE\nLook around: Right mouse button\n\nToggle tools: Shift+Mouse wheel\n\nPress ESC to reset speed and position.",
-				startUpPopupCallback
-			);
+			showHelpPopup ();
 		}
 
         #endregion
@@ -162,6 +156,15 @@ namespace DragginzWorldEditor
         // ----------------------------------------------------------------------------------------
 
         #region PublicMethods
+
+		private void showHelpPopup() {
+			AppController.Instance.showPopup(
+				PopupMode.Notification,
+				"Controls",
+				"Normal movement: AWSD\nUp and down: QE\nLook around: Right mouse button\nWireframe mode: Shift\nToggle tools: Mouse wheel\n\nPress ESC to reset speed and position.",
+				startUpPopupCallback
+			);
+		}
 
 		public void startUpPopupCallback(int buttonId) {
 
@@ -184,12 +187,29 @@ namespace DragginzWorldEditor
 		//
 		public void customUpdateCheckControls(float time, float timeDelta)
 		{
-			if (!MainMenu.Instance.popup.isVisible ())
+			if (Input.GetKeyDown (KeyCode.LeftShift)) {
+				FlyCam.Instance.drawWireframe = true;
+			}
+			else if (Input.GetKeyUp (KeyCode.LeftShift)) {
+				FlyCam.Instance.drawWireframe = false;
+			}
+
+			if (MainMenu.Instance.popup.isVisible ())
 			{
-				if (Input.GetKeyDown(KeyCode.Escape)) {
-					if (AppController.Instance.appState != AppState.Null) {
-						resetFlyCam();
+				if (Input.GetKeyDown (KeyCode.Escape)) {
+					AppController.Instance.hidePopup ();
+				}
+			}
+			else {
+				
+				if (Input.GetKeyDown (KeyCode.F1)) {
+					showHelpPopup ();
+				}
+				else if (Input.GetKeyDown (KeyCode.Escape)) {
+					if (AppController.Instance.appState != AppState.Look) {
+						setMode (AppState.Look);
 					}
+					resetFlyCam ();
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha1)) {
 					setMode (AppState.Look);
@@ -198,10 +218,10 @@ namespace DragginzWorldEditor
 					setMode (AppState.Dig);
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-					setMode (AppState.Paint);
+					setMode (AppState.Build);
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha4)) {
-					setMode (AppState.Build);
+					setMode (AppState.Paint);
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha5)) {
 					setMode(AppState.Items);
@@ -276,6 +296,9 @@ namespace DragginzWorldEditor
 					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_ITEMS];
 					laserAim.SetActive (true);
 					itemAim.SetActive (true);
+					if (_goCurItem == null) {
+						newItemSelected (MainMenu.Instance.iSelectedItem);
+					}
 				}
 
 				if (goPlayer != null && goPlayerEdit != null) {
@@ -430,6 +453,10 @@ namespace DragginzWorldEditor
 		//
 		public void newItemSelected (int iSelectedItem)
 		{
+			if (AppController.Instance.appState == AppState.Null) {
+				return;
+			}
+				
 			if (itemAim != null) {
 				if (_goCurItem != null) {
 					Destroy (_goCurItem);

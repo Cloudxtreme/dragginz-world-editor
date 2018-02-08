@@ -244,8 +244,8 @@ namespace DragginzWorldEditor
 				go.name = "center_" + sPos;
 				go.transform.SetParent(quadrant.transform);
 				go.transform.localPosition = new Vector3(0.25f, 0.25f, 0.25f);
-				Block blockScript = go.AddComponent<Block> ();
-				blockScript.init ();
+				//Block blockScript = go.AddComponent<Block> ();
+				//blockScript.init ();
 			}
 
 			_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] = 1;

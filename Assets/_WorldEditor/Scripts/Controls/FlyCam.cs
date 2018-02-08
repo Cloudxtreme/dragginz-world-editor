@@ -31,6 +31,8 @@ namespace DragginzWorldEditor
 
 		private float _nextPosUpdate;
 
+		public bool drawWireframe = false;
+
 		void Awake()
 		{
 			myCam = GetComponent<Camera> ();
@@ -46,6 +48,15 @@ namespace DragginzWorldEditor
 			dragDiff   = Vector3.zero;
 
 			_nextPosUpdate = 0;
+
+			drawWireframe = false;
+		}
+
+		void OnPreRender() {
+			GL.wireframe = drawWireframe;
+		}
+		void OnPostRender() {
+			GL.wireframe = false;
 		}
 
 		void Update ()
@@ -55,9 +66,9 @@ namespace DragginzWorldEditor
 			//}
 
 			_mouseWheel = 0;
-			if (!Input.GetKey (KeyCode.LeftShift)) {
-				_mouseWheel = (AppController.Instance.appState != AppState.Null ? Input.GetAxis ("Mouse ScrollWheel") : 0);
-			}
+			//if (!Input.GetKey (KeyCode.LeftShift)) {
+			//	_mouseWheel = (AppController.Instance.appState != AppState.Null ? Input.GetAxis ("Mouse ScrollWheel") : 0);
+			//}
 
 			if (_mouseWheel != 0) {
 				_mouseWheel = (_mouseWheel < 0 ? -0.1f : 0.1f);

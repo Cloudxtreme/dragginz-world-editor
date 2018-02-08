@@ -21,9 +21,9 @@ namespace DragginzWorldEditor
 		public override void customUpdate(float time, float timeDelta)
 		{
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
-				if (Input.GetKey (KeyCode.LeftShift)) {
+				//if (Input.GetKey (KeyCode.LeftShift)) {
 					MainMenu.Instance.toggleMaterial (Input.GetAxis ("Mouse ScrollWheel"));
-				}
+				//}
 			}
 
 			doRayCast ();

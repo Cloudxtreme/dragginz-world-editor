@@ -36,6 +36,9 @@ namespace DragginzWorldEditor
 
 		protected static bool _mouseIsDown;
 
+		private static float _uiHeight  = (float)Screen.height * (90.0f / 1080.0f);
+		private static float _maxClickY = (float)Screen.height - _uiHeight;
+
 		private static bool _initialised = false;
 
 		//
@@ -234,7 +237,7 @@ namespace DragginzWorldEditor
 			}
 
 			// no raycasting if mouse cursor is over top menu
-			if (Screen.height - Input.mousePosition.y < 90) {
+			if (Input.mousePosition.y >= _maxClickY) {
 				return;
 			}
 

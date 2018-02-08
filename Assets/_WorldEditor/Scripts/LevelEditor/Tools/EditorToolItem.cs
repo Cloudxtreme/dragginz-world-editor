@@ -21,9 +21,9 @@ namespace DragginzWorldEditor
 		public override void customUpdate(float time, float timeDelta)
 		{
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
-				if (Input.GetKey (KeyCode.LeftShift)) {
+				//if (Input.GetKey (KeyCode.LeftShift)) {
 					MainMenu.Instance.toggleItem (Input.GetAxis ("Mouse ScrollWheel"));
-				}
+				//}
 			}
 
 			doRayCast ();
@@ -61,13 +61,14 @@ namespace DragginzWorldEditor
 		{
 			string sName = _levelEditor.goCurItem.name+"_"+_levelEditor.goItems.transform.childCount;
 
-			GameObject goNew = GameObject.Instantiate (_levelEditor.itemPrefabs [MainMenu.Instance.iSelectedItem]);
+			GameObject goNew = World.Instance.createItem (MainMenu.Instance.iSelectedItem, v3Pos, sName, _levelEditor.goItems.transform);
+			/*GameObject goNew = GameObject.Instantiate (_levelEditor.itemPrefabs [MainMenu.Instance.iSelectedItem]);
 			goNew.transform.SetParent (_levelEditor.goItems.transform);
 			goNew.transform.position = v3Pos;
 			goNew.name = sName;
 			// turn on gravity and collider
 			goNew.GetComponent<BoxCollider>().enabled = true;
-			goNew.GetComponent<Rigidbody>().useGravity = true;
+			goNew.GetComponent<Rigidbody>().useGravity = true;*/
 
 			_levelEditor.resetUndoActions ();
 			_levelEditor.addUndoAction (AppState.Items, goNew);
