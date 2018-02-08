@@ -29,6 +29,9 @@ namespace DragginzWorldEditor
 		private Vector3 dragDiff;
 
 		private Vector3 _playerPosSave;
+		private LayerMask _layermask;
+		private Collider[] _hitColliders;
+		private Vector3 _v3PlayerExtents;
 
 		private float _mouseWheel;
 		private float _inputH;
@@ -52,6 +55,8 @@ namespace DragginzWorldEditor
 			dragDiff   = Vector3.zero;
 
 			_playerPosSave = player.position;
+			_layermask = 1 << 8;
+			_v3PlayerExtents = new Vector3 (0.3f, 0.2f, 0.2f);
 
 			_nextPosUpdate = 0;
 
@@ -121,16 +126,21 @@ namespace DragginzWorldEditor
 				}
 			}*/
 
+			if (!drawWireframe) {
+				
+				_hitColliders = Physics.OverlapBox (player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
+				if (_hitColliders.Length > 0) {
+					player.position = _playerPosSave;
+					dragOrigin = myCam.ScreenToWorldPoint (mousePos);
+				} else {
+					_playerPosSave = player.position;
+				}
+
+			}
+
 			if (Time.realtimeSinceStartup > _nextPosUpdate) {
 				_nextPosUpdate = Time.realtimeSinceStartup + 0.5f;
 				MainMenu.Instance.setCameraPositionText (player.position);
-			}
-		}
-
-		void LateUpdate()
-		{
-			if (playerCollision.isColliding) {
-				player.position = playerCollision.lastSavePos;
 			}
 		}
 

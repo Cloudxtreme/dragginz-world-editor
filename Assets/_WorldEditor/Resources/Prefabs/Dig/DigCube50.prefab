@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33352239748372858}
   - component: {fileID: 65583886368654258}
   - component: {fileID: 23730179616797894}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DigCube50
   m_TagString: DigAndDestroy
   m_Icon: {fileID: 0}

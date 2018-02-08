@@ -475,7 +475,7 @@ namespace DragginzWorldEditor
 		public void resetFlyCam()
 		{
 			FlyCam.Instance.reset ();
-			PlayerEditCollision.Instance.isColliding = false;
+			//PlayerEditCollision.Instance.isColliding = false;
 		}
 
 		//

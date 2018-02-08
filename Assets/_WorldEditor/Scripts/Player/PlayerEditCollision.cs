@@ -4,6 +4,7 @@
 //
 
 using UnityEngine;
+
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,13 +12,14 @@ namespace DragginzWorldEditor
 {
 	public class PlayerEditCollision : MonoSingleton<PlayerEditCollision>
 	{
-		public bool isColliding;
-		public Vector3 lastSavePos;
+		public bool isColliding = false;
+		public List<Vector3> lastSavePos;
+		public int iCurSaveIndex = 0;
 
 		void Awake()
 		{
-			isColliding = false;
-			lastSavePos = transform.position;
+			lastSavePos.Add(transform.position);
+			lastSavePos.Add(transform.position);
 		}
 
 		void OnCollisionEnter(Collision collision)
@@ -32,10 +34,11 @@ namespace DragginzWorldEditor
 			isColliding = false;
 		}
 
-		void Update()
+		void FixedUpdate()
 		{
 			if (!isColliding) {
-				lastSavePos = transform.position;
+				lastSavePos[iCurSaveIndex] = transform.position;
+				iCurSaveIndex = (iCurSaveIndex == 0 ? 1 : 0);
 			}
 		}
 	}
