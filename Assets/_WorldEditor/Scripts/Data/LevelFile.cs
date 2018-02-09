@@ -25,5 +25,11 @@ namespace DragginzWorldEditor
 
 		[SerializeField]
 		public List<LevelItem> levelItems { get; set; }
+
+		[SerializeField]
+		public DataTypeVector3 playerPosition  { get; set; }
+
+		[SerializeField]
+		public DataTypeVector3 playerEuler  { get; set; }
 	}
 }

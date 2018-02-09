@@ -13,9 +13,9 @@ namespace DragginzWorldEditor
 
 		private static float movementSpeed = 0.15f;
 
-		private Camera myCam;
+		private Camera _myCam;
 
-		private Transform player;
+		private Transform _player;
 		private Vector3 initialPos;
 		private Vector3 initialRotation;
 
@@ -40,28 +40,36 @@ namespace DragginzWorldEditor
 
 		public bool drawWireframe = false;
 
+		#region Getters
+
+		public Transform player {
+			get { return _player; }
+		}
+
+		#endregion
+
 		void Awake()
 		{
-			myCam = GetComponent<Camera> ();
+			_myCam = GetComponent<Camera> ();
 
-			player = transform.parent;
+			_player = transform.parent;
 
 			// center player in level
-			initialPos = player.position;
+			initialPos = _player.position;
 			initialPos.x += Globals.LEVEL_WIDTH  / 2;
 			initialPos.y += Globals.LEVEL_HEIGHT / 2;
 			initialPos.z += Globals.LEVEL_DEPTH  / 2;
-			player.position = initialPos;
+			_player.position = initialPos;
 
-			initialRotation = player.eulerAngles;
+			initialRotation = _player.eulerAngles;
 
-			playerEuler = player.eulerAngles;
+			playerEuler = _player.eulerAngles;
 
 			mousePos   = Vector3.zero;
 			dragOrigin = Vector3.zero;
 			dragDiff   = Vector3.zero;
 
-			_playerPosSave = player.position;
+			_playerPosSave = _player.position;
 			_layermask = 1 << 8;
 			_v3PlayerExtents = new Vector3 (0.3f, 0.2f, 0.2f);
 
@@ -91,20 +99,20 @@ namespace DragginzWorldEditor
 
 			if (_mouseWheel != 0) {
 				_mouseWheel = (_mouseWheel < 0 ? -0.1f : 0.1f);
-				player.position += transform.forward * _mouseWheel;// * movementSpeed;
+				_player.position += transform.forward * _mouseWheel;// * movementSpeed;
 			}
 
 			// Looking around with the mouse
 			if (Input.GetMouseButton (1)) {
 
-				player.Rotate(-2f * Input.GetAxis("Mouse Y"), 2f * Input.GetAxis("Mouse X"), 0);
-				playerEuler = player.eulerAngles;
+				_player.Rotate(-2f * Input.GetAxis("Mouse Y"), 2f * Input.GetAxis("Mouse X"), 0);
+				playerEuler = _player.eulerAngles;
 				playerEuler.z = 0;
-				player.eulerAngles = playerEuler;
+				_player.eulerAngles = playerEuler;
 			}
 
 			if (_mouseWheel == 0) {
-				player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
+				_player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
 				//player.position += (transform.up * Input.GetAxis ("Depth")) * movementSpeed;
 			}
 
@@ -136,22 +144,27 @@ namespace DragginzWorldEditor
 			if (!drawWireframe) {
 
 				// did camera move?
-				if (player.position != _playerPosSave) {
+				if (_player.position != _playerPosSave) {
 					
-					_hitColliders = Physics.OverlapBox (player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
+					_hitColliders = Physics.OverlapBox (_player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
 					if (_hitColliders.Length > 0) {
-						player.position = _playerPosSave;
-						dragOrigin = myCam.ScreenToWorldPoint (mousePos);
+						_player.position = _playerPosSave;
+						dragOrigin = _myCam.ScreenToWorldPoint (mousePos);
 					} else {
-						_playerPosSave = player.position;
+						_playerPosSave = _player.position;
 					}
 				}
 			}
 
 			if (Time.realtimeSinceStartup > _nextPosUpdate) {
 				_nextPosUpdate = Time.realtimeSinceStartup + 0.5f;
-				MainMenu.Instance.setCameraPositionText (player.position);
+				MainMenu.Instance.setCameraPositionText (_player.position);
 			}
+		}
+
+		public void setNewInitialPosition(Vector3 newPos, Vector3 newRot) {
+			initialPos = newPos;
+			initialRotation = newRot;
 		}
 
 		public void toggleOffset()
@@ -168,10 +181,10 @@ namespace DragginzWorldEditor
 			camOffset = Vector3.zero;
 			transform.localPosition = camOffset;
 
-			player.position = initialPos;
-			player.eulerAngles = initialRotation;
+			_player.position = initialPos;
+			_player.eulerAngles = initialRotation;
 			MainMenu.Instance.setMovementSpeedText (movementSpeed);
-			MainMenu.Instance.setCameraPositionText (player.position);
+			MainMenu.Instance.setCameraPositionText (_player.position);
 		}
 	}
 }

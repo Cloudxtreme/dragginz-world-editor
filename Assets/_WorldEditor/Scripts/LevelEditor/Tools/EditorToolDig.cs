@@ -30,6 +30,7 @@ namespace DragginzWorldEditor
 			{
 				_trfmAimTool.position = _hit.point;
 				_trfmAimTool.forward = _hit.normal;
+				Debug.Log ("_hit.normal:" + _hit.normal);
 				changeShaders (Globals.highlightShaderName);
 
 				if (_mouseIsDown) {
@@ -55,7 +56,7 @@ namespace DragginzWorldEditor
 			// keep track of parent objects that had children removed
 			List<Transform> listcubeTransforms = new List<Transform>();
 
-			List<GameObject> listCollidingObjects = _levelEditor.getOverlappingObjects(v3Pos);
+			List<GameObject> listCollidingObjects = _levelEditor.getOverlappingObjects(v3Pos, _rendererAimTool.bounds.extents);
 			len = listCollidingObjects.Count;
 			for (i = 0; i < len; ++i) {
 				if (!listcubeTransforms.Contains (listCollidingObjects [i].transform.parent)) {

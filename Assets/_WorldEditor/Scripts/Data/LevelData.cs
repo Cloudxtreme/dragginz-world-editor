@@ -49,6 +49,11 @@ namespace DragginzWorldEditor
 
 			levelEditor.resetAll ();
 
+			Vector3 savedPos = new Vector3 (levelFile.playerPosition.x, levelFile.playerPosition.y, levelFile.playerPosition.z);
+			Vector3 savedRot = new Vector3 (levelFile.playerEuler.x, levelFile.playerEuler.y, levelFile.playerEuler.z);
+			FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
+			FlyCam.Instance.reset ();
+
 			GameObject goQuadrant;
 			GameObject container;
 			Vector3 pos = Vector3.zero;
@@ -139,6 +144,17 @@ namespace DragginzWorldEditor
 			LevelFile levelFile         = new LevelFile ();
 			levelFile.fileFormatVersion = Globals.levelSaveFormatVersion;
 			levelFile.levelName         = "My Level";
+
+			levelFile.playerPosition   = new DataTypeVector3 ();
+			levelFile.playerPosition.x = FlyCam.Instance.player.position.x;
+			levelFile.playerPosition.y = FlyCam.Instance.player.position.y;
+			levelFile.playerPosition.z = FlyCam.Instance.player.position.z;
+
+			levelFile.playerEuler   = new DataTypeVector3 ();
+			levelFile.playerEuler.x = FlyCam.Instance.player.eulerAngles.x;
+			levelFile.playerEuler.y = FlyCam.Instance.player.eulerAngles.y;
+			levelFile.playerEuler.z = FlyCam.Instance.player.eulerAngles.z;
+
 			levelFile.levelQuadrants    = new List<LevelQuadrant> ();
 
 			foreach (Transform child in parent.transform) {

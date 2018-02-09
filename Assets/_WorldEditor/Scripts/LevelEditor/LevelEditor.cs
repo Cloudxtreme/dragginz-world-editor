@@ -488,14 +488,14 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public List<GameObject> getOverlappingObjects(Vector3 v3Pos)
+		public List<GameObject> getOverlappingObjects(Vector3 v3Pos, Vector3 extents)
 		{
 			List<GameObject> listCollidingObjects = new List<GameObject>();
 
 			int i, len;
 
-			Vector3 pos = MainMenu.Instance.v3DigSettings * (_fRockSize * .75f) * .5f;
-			Collider[] hitColliders = Physics.OverlapBox (v3Pos, pos);
+			//Vector3 pos = MainMenu.Instance.v3DigSettings * (_fRockSize * .75f) * .5f;
+			Collider[] hitColliders = Physics.OverlapBox (v3Pos, extents);
 
 			len = hitColliders.Length;
 			for (i = 0; i < len; ++i) {

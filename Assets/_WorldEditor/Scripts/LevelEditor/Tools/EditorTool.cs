@@ -20,6 +20,8 @@ namespace DragginzWorldEditor
 		protected static Transform _trfmAimTool;
 		protected static Transform _trfmAimItem;
 
+		protected static Renderer _rendererAimTool;
+
 		protected static Ray _ray;
 		protected static RaycastHit _hit;
 		protected static GameObject _goHit;
@@ -65,6 +67,8 @@ namespace DragginzWorldEditor
 
 				_trfmAimTool = _levelEditor.laserAim.transform;
 				_trfmAimItem = _levelEditor.itemAim.transform;
+
+				_rendererAimTool = _trfmAimTool.GetComponent<Renderer> ();
 
 				_aUsedShaders = new Dictionary<string, Shader> ();
 				_goLastShaderChange = null;
@@ -166,7 +170,7 @@ namespace DragginzWorldEditor
 			_aGoShaderChanged.Clear ();
 
 			// set new shaders
-			_aGoShaderChanged = _levelEditor.getOverlappingObjects(_trfmAimTool.position);
+			_aGoShaderChanged = _levelEditor.getOverlappingObjects(_trfmAimTool.position, _rendererAimTool.bounds.extents);
 			setShaders (shaderName);
 		}
 
