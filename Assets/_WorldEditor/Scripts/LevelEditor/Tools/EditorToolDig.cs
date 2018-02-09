@@ -28,9 +28,11 @@ namespace DragginzWorldEditor
 
 			if (_goHit != null)
 			{
-				_trfmAimTool.position = _hit.point;
 				_trfmAimTool.forward = _hit.normal;
-				Debug.Log ("_hit.normal:" + _hit.normal);
+				_v3Pos = _hit.point;
+				_v3Pos -= (_hit.normal * (_trfmAimTool.lossyScale.z * 0.49f));
+				_trfmAimTool.position = _v3Pos;
+
 				changeShaders (Globals.highlightShaderName);
 
 				if (_mouseIsDown) {

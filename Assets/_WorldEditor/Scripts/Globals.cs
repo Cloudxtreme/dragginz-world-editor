@@ -41,7 +41,7 @@ namespace DragginzWorldEditor
 
 		static public readonly string containerGameObjectPrepend = "q_";
 
-		static public readonly float RAYCAST_DISTANCE_EDIT = 4.0f;
+		static public readonly float RAYCAST_DISTANCE_EDIT = 4.2f;
 
 		//
 		public static int getItemIndexFromName(string name)
