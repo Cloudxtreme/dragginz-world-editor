@@ -36,6 +36,7 @@ namespace DragginzWorldEditor
 		public GameObject goPlayerEdit;
 
 		public GameObject cubePrefab;
+		public GameObject cubePrefabEdge;
 		public GameObject cubePrefabCenter;
 
 		public List<GameObject> itemPrefabs;
@@ -209,6 +210,8 @@ namespace DragginzWorldEditor
 					if (AppController.Instance.appState != AppState.Look) {
 						setMode (AppState.Look);
 					}
+				}
+				else if (Input.GetKeyDown(KeyCode.H)) {
 					resetFlyCam ();
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha1)) {

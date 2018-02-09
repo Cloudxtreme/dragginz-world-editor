@@ -15,7 +15,8 @@ namespace DragginzWorldEditor
 
 		private LevelEditor _levelEditor;
 
-		private Dictionary<int, Dictionary<int, Dictionary<int, int>>> _quadrantFlags;
+		//private Dictionary<int, Dictionary<int, Dictionary<int, int>>> _quadrantFlags;
+		private Dictionary<string, int> _quadrantFlagsNew;
 		private int _iMinLevelCoord;
 		private int _iMaxLevelCoord;
 
@@ -42,9 +43,10 @@ namespace DragginzWorldEditor
 			_iMinLevelCoord = -50;
 			_iMaxLevelCoord = 50;
 
-			_quadrantFlags = new Dictionary<int, Dictionary<int, Dictionary<int, int>>> ();
+			//_quadrantFlags = new Dictionary<int, Dictionary<int, Dictionary<int, int>>> ();
+			_quadrantFlagsNew = new Dictionary<string, int> ();
 
-			for (int x = _iMinLevelCoord; x <= _iMaxLevelCoord; ++x) {
+			/*for (int x = _iMinLevelCoord; x <= _iMaxLevelCoord; ++x) {
 				_quadrantFlags.Add(x, new Dictionary<int, Dictionary<int, int>> ());
 				for (int y = _iMinLevelCoord; y <= _iMaxLevelCoord; ++y) {
 					_quadrantFlags [x].Add(y, new Dictionary<int, int> ());
@@ -52,7 +54,7 @@ namespace DragginzWorldEditor
 						_quadrantFlags [x] [y].Add(z, 0);
 					}
 				}
-			}
+			}*/
 
 			_visibleQuadrants = new Dictionary<GameObject, bool> ();
 			_aQuadrantChangedVisibility = new List<GameObject> ();
@@ -142,6 +144,7 @@ namespace DragginzWorldEditor
 			int count = 0;
 
 			// create hollow cube of cubes :)
+			Vector3 v3Center = new Vector3(Globals.LEVEL_WIDTH / 2, Globals.LEVEL_HEIGHT / 2, Globals.LEVEL_DEPTH / 2);
 			int size = 2; // actual size will be size*2+1
 			int height = 3;
 			Vector3 pos = Vector3.zero;
@@ -149,7 +152,7 @@ namespace DragginzWorldEditor
 				for (int y = -1; y <= height; ++y) {
 					for (int z = -size; z <= size; ++z) {
 
-						pos = new Vector3 (x * fQuadrantSize, y * fQuadrantSize, z * fQuadrantSize);
+						pos = new Vector3 ((x + (int)v3Center.x) * fQuadrantSize, (y + (int)v3Center.y) * fQuadrantSize, (z + (int)v3Center.z) * fQuadrantSize);
 
 						if (Mathf.Abs (x) == size || y == -1 || y == height || Mathf.Abs (z) == size) {
 							createRockCube (pos);
@@ -182,24 +185,47 @@ namespace DragginzWorldEditor
 			_visibleQuadrants.Clear ();
 			_aQuadrantChangedVisibility.Clear ();
 
-			for (int x = _iMinLevelCoord; x <= _iMaxLevelCoord; ++x) {
+			/*for (int x = _iMinLevelCoord; x <= _iMaxLevelCoord; ++x) {
 				for (int y = _iMinLevelCoord; y <= _iMaxLevelCoord; ++y) {
 					for (int z = _iMinLevelCoord; z <= _iMaxLevelCoord; ++z) {
 						_quadrantFlags [x] [y] [z] = 0;
 					}
 				}
-			}
+			}*/
+
+			_quadrantFlagsNew.Clear ();
 		}
 
 		//
 		public void createRockCube (Vector3 v3CubePos, bool fillQuadrant = true)
 		{
-			// cube already created at that position
-			if (_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] == 1) {
+			int qX = (int)v3CubePos.x;
+			int qY = (int)v3CubePos.y;
+			int qZ = (int)v3CubePos.z;
+
+			// out of level bounds?
+			if (qX < -1 || qY < -1 || qZ < -1) {
+				return;
+			}
+			else if (qX > Globals.LEVEL_WIDTH || qY > Globals.LEVEL_HEIGHT || qZ > Globals.LEVEL_DEPTH) {
 				return;
 			}
 
-			GameObject cubeParent = createQuadrant (v3CubePos);
+			string quadrantId = qX.ToString() + "_" + qY.ToString() + "_" + qZ.ToString();
+
+			// cube already created at that position
+			if (_quadrantFlagsNew.ContainsKey (quadrantId)) {
+				return;
+			}
+
+			//if (_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] == 1) {
+			//	return;
+			//}
+
+			bool isEdgeQuadrant = ((qX == -1 || qY == -1 || qZ == -1) || (qX == Globals.LEVEL_WIDTH || qY == Globals.LEVEL_HEIGHT || qZ == Globals.LEVEL_DEPTH));
+			//Debug.Log (quadrantId + ":isEdgeQuadrant: " + isEdgeQuadrant);
+
+			GameObject cubeParent = createQuadrant (v3CubePos, quadrantId);
 			GameObject container = createContainer (cubeParent.transform);
 
 			if (!fillQuadrant) {
@@ -220,8 +246,10 @@ namespace DragginzWorldEditor
 				for (int y = 0; y < len; ++y) {
 					pos.z = startPos;
 					for (int z = 0; z < len; ++z) {
+
 						sName = "r-" + x.ToString () + "-" + y.ToString () + "-" + z.ToString ();
-						createRock (pos, container, sName);
+						createRock (pos, container, sName, null, isEdgeQuadrant);
+
 						pos.z += fRockSize;
 					}
 					pos.y += fRockSize;
@@ -231,24 +259,27 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public GameObject createQuadrant(Vector3 v3CubePos)
+		public GameObject createQuadrant(Vector3 v3CubePos, string quadrantId)
 		{
-			string sPos = v3CubePos.x.ToString () + "_" + v3CubePos.y.ToString () + "_" + v3CubePos.z.ToString ();
+			//string sPos = v3CubePos.x.ToString () + "_" + v3CubePos.y.ToString () + "_" + v3CubePos.z.ToString ();
 
-			GameObject quadrant = new GameObject(Globals.containerGameObjectPrepend + sPos);
+			GameObject quadrant = new GameObject(Globals.containerGameObjectPrepend + quadrantId);
 			quadrant.transform.SetParent(_levelEditor.goWorld.transform);
 			quadrant.transform.localPosition = v3CubePos;
 
-			if (_levelEditor.cubePrefabCenter != null) {
+			/*if (_levelEditor.cubePrefabCenter != null) {
 				GameObject go = GameObject.Instantiate(_levelEditor.cubePrefabCenter);
-				go.name = "center_" + sPos;
+				go.name = "center_" + quadrantId;
 				go.transform.SetParent(quadrant.transform);
 				go.transform.localPosition = new Vector3(0.25f, 0.25f, 0.25f);
 				//Block blockScript = go.AddComponent<Block> ();
 				//blockScript.init ();
-			}
+			}*/
 
-			_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] = 1;
+			//_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] = 1;
+
+			_quadrantFlagsNew.Add(quadrantId, 1);
+			//Debug.Log ("Creating Quadrant "+quadrantId);
 
 			_visibleQuadrants.Add (quadrant, true);
 
@@ -266,23 +297,25 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public GameObject createRock(Vector3 pos, GameObject parent, string name, Material material = null) {
+		public GameObject createRock(Vector3 pos, GameObject parent, string name, Material material = null, bool isEdge = false) {
 
 			GameObject go = null;
 			GameObject prefab = null;
 			Vector3 rotation = Vector3.zero;
 
-			prefab = _levelEditor.cubePrefab;//(_cubeIndex == 0 ? cubePrefab : cubePrefab2);
+			prefab = (isEdge ? _levelEditor.cubePrefabEdge : _levelEditor.cubePrefab);
 			if (prefab) {
 				go = GameObject.Instantiate(prefab);
 				go.name = name;
 				go.transform.SetParent(parent.transform);
 				go.transform.localPosition = pos;
 				go.transform.localRotation = Quaternion.Euler (rotation);
-				if (material != null) {
-					go.GetComponent<MeshRenderer> ().material = material;
-				} else {
-					go.GetComponent<MeshRenderer> ().material = _levelEditor.materialsWalls [UnityEngine.Random.Range (0, _levelEditor.materialsWalls.Count)];
+				if (!isEdge) {
+					if (material != null) {
+						go.GetComponent<MeshRenderer> ().material = material;
+					} else {
+						go.GetComponent<MeshRenderer> ().material = _levelEditor.materialsWalls [UnityEngine.Random.Range (0, _levelEditor.materialsWalls.Count)];
+					}
 				}
 				_numCubes++;
 			}

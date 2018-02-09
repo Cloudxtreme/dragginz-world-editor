@@ -21,6 +21,9 @@ namespace DragginzWorldEditor
 		public DataTypeVector3 position  { get; set; }
 
 		[SerializeField]
+		public int isEdge { get; set; }
+
+		[SerializeField]
 		public List<LevelObject> levelObjects { get; set; }
 
 	}

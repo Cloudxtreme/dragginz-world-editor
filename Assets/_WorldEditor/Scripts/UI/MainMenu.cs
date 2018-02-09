@@ -328,9 +328,9 @@ namespace DragginzWorldEditor
 
 				int materialIndex = _iSelectedMaterial;
 				if (toggle < 0) {
-					materialIndex = (materialIndex > 0 ? materialIndex - 1 : Globals.materials.Length - 1);
+					materialIndex = (materialIndex > 0 ? materialIndex - 1 : 0);//Globals.materials.Length - 1);
 				} else {
-					materialIndex = (materialIndex < (Globals.materials.Length - 1) ? materialIndex + 1 : 0);
+					materialIndex = (materialIndex < (Globals.materials.Length - 1) ? materialIndex + 1 : (Globals.materials.Length - 1));//0);
 				}
 
 				changeMaterial (materialIndex);
@@ -374,9 +374,9 @@ namespace DragginzWorldEditor
 
 				int itemIndex = _iSelectedItem;
 				if (toggle < 0) {
-					itemIndex = (itemIndex > 0 ? itemIndex - 1 : Globals.items.Count - 1);
+					itemIndex = (itemIndex > 0 ? itemIndex - 1 : 0);//Globals.items.Count - 1);
 				} else {
-					itemIndex = (itemIndex < (Globals.items.Count - 1) ? itemIndex + 1 : 0);
+					itemIndex = (itemIndex < (Globals.items.Count - 1) ? itemIndex + 1 : (Globals.items.Count - 1));//0);
 				}
 
 				changeItem (itemIndex);
@@ -416,9 +416,9 @@ namespace DragginzWorldEditor
 				if (sliderDigWidth != null) {
 					value = sliderDigWidth.value + (toggle < 0 ? -1 : 1);
 					if (value > sliderDigWidth.maxValue) {
-						value = sliderDigWidth.minValue;
+						value = sliderDigWidth.maxValue;//sliderDigWidth.minValue;
 					} else if (value < sliderDigWidth.minValue) {
-						value = sliderDigWidth.maxValue;
+						value = sliderDigWidth.minValue;//sliderDigWidth.maxValue;
 					}
 					sliderDigWidth.value = value;
 					_v3DigSettings.x = (int)sliderDigWidth.value;
@@ -428,13 +428,25 @@ namespace DragginzWorldEditor
 				if (sliderDigHeight != null) {
 					value = sliderDigHeight.value + (toggle < 0 ? -1 : 1);
 					if (value > sliderDigHeight.maxValue) {
-						value = sliderDigHeight.minValue;
+						value = sliderDigHeight.maxValue;//sliderDigHeight.minValue;
 					} else if (value < sliderDigHeight.minValue) {
-						value = sliderDigHeight.maxValue;
+						value = sliderDigHeight.minValue;//sliderDigHeight.maxValue;
 					}
 					sliderDigHeight.value = value;
 					_v3DigSettings.y = (int)sliderDigHeight.value;
 					updateSliderValueText (sliderDigHeight.transform.parent, sliderDigHeight.value);
+				}
+
+				if (sliderDigDepth != null) {
+					value = sliderDigDepth.value + (toggle < 0 ? -1 : 1);
+					if (value > sliderDigDepth.maxValue) {
+						value = sliderDigDepth.maxValue;//sliderDigHeight.minValue;
+					} else if (value < sliderDigDepth.minValue) {
+						value = sliderDigDepth.minValue;//sliderDigHeight.maxValue;
+					}
+					sliderDigDepth.value = value;
+					_v3DigSettings.z = (int)sliderDigDepth.value;
+					updateSliderValueText (sliderDigDepth.transform.parent, sliderDigDepth.value);
 				}
 
 				LevelEditor.Instance.updateDigSettings(_v3DigSettings);

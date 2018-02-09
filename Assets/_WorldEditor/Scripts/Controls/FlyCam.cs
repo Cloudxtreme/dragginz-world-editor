@@ -45,7 +45,14 @@ namespace DragginzWorldEditor
 			myCam = GetComponent<Camera> ();
 
 			player = transform.parent;
+
+			// center player in level
 			initialPos = player.position;
+			initialPos.x += Globals.LEVEL_WIDTH  / 2;
+			initialPos.y += Globals.LEVEL_HEIGHT / 2;
+			initialPos.z += Globals.LEVEL_DEPTH  / 2;
+			player.position = initialPos;
+
 			initialRotation = player.eulerAngles;
 
 			playerEuler = player.eulerAngles;
@@ -101,7 +108,7 @@ namespace DragginzWorldEditor
 				//player.position += (transform.up * Input.GetAxis ("Depth")) * movementSpeed;
 			}
 
-			if (AppController.Instance.appState == AppState.Look) {
+			/*if (AppController.Instance.appState == AppState.Look) {
 				
 				if (Input.GetMouseButtonDown(0))
 				{
@@ -117,7 +124,7 @@ namespace DragginzWorldEditor
 					dragDiff = myCam.ScreenToWorldPoint(mousePos) - player.position;
 					player.position = dragOrigin - dragDiff;
 				}
-			}
+			}*/
 			/*else
 			{
 				if (_mouseWheel == 0) {
@@ -127,15 +134,18 @@ namespace DragginzWorldEditor
 			}*/
 
 			if (!drawWireframe) {
-				
-				_hitColliders = Physics.OverlapBox (player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
-				if (_hitColliders.Length > 0) {
-					player.position = _playerPosSave;
-					dragOrigin = myCam.ScreenToWorldPoint (mousePos);
-				} else {
-					_playerPosSave = player.position;
-				}
 
+				// did camera move?
+				if (player.position != _playerPosSave) {
+					
+					_hitColliders = Physics.OverlapBox (player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
+					if (_hitColliders.Length > 0) {
+						player.position = _playerPosSave;
+						dragOrigin = myCam.ScreenToWorldPoint (mousePos);
+					} else {
+						_playerPosSave = player.position;
+					}
+				}
 			}
 
 			if (Time.realtimeSinceStartup > _nextPosUpdate) {

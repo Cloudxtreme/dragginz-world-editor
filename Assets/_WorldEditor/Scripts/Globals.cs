@@ -11,8 +11,8 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v02.08.2a";
-		static public readonly int levelSaveFormatVersion = 2;
+		static public readonly string version = "Level Editor v02.09.0a";
+		static public readonly int levelSaveFormatVersion = 3;
 
         static public readonly string appContainerName      = "{AppController}";
         static public readonly string lightsContainerName   = "[Lights]";
@@ -35,10 +35,13 @@ namespace DragginzWorldEditor
 		static public readonly string warningObsoleteFileFormat = "Can't load level:\nFile format is obsolete!";
 		static public readonly string warningInvalidFileFormat  = "Can't load level:\nFile format is invalid!";
 
-		static public readonly string containerGameObjectPrepend = "quadrant_";
-		static public readonly string rockGameObjectPrepend = "rock_";
+		static public readonly int LEVEL_WIDTH  = 36;
+		static public readonly int LEVEL_HEIGHT = 36;
+		static public readonly int LEVEL_DEPTH  = 36;
 
-		static public readonly float RAYCAST_DISTANCE_EDIT = 20.0f;
+		static public readonly string containerGameObjectPrepend = "q_";
+
+		static public readonly float RAYCAST_DISTANCE_EDIT = 4.0f;
 
 		//
 		public static int getItemIndexFromName(string name)

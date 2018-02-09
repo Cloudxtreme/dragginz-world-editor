@@ -51,8 +51,9 @@ namespace DragginzWorldEditor
 			// get quadrant
 
 			Vector3 v3QuadrantPos = new Vector3 ((float)x / 1f, (float)y / 1f, (float)z / 1f);
-			string sPos = v3QuadrantPos.x.ToString () + "_" + v3QuadrantPos.y.ToString () + "_" + v3QuadrantPos.z.ToString ();
-			string sQuadrantName = Globals.containerGameObjectPrepend + sPos;
+			//string sPos = v3QuadrantPos.x.ToString () + "_" + v3QuadrantPos.y.ToString () + "_" + v3QuadrantPos.z.ToString ();
+			string quadrantId = (int)v3QuadrantPos.x + "_" + (int)v3QuadrantPos.y + "_" + (int)v3QuadrantPos.z;
+			string sQuadrantName = Globals.containerGameObjectPrepend + quadrantId;
 			Transform trfmQuadrant = _levelEditor.goWorld.transform.Find (sQuadrantName);
 
 			//Debug.Log ("quadrant: "+trfmQuadrant+" - "+trfmQuadrant.name);
