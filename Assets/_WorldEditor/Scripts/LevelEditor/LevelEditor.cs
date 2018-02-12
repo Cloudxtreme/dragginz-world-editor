@@ -283,6 +283,9 @@ namespace DragginzWorldEditor
 				else if (mode == AppState.Paint)
 				{
 					MainMenu.Instance.showMaterialBox (true);
+					MainMenu.Instance.showDigButtons (true);
+					laserAim.SetActive (true);
+					updateDigSettings (MainMenu.Instance.v3DigSettings);
 					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_PAINT];
 				}
 				else if (mode == AppState.Build)
@@ -322,7 +325,7 @@ namespace DragginzWorldEditor
 				undo.name = go.name;
 				undo.position = go.transform.localPosition;
 				undo.parent = go.transform.parent;
-				undo.material = go.GetComponent<Renderer> ().material;
+				undo.material = go.GetComponent<Renderer> ().sharedMaterial;
 			}
 
 			// items
@@ -375,6 +378,7 @@ namespace DragginzWorldEditor
 			int effectedCubes = 0;
 
 			Shader shader = Shader.Find (Globals.defaultShaderName);
+			Renderer renderer;
 
 			undoAction undo;
 			undoItem item;
@@ -393,11 +397,21 @@ namespace DragginzWorldEditor
 						effectedCubes++;
 					}
 				}
-				// PAINT
+				// BUILD
 				else if (undo.action == AppState.Build) {
 					if (undo.go != null) {
 						Destroy (undo.go);
 						effectedCubes--;
+					}
+				}
+				// PAINT
+				else if (undo.action == AppState.Paint) {
+					if (undo.go != null) {
+						undo.material.shader = shader;
+						renderer = undo.go.GetComponent<Renderer> ();
+						if (renderer != null) {
+							renderer.sharedMaterial = undo.material;
+						}
 					}
 				}
 				// ITEM

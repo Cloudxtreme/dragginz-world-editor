@@ -250,5 +250,14 @@ namespace DragginzWorldEditor
 				_goHit = _hit.collider.gameObject;
 			}
 		}
+
+		//
+		protected void setAimTool ()
+		{
+			_trfmAimTool.forward = _hit.normal;
+			_v3Pos = _hit.point;
+			_v3Pos -= (_hit.normal * (_trfmAimTool.lossyScale.z * 0.49f));
+			_trfmAimTool.position = _v3Pos;
+		}
 	}
 }

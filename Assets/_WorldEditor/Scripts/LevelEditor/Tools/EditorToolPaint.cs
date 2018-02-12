@@ -28,17 +28,45 @@ namespace DragginzWorldEditor
 
 			if (_goHit != null)
 			{
-				changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);
+				setAimTool ();
+
+				changeShaders (Globals.highlightShaderName);
+				//changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);
 
 				if (_mouseIsDown) {
-					setSingleMaterial (_goHit, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
+					paintIt (_trfmAimTool.position, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
+					//setSingleMaterial (_goHit, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
 					_goLastMaterialChanged = null;
 					_tempMaterial = null;
+					_mouseIsDown = false;
 				}
 			}
 			else {
-				resetMaterial ();
+				resetAim ();
+				//resetMaterial ();
 			}
+		}
+
+		private void paintIt (Vector3 v3Pos, Material material)
+		{
+			int i, len;
+
+			_levelEditor.resetUndoActions ();
+
+			List<GameObject> listCollidingObjects = _levelEditor.getOverlappingObjects(v3Pos, _rendererAimTool.bounds.extents);
+			len = listCollidingObjects.Count;
+			Renderer renderer;
+			for (i = 0; i < len; ++i) {
+				_levelEditor.addUndoAction (AppState.Paint, listCollidingObjects [i]);
+				renderer = listCollidingObjects [i].GetComponent<Renderer> ();
+				if (renderer != null) {
+					renderer.sharedMaterial = material;
+				}
+			}
+			listCollidingObjects.Clear ();
+			listCollidingObjects = null;
+
+			MainMenu.Instance.setUndoButton (true);
 		}
 	}
 }
