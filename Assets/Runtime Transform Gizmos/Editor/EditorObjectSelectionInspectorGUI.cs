@@ -42,6 +42,13 @@ namespace RTEditor
 
             EditorGUILayout.BeginVertical("Box");
 
+            MultiSelectOverlapMode newOverlapMode = (MultiSelectOverlapMode)EditorGUILayout.EnumPopup("Multi Select Overlap Mode", objectSelectionSettings.MultiSelectOverlapMode);
+            if(newOverlapMode != objectSelectionSettings.MultiSelectOverlapMode)
+            {
+                UnityEditorUndoHelper.RecordObjectForInspectorPropertyChange(_editorObjectSelection);
+                objectSelectionSettings.MultiSelectOverlapMode = newOverlapMode;
+            }
+
             bool newBool;
             EditorGUI.indentLevel += 1;
             _restrictionsAreVisible = EditorGUILayout.Foldout(_restrictionsAreVisible, "Restrictions");

@@ -18,6 +18,7 @@ namespace DragginzWorldEditor
 {
 	public class MainMenu : MonoSingleton<MainMenu>
     {
+		public GameObject goTransformSelection;
 		public GameObject goMaterialSelection;
 		public GameObject goItemsSelection;
 		public GameObject goDigSettings;
@@ -132,14 +133,15 @@ namespace DragginzWorldEditor
 			if (_gizmoSystem != null) {
 				_gizmoSystem.ActiveGizmoTypeChanged += onGizmoChanged;
                 EditorObjectSelection.Instance.GameObjectClicked += onGameObjectClicked;
-
+				EditorObjectSelection.Instance.SelectionChanged += onSelectionChanged;
             }
 		}
 
 		void OnDisable() {
 			if (_gizmoSystem != null) {
 				_gizmoSystem.ActiveGizmoTypeChanged -= onGizmoChanged;
-                EditorObjectSelection.Instance.GameObjectClicked += onGameObjectClicked;
+                EditorObjectSelection.Instance.GameObjectClicked -= onGameObjectClicked;
+				EditorObjectSelection.Instance.SelectionChanged -= onSelectionChanged;
             }
 		}
 
@@ -210,6 +212,12 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public void showTransformBox(bool state) {
+			if (goTransformSelection != null) {
+				goTransformSelection.SetActive (state);
+			}
+		}
+
 		public void showMaterialBox(bool state) {
 			if (goMaterialSelection != null) {
 				goMaterialSelection.SetActive (state);
@@ -222,7 +230,6 @@ namespace DragginzWorldEditor
 			}
 		}
 
-		//
 		public void showDigButtons(bool state) {
 			if (goDigSettings != null) {
 				goDigSettings.SetActive (state);
@@ -231,9 +238,6 @@ namespace DragginzWorldEditor
 
 		#region PrivateMethods
 
-		/// <summary>
-		/// ...
-		/// </summary>
         private void selectTool(int toolId) {
 
             if (_iSelectedTool == toolId) {
@@ -248,9 +252,7 @@ namespace DragginzWorldEditor
             _iSelectedTool = toolId;
         }
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		//
         private void setToolButtonImage(Image img, string spriteName) {
 
             if (img) {
@@ -271,9 +273,7 @@ namespace DragginzWorldEditor
             }
         }
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		//
         private void showLoadFileDialog() {
 
 			//AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
@@ -284,10 +284,8 @@ namespace DragginzWorldEditor
 				showLoadFileBrowser (1);
 			}
         }
-        
-		/// <summary>
-		/// ...
-		/// </summary>
+
+		//
 		private void showLoadFileBrowser(int buttonId) {
 
 			_popup.hide();
@@ -303,9 +301,7 @@ namespace DragginzWorldEditor
 			});
 		}
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		//
         private void showSaveFileDialog() {
 
 			//AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
@@ -317,9 +313,7 @@ namespace DragginzWorldEditor
             });
         }
 
-		/// <summary>
-		/// Toggles the material.
-		/// </summary>
+		//
 		public void toggleMaterial(float toggle)
 		{
 			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {
@@ -469,8 +463,14 @@ namespace DragginzWorldEditor
 
         private void onGameObjectClicked(GameObject clickedObject) {
 
-            Debug.Log("onGameObjectClicked "+clickedObject.name);
+            //Debug.Log("onGameObjectClicked "+clickedObject.name);
+			clickedObject.GetComponent<Rigidbody> ().useGravity = false;
         }
+
+		private void onSelectionChanged(ObjectSelectionChangedEventArgs selectionChangedEventArgs) {
+			
+			LevelEditor.Instance.setSelectedObjects (selectionChangedEventArgs.SelectedObjects);
+		}
 
         #endregion
 

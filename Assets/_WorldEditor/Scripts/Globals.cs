@@ -11,7 +11,7 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v02.12.0a";
+		static public readonly string version = "Level Editor v02.12.1a";
 		static public readonly int levelSaveFormatVersion = 4;
 
         static public readonly string appContainerName      = "{AppController}";

@@ -14,6 +14,7 @@ namespace DragginzWorldEditor
 		private static float movementSpeed = 0.15f;
 
 		private Camera _myCam;
+		private Camera _itemCam;
 
 		private Transform _player;
 		private Vector3 initialPos;
@@ -79,6 +80,8 @@ namespace DragginzWorldEditor
 		}
 
 		void Start() {
+
+			_itemCam = LevelEditor.Instance.itemCam;
 
 			playerCollision = PlayerEditCollision.Instance;
 		}
@@ -154,6 +157,11 @@ namespace DragginzWorldEditor
 						_playerPosSave = _player.position;
 					}
 				}
+			}
+
+			if (_itemCam.enabled) {
+				_itemCam.transform.position = _myCam.transform.position;
+				_itemCam.transform.rotation = _myCam.transform.rotation;
 			}
 
 			if (Time.realtimeSinceStartup > _nextPosUpdate) {

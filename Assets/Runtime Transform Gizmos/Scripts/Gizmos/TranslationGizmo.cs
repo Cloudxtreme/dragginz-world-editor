@@ -58,6 +58,7 @@ namespace RTEditor
             UseMouseButtons = false,
             UseStrictModifierCheck = true
         };
+        [SerializeField]
         private ShortcutKeys _enableBoxSnappingShortcut = new ShortcutKeys("Enable box snapping", 1)
         {
             Key0 = KeyCode.B,
@@ -193,6 +194,7 @@ namespace RTEditor
         /// <summary>
         /// Holds the snap settings for the translation gizmo.
         /// </summary>
+        [SerializeField]
         private TranslationGizmoSnapSettings _snapSettings = new TranslationGizmoSnapSettings();
 
         /// <summary>

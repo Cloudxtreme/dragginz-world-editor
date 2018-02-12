@@ -371,6 +371,7 @@ namespace RTEditor
             _gizmoCamera.clearFlags = CameraClearFlags.Depth;
             _gizmoCamera.depth = EditorCamera.Instance.Camera.depth + 1.0f;
             _gizmoCamera.renderingPath = RenderingPath.Forward;
+            _gizmoCamera.allowHDR = false;
             _gizmoCameraTransform.parent = _gizmoTransform.parent;
         }
 

@@ -110,7 +110,7 @@ namespace RTEditor
         /// This is the camera rotation speed expressed in degrees/second.
         /// </summary>
         [SerializeField]
-        private float _rotationSpeedInDegrees = 8.8f;
+        private float _rotationSpeedInDegrees = 4.8f;
 
         /// <summary>
         /// Cached camera component for easy access.
@@ -445,7 +445,11 @@ namespace RTEditor
                     //       the zoom speed based on the camera type.
                     float zoomSpeed = Camera.orthographic ? _zoomSettings.OrthographicStandardZoomSpeed : _zoomSettings.PerspectiveStandardZoomSpeed * Time.deltaTime;
                     zoomSpeed *= CalculateZoomFactor();
-                    EditorCameraZoom.ZoomCamera(Camera, scrollSpeed * zoomSpeed);
+                    float zoomAmount = scrollSpeed * zoomSpeed;
+                    EditorCameraZoom.ZoomCamera(Camera, zoomAmount);
+
+                    _orbitOffsetAlongLook -= zoomAmount;
+                    if (_orbitOffsetAlongLook < 0.0f) _orbitOffsetAlongLook = 1e-5f;
 
                     SetOrthoSize(Camera.orthographicSize); // Ugly, ugly, ugly!!!!
                 }
@@ -495,29 +499,31 @@ namespace RTEditor
                 // Make sure all coroutines are stopped to avoid any conflicts
                 StopAllCoroutines();
 
-                // Calculate the amount of rotation which must be applied
-                float rotationSpeedTimesDeltaTime = _rotationSpeedInDegrees * Time.deltaTime;
-
                 // Rotate based on the type of rotation we are dealing with.
                 // Note: Even if the rotation mode is set to orbit, we will still perform a 'LookAround' rotation
                 //       if the camera hasn't been focused.
                 if (lookAround || !_wasFocused)
                 {
+                    float mouseX = Input.GetAxis("Mouse X");
+                    float mouseY = Input.GetAxis("Mouse Y");
                     EditorCameraRotation.RotateCamera(Camera,
-                                                      -_mouse.CursorOffsetSinceLastFrame.y * rotationSpeedTimesDeltaTime,
-                                                      _mouse.CursorOffsetSinceLastFrame.x * rotationSpeedTimesDeltaTime);
+                                                      -mouseY * _rotationSpeedInDegrees,
+                                                       mouseX * _rotationSpeedInDegrees);
                 }
                 else
                 if (_wasFocused && orbit)
                 {
+                    float mouseX = Input.GetAxis("Mouse X");
+                    float mouseY = Input.GetAxis("Mouse Y");
+
                     // Calculate the orbit point. This is done by moving from the camera position along the camera
                     // look vector by a distance equal to '_orbitOffsetAlongLook'.
                     Transform cameraTransform = Camera.transform;
                     Vector3 orbitPoint = cameraTransform.position + cameraTransform.forward * _orbitOffsetAlongLook;
 
                     EditorCameraOrbit.OrbitCamera(Camera,
-                                                    -_mouse.CursorOffsetSinceLastFrame.y * rotationSpeedTimesDeltaTime,
-                                                    _mouse.CursorOffsetSinceLastFrame.x * rotationSpeedTimesDeltaTime, orbitPoint);
+                                                 -mouseY * _rotationSpeedInDegrees,
+                                                  mouseX * _rotationSpeedInDegrees, orbitPoint);
                 }
             }
         }
@@ -535,12 +541,18 @@ namespace RTEditor
             {
                 if (Camera.orthographic) EditorCameraZoom.ZoomCamera(Camera, moveAmount);
                 else cameraTransform.position += cameraTransform.forward * moveAmount;
+
+                _orbitOffsetAlongLook -= moveAmount;
+                if (_orbitOffsetAlongLook < 0.0f) _orbitOffsetAlongLook = 1e-5f;
             }
             else
             if (_moveBackShortcut.IsActive())
             {
                 if (Camera.orthographic) EditorCameraZoom.ZoomCamera(Camera, -moveAmount);
                 else cameraTransform.position -= cameraTransform.forward * moveAmount;
+
+                _orbitOffsetAlongLook += moveAmount;
+                if (_orbitOffsetAlongLook < 0.0f) _orbitOffsetAlongLook = 1e-5f;
             }
 
             if (_strafeLeftShortcut.IsActive()) cameraTransform.position -= cameraTransform.right * moveAmount;
@@ -594,11 +606,15 @@ namespace RTEditor
             while (true)
             {
                 // Zoom the camera using the current speed
-                EditorCameraZoom.ZoomCamera(Camera, currentSpeed * Time.deltaTime);
+                float zoomAmount = currentSpeed * Time.deltaTime;
+                EditorCameraZoom.ZoomCamera(Camera, zoomAmount);
                 SetOrthoSize(Camera.orthographicSize); // Ugly, ugly, ugly!!!!
 
                 // Move from the current speed towards 0 using the smooth value
                 currentSpeed = Mathf.Lerp(currentSpeed, 0.0f, smoothValue);
+
+                _orbitOffsetAlongLook -= zoomAmount;
+                if (_orbitOffsetAlongLook < 0.0f) _orbitOffsetAlongLook = 1e-5f;
 
                 // Exit if the speed is small enough
                 if (Mathf.Abs(currentSpeed) < 1e-5f) break;

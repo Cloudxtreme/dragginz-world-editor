@@ -19,6 +19,7 @@ namespace RTEditor
         /// in increments of this step value. That is, whenever the accumulated translation becomes >= than this 
         /// value, a translation will be applied to the translation gizmo and the objects that it controls.
         /// </summary>
+        [SerializeField]
         private float _stepValueInWorldUnits = 1.0f;
         #endregion
 

@@ -3,10 +3,18 @@ using System;
 
 namespace RTEditor
 {
+    public enum MultiSelectOverlapMode
+    {
+        Full = 0,
+        Partial
+    }
+
     [Serializable]
     public class ObjectSelectionSettings
     {
         #region Private Variables
+        [SerializeField]
+        private MultiSelectOverlapMode _multiSelectOverlapMode = MultiSelectOverlapMode.Partial;
         [SerializeField]
         private ObjectSelectionRenderMode _objectSelectionRenderMode = ObjectSelectionRenderMode.SelectionBoxes;
         [SerializeField]
@@ -34,6 +42,7 @@ namespace RTEditor
         #endregion
 
         #region Public Properties
+        public MultiSelectOverlapMode MultiSelectOverlapMode { get { return _multiSelectOverlapMode; } set { _multiSelectOverlapMode = value; } }
         public ObjectSelectionRenderMode ObjectSelectionRenderMode { get { return _objectSelectionRenderMode; } set { _objectSelectionRenderMode = value; } }
         public int SelectableLayers { get { return _selectableLayers; } set { _selectableLayers = value; } }
         public int DuplicatableLayers { get { return _duplicatableLayers; } set { _duplicatableLayers = value; } }

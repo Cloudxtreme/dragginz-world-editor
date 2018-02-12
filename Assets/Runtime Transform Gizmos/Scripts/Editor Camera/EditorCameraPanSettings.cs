@@ -13,11 +13,13 @@ namespace RTEditor
         /// <summary>
         /// The camera pan mode.
         /// </summary>
+        [SerializeField]
         private EditorCameraPanMode _panMode = EditorCameraPanMode.Standard;
 
         /// <summary>
         /// This is the smooth value that is used when the pan mode is set to 'Smooth'.
         /// </summary>
+        [SerializeField]
         private float _smoothValue = 0.15f;
 
         /// <summary>

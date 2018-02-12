@@ -9,6 +9,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using RTEditor;
+
 namespace DragginzWorldEditor
 {
 	struct undoItem {
@@ -29,7 +31,9 @@ namespace DragginzWorldEditor
 
 	public class LevelEditor : MonoSingleton<LevelEditor>
 	{
-		public Camera mainCam;
+		public Camera editCam;
+		public Camera itemCam;
+
 		public GameObject goWorld;
 		public GameObject goItems;
 		public GameObject goPlayer;
@@ -58,6 +62,7 @@ namespace DragginzWorldEditor
 		private List<undoAction> _undoActions;
 
 		private GameObject _goCurItem;
+		private List<GameObject> _selectedObjects;
 
 		private float _fRockSize;
         private int _cubesPerQuadrant;
@@ -114,6 +119,7 @@ namespace DragginzWorldEditor
 			_undoActions = new List<undoAction> ();
 
 			_goCurItem = null;
+			_selectedObjects = new List<GameObject> ();
 
 			_fRockSize = 0.5f;
 			_cubesPerQuadrant = 2;
@@ -247,70 +253,83 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void setMode(AppState mode, bool forceMode = false) {
+		public void setMode(AppState mode, bool forceMode = false)
+		{
+			if (mode == AppController.Instance.appState && !forceMode) {
+				return;
+			}
 
-			if (forceMode || (mode != AppController.Instance.appState))
+			AppController.Instance.setAppState (mode);
+			MainMenu.Instance.setModeButtons (mode);
+
+			if (_curEditorTool != null) {
+				_curEditorTool.setSingleMaterial (laserAim, laserAimMaterial, false);
+				_curEditorTool.resetMaterial ();
+				_curEditorTool.resetAim ();
+				_curEditorTool.resetItem ();
+			}
+			_curEditorTool = null;
+
+			MainMenu.Instance.showTransformBox (false);
+			MainMenu.Instance.showDigButtons (false);
+			MainMenu.Instance.showMaterialBox (false);
+			MainMenu.Instance.showItemsBox (false);
+
+			laserAim.SetActive (false);
+			itemAim.SetActive (false);
+
+			editCam.enabled = true;
+			itemCam.enabled = false;
+
+			EditorObjectSelection.Instance.ClearSelection(false);
+
+			setSelectedObjects ();
+
+			if (mode == AppState.Look)
 			{
-				AppController.Instance.setAppState (mode);
-				MainMenu.Instance.setModeButtons (mode);
+				MainMenu.Instance.showTransformBox (true);
+				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_LOOK];
+				itemCam.enabled = true;
+				itemCam.transform.position = editCam.transform.position;
+				editCam.enabled = false;
+			}
+			else if (mode == AppState.Dig)
+			{
+				MainMenu.Instance.showDigButtons (true);
+				laserAim.SetActive (true);
+				updateDigSettings (MainMenu.Instance.v3DigSettings);
+				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_DIG];
+			}
+			else if (mode == AppState.Paint)
+			{
+				MainMenu.Instance.showMaterialBox (true);
+				MainMenu.Instance.showDigButtons (true);
+				laserAim.SetActive (true);
+				updateDigSettings (MainMenu.Instance.v3DigSettings);
+				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_PAINT];
+			}
+			else if (mode == AppState.Build)
+			{
+				MainMenu.Instance.showMaterialBox (true);
+				laserAim.SetActive (true);
+				laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
+				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_BUILD];
+				_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
+			}
+			else if (mode == AppState.Items)
+			{
+				MainMenu.Instance.showItemsBox (true);
+				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_ITEMS];
+				laserAim.SetActive (true);
+				itemAim.SetActive (true);
+				if (_goCurItem == null) {
+					newItemSelected (MainMenu.Instance.iSelectedItem);
+				}
+			}
 
-				if (_curEditorTool != null) {
-					_curEditorTool.setSingleMaterial (laserAim, laserAimMaterial, false);
-					_curEditorTool.resetMaterial ();
-					_curEditorTool.resetAim ();
-					_curEditorTool.resetItem ();
-				}
-				_curEditorTool = null;
-
-				MainMenu.Instance.showDigButtons (false);
-				MainMenu.Instance.showMaterialBox (false);
-				MainMenu.Instance.showItemsBox (false);
-
-				laserAim.SetActive (false);
-				itemAim.SetActive (false);
-
-				if (mode == AppState.Look)
-				{
-					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_LOOK];
-				}
-				else if (mode == AppState.Dig)
-				{
-					MainMenu.Instance.showDigButtons (true);
-					laserAim.SetActive (true);
-					updateDigSettings (MainMenu.Instance.v3DigSettings);
-					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_DIG];
-				}
-				else if (mode == AppState.Paint)
-				{
-					MainMenu.Instance.showMaterialBox (true);
-					MainMenu.Instance.showDigButtons (true);
-					laserAim.SetActive (true);
-					updateDigSettings (MainMenu.Instance.v3DigSettings);
-					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_PAINT];
-				}
-				else if (mode == AppState.Build)
-				{
-					MainMenu.Instance.showMaterialBox (true);
-					laserAim.SetActive (true);
-					laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
-					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_BUILD];
-					_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
-				}
-				else if (mode == AppState.Items)
-				{
-					MainMenu.Instance.showItemsBox (true);
-					_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_ITEMS];
-					laserAim.SetActive (true);
-					itemAim.SetActive (true);
-					if (_goCurItem == null) {
-						newItemSelected (MainMenu.Instance.iSelectedItem);
-					}
-				}
-
-				if (goPlayer != null && goPlayerEdit != null) {
-					goPlayer.SetActive ((mode == AppState.Play));
-					goPlayerEdit.SetActive (!goPlayer.activeSelf);
-				}
+			if (goPlayer != null && goPlayerEdit != null) {
+				goPlayer.SetActive ((mode == AppState.Play));
+				goPlayerEdit.SetActive (!goPlayer.activeSelf);
 			}
 		}
 
@@ -446,6 +465,33 @@ namespace DragginzWorldEditor
 			if (effectedCubes != 0) {
 				World.Instance.numCubes += effectedCubes;
 				MainMenu.Instance.setCubeCountText (World.Instance.numCubes);
+			}
+		}
+
+		//
+		public void setSelectedObjects(List<GameObject> selectedObjects = null) {
+
+			int i, len = _selectedObjects.Count;
+			for (i = 0; i < len; ++i) {
+				if (_selectedObjects [i] != null) {
+					_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = true;
+					_selectedObjects [i].GetComponent<BoxCollider> ().enabled = true;
+				}
+			}
+
+			_selectedObjects.Clear ();
+
+			if (selectedObjects != null) {
+				
+				_selectedObjects = selectedObjects;
+
+				len = _selectedObjects.Count;
+				for (i = 0; i < len; ++i) {
+					if (_selectedObjects [i] != null) {
+						_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = false;
+						_selectedObjects [i].GetComponent<BoxCollider> ().enabled = false;
+					}
+				}
 			}
 		}
 

@@ -62,7 +62,7 @@ namespace DragginzWorldEditor
 				_initialised = true;
 
 				_levelEditor = LevelEditor.Instance;
-				_curCam = _levelEditor.mainCam;
+				_curCam = _levelEditor.editCam;
 				_flycam = FlyCam.Instance;
 
 				_trfmAimTool = _levelEditor.laserAim.transform;

@@ -44,10 +44,33 @@ namespace RTEditor
 
             // Lop through all game objects in the list
             var intersectingGameObjects = new List<GameObject>();
-            foreach (GameObject gameObject in gameObjects)
+            if(EditorObjectSelection.Instance.ObjectSelectionSettings.MultiSelectOverlapMode == MultiSelectOverlapMode.Partial)
             {
-                // If the game object's screen rectangle intersects the selection rectangle, add it to the list
-                if (_enclosingRectangle.Overlaps(gameObject.GetScreenRectangle(camera), true)) intersectingGameObjects.Add(gameObject);
+                foreach (GameObject gameObject in gameObjects)
+                {
+                    // If the game object's screen rectangle intersects the selection rectangle, add it to the list
+                    if (_enclosingRectangle.Overlaps(gameObject.GetScreenRectangle(camera), true)) intersectingGameObjects.Add(gameObject);
+                }
+            }
+            else
+            {
+                foreach (GameObject gameObject in gameObjects)
+                {
+                    Rect screenObjRect = gameObject.GetScreenRectangle(camera);
+                    var objRectPts = screenObjRect.GetCornerAndCenterPoints();
+
+                    bool foundPtOutside = false;
+                    foreach (var pt in objRectPts)
+                    {
+                        if (!_enclosingRectangle.Contains(pt, true))
+                        {
+                            foundPtOutside = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundPtOutside) intersectingGameObjects.Add(gameObject);
+                }
             }
 
             // Return the list of intersecting game objects
