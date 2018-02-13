@@ -21,6 +21,7 @@ namespace DragginzWorldEditor
 		protected static Transform _trfmAimItem;
 
 		protected static Renderer _rendererAimTool;
+		protected static Material _materialAimTool;
 
 		protected static Ray _ray;
 		protected static RaycastHit _hit;
@@ -69,6 +70,7 @@ namespace DragginzWorldEditor
 				_trfmAimItem = _levelEditor.itemAim.transform;
 
 				_rendererAimTool = _trfmAimTool.GetComponent<Renderer> ();
+				_materialAimTool = _rendererAimTool.material;
 
 				_aUsedShaders = new Dictionary<string, Shader> ();
 				_goLastShaderChange = null;
@@ -119,6 +121,11 @@ namespace DragginzWorldEditor
 			setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
 			changeShaders ();
 			_trfmAimTool.position = new Vector3(9999,9999,9999);
+			_rendererAimTool.material = _materialAimTool;
+		}
+
+		public void setCurAimMaterial() {
+			_rendererAimTool.material = _levelEditor.aMaterials [MainMenu.Instance.iSelectedMaterial];
 		}
 
 		public void resetMaterial()

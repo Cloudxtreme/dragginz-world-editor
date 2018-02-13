@@ -35,11 +35,14 @@ namespace DragginzWorldEditor
 		private Vector3 _v3PlayerExtents;
 
 		private float _mouseWheel;
-		private float _inputH;
 
+		private float _time;
 		private float _nextPosUpdate;
 
-		public bool drawWireframe = false;
+		private bool _camCanMove;
+		private bool _move;
+
+		public bool drawWireframe;
 
 		#region Getters
 
@@ -74,7 +77,11 @@ namespace DragginzWorldEditor
 			_layermask = 1 << 8;
 			_v3PlayerExtents = new Vector3 (0.3f, 0.2f, 0.2f);
 
+			_time = 0;
 			_nextPosUpdate = 0;
+
+			_camCanMove = true;
+			_move = false;
 
 			drawWireframe = false;
 		}
@@ -95,15 +102,26 @@ namespace DragginzWorldEditor
 
 		void Update ()
 		{
-			_mouseWheel = 0;
+			_time = Time.realtimeSinceStartup;
+
+			if (_camCanMove) {
+				_move = Input.GetAxis ("Horizontal") != 0.0f || Input.GetAxis ("Vertical") != 0.0f || Input.GetAxis ("Depth") != 0.0f;
+			} else {
+				if (!Input.anyKey) { //Input.GetAxis ("Horizontal") == 0.0f && Input.GetAxis ("Vertical") == 0.0f && Input.GetAxis ("Depth") == 0.0f) {
+					_camCanMove = true;
+					Input.ResetInputAxes();
+				}
+			}
+
+			//_mouseWheel = 0;
 			//if (!Input.GetKey (KeyCode.LeftShift)) {
 			//	_mouseWheel = (AppController.Instance.appState != AppState.Null ? Input.GetAxis ("Mouse ScrollWheel") : 0);
 			//}
 
-			if (_mouseWheel != 0) {
+			/*if (_mouseWheel != 0) {
 				_mouseWheel = (_mouseWheel < 0 ? -0.1f : 0.1f);
 				_player.position += transform.forward * _mouseWheel;// * movementSpeed;
-			}
+			}*/
 
 			// Looking around with the mouse
 			if (Input.GetMouseButton (1)) {
@@ -114,9 +132,8 @@ namespace DragginzWorldEditor
 				_player.eulerAngles = playerEuler;
 			}
 
-			if (_mouseWheel == 0) {
+			if (_camCanMove) {
 				_player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
-				//player.position += (transform.up * Input.GetAxis ("Depth")) * movementSpeed;
 			}
 
 			/*if (AppController.Instance.appState == AppState.Look) {
@@ -144,15 +161,18 @@ namespace DragginzWorldEditor
 				}
 			}*/
 
-			if (!drawWireframe) {
+			if (_move && !drawWireframe) {
 
 				// did camera move?
 				if (_player.position != _playerPosSave) {
-					
+				
 					_hitColliders = Physics.OverlapBox (_player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
 					if (_hitColliders.Length > 0) {
 						_player.position = _playerPosSave;
 						dragOrigin = _myCam.ScreenToWorldPoint (mousePos);
+						//_camCanMove = false;
+						_move = false;
+						Input.ResetInputAxes();
 					} else {
 						_playerPosSave = _player.position;
 					}
@@ -164,8 +184,8 @@ namespace DragginzWorldEditor
 				_itemCam.transform.rotation = _myCam.transform.rotation;
 			}
 
-			if (Time.realtimeSinceStartup > _nextPosUpdate) {
-				_nextPosUpdate = Time.realtimeSinceStartup + 0.5f;
+			if (_time > _nextPosUpdate) {
+				_nextPosUpdate = _time + 0.5f;
 				MainMenu.Instance.setCameraPositionText (_player.position);
 			}
 		}

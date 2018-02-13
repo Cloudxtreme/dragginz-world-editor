@@ -21,6 +21,7 @@ namespace DragginzWorldEditor
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
 				//if (Input.GetKey (KeyCode.LeftShift)) {
 					MainMenu.Instance.toggleMaterial (Input.GetAxis ("Mouse ScrollWheel"));
+					setCurAimMaterial();
 				//}
 			}
 
@@ -29,6 +30,10 @@ namespace DragginzWorldEditor
 			if (_goHit != null)
 			{
 				setAimTool ();
+
+				if (_rendererAimTool.material == _materialAimTool) {
+					setCurAimMaterial();
+				}
 
 				changeShaders (Globals.highlightShaderName);
 				//changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);

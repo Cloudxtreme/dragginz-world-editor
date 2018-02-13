@@ -307,6 +307,7 @@ namespace DragginzWorldEditor
 				laserAim.SetActive (true);
 				updateDigSettings (MainMenu.Instance.v3DigSettings);
 				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_PAINT];
+				_curEditorTool.setCurAimMaterial ();
 			}
 			else if (mode == AppState.Build)
 			{
