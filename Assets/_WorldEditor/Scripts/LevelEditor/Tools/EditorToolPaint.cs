@@ -11,11 +11,26 @@ namespace DragginzWorldEditor
 {
 	public class EditorToolPaint : EditorTool {
 
+		private Vector3 _v3AimSize;
+
 		public EditorToolPaint() : base(Globals.EDITOR_TOOL_PAINT)
 		{
-			//
+			_v3AimSize = new Vector3 (1, 1, 1);
 		}
 
+		//
+		public override void deactivate()
+		{
+			_v3AimSize = MainMenu.Instance.v3DigSettings;
+		}
+
+		//
+		public override void activate()
+		{
+			MainMenu.Instance.resetDigSettings (_v3AimSize);
+		}
+
+		//
 		public override void customUpdate(float time, float timeDelta)
 		{
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {

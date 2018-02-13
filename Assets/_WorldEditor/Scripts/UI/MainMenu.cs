@@ -396,15 +396,15 @@ namespace DragginzWorldEditor
 			}
 		}
 
-		public void resetDigSettings()
+		public void resetDigSettings(Vector3 v3Set)
 		{
-			_v3DigSettings = new Vector3 (1, 1, 1);
-			sliderDigWidth.value  = 1;
-			sliderDigHeight.value = 1;
-			sliderDigDepth.value  = 1;
-			updateSliderValueText (sliderDigWidth.transform.parent,  1);
-			updateSliderValueText (sliderDigHeight.transform.parent, 1);
-			updateSliderValueText (sliderDigDepth.transform.parent,  1);
+			_v3DigSettings = v3Set;
+			sliderDigWidth.value  = _v3DigSettings.x;
+			sliderDigHeight.value = _v3DigSettings.y;
+			sliderDigDepth.value  = _v3DigSettings.z;
+			updateSliderValueText (sliderDigWidth.transform.parent,  _v3DigSettings.x);
+			updateSliderValueText (sliderDigHeight.transform.parent, _v3DigSettings.y);
+			updateSliderValueText (sliderDigDepth.transform.parent,  _v3DigSettings.z);
 		}
 
 		//

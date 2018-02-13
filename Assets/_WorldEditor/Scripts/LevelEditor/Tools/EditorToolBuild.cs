@@ -13,11 +13,29 @@ namespace DragginzWorldEditor
 {
 	public class EditorToolBuild : EditorTool {
 
+		private Vector3 _v3AimSize;
+
+		private Vector3 _v3BuildSize = Vector3.zero;
+		private float _fOffset;
+
 		public EditorToolBuild() : base(Globals.EDITOR_TOOL_BUILD)
 		{
-			//
+			_v3AimSize = new Vector3 (1, 1, 1);
 		}
 
+		//
+		public override void deactivate()
+		{
+			_v3AimSize = MainMenu.Instance.v3DigSettings;
+		}
+
+		//
+		public override void activate()
+		{
+			MainMenu.Instance.resetDigSettings (_v3AimSize);
+		}
+
+		//
 		public override void customUpdate(float time, float timeDelta)
 		{
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
@@ -29,20 +47,41 @@ namespace DragginzWorldEditor
 
 			doRayCast ();
 
-			if (_goHit != null)
+			if (_raycastedObjectHasChanged)
 			{
 				if (_rendererAimCenterCube.sharedMaterial == _materialAimTool) {
 					setCurAimCenterCubeMaterial();
 				}
 
-				_trfmAimTool.position = _goHit.transform.position + (_hit.normal * _levelEditor.fRockSize);
+				_v3BuildSize = MainMenu.Instance.v3DigSettings;
+
+				_v3Pos = _goHit.transform.position + (_hit.normal * _levelEditor.fRockSize);
+				_trfmAimTool.forward  = _hit.normal;
+
+				if ((int)_v3BuildSize.x > 1)
+				{
+					_fOffset = 0.5f * ((_v3BuildSize.x - 1) * _levelEditor.fRockSize);
+					_v3Pos -= _fOffset * _trfmAimTool.right;
+				}
+				if ((int)_v3BuildSize.y > 1) {
+					_fOffset = 0.5f * ((_v3BuildSize.y - 1) * _levelEditor.fRockSize);
+					_v3Pos += _fOffset * _trfmAimTool.up;
+				}
+				if ((int)_v3BuildSize.z > 1) {
+					_fOffset = 0.5f * ((_v3BuildSize.z - 1) * _levelEditor.fRockSize);
+					_v3Pos += _fOffset * _trfmAimTool.forward;
+				}
+
+				_trfmAimTool.position = _v3Pos;
+
+				_trfmAimCenterCube.position = _goHit.transform.position + (_hit.normal * _levelEditor.fRockSize);
 
 				if (_mouseIsDown) {
 					buildIt (_trfmAimTool.position);
 					_mouseIsDown = false;
 				}
 			}
-			else {
+			else if (_goHit == null) {
 				resetAim ();
 			}
 		}

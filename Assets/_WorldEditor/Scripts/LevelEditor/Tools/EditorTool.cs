@@ -29,6 +29,9 @@ namespace DragginzWorldEditor
 		protected static RaycastHit _hit;
 		protected static GameObject _goHit;
 
+		protected static GameObject _goHitLast;
+		protected static bool _raycastedObjectHasChanged;
+
 		protected static Bounds _bounds;
 		protected static Vector3 _v3Pos;
 
@@ -83,6 +86,9 @@ namespace DragginzWorldEditor
 				//_goLastMaterialChanged = null;
 				//_tempMaterial = null;
 
+				_goHitLast = null;
+				_raycastedObjectHasChanged = false;
+
 				_mouseIsDown = false;
 			}
 		}
@@ -101,6 +107,18 @@ namespace DragginzWorldEditor
 					_mouseIsDown = false;
 				}
 			}
+		}
+
+		//
+		public virtual void activate()
+		{
+			//
+		}
+
+		//
+		public virtual void deactivate()
+		{
+			//
 		}
 
 		//
@@ -127,6 +145,7 @@ namespace DragginzWorldEditor
 			_trfmAimTool.position = new Vector3(9999,9999,9999);
 			_rendererAimTool.material = _materialAimTool;
 			_rendererAimCenterCube.material = _materialAimTool;
+			_goHitLast = null;
 		}
 
 		public void setCurAimMaterial() {
@@ -250,9 +269,11 @@ namespace DragginzWorldEditor
 		//
 		// PRIVATE METHODS
 		//
-		protected void doRayCast() {
-
+		protected void doRayCast()
+		{
 			_goHit = null;
+			_raycastedObjectHasChanged = false;
+
 			if (MainMenu.Instance.popup.isVisible ()) {
 				return;
 			}
@@ -265,6 +286,10 @@ namespace DragginzWorldEditor
 			_ray = _curCam.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast (_ray, out _hit, Globals.RAYCAST_DISTANCE_EDIT)) {
 				_goHit = _hit.collider.gameObject;
+				if (_goHit != _goHitLast) {
+					_goHitLast = _goHit;
+					_raycastedObjectHasChanged = true;
+				}
 			}
 		}
 

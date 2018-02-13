@@ -268,6 +268,7 @@ namespace DragginzWorldEditor
 				_curEditorTool.resetMaterial ();
 				_curEditorTool.resetAim ();
 				_curEditorTool.resetItem ();
+				_curEditorTool.deactivate ();
 			}
 			_curEditorTool = null;
 
@@ -333,8 +334,12 @@ namespace DragginzWorldEditor
 				goPlayerEdit.SetActive (!goPlayer.activeSelf);
 			}
 
-			MainMenu.Instance.resetDigSettings ();
+			MainMenu.Instance.resetDigSettings (new Vector3 (1, 1, 1));
 			updateDigSettings (MainMenu.Instance.v3DigSettings);
+
+			if (_curEditorTool != null) {
+				_curEditorTool.activate ();
+			}
 		}
 
 		//
@@ -506,7 +511,8 @@ namespace DragginzWorldEditor
 			if (AppController.Instance.appState == AppState.Build) {
 				laserAim.transform.localScale = v3DigSettings * fScale;
 				laserAimCenterCube.SetActive (true);
-				laserAimCenterCube.transform.localScale = new Vector3(_fRockSize / laserAim.transform.localScale.x, _fRockSize / laserAim.transform.localScale.y, _fRockSize / laserAim.transform.localScale.z);
+				fScale -= 0.05f;
+				laserAimCenterCube.transform.localScale = new Vector3(fScale / laserAim.transform.localScale.x, fScale / laserAim.transform.localScale.y, fScale / laserAim.transform.localScale.z);
 			} else {
 				fScale *= 0.75f;
 				laserAim.transform.localScale = v3DigSettings * fScale;
