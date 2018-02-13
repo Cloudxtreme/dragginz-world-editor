@@ -30,6 +30,10 @@ namespace DragginzWorldEditor
 			{
 				setAimTool ();
 
+				if (_rendererAimTool.material != _materialAimTool) {
+					_rendererAimTool.material = _materialAimTool;
+				}
+
 				changeShaders (Globals.highlightShaderName);
 
 				if (_mouseIsDown) {

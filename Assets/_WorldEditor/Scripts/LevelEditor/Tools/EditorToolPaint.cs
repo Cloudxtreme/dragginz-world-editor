@@ -41,8 +41,8 @@ namespace DragginzWorldEditor
 				if (_mouseIsDown) {
 					paintIt (_trfmAimTool.position, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
 					//setSingleMaterial (_goHit, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
-					_goLastMaterialChanged = null;
-					_tempMaterial = null;
+					//_goLastMaterialChanged = null;
+					//_tempMaterial = null;
 					_mouseIsDown = false;
 				}
 			}

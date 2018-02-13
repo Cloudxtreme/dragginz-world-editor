@@ -23,6 +23,7 @@ namespace DragginzWorldEditor
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
 				//if (Input.GetKey (KeyCode.LeftShift)) {
 					MainMenu.Instance.toggleMaterial (Input.GetAxis ("Mouse ScrollWheel"));
+					setCurAimCenterCubeMaterial();
 				//}
 			}
 
@@ -30,6 +31,10 @@ namespace DragginzWorldEditor
 
 			if (_goHit != null)
 			{
+				if (_rendererAimCenterCube.sharedMaterial == _materialAimTool) {
+					setCurAimCenterCubeMaterial();
+				}
+
 				_trfmAimTool.position = _goHit.transform.position + (_hit.normal * _levelEditor.fRockSize);
 
 				if (_mouseIsDown) {

@@ -26,8 +26,8 @@ namespace DragginzWorldEditor
 		private PlayerEditCollision playerCollision;
 
 		private Vector3 mousePos;
-		private Vector3 dragOrigin;
-		private Vector3 dragDiff;
+		//private Vector3 dragOrigin;
+		//private Vector3 dragDiff;
 
 		private Vector3 _playerPosSave;
 		private LayerMask _layermask;
@@ -35,6 +35,7 @@ namespace DragginzWorldEditor
 		private Vector3 _v3PlayerExtents;
 
 		private float _mouseWheel;
+		private bool _mouseRightIsDown;
 
 		private float _time;
 		private float _nextPosUpdate;
@@ -70,12 +71,15 @@ namespace DragginzWorldEditor
 			playerEuler = _player.eulerAngles;
 
 			mousePos   = Vector3.zero;
-			dragOrigin = Vector3.zero;
-			dragDiff   = Vector3.zero;
+			//dragOrigin = Vector3.zero;
+			//dragDiff   = Vector3.zero;
 
 			_playerPosSave = _player.position;
 			_layermask = 1 << 8;
 			_v3PlayerExtents = new Vector3 (0.3f, 0.2f, 0.2f);
+
+			_mouseWheel = 0;
+			_mouseRightIsDown = false;
 
 			_time = 0;
 			_nextPosUpdate = 0;
@@ -113,6 +117,16 @@ namespace DragginzWorldEditor
 				}
 			}
 
+			if (!_mouseRightIsDown) {
+				if (Input.GetMouseButtonDown (1)) {
+					_mouseRightIsDown = true;
+				}
+			} else {
+				if (Input.GetMouseButtonUp (1)) {
+					_mouseRightIsDown = false;
+				}
+			}
+
 			//_mouseWheel = 0;
 			//if (!Input.GetKey (KeyCode.LeftShift)) {
 			//	_mouseWheel = (AppController.Instance.appState != AppState.Null ? Input.GetAxis ("Mouse ScrollWheel") : 0);
@@ -124,8 +138,8 @@ namespace DragginzWorldEditor
 			}*/
 
 			// Looking around with the mouse
-			if (Input.GetMouseButton (1)) {
-
+			if (_mouseRightIsDown) {
+				//Debug.Log ("mouse is down - axis x: " + Input.GetAxis ("Mouse X"));
 				_player.Rotate(-2f * Input.GetAxis("Mouse Y"), 2f * Input.GetAxis("Mouse X"), 0);
 				playerEuler = _player.eulerAngles;
 				playerEuler.z = 0;
@@ -169,7 +183,7 @@ namespace DragginzWorldEditor
 					_hitColliders = Physics.OverlapBox (_player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
 					if (_hitColliders.Length > 0) {
 						_player.position = _playerPosSave;
-						dragOrigin = _myCam.ScreenToWorldPoint (mousePos);
+						//dragOrigin = _myCam.ScreenToWorldPoint (mousePos);
 						//_camCanMove = false;
 						_move = false;
 						Input.ResetInputAxes();

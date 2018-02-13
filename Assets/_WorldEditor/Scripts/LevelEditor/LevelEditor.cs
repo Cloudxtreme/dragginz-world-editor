@@ -43,13 +43,14 @@ namespace DragginzWorldEditor
 		public GameObject cubePrefabEdge;
 		public GameObject cubePrefabCenter;
 
-		public List<GameObject> itemPrefabs;
-        public List<Material> materialsWalls;
-
 		public GameObject laserAim;
+		public GameObject laserAimCenterCube;
 		public Material laserAimMaterial;
 
 		public GameObject itemAim;
+
+		public List<GameObject> itemPrefabs;
+        public List<Material> materialsWalls;
 
 		private World _World;
 
@@ -153,7 +154,7 @@ namespace DragginzWorldEditor
 
 			_curEditorTool = null;
 
-			updateDigSettings (new Vector3(1,1,1));
+			//updateDigSettings (new Vector3(1,1,1));
 
 			showHelpPopup ();
 		}
@@ -297,7 +298,6 @@ namespace DragginzWorldEditor
 			{
 				MainMenu.Instance.showDigButtons (true);
 				laserAim.SetActive (true);
-				updateDigSettings (MainMenu.Instance.v3DigSettings);
 				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_DIG];
 			}
 			else if (mode == AppState.Paint)
@@ -305,17 +305,17 @@ namespace DragginzWorldEditor
 				MainMenu.Instance.showMaterialBox (true);
 				MainMenu.Instance.showDigButtons (true);
 				laserAim.SetActive (true);
-				updateDigSettings (MainMenu.Instance.v3DigSettings);
 				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_PAINT];
 				_curEditorTool.setCurAimMaterial ();
 			}
 			else if (mode == AppState.Build)
 			{
 				MainMenu.Instance.showMaterialBox (true);
+				MainMenu.Instance.showDigButtons (true);
 				laserAim.SetActive (true);
-				laserAim.transform.localScale = new Vector3(_fRockSize, _fRockSize, _fRockSize);
 				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_BUILD];
-				_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
+				//_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
+				_curEditorTool.setCurAimMaterial ();
 			}
 			else if (mode == AppState.Items)
 			{
@@ -332,6 +332,9 @@ namespace DragginzWorldEditor
 				goPlayer.SetActive ((mode == AppState.Play));
 				goPlayerEdit.SetActive (!goPlayer.activeSelf);
 			}
+
+			MainMenu.Instance.resetDigSettings ();
+			updateDigSettings (MainMenu.Instance.v3DigSettings);
 		}
 
 		//
@@ -499,8 +502,16 @@ namespace DragginzWorldEditor
 		//
 		public void updateDigSettings(Vector3 v3DigSettings)
 		{
-			float _fScale = _fRockSize * .75f;
-			laserAim.transform.localScale = v3DigSettings * _fScale;
+			float fScale = _fRockSize;
+			if (AppController.Instance.appState == AppState.Build) {
+				laserAim.transform.localScale = v3DigSettings * fScale;
+				laserAimCenterCube.SetActive (true);
+				laserAimCenterCube.transform.localScale = new Vector3(_fRockSize / laserAim.transform.localScale.x, _fRockSize / laserAim.transform.localScale.y, _fRockSize / laserAim.transform.localScale.z);
+			} else {
+				fScale *= 0.75f;
+				laserAim.transform.localScale = v3DigSettings * fScale;
+				laserAimCenterCube.SetActive (false);
+			}
 		}
 
 		//
@@ -509,9 +520,9 @@ namespace DragginzWorldEditor
 			if (AppController.Instance.appState == AppState.Paint) {
 				_curEditorTool.resetMaterial();
 			}
-			else if (AppController.Instance.appState == AppState.Build) {
-				_curEditorTool.setSingleMaterial (laserAim, _aMaterials [MainMenu.Instance.iSelectedMaterial], false);
-			}
+			//else if (AppController.Instance.appState == AppState.Build) {
+			//	_curEditorTool.setSingleMaterial (laserAim, _aMaterials [MainMenu.Instance.iSelectedMaterial], false);
+			//}
 		}
 
 		//

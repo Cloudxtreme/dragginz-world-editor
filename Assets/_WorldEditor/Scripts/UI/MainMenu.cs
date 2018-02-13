@@ -396,9 +396,18 @@ namespace DragginzWorldEditor
 			}
 		}
 
-		/// <summary>
-		/// Toggles the size of the dig.
-		/// </summary>
+		public void resetDigSettings()
+		{
+			_v3DigSettings = new Vector3 (1, 1, 1);
+			sliderDigWidth.value  = 1;
+			sliderDigHeight.value = 1;
+			sliderDigDepth.value  = 1;
+			updateSliderValueText (sliderDigWidth.transform.parent,  1);
+			updateSliderValueText (sliderDigHeight.transform.parent, 1);
+			updateSliderValueText (sliderDigDepth.transform.parent,  1);
+		}
+
+		//
 		public void toggleDigSize(float toggle)
 		{
 			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {

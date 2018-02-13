@@ -18,9 +18,11 @@ namespace DragginzWorldEditor
 		protected static FlyCam _flycam;
 
 		protected static Transform _trfmAimTool;
+		protected static Transform _trfmAimCenterCube;
 		protected static Transform _trfmAimItem;
 
 		protected static Renderer _rendererAimTool;
+		protected static Renderer _rendererAimCenterCube;
 		protected static Material _materialAimTool;
 
 		protected static Ray _ray;
@@ -34,8 +36,8 @@ namespace DragginzWorldEditor
 		protected static GameObject _goLastShaderChange;
 		protected static List<GameObject> _aGoShaderChanged;
 
-		protected static GameObject _goLastMaterialChanged;
-		protected static Material _tempMaterial;
+		//protected static GameObject _goLastMaterialChanged;
+		//protected static Material _tempMaterial;
 
 		protected static bool _mouseIsDown;
 
@@ -67,17 +69,19 @@ namespace DragginzWorldEditor
 				_flycam = FlyCam.Instance;
 
 				_trfmAimTool = _levelEditor.laserAim.transform;
+				_trfmAimCenterCube = _levelEditor.laserAimCenterCube.transform;
 				_trfmAimItem = _levelEditor.itemAim.transform;
 
 				_rendererAimTool = _trfmAimTool.GetComponent<Renderer> ();
+				_rendererAimCenterCube = _trfmAimCenterCube.GetComponent<Renderer> ();
 				_materialAimTool = _rendererAimTool.material;
 
 				_aUsedShaders = new Dictionary<string, Shader> ();
 				_goLastShaderChange = null;
 				_aGoShaderChanged = new List<GameObject> ();
 
-				_goLastMaterialChanged = null;
-				_tempMaterial = null;
+				//_goLastMaterialChanged = null;
+				//_tempMaterial = null;
 
 				_mouseIsDown = false;
 			}
@@ -122,17 +126,23 @@ namespace DragginzWorldEditor
 			changeShaders ();
 			_trfmAimTool.position = new Vector3(9999,9999,9999);
 			_rendererAimTool.material = _materialAimTool;
+			_rendererAimCenterCube.material = _materialAimTool;
 		}
 
 		public void setCurAimMaterial() {
 			_rendererAimTool.material = _levelEditor.aMaterials [MainMenu.Instance.iSelectedMaterial];
 		}
 
+		public void setCurAimCenterCubeMaterial() {
+			_rendererAimTool.material = _materialAimTool;
+			_rendererAimCenterCube.sharedMaterial = _levelEditor.aMaterials [MainMenu.Instance.iSelectedMaterial];
+		}
+
 		public void resetMaterial()
 		{
-			setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
-			_goLastMaterialChanged = null;
-			_tempMaterial = null;
+			//setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
+			//_goLastMaterialChanged = null;
+			//_tempMaterial = null;
 		}
 
 		public void resetItem()
@@ -208,7 +218,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void changeSingleMaterial(GameObject go, int materialIndex)
+		/*public void changeSingleMaterial(GameObject go, int materialIndex)
 		{
 			if (go == null) {
 				return;
@@ -221,7 +231,7 @@ namespace DragginzWorldEditor
 
 			_goLastMaterialChanged = go;
 			setSingleMaterial (_goLastMaterialChanged, _levelEditor.aMaterials[materialIndex]);
-		}
+		}*/
 
 		//
 		public void setSingleMaterial(GameObject go, Material material, bool setTempMaterial = true)
@@ -229,9 +239,9 @@ namespace DragginzWorldEditor
 			if (go != null && material != null) {
 				Renderer renderer = go.GetComponent<Renderer> ();
 				if (renderer != null && renderer.sharedMaterial.name != material.name) {
-					if (setTempMaterial) {
-						_tempMaterial = renderer.sharedMaterial;
-					}
+					//if (setTempMaterial) {
+					//	_tempMaterial = renderer.sharedMaterial;
+					//}
 					renderer.sharedMaterial = material;
 				}
 			}
