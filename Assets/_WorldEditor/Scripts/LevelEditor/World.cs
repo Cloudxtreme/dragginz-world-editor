@@ -17,8 +17,8 @@ namespace DragginzWorldEditor
 
 		//private Dictionary<int, Dictionary<int, Dictionary<int, int>>> _quadrantFlags;
 		private Dictionary<string, int> _quadrantFlagsNew;
-		private int _iMinLevelCoord;
-		private int _iMaxLevelCoord;
+		//private int _iMinLevelCoord;
+		//private int _iMaxLevelCoord;
 
 		private Dictionary<GameObject, bool> _visibleQuadrants;
 		private List<GameObject> _aQuadrantChangedVisibility;
@@ -40,8 +40,8 @@ namespace DragginzWorldEditor
 		{
 			_levelEditor = LevelEditor.Instance;
 
-			_iMinLevelCoord = -50;
-			_iMaxLevelCoord = 50;
+			//_iMinLevelCoord = -50;
+			//_iMaxLevelCoord = 50;
 
 			//_quadrantFlags = new Dictionary<int, Dictionary<int, Dictionary<int, int>>> ();
 			_quadrantFlagsNew = new Dictionary<string, int> ();

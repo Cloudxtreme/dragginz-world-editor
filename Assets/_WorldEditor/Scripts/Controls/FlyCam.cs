@@ -23,9 +23,9 @@ namespace DragginzWorldEditor
 		private Vector3 playerEuler;
 		private Vector3 camOffset;
 
-		private PlayerEditCollision playerCollision;
+		//private PlayerEditCollision playerCollision;
 
-		private Vector3 mousePos;
+		//private Vector3 mousePos;
 		//private Vector3 dragOrigin;
 		//private Vector3 dragDiff;
 
@@ -34,7 +34,7 @@ namespace DragginzWorldEditor
 		private Collider[] _hitColliders;
 		private Vector3 _v3PlayerExtents;
 
-		private float _mouseWheel;
+		//private float _mouseWheel;
 		private bool _mouseRightIsDown;
 
 		private float _time;
@@ -70,7 +70,7 @@ namespace DragginzWorldEditor
 
 			playerEuler = _player.eulerAngles;
 
-			mousePos   = Vector3.zero;
+			//mousePos   = Vector3.zero;
 			//dragOrigin = Vector3.zero;
 			//dragDiff   = Vector3.zero;
 
@@ -78,7 +78,7 @@ namespace DragginzWorldEditor
 			_layermask = 1 << 8;
 			_v3PlayerExtents = new Vector3 (0.3f, 0.2f, 0.2f);
 
-			_mouseWheel = 0;
+			//_mouseWheel = 0;
 			_mouseRightIsDown = false;
 
 			_time = 0;
@@ -94,7 +94,7 @@ namespace DragginzWorldEditor
 
 			_itemCam = LevelEditor.Instance.itemCam;
 
-			playerCollision = PlayerEditCollision.Instance;
+			//playerCollision = PlayerEditCollision.Instance;
 		}
 
 		void OnPreRender() {

@@ -33,6 +33,7 @@ namespace DragginzWorldEditor
 	{
 		public Camera editCam;
 		public Camera itemCam;
+		public RTEditorCam itemCamScript;
 
 		public GameObject goWorld;
 		public GameObject goItems;
@@ -197,9 +198,11 @@ namespace DragginzWorldEditor
 		{
 			if (Input.GetKeyDown (KeyCode.LeftShift)) {
 				FlyCam.Instance.drawWireframe = true;
+				itemCamScript.drawWireframe = true;
 			}
 			else if (Input.GetKeyUp (KeyCode.LeftShift)) {
 				FlyCam.Instance.drawWireframe = false;
+				itemCamScript.drawWireframe = false;
 			}
 
 			if (MainMenu.Instance.popup.isVisible ())
@@ -511,7 +514,7 @@ namespace DragginzWorldEditor
 			if (AppController.Instance.appState == AppState.Build) {
 				laserAim.transform.localScale = v3DigSettings * fScale;
 				laserAimCenterCube.SetActive (true);
-				fScale -= 0.05f;
+				fScale -= 0.01f;
 				laserAimCenterCube.transform.localScale = new Vector3(fScale / laserAim.transform.localScale.x, fScale / laserAim.transform.localScale.y, fScale / laserAim.transform.localScale.z);
 			} else {
 				fScale *= 0.75f;

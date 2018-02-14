@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+using DragginzWorldEditor;
+
 namespace RTEditor
 {
     public class SceneGizmo : MonoSingletonBase<SceneGizmo>
@@ -378,6 +380,9 @@ namespace RTEditor
         private void UpdateGizmoCamera()
         {
             Transform editorCameraTransform = EditorCamera.Instance.transform;
+			if (AppController.Instance.appState != AppState.Look) {
+				editorCameraTransform = FlyCam.Instance.player;
+			}
             _gizmoCameraTransform.position = editorCameraTransform.position;
             _gizmoCameraTransform.rotation = editorCameraTransform.rotation;
             UpdateGizmoCameraViewport();

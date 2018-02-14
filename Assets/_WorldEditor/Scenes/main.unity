@@ -333,6 +333,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   editCam: {fileID: 677500482}
   itemCam: {fileID: 1536498745}
+  itemCamScript: {fileID: 1536498747}
   goWorld: {fileID: 138649708}
   goItems: {fileID: 2126851608}
   goPlayer: {fileID: 725634865}
@@ -342,6 +343,10 @@ MonoBehaviour:
     type: 2}
   cubePrefabCenter: {fileID: 1025387082872192, guid: 8b4d8a7fdb48cdd4485c9b15d1bfdf58,
     type: 2}
+  laserAim: {fileID: 1209775551}
+  laserAimCenterCube: {fileID: 764806981}
+  laserAimMaterial: {fileID: 2100000, guid: 3877836b3e3455d4a831a75fb9f5691a, type: 2}
+  itemAim: {fileID: 1300222925}
   itemPrefabs:
   - {fileID: 1135133013189630, guid: 793d0c05a5cff35499c993e26155c363, type: 2}
   - {fileID: 1542846363279082, guid: cebf51f94e5c13b448ce24968386e892, type: 2}
@@ -350,10 +355,6 @@ MonoBehaviour:
   materialsWalls:
   - {fileID: 2100000, guid: 6bd787e00820ed64ab274fa05081fdc7, type: 2}
   - {fileID: 2100000, guid: 30134efa1826c0648b3e40394960a8f1, type: 2}
-  laserAim: {fileID: 1209775551}
-  laserAimCenterCube: {fileID: 764806981}
-  laserAimMaterial: {fileID: 2100000, guid: 3877836b3e3455d4a831a75fb9f5691a, type: 2}
-  itemAim: {fileID: 1300222925}
 --- !u!4 &361061324
 Transform:
   m_ObjectHideFlags: 0
@@ -379,7 +380,7 @@ GameObject:
   - component: {fileID: 391613031}
   - component: {fileID: 391613030}
   m_Layer: 0
-  m_Name: (Singleton)RTEditor.RuntimeEditorApplication
+  m_Name: RTEditor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1644,6 +1645,7 @@ GameObject:
   - component: {fileID: 1536498744}
   - component: {fileID: 1536498745}
   - component: {fileID: 1536498746}
+  - component: {fileID: 1536498747}
   m_Layer: 0
   m_Name: (Singleton)RTEditor.EditorCamera
   m_TagString: Untagged
@@ -1890,6 +1892,18 @@ MonoBehaviour:
     _topColor: {r: 0.2784314, g: 0.2784314, b: 0.2784314, a: 1}
     _bottomColor: {r: 0, g: 0, b: 0, a: 1}
     _gradientOffset: 0
+--- !u!114 &1536498747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1536498743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f548ab92b4e13b458bd5717ef189002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawWireframe: 0
 --- !u!1 &1596684866
 GameObject:
   m_ObjectHideFlags: 0
