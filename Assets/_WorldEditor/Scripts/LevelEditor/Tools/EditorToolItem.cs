@@ -32,25 +32,27 @@ namespace DragginzWorldEditor
 			{
 				_bounds = _levelEditor.goCurItem.GetComponent<Renderer> ().bounds;
 
-				//_trfmAimItem.forward = _hit.normal;
-				//_trfmAimTool.forward = _hit.normal;
+				if (_hit.normal.y != 0) {
+					_trfmAimItem.forward = -Vector3.forward;
+				} else {
+					_trfmAimItem.forward = _hit.normal;
+				}
 
-				//Vector3 v3Bounds = _levelEditor.goCurItem.GetComponent<Renderer> ().bounds.extents;
-				_v3Pos = _goHit.transform.position + _hit.normal;
-				//v3Pos.x += (_hit.normal.x * v3Bounds.x);
-				//v3Pos.y += (_hit.normal.y * v3Bounds.y);
-				//v3Pos.z += (_hit.normal.z * v3Bounds.z);
+				_v3Pos = _goHit.transform.position;
+				_v3Pos +=  (_hit.normal * (_levelEditor.fRockSize + 0.05f));
+
+				_trfmAimTool.position   = _bounds.center;
+				//_trfmAimTool.forward    = _trfmAimItem.forward;
+				_trfmAimTool.localScale = _bounds.extents * 2.0f;
 
 				_v3Pos.y -= (_bounds.extents.y * _goHit.transform.localScale.y);
 				_trfmAimItem.position = _v3Pos;
-
-				_trfmAimTool.position = _bounds.center;
-				_trfmAimTool.localScale = _levelEditor.goCurItem.GetComponent<Renderer> ().bounds.extents * 2.0f;
 
 				if (_mouseIsDown) {
 					placeIt (_v3Pos);
 					_mouseIsDown = false;
 				}
+
 			}
 			else {
 				resetItem ();
@@ -62,13 +64,7 @@ namespace DragginzWorldEditor
 			string sName = _levelEditor.goCurItem.name+"_"+_levelEditor.goItems.transform.childCount;
 
 			GameObject goNew = World.Instance.createItem (MainMenu.Instance.iSelectedItem, v3Pos, sName, _levelEditor.goItems.transform);
-			/*GameObject goNew = GameObject.Instantiate (_levelEditor.itemPrefabs [MainMenu.Instance.iSelectedItem]);
-			goNew.transform.SetParent (_levelEditor.goItems.transform);
-			goNew.transform.position = v3Pos;
-			goNew.name = sName;
-			// turn on gravity and collider
-			goNew.GetComponent<BoxCollider>().enabled = true;
-			goNew.GetComponent<Rigidbody>().useGravity = true;*/
+			//goNew.transform.forward = _trfmAimItem.forward;
 
 			_levelEditor.resetUndoActions ();
 			_levelEditor.addUndoAction (AppState.Items, goNew);

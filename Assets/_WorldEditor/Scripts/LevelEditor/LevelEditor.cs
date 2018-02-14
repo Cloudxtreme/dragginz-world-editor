@@ -290,6 +290,8 @@ namespace DragginzWorldEditor
 
 			setSelectedObjects ();
 
+			SceneGizmo.Instance.editorCameraTransform = EditorCamera.Instance.transform;
+
 			if (mode == AppState.Look)
 			{
 				MainMenu.Instance.showTransformBox (true);
@@ -336,6 +338,8 @@ namespace DragginzWorldEditor
 				goPlayer.SetActive ((mode == AppState.Play));
 				goPlayerEdit.SetActive (!goPlayer.activeSelf);
 			}
+
+			SceneGizmo.Instance.editorCameraTransform = (itemCam.enabled ? EditorCamera.Instance.transform : FlyCam.Instance.player);
 
 			MainMenu.Instance.resetDigSettings (new Vector3 (1, 1, 1));
 			updateDigSettings (MainMenu.Instance.v3DigSettings);

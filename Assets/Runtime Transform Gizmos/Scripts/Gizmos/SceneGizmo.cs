@@ -112,6 +112,7 @@ namespace RTEditor
         public Color ZAxisColor { get { return _zAxisColor; } set { _zAxisColor = value; } }
         public Color HoveredComponentColor { get { return _hoveredComponentColor; } set { _hoveredComponentColor = value; } }
         public Color CubeColor { get { return _cubeColor; } set { _cubeColor = value; } }
+		public Transform editorCameraTransform;
         #endregion
 
         #region Public Methods
@@ -125,6 +126,7 @@ namespace RTEditor
         private void Awake()
         {
             _gizmoTransform = transform;
+			editorCameraTransform = EditorCamera.Instance.transform;
         }
 
         private void Start()
@@ -379,12 +381,12 @@ namespace RTEditor
 
         private void UpdateGizmoCamera()
         {
-            Transform editorCameraTransform = EditorCamera.Instance.transform;
+            /*Transform editorCameraTransform = EditorCamera.Instance.transform;
 			if (AppController.Instance.appState != AppState.Look) {
 				editorCameraTransform = FlyCam.Instance.player;
-			}
-            _gizmoCameraTransform.position = editorCameraTransform.position;
-            _gizmoCameraTransform.rotation = editorCameraTransform.rotation;
+			}*/
+			_gizmoCameraTransform.position = editorCameraTransform.position;
+			_gizmoCameraTransform.rotation = editorCameraTransform.rotation;
             UpdateGizmoCameraViewport();
             UpdateGizmoCameraViewVolume();
 

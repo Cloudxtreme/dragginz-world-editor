@@ -143,6 +143,7 @@ namespace DragginzWorldEditor
 			setSingleShader (_goLastShaderChange, Globals.defaultShaderName);
 			changeShaders ();
 			_trfmAimTool.position = new Vector3(9999,9999,9999);
+			_trfmAimTool.forward = Vector3.forward;
 			_rendererAimTool.material = _materialAimTool;
 			_rendererAimCenterCube.material = _materialAimTool;
 			_goHitLast = null;
@@ -167,6 +168,7 @@ namespace DragginzWorldEditor
 		public void resetItem()
 		{
 			_trfmAimItem.position = new Vector3(9999,9999,9999);
+			_trfmAimItem.forward = Vector3.forward;
 			_trfmAimTool.position = new Vector3(9999,9999,9999);
 		}
 

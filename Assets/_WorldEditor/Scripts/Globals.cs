@@ -11,7 +11,7 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v02.14.0a";
+		static public readonly string version = "Level Editor v02.14.1a";
 		static public readonly int levelSaveFormatVersion = 4;
 
         static public readonly string appContainerName      = "{AppController}";
@@ -41,7 +41,7 @@ namespace DragginzWorldEditor
 
 		static public readonly string containerGameObjectPrepend = "q_";
 
-		static public readonly float RAYCAST_DISTANCE_EDIT = 4.2f;
+		static public readonly float RAYCAST_DISTANCE_EDIT = 10.24f;
 
 		//
 		public static int getItemIndexFromName(string name)
