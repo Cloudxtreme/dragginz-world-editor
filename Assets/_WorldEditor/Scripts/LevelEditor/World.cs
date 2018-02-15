@@ -331,8 +331,15 @@ namespace DragginzWorldEditor
 			goNew.transform.position = v3Pos;
 			goNew.name = name;
 
-			goNew.GetComponent<BoxCollider>().enabled  = enableCollider;
-			goNew.GetComponent<Rigidbody>().useGravity = enableCollider;
+			BoxCollider collider = goNew.GetComponent<BoxCollider> ();
+			if (collider != null) {
+				collider.enabled = enableCollider;
+			}
+
+			Rigidbody rigidBody = goNew.GetComponent<Rigidbody> ();
+			if (rigidBody != null) {
+				rigidBody.useGravity = enableCollider;
+			}
 
 			return goNew;
 		}

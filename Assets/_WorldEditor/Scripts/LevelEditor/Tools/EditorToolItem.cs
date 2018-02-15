@@ -13,6 +13,8 @@ namespace DragginzWorldEditor
 {
 	public class EditorToolItem : EditorTool {
 
+		private Collider _collider;
+
 		public EditorToolItem() : base(Globals.EDITOR_TOOL_ITEMS)
 		{
 			//
@@ -30,7 +32,16 @@ namespace DragginzWorldEditor
 
 			if (_goHit != null && _levelEditor.goCurItem != null)
 			{
-				_bounds = _levelEditor.goCurItem.GetComponent<Renderer> ().bounds;
+				if (_levelEditor.goCurItem.GetComponent<BoxCollider> () != null) {
+					_collider = _levelEditor.goCurItem.GetComponent<BoxCollider> ();
+					_bounds = _collider.bounds;
+				} else if (_levelEditor.goCurItem.GetComponent<MeshCollider> () != null) {
+					_collider = _levelEditor.goCurItem.GetComponent<MeshCollider> ();
+					_bounds = _collider.bounds;
+				} else {
+					_bounds = new Bounds ();
+				}
+				//_bounds = _levelEditor.goCurItem.GetComponent<BoxCollider> ().bounds;
 
 				if (_hit.normal.y != 0) {
 					_trfmAimItem.forward = -Vector3.forward;

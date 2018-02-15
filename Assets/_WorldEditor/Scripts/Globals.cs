@@ -30,7 +30,7 @@ namespace DragginzWorldEditor
 		public const string highlightShaderName = "Legacy Shaders/Reflective/Diffuse";
 
         static public readonly string[] materials = {"Marble", "Moss", "Shape", "Stone"};
-		static public readonly List<string> items = new List<string>() {"itemAltar", "itemBarrel", "itemChest", "itemSkull"};
+		static public readonly List<string> items = new List<string>() {"itemSkull", "itemPipe", "itemCupboard", "itemToilet"};
 
 		static public readonly string warningObsoleteFileFormat = "Can't load level:\nFile format is obsolete!";
 		static public readonly string warningInvalidFileFormat  = "Can't load level:\nFile format is invalid!";

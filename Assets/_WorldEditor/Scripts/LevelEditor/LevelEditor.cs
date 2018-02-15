@@ -360,7 +360,9 @@ namespace DragginzWorldEditor
 				undo.name = go.name;
 				undo.position = go.transform.localPosition;
 				undo.parent = go.transform.parent;
-				undo.material = go.GetComponent<Renderer> ().sharedMaterial;
+				if (go.GetComponent<Renderer> () != null) {
+					undo.material = go.GetComponent<Renderer> ().sharedMaterial;
+				}
 			}
 
 			// items
@@ -490,8 +492,12 @@ namespace DragginzWorldEditor
 			int i, len = _selectedObjects.Count;
 			for (i = 0; i < len; ++i) {
 				if (_selectedObjects [i] != null) {
-					_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = true;
-					_selectedObjects [i].GetComponent<BoxCollider> ().enabled = true;
+					if (_selectedObjects [i].GetComponent<Rigidbody> () != null) {
+						_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = true;
+					}
+					if (_selectedObjects [i].GetComponent<BoxCollider> () != null) {
+						_selectedObjects [i].GetComponent<BoxCollider> ().enabled = true;
+					}
 				}
 			}
 
@@ -504,8 +510,12 @@ namespace DragginzWorldEditor
 				len = _selectedObjects.Count;
 				for (i = 0; i < len; ++i) {
 					if (_selectedObjects [i] != null) {
-						_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = false;
-						_selectedObjects [i].GetComponent<BoxCollider> ().enabled = false;
+						if (_selectedObjects [i].GetComponent<Rigidbody> () != null) {
+							_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = false;
+						}
+						if (_selectedObjects [i].GetComponent<BoxCollider> () != null) {
+							_selectedObjects [i].GetComponent<BoxCollider> ().enabled = false;
+						}
 					}
 				}
 			}

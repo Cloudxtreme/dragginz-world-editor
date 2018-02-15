@@ -473,7 +473,9 @@ namespace DragginzWorldEditor
         private void onGameObjectClicked(GameObject clickedObject) {
 
             //Debug.Log("onGameObjectClicked "+clickedObject.name);
-			clickedObject.GetComponent<Rigidbody> ().useGravity = false;
+			if (clickedObject.GetComponent<Rigidbody> () != null) {
+				clickedObject.GetComponent<Rigidbody> ().useGravity = false;
+			}
         }
 
 		private void onSelectionChanged(ObjectSelectionChangedEventArgs selectionChangedEventArgs) {

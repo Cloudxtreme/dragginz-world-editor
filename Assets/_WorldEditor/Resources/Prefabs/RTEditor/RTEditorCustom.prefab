@@ -577,6 +577,7 @@ MonoBehaviour:
   _cubeColor: {r: 0.8, g: 0.8, b: 0.8, a: 0.92941177}
   _hoveredComponentColor: {r: 0.9647059, g: 0.9490196, b: 0.19607843, a: 1}
   _cameraAlignDuration: 0.3
+  editorCameraTransform: {fileID: 0}
 --- !u!114 &114366230451012356
 MonoBehaviour:
   m_ObjectHideFlags: 1
