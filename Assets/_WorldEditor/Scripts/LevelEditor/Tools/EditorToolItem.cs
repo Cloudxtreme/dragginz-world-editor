@@ -41,23 +41,22 @@ namespace DragginzWorldEditor
 				} else {
 					_bounds = new Bounds ();
 				}
-				//_bounds = _levelEditor.goCurItem.GetComponent<BoxCollider> ().bounds;
-
-				if (_hit.normal.y != 0) {
-					_trfmAimItem.forward = -Vector3.forward;
-				} else {
-					_trfmAimItem.forward = _hit.normal;
-				}
 
 				_v3Pos = _goHit.transform.position;
 				_v3Pos +=  (_hit.normal * (_levelEditor.fRockSize + 0.05f));
 
-				_trfmAimTool.position   = _bounds.center;
+				//_trfmAimTool.position   = _bounds.center;
 				//_trfmAimTool.forward    = _trfmAimItem.forward;
-				_trfmAimTool.localScale = _bounds.extents * 2.0f;
+				//_trfmAimTool.localScale = _bounds.extents * 2.0f;
 
 				_v3Pos.y -= (_bounds.extents.y * _goHit.transform.localScale.y);
 				_trfmAimItem.position = _v3Pos;
+
+				if (_hit.normal.y != 0) {
+					_levelEditor.goCurItem.transform.forward = -Vector3.forward;
+				} else {
+					_levelEditor.goCurItem.transform.forward = _hit.normal;
+				}
 
 				if (_mouseIsDown) {
 					placeIt (_v3Pos);
