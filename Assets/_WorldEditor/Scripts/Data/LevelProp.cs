@@ -12,7 +12,7 @@ using UnityEngine;
 namespace DragginzWorldEditor
 {
 	[Serializable]
-	public class LevelItem {
+	public class LevelProp {
 
 		[SerializeField]
 		public int id { get; set; }

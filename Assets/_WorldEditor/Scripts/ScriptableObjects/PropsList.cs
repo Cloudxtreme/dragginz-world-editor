@@ -12,6 +12,6 @@ namespace DragginzWorldEditor
 	[CreateAssetMenu(fileName = "NewPropsList", menuName = "Dragginz/Props List", order = 2)]
 	public class PropsList : ScriptableObject
 	{
-		public List<PropDefinition> propsList;
+		public List<PropDefinition> props;
 	}
 }

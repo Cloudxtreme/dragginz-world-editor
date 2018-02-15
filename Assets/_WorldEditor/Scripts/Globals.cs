@@ -11,11 +11,13 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v02.14.1a";
-		static public readonly int levelSaveFormatVersion = 4;
+		static public readonly string version = "Level Editor v02.15.0a";
+		static public readonly int levelSaveFormatVersion = 5;
+
+		public const string propListName = "props_list_leveleditor";
 
         static public readonly string appContainerName      = "{AppController}";
-        static public readonly string lightsContainerName   = "[Lights]";
+        //static public readonly string lightsContainerName   = "[Lights]";
         static public readonly string worldContainerName    = "[World]";
         static public readonly string mainMenuContainerName = "[MainMenu]";
 
@@ -30,7 +32,6 @@ namespace DragginzWorldEditor
 		public const string highlightShaderName = "Legacy Shaders/Reflective/Diffuse";
 
         static public readonly string[] materials = {"Marble", "Moss", "Shape", "Stone"};
-		static public readonly List<string> items = new List<string>() {"propSkull", "propPipe", "propCupboard", "propToilet", "propImpling"};
 
 		static public readonly string warningObsoleteFileFormat = "Can't load level:\nFile format is obsolete!";
 		static public readonly string warningInvalidFileFormat  = "Can't load level:\nFile format is invalid!";
@@ -44,7 +45,7 @@ namespace DragginzWorldEditor
 		static public readonly float RAYCAST_DISTANCE_EDIT = 10.24f;
 
 		//
-		public static int getItemIndexFromName(string name)
+		/*public static int getItemIndexFromName(string name)
 		{
 			string correctName = name;
 
@@ -55,7 +56,7 @@ namespace DragginzWorldEditor
 			}
 
 			return items.IndexOf (correctName);
-		}
+		}*/
 
 		/// <summary>
 		/// ...

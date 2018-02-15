@@ -91,27 +91,27 @@ namespace DragginzWorldEditor
 
 			MainMenu.Instance.setCubeCountText (World.Instance.numCubes);
 
-			if (levelFile.levelItems != null) {
+			if (levelFile.levelProps != null) {
 				
-				LevelItem levelItem;
-				GameObject item;
+				LevelProp levelProp;
+				GameObject goProp;
 				Quaternion rotation = Quaternion.identity;
 
-				len = levelFile.levelItems.Count;
+				len = levelFile.levelProps.Count;
 				for (i = 0; i < len; ++i) {
-					levelItem = levelFile.levelItems [i];
+					levelProp = levelFile.levelProps [i];
 
-					pos.x = levelItem.position.x;
-					pos.y = levelItem.position.y;
-					pos.z = levelItem.position.z;
+					pos.x = levelProp.position.x;
+					pos.y = levelProp.position.y;
+					pos.z = levelProp.position.z;
 
-					item = world.createItem (levelItem.id, pos, levelItem.name, levelEditor.goItems.transform); 
+					goProp = world.createProp (levelProp.id, pos, levelProp.name, levelEditor.goProps.transform); 
 
-					rotation.w = levelItem.rotation.w;
-					rotation.x = levelItem.rotation.x;
-					rotation.y = levelItem.rotation.y;
-					rotation.z = levelItem.rotation.z;
-					item.transform.rotation = rotation;
+					rotation.w = levelProp.rotation.w;
+					rotation.x = levelProp.rotation.x;
+					rotation.y = levelProp.rotation.y;
+					rotation.z = levelProp.rotation.z;
+					goProp.transform.rotation = rotation;
 				}
 			}
 		}
@@ -215,41 +215,41 @@ namespace DragginzWorldEditor
 				levelFile.levelQuadrants.Add (quadrant);
 			}
 
-			parent = LevelEditor.Instance.goItems;
+			parent = LevelEditor.Instance.goProps;
 			if (parent != null) {
 
-				List<LevelItem> items = new List<LevelItem> ();
+				List<LevelProp> levelProps = new List<LevelProp> ();
 
-				foreach (Transform item in parent.transform) {
+				foreach (Transform prop in parent.transform) {
 
-					if (!item.gameObject.activeSelf) {
+					if (!prop.gameObject.activeSelf) {
 						continue;
 					}
 
-					int itemId = Globals.getItemIndexFromName (item.name);
-					if (itemId == -1) {
+					int propId = -1;//Globals.getItemIndexFromName (item.name);
+					if (propId == -1) {
 						continue;
 					}
 
-					LevelItem levelItem = new LevelItem ();
-					levelItem.id   = itemId;
-					levelItem.name = item.name;
+					LevelProp levelProp = new LevelProp ();
+					levelProp.id   = propId;
+					levelProp.name = prop.name;
 
-					levelItem.position   = new DataTypeVector3 ();
-					levelItem.position.x = item.position.x;
-					levelItem.position.y = item.position.y;
-					levelItem.position.z = item.position.z;
+					levelProp.position   = new DataTypeVector3 ();
+					levelProp.position.x = prop.position.x;
+					levelProp.position.y = prop.position.y;
+					levelProp.position.z = prop.position.z;
 
-					levelItem.rotation = new DataTypeQuaternion ();
-					levelItem.rotation.w = item.rotation.w;
-					levelItem.rotation.x = item.rotation.x;
-					levelItem.rotation.y = item.rotation.y;
-					levelItem.rotation.z = item.rotation.z;
+					levelProp.rotation = new DataTypeQuaternion ();
+					levelProp.rotation.w = prop.rotation.w;
+					levelProp.rotation.x = prop.rotation.x;
+					levelProp.rotation.y = prop.rotation.y;
+					levelProp.rotation.z = prop.rotation.z;
 
-					items.Add (levelItem);
+					levelProps.Add (levelProp);
 				}
 
-				levelFile.levelItems = items;
+				levelFile.levelProps = levelProps;
 			}
 
 			return levelFile;

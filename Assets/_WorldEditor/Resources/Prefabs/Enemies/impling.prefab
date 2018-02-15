@@ -580,7 +580,7 @@ GameObject:
   - component: {fileID: 95295102436571984}
   - component: {fileID: 54449134820806646}
   m_Layer: 9
-  m_Name: propImpling
+  m_Name: impling
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -989,7 +989,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1574667098154834}
-  m_LocalRotation: {x: -0.56254697, y: -0.06405748, z: 0.82167214, w: -0.06551591}
+  m_LocalRotation: {x: -0.562547, y: -0.064057484, z: 0.82167226, w: -0.06551592}
   m_LocalPosition: {x: 0.59069765, y: -0.50653255, z: 1.2841672}
   m_LocalScale: {x: 1.0000001, y: 1, z: 1}
   m_Children:

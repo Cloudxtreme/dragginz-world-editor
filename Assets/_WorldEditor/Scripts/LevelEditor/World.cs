@@ -178,7 +178,7 @@ namespace DragginzWorldEditor
 				Destroy (child.gameObject);
 			}
 
-			foreach (Transform child in _levelEditor.goItems.transform) {
+			foreach (Transform child in _levelEditor.goProps.transform) {
 				Destroy (child.gameObject);
 			}
 
@@ -324,7 +324,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public GameObject createItem(int id, Vector3 v3Pos, string name, Transform parent, bool enableCollider = true)
+		public GameObject createProp(int id, Vector3 v3Pos, string name, Transform parent, bool enableCollider = true)
 		{
 			GameObject goNew = GameObject.Instantiate (_levelEditor.itemPrefabs [id]);
 			goNew.transform.SetParent (parent);

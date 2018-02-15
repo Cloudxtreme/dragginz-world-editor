@@ -11,5 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c62a9d31166f36e4fa67017a63dfdc6e, type: 3}
   m_Name: props_list_leveleditor
   m_EditorClassIdentifier: 
-  propsList:
+  props:
   - {fileID: 11400000, guid: 1a6964554eff52c4686fa4bc9bb638ee, type: 2}
+  - {fileID: 11400000, guid: 05cab00cf29ae0d4ebfc86713ec5cf1b, type: 2}
+  - {fileID: 11400000, guid: b10d738007b9553409a3f1dd9705ca21, type: 2}
+  - {fileID: 11400000, guid: d6356cca801a13f4590ec0bf305a2142, type: 2}

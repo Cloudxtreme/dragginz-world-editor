@@ -19,7 +19,7 @@ namespace DragginzWorldEditor
 		Dig,
 		Paint,
 		Build,
-		Items,
+		Props,
 		Play
 	};
 

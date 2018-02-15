@@ -13,6 +13,12 @@ using RTEditor;
 
 namespace DragginzWorldEditor
 {
+	struct levelProp {
+		public string name;
+		public GameObject clone;
+		public Vector3 forward;
+	};
+
 	struct undoItem {
 		public GameObject go;
 		public Vector3 position;
@@ -36,7 +42,7 @@ namespace DragginzWorldEditor
 		public RTEditorCam itemCamScript;
 
 		public GameObject goWorld;
-		public GameObject goItems;
+		public GameObject goProps;
 		public GameObject goPlayer;
 		public GameObject goPlayerEdit;
 
@@ -62,6 +68,8 @@ namespace DragginzWorldEditor
 		private Dictionary<string, Material> _aDictMaterials;
 
 		private List<undoAction> _undoActions;
+
+		private List<levelProp> _levelPropDefs;
 
 		private GameObject _goCurItem;
 		private List<GameObject> _selectedObjects;
@@ -120,6 +128,8 @@ namespace DragginzWorldEditor
 
 			_undoActions = new List<undoAction> ();
 
+			_levelPropDefs = new List<levelProp> ();
+
 			_goCurItem = null;
 			_selectedObjects = new List<GameObject> ();
 
@@ -136,7 +146,29 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		void Start() {
+		void Start()
+		{
+			// init props
+
+			PropsList propList = Resources.Load<PropsList> ("Data/" + Globals.propListName);
+			int i, len = propList.props.Count;
+			for (i = 0; i < len; ++i) {
+				PropDefinition propDef = propList.props [i];
+				if (propDef.prefab != null) {
+					levelProp p = new levelProp ();
+					p.name = propDef.propName;
+					GameObject clone = Instantiate (propDef.prefab);
+					p.forward = clone.transform.forward;
+					Destroy (clone);
+					_levelPropDefs.Add (p);
+				}
+			}
+			len = _levelPropDefs.Count;
+			for (i = 0; i < len; ++i) {
+				Debug.Log (_levelPropDefs [i].name + "->forward = " + _levelPropDefs [i].forward);
+			}
+
+			// other stuff
 
 			setMode (AppState.Null, true);
 
@@ -237,7 +269,7 @@ namespace DragginzWorldEditor
 					setMode (AppState.Paint);
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha5)) {
-					setMode(AppState.Items);
+					setMode(AppState.Props);
 				}
 			}
 
@@ -323,9 +355,9 @@ namespace DragginzWorldEditor
 				//_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
 				_curEditorTool.setCurAimMaterial ();
 			}
-			else if (mode == AppState.Items)
+			else if (mode == AppState.Props)
 			{
-				MainMenu.Instance.showItemsBox (true);
+				//MainMenu.Instance.showItemsBox (true);
 				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_ITEMS];
 				laserAim.SetActive (true);
 				itemAim.SetActive (true);
@@ -367,7 +399,7 @@ namespace DragginzWorldEditor
 
 			// items
 			undo.items = new List<undoItem> ();
-			foreach (Transform child in goItems.transform) {
+			foreach (Transform child in goProps.transform) {
 				undoItem item = new undoItem ();
 				item.go = child.gameObject;
 				item.position = child.position;
@@ -452,7 +484,7 @@ namespace DragginzWorldEditor
 					}
 				}
 				// ITEM
-				else if (undo.action == AppState.Items) {
+				else if (undo.action == AppState.Props) {
 					if (undo.go != null) {
 						Destroy (undo.go);
 					}
@@ -560,7 +592,7 @@ namespace DragginzWorldEditor
 					Destroy (_goCurItem);
 					_goCurItem = null;
 				}
-				_goCurItem = _World.createItem (MainMenu.Instance.iSelectedItem, Vector3.zero, Globals.items [MainMenu.Instance.iSelectedItem], itemAim.transform, false); 
+				_goCurItem = _World.createProp (MainMenu.Instance.iSelectedItem, Vector3.zero, null , itemAim.transform, false); //Globals.items [MainMenu.Instance.iSelectedItem]
 				_goCurItem.transform.localPosition = Vector3.zero;
 			}
 

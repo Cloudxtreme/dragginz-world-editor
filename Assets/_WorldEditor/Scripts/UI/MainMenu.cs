@@ -190,7 +190,7 @@ namespace DragginzWorldEditor
 			LevelEditor.Instance.setMode(AppState.Play);
 		}
 		public void onButtonModeItemsClicked() {
-			LevelEditor.Instance.setMode(AppState.Items);
+			LevelEditor.Instance.setMode(AppState.Props);
 		}
 
 		//
@@ -199,7 +199,7 @@ namespace DragginzWorldEditor
 			btnModeDig.interactable   = (mode != AppState.Dig);
 			btnModePaint.interactable = (mode != AppState.Paint);
 			btnModeBuild.interactable = (mode != AppState.Build);
-			btnModeItems.interactable = (mode != AppState.Items);
+			btnModeItems.interactable = (mode != AppState.Props);
 			//btnModePlay.interactable  = (mode != AppState.Play);
 		}
 
@@ -360,7 +360,7 @@ namespace DragginzWorldEditor
 			}
 		}
 
-		public void toggleItem(float toggle)
+		/*public void toggleItem(float toggle)
 		{
 			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {
 
@@ -394,7 +394,7 @@ namespace DragginzWorldEditor
 
 				LevelEditor.Instance.newItemSelected (_iSelectedItem);
 			}
-		}
+		}*/
 
 		public void resetDigSettings(Vector3 v3Set)
 		{
@@ -524,7 +524,7 @@ namespace DragginzWorldEditor
 		}
 
 		public void onSelectItem(int value) {
-			changeItem (value);
+			//changeItem (value);
 		}
 
 		// -------------------------------------------------------------------------------------

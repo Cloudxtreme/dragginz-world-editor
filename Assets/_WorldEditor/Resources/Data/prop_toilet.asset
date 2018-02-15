@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c31a8b1589037664ca73d9793a3ebe21, type: 3}
+  m_Name: prop_toilet
+  m_EditorClassIdentifier: 
+  propName: Toilet
+  prefab: {fileID: 1148425303337894, guid: 40628c2be74d7794eb18d38515480b93, type: 2}
+  isUsingGravity: 1
+  normal: {x: 0, y: 0, z: 0}

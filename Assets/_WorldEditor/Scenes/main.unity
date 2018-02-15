@@ -317,7 +317,7 @@ MonoBehaviour:
   itemCam: {fileID: 1536498745}
   itemCamScript: {fileID: 1536498747}
   goWorld: {fileID: 138649708}
-  goItems: {fileID: 2126851608}
+  goProps: {fileID: 2126851608}
   goPlayer: {fileID: 725634865}
   goPlayerEdit: {fileID: 1608281686}
   cubePrefab: {fileID: 1025387082872192, guid: 2a7b586c77ed6c14bafc60094e325eba, type: 2}
@@ -643,22 +643,22 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 224005085525295648, guid: c891010f2fd945b488775603e1678256,
+    - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 224005085525295648, guid: c891010f2fd945b488775603e1678256,
+    - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 999.9999
+      value: 195
       objectReference: {fileID: 0}
-    - target: {fileID: 224005085525295648, guid: c891010f2fd945b488775603e1678256,
+    - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchoredPosition.y
       value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 224362396818153044, guid: c891010f2fd945b488775603e1678256,
+    - target: {fileID: 224145464089200884, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -673,22 +673,22 @@ Prefab:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 224005085525295648, guid: c891010f2fd945b488775603e1678256,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224362396818153044, guid: c891010f2fd945b488775603e1678256,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 224465340556703038, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchorMax.x
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224465340556703038, guid: c891010f2fd945b488775603e1678256,
-        type: 2}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
-        type: 2}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224145464089200884, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -1419,7 +1419,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2126851609}
   m_Layer: 0
-  m_Name: '[Items]'
+  m_Name: '[Props]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -24,7 +24,7 @@ namespace DragginzWorldEditor
 		{
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
 				//if (Input.GetKey (KeyCode.LeftShift)) {
-					MainMenu.Instance.toggleItem (Input.GetAxis ("Mouse ScrollWheel"));
+					//MainMenu.Instance.toggleItem (Input.GetAxis ("Mouse ScrollWheel"));
 				//}
 			}
 
@@ -71,13 +71,13 @@ namespace DragginzWorldEditor
 
 		public void placeIt(Vector3 v3Pos)
 		{
-			string sName = _levelEditor.goCurItem.name+"_"+_levelEditor.goItems.transform.childCount;
+			string sName = _levelEditor.goCurItem.name+"_"+_levelEditor.goProps.transform.childCount;
 
-			GameObject goNew = World.Instance.createItem (MainMenu.Instance.iSelectedItem, v3Pos, sName, _levelEditor.goItems.transform);
+			GameObject goNew = World.Instance.createProp (MainMenu.Instance.iSelectedItem, v3Pos, sName, _levelEditor.goProps.transform);
 			//goNew.transform.forward = _trfmAimItem.forward;
 
 			_levelEditor.resetUndoActions ();
-			_levelEditor.addUndoAction (AppState.Items, goNew);
+			_levelEditor.addUndoAction (AppState.Props, goNew);
 		}
 	}
 }

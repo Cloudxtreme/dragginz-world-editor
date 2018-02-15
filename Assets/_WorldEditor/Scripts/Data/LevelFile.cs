@@ -24,7 +24,7 @@ namespace DragginzWorldEditor
 		public List<LevelQuadrant> levelQuadrants { get; set; }
 
 		[SerializeField]
-		public List<LevelItem> levelItems { get; set; }
+		public List<LevelProp> levelProps { get; set; }
 
 		[SerializeField]
 		public DataTypeVector3 playerPosition  { get; set; }
