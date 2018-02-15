@@ -70,6 +70,8 @@
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolPaint.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\World.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Player\PlayerEditCollision.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\ScriptableObjects\PropDefinition.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\ScriptableObjects\PropsList.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\UI\DigMainMenu.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\UI\Popup.cs" />
