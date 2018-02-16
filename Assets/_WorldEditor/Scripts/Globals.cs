@@ -11,15 +11,13 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v02.15.0a";
+		static public readonly string version = "Level Editor v02.16.0a";
 		static public readonly int levelSaveFormatVersion = 5;
 
 		public const string propListName = "props_list_leveleditor";
 
         static public readonly string appContainerName      = "{AppController}";
-        //static public readonly string lightsContainerName   = "[Lights]";
         static public readonly string worldContainerName    = "[World]";
-        static public readonly string mainMenuContainerName = "[MainMenu]";
 
 		static public readonly int EDITOR_TOOL_LOOK  = 0;
 		static public readonly int EDITOR_TOOL_DIG   = 1;

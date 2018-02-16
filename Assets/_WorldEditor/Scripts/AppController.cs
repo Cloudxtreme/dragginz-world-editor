@@ -30,6 +30,14 @@ namespace DragginzWorldEditor
 	};
 
 	//
+	public struct levelProp {
+		public string name;
+		public GameObject prefab;
+		public Vector3 forward;
+		public bool useGravity;
+	};
+
+	//
     public class AppController : MonoSingletonBase<AppController>
     {
         private AppState _appState;

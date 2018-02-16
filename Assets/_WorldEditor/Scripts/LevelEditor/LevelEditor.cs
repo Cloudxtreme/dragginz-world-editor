@@ -13,12 +13,6 @@ using RTEditor;
 
 namespace DragginzWorldEditor
 {
-	struct levelProp {
-		public string name;
-		public GameObject clone;
-		public Vector3 forward;
-	};
-
 	struct undoItem {
 		public GameObject go;
 		public Vector3 position;
@@ -56,7 +50,7 @@ namespace DragginzWorldEditor
 
 		public GameObject itemAim;
 
-		public List<GameObject> itemPrefabs;
+		//public List<GameObject> itemPrefabs;
         public List<Material> materialsWalls;
 
 		private World _World;
@@ -70,6 +64,7 @@ namespace DragginzWorldEditor
 		private List<undoAction> _undoActions;
 
 		private List<levelProp> _levelPropDefs;
+		private int _iSelectedItem = 0;
 
 		private GameObject _goCurItem;
 		private List<GameObject> _selectedObjects;
@@ -100,6 +95,14 @@ namespace DragginzWorldEditor
 
 		public Dictionary<string, Material> aDictMaterials {
 			get { return _aDictMaterials; }
+		}
+
+		public int iSelectedItem {
+			get { return _iSelectedItem; }
+		}
+
+		public List<levelProp> levelPropDefs {
+			get { return _levelPropDefs; }
 		}
 
 		public GameObject goCurItem {
@@ -153,20 +156,27 @@ namespace DragginzWorldEditor
 			PropsList propList = Resources.Load<PropsList> ("Data/" + Globals.propListName);
 			int i, len = propList.props.Count;
 			for (i = 0; i < len; ++i) {
+
 				PropDefinition propDef = propList.props [i];
 				if (propDef.prefab != null) {
-					levelProp p = new levelProp ();
-					p.name = propDef.propName;
+					
+					levelProp p  = new levelProp ();
+					p.name       = propDef.propName;
+					p.prefab     = propDef.prefab;
+					p.useGravity = propDef.isUsingGravity;
+
 					GameObject clone = Instantiate (propDef.prefab);
 					p.forward = clone.transform.forward;
 					Destroy (clone);
+
 					_levelPropDefs.Add (p);
 				}
 			}
-			len = _levelPropDefs.Count;
+
+			/*len = _levelPropDefs.Count;
 			for (i = 0; i < len; ++i) {
 				Debug.Log (_levelPropDefs [i].name + "->forward = " + _levelPropDefs [i].forward);
-			}
+			}*/
 
 			// other stuff
 
@@ -362,7 +372,7 @@ namespace DragginzWorldEditor
 				laserAim.SetActive (true);
 				itemAim.SetActive (true);
 				if (_goCurItem == null) {
-					newItemSelected (MainMenu.Instance.iSelectedItem);
+					newItemSelected (_iSelectedItem);
 				}
 			}
 
@@ -527,8 +537,8 @@ namespace DragginzWorldEditor
 					if (_selectedObjects [i].GetComponent<Rigidbody> () != null) {
 						_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = true;
 					}
-					if (_selectedObjects [i].GetComponent<BoxCollider> () != null) {
-						_selectedObjects [i].GetComponent<BoxCollider> ().enabled = true;
+					if (_selectedObjects [i].GetComponent<Collider> () != null) {
+						_selectedObjects [i].GetComponent<Collider> ().enabled = true;
 					}
 				}
 			}
@@ -545,8 +555,8 @@ namespace DragginzWorldEditor
 						if (_selectedObjects [i].GetComponent<Rigidbody> () != null) {
 							_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = false;
 						}
-						if (_selectedObjects [i].GetComponent<BoxCollider> () != null) {
-							_selectedObjects [i].GetComponent<BoxCollider> ().enabled = false;
+						if (_selectedObjects [i].GetComponent<Collider> () != null) {
+							_selectedObjects [i].GetComponent<Collider> ().enabled = false;
 						}
 					}
 				}
@@ -580,6 +590,17 @@ namespace DragginzWorldEditor
 			//}
 		}
 
+		public void toggleItem(float toggle)
+		{
+			if (toggle < 0) {
+				_iSelectedItem = (_iSelectedItem > 0 ? _iSelectedItem - 1 : 0);
+			} else {
+				_iSelectedItem = (_iSelectedItem < (_levelPropDefs.Count - 1) ? _iSelectedItem + 1 : (_levelPropDefs.Count - 1));
+			}
+
+			newItemSelected (_iSelectedItem);
+		}
+
 		//
 		public void newItemSelected (int iSelectedItem)
 		{
@@ -592,7 +613,7 @@ namespace DragginzWorldEditor
 					Destroy (_goCurItem);
 					_goCurItem = null;
 				}
-				_goCurItem = _World.createProp (MainMenu.Instance.iSelectedItem, Vector3.zero, null , itemAim.transform, false); //Globals.items [MainMenu.Instance.iSelectedItem]
+				_goCurItem = _World.createProp (iSelectedItem, Vector3.zero, _levelPropDefs[_iSelectedItem].name , itemAim.transform, false);
 				_goCurItem.transform.localPosition = Vector3.zero;
 			}
 

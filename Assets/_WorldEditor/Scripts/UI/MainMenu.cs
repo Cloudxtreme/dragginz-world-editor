@@ -72,10 +72,10 @@ namespace DragginzWorldEditor
 			get { return _iSelectedMaterial; }
 		}
 
-		private int _iSelectedItem = 0;
+		/*private int _iSelectedItem = 0;
 		public int iSelectedItem {
 			get { return _iSelectedItem; }
-		}
+		}*/
 
         private Popup _popup;
         public Popup popup {

@@ -324,14 +324,14 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public GameObject createProp(int id, Vector3 v3Pos, string name, Transform parent, bool enableCollider = true)
+		public GameObject createProp(int index, Vector3 v3Pos, string name, Transform parent, bool enableCollider = true)
 		{
-			GameObject goNew = GameObject.Instantiate (_levelEditor.itemPrefabs [id]);
+			GameObject goNew = GameObject.Instantiate (_levelEditor.levelPropDefs [index].prefab);
 			goNew.transform.SetParent (parent);
 			goNew.transform.position = v3Pos;
 			goNew.name = name;
 
-			BoxCollider collider = goNew.GetComponent<BoxCollider> ();
+			Collider collider = goNew.GetComponent<Collider> ();
 			if (collider != null) {
 				collider.enabled = enableCollider;
 			}

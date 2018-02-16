@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: prop_skull
   m_EditorClassIdentifier: 
   propName: Skull
-  prefab: {fileID: 1714697049149264, guid: 2791811d467ba5542bcf9776fea0b1b0, type: 2}
+  prefab: {fileID: 1356763988813370, guid: 0c9cfd40b3272e44d9bbd5d6537cd9b5, type: 2}
   isUsingGravity: 1

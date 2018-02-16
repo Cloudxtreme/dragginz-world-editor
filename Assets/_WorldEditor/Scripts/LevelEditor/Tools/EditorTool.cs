@@ -42,6 +42,8 @@ namespace DragginzWorldEditor
 		//protected static GameObject _goLastMaterialChanged;
 		//protected static Material _tempMaterial;
 
+		protected static float _lastMouseWheelUpdate;
+
 		protected static bool _mouseIsDown;
 
 		private static float _uiHeight  = (float)Screen.height * (90.0f / 1080.0f);
@@ -88,6 +90,8 @@ namespace DragginzWorldEditor
 
 				_goHitLast = null;
 				_raycastedObjectHasChanged = false;
+
+				_lastMouseWheelUpdate = 0;
 
 				_mouseIsDown = false;
 			}

@@ -23,40 +23,38 @@ namespace DragginzWorldEditor
 		public override void customUpdate(float time, float timeDelta)
 		{
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
-				//if (Input.GetKey (KeyCode.LeftShift)) {
-					//MainMenu.Instance.toggleItem (Input.GetAxis ("Mouse ScrollWheel"));
-				//}
+				if (time > _lastMouseWheelUpdate) {
+					_lastMouseWheelUpdate = time + 0.2f;
+					_levelEditor.toggleItem (Input.GetAxis ("Mouse ScrollWheel"));
+				}
 			}
 
 			doRayCast ();
 
 			if (_goHit != null && _levelEditor.goCurItem != null)
 			{
-				if (_levelEditor.goCurItem.GetComponent<BoxCollider> () != null) {
-					_collider = _levelEditor.goCurItem.GetComponent<BoxCollider> ();
+				if (_hit.normal.y != 0) {
+					_levelEditor.goCurItem.transform.forward = Vector3.forward;
+				} else {
+					_levelEditor.goCurItem.transform.forward = _hit.normal;
+				}
+
+				if (_levelEditor.goCurItem.GetComponent<Collider> () != null) {
+					_collider = _levelEditor.goCurItem.GetComponent<Collider> ();
 					_bounds = _collider.bounds;
-				} else if (_levelEditor.goCurItem.GetComponent<MeshCollider> () != null) {
+				}
+				/*else if (_levelEditor.goCurItem.GetComponent<MeshCollider> () != null) {
 					_collider = _levelEditor.goCurItem.GetComponent<MeshCollider> ();
 					_bounds = _collider.bounds;
-				} else {
-					_bounds = new Bounds ();
 				}
+				else {
+					_bounds = new Bounds ();
+				}*/
 
 				_v3Pos = _goHit.transform.position;
 				_v3Pos +=  (_hit.normal * (_levelEditor.fRockSize + 0.05f));
 
-				//_trfmAimTool.position   = _bounds.center;
-				//_trfmAimTool.forward    = _trfmAimItem.forward;
-				//_trfmAimTool.localScale = _bounds.extents * 2.0f;
-
-				_v3Pos.y -= (_bounds.extents.y * _goHit.transform.localScale.y);
-				_trfmAimItem.position = _v3Pos;
-
-				if (_hit.normal.y != 0) {
-					_levelEditor.goCurItem.transform.forward = -Vector3.forward;
-				} else {
-					_levelEditor.goCurItem.transform.forward = _hit.normal;
-				}
+				_levelEditor.goCurItem.transform.position = _v3Pos;
 
 				if (_mouseIsDown) {
 					placeIt (_v3Pos);
@@ -73,8 +71,8 @@ namespace DragginzWorldEditor
 		{
 			string sName = _levelEditor.goCurItem.name+"_"+_levelEditor.goProps.transform.childCount;
 
-			GameObject goNew = World.Instance.createProp (MainMenu.Instance.iSelectedItem, v3Pos, sName, _levelEditor.goProps.transform);
-			//goNew.transform.forward = _trfmAimItem.forward;
+			GameObject goNew = World.Instance.createProp (_levelEditor.iSelectedItem, v3Pos, sName, _levelEditor.goProps.transform);
+			goNew.transform.forward = _levelEditor.goCurItem.transform.forward;
 
 			_levelEditor.resetUndoActions ();
 			_levelEditor.addUndoAction (AppState.Props, goNew);
