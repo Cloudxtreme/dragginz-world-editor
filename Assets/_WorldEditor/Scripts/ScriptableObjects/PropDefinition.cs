@@ -11,8 +11,12 @@ namespace DragginzWorldEditor
 	[CreateAssetMenu(fileName = "NewProp", menuName = "Dragginz/Prop", order = 1)]
 	public class PropDefinition : ScriptableObject
 	{
+		public int id              = 0;
 		public string propName     = "New Prop";
+
 		public GameObject prefab   = null;
-		public bool isUsingGravity = true;
+
+		public bool isUsingCollider = true;
+		public bool isUsingGravity  = true;
 	}
 }

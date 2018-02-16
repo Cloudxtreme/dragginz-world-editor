@@ -11,6 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c31a8b1589037664ca73d9793a3ebe21, type: 3}
   m_Name: prop_pipe
   m_EditorClassIdentifier: 
+  id: 2
   propName: Pipe
   prefab: {fileID: 1487334898027488, guid: 8abb7a93364931b4f9d3fb30ecbf5284, type: 2}
-  isUsingGravity: 1
+  isUsingCollider: 1
+  isUsingGravity: 0

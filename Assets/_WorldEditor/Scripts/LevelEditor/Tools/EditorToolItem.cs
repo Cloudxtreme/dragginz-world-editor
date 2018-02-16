@@ -71,8 +71,12 @@ namespace DragginzWorldEditor
 		{
 			string sName = _levelEditor.goCurItem.name+"_"+_levelEditor.goProps.transform.childCount;
 
-			GameObject goNew = World.Instance.createProp (_levelEditor.iSelectedItem, v3Pos, sName, _levelEditor.goProps.transform);
+			propDef prop = _levelEditor.levelPropDefs [_levelEditor.iSelectedItem];
+
+			GameObject goNew = World.Instance.createProp (prop, v3Pos, sName, _levelEditor.goProps.transform, prop.useCollider, prop.useGravity);
 			goNew.transform.forward = _levelEditor.goCurItem.transform.forward;
+
+			PropsManager.Instance.addWorldProp (prop.id, goNew);
 
 			_levelEditor.resetUndoActions ();
 			_levelEditor.addUndoAction (AppState.Props, goNew);

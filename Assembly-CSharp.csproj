@@ -62,6 +62,7 @@
      <Compile Include="Assets\_WorldEditor\Scripts\Globals.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Block.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\PropsManager.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorTool.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolBuild.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolDig.cs" />

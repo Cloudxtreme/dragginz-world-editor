@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c31a8b1589037664ca73d9793a3ebe21, type: 3}
-  m_Name: prop_toilet
+  m_Name: prop_lantern
   m_EditorClassIdentifier: 
-  id: 4
-  propName: Toilet
-  prefab: {fileID: 1148425303337894, guid: 40628c2be74d7794eb18d38515480b93, type: 2}
-  isUsingGravity: 1
+  id: 5
+  propName: Lantern
+  prefab: {fileID: 1581331245749186, guid: 2b8c38f3445cbf542ade43afb21e4ca3, type: 2}
+  isUsingGravity: 0

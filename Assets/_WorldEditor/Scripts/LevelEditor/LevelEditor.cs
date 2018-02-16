@@ -63,7 +63,7 @@ namespace DragginzWorldEditor
 
 		private List<undoAction> _undoActions;
 
-		private List<levelProp> _levelPropDefs;
+		private List<propDef> _levelPropDefs;
 		private int _iSelectedItem = 0;
 
 		private GameObject _goCurItem;
@@ -101,7 +101,7 @@ namespace DragginzWorldEditor
 			get { return _iSelectedItem; }
 		}
 
-		public List<levelProp> levelPropDefs {
+		public List<propDef> levelPropDefs {
 			get { return _levelPropDefs; }
 		}
 
@@ -131,7 +131,7 @@ namespace DragginzWorldEditor
 
 			_undoActions = new List<undoAction> ();
 
-			_levelPropDefs = new List<levelProp> ();
+			_levelPropDefs = new List<propDef> ();
 
 			_goCurItem = null;
 			_selectedObjects = new List<GameObject> ();
@@ -139,6 +139,8 @@ namespace DragginzWorldEditor
 			_fRockSize = 0.5f;
 			_cubesPerQuadrant = 2;
 			_fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
+
+			PropsManager.Instance.init ();
 
 			// Instantiate app controller singleton
 			if (GameObject.Find(Globals.appContainerName) == null) {
@@ -160,14 +162,12 @@ namespace DragginzWorldEditor
 				PropDefinition propDef = propList.props [i];
 				if (propDef.prefab != null) {
 					
-					levelProp p  = new levelProp ();
-					p.name       = propDef.propName;
-					p.prefab     = propDef.prefab;
-					p.useGravity = propDef.isUsingGravity;
-
-					GameObject clone = Instantiate (propDef.prefab);
-					p.forward = clone.transform.forward;
-					Destroy (clone);
+					propDef p   = new propDef ();
+					p.id          = propDef.id;
+					p.name        = propDef.propName;
+					p.prefab      = propDef.prefab;
+					p.useCollider = propDef.isUsingCollider;
+					p.useGravity  = propDef.isUsingGravity;
 
 					_levelPropDefs.Add (p);
 				}
@@ -613,7 +613,8 @@ namespace DragginzWorldEditor
 					Destroy (_goCurItem);
 					_goCurItem = null;
 				}
-				_goCurItem = _World.createProp (iSelectedItem, Vector3.zero, _levelPropDefs[_iSelectedItem].name , itemAim.transform, false);
+				propDef prop = levelPropDefs [_iSelectedItem];
+				_goCurItem = _World.createProp (prop, Vector3.zero, prop.name , itemAim.transform, false, false);
 				_goCurItem.transform.localPosition = Vector3.zero;
 			}
 

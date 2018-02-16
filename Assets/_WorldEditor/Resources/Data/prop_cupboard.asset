@@ -11,6 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c31a8b1589037664ca73d9793a3ebe21, type: 3}
   m_Name: prop_cupboard
   m_EditorClassIdentifier: 
+  id: 3
   propName: Cupboard
   prefab: {fileID: 1618792593003980, guid: d4478a2057815f74c9cc5a29b44effcc, type: 2}
   isUsingGravity: 1

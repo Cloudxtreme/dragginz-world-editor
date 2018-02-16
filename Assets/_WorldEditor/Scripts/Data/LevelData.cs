@@ -105,13 +105,13 @@ namespace DragginzWorldEditor
 					pos.y = levelProp.position.y;
 					pos.z = levelProp.position.z;
 
-					goProp = world.createProp (levelProp.id, pos, levelProp.name, levelEditor.goProps.transform); 
+					/*goProp = world.createProp (levelProp.id, pos, levelProp.name, levelEditor.goProps.transform); 
 
 					rotation.w = levelProp.rotation.w;
 					rotation.x = levelProp.rotation.x;
 					rotation.y = levelProp.rotation.y;
 					rotation.z = levelProp.rotation.z;
-					goProp.transform.rotation = rotation;
+					goProp.transform.rotation = rotation;*/
 				}
 			}
 		}
