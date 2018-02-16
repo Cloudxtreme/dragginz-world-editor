@@ -19,19 +19,21 @@ namespace DragginzWorldEditor
 
 	public struct worldProp {
 		public int id;
+		public string name; 
 		public GameObject go;
-		public worldProp(int id, GameObject go) {
+		public worldProp(int id, string name, GameObject go) {
 			this.id = id;
+			this.name = name;
 			this.go = go;
 		}
 	};
 
 	//
-	public class PropsManager : Singleton<PropsManager> {
-
+	public class PropsManager : Singleton<PropsManager>
+	{
 		private List<propDef> _levelPropDefs;
 		private int _iSelectedItem;
-		private List<worldProp> _worldProps;
+		private Dictionary<GameObject, worldProp> _worldProps;
 
 		#region Getters
 
@@ -43,7 +45,7 @@ namespace DragginzWorldEditor
 			get { return _iSelectedItem; }
 		}
 
-		public List<worldProp> worldProps {
+		public Dictionary<GameObject, worldProp> worldProps {
 			get { return _worldProps; }
 		}
 
@@ -75,17 +77,62 @@ namespace DragginzWorldEditor
 
 			_iSelectedItem = 0;
 
-			_worldProps = new List<worldProp> ();
+			_worldProps = new Dictionary<GameObject, worldProp> ();
 		}
 
 		//
-		public void addWorldProp(int id, GameObject go) {
-			
+		public propDef getSelectedPropDef()
+		{
+			return _levelPropDefs [_iSelectedItem];
 		}
 
 		//
-		public void removeWorldProp(GameObject go) {
+		public propDef getPropDefForId(int id)
+		{
+			propDef p = new propDef();
+			p.id = -1;
 
+			int i, len = _levelPropDefs.Count;
+			for (i = 0; i < len; ++i) {
+				if (_levelPropDefs [i].id == id) {
+					p = _levelPropDefs [i];
+					break;
+				}
+			}
+
+			return p;
+		}
+
+		//
+		public void reset()
+		{
+			_worldProps.Clear ();
+		}
+
+		//
+		public void toggleSelectedProp(float toggle)
+		{
+			if (toggle < 0) {
+				_iSelectedItem = (_iSelectedItem > 0 ? _iSelectedItem - 1 : 0);
+			} else {
+				_iSelectedItem = (_iSelectedItem < (_levelPropDefs.Count - 1) ? _iSelectedItem + 1 : (_levelPropDefs.Count - 1));
+			}
+
+			LevelEditor.Instance.newItemSelected (_iSelectedItem);
+		}
+
+		//
+		public void addWorldProp(int id, GameObject go)
+		{
+			_worldProps.Add (go, new worldProp (id, go.name, go));
+		}
+
+		//
+		public void removeWorldProp(GameObject go)
+		{
+			if (_worldProps.ContainsKey (go)) {
+				_worldProps.Remove (go);
+			}
 		}
 
 		#endregion

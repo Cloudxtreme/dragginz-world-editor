@@ -21,16 +21,16 @@ namespace DragginzWorldEditor
 			FileStream file = File.Open(filename, FileMode.Open);
 
 			LevelFile levelFile = null;
-			try {
+			//try {
 				levelFile = bf.Deserialize(file) as LevelFile;
 				if (levelFile != null) {
 					createLevel (levelFile, parent);
 				}
-			}
-			catch (System.Exception e) {
-				Debug.LogWarning (e.Message);
-				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat);
-			}
+			//}
+			//catch (System.Exception e) {
+			//	Debug.LogWarning (e.Message);
+			//	AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat);
+			//}
 
 			file.Close();
 			file.Dispose();
@@ -45,6 +45,7 @@ namespace DragginzWorldEditor
 			}
 
 			LevelEditor levelEditor = LevelEditor.Instance;
+			PropsManager propsManager = PropsManager.Instance;
 			World world = World.Instance;
 
 			levelEditor.resetAll ();
@@ -96,6 +97,7 @@ namespace DragginzWorldEditor
 				LevelProp levelProp;
 				GameObject goProp;
 				Quaternion rotation = Quaternion.identity;
+				propDef prop;
 
 				len = levelFile.levelProps.Count;
 				for (i = 0; i < len; ++i) {
@@ -105,13 +107,17 @@ namespace DragginzWorldEditor
 					pos.y = levelProp.position.y;
 					pos.z = levelProp.position.z;
 
-					/*goProp = world.createProp (levelProp.id, pos, levelProp.name, levelEditor.goProps.transform); 
+					prop = propsManager.getPropDefForId(levelProp.id);
+					if (prop.id == -1) {
+					
+						goProp = world.createProp (prop, pos, levelProp.name, levelEditor.goProps.transform);
 
-					rotation.w = levelProp.rotation.w;
-					rotation.x = levelProp.rotation.x;
-					rotation.y = levelProp.rotation.y;
-					rotation.z = levelProp.rotation.z;
-					goProp.transform.rotation = rotation;*/
+						rotation.w = levelProp.rotation.w;
+						rotation.x = levelProp.rotation.x;
+						rotation.y = levelProp.rotation.y;
+						rotation.z = levelProp.rotation.z;
+						goProp.transform.rotation = rotation;
+					}
 				}
 			}
 		}
@@ -215,7 +221,45 @@ namespace DragginzWorldEditor
 				levelFile.levelQuadrants.Add (quadrant);
 			}
 
-			parent = LevelEditor.Instance.goProps;
+			// PROPS
+
+			List<LevelProp> levelProps = new List<LevelProp> ();
+
+			Dictionary<GameObject, worldProp> worldProps = PropsManager.Instance.worldProps;
+			foreach (KeyValuePair<GameObject, worldProp> p in worldProps) {
+
+				worldProp prop = p.Value;
+
+				if (!prop.go.activeSelf) {
+					continue;
+				}
+
+				int propId = prop.id;
+				if (propId <= 0) {
+					continue;
+				}
+
+				LevelProp levelProp = new LevelProp ();
+				levelProp.id   = propId;
+				levelProp.name = prop.name;
+
+				levelProp.position   = new DataTypeVector3 ();
+				levelProp.position.x = prop.go.transform.position.x;
+				levelProp.position.y = prop.go.transform.position.y;
+				levelProp.position.z = prop.go.transform.position.z;
+
+				levelProp.rotation = new DataTypeQuaternion ();
+				levelProp.rotation.w = prop.go.transform.rotation.w;
+				levelProp.rotation.x = prop.go.transform.rotation.x;
+				levelProp.rotation.y = prop.go.transform.rotation.y;
+				levelProp.rotation.z = prop.go.transform.rotation.z;
+
+				levelProps.Add (levelProp);	
+			}
+
+			levelFile.levelProps = levelProps;
+
+			/*parent = LevelEditor.Instance.goProps;
 			if (parent != null) {
 
 				List<LevelProp> levelProps = new List<LevelProp> ();
@@ -250,7 +294,7 @@ namespace DragginzWorldEditor
 				}
 
 				levelFile.levelProps = levelProps;
-			}
+			}*/
 
 			return levelFile;
 		}

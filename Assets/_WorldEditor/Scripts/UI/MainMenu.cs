@@ -277,6 +277,7 @@ namespace DragginzWorldEditor
         private void showLoadFileDialog() {
 
 			//AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
+			EditorObjectSelection.Instance.ClearSelection(false);
 
 			if (_popup) {
 				_popup.showPopup (PopupMode.Confirmation, "Load Level", "Are you sure?\nAll unsaved changes will be lost!", showLoadFileBrowser);
@@ -305,7 +306,8 @@ namespace DragginzWorldEditor
         private void showSaveFileDialog() {
 
 			//AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
-            
+			EditorObjectSelection.Instance.ClearSelection(false);
+
 			FileBrowser.SaveFilePanel("Save Level", "Saving Level", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "myLevel", new string[] { "dat" }, null, (bool canceled, string filePath) => {
                 if (!canceled) {
 					LevelData.Instance.saveLevelData(filePath);

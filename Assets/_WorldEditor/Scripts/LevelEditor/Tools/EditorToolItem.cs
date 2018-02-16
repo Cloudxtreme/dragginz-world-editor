@@ -25,7 +25,7 @@ namespace DragginzWorldEditor
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
 				if (time > _lastMouseWheelUpdate) {
 					_lastMouseWheelUpdate = time + 0.2f;
-					_levelEditor.toggleItem (Input.GetAxis ("Mouse ScrollWheel"));
+					PropsManager.Instance.toggleSelectedProp (Input.GetAxis ("Mouse ScrollWheel"));
 				}
 			}
 
@@ -71,7 +71,7 @@ namespace DragginzWorldEditor
 		{
 			string sName = _levelEditor.goCurItem.name+"_"+_levelEditor.goProps.transform.childCount;
 
-			propDef prop = _levelEditor.levelPropDefs [_levelEditor.iSelectedItem];
+			propDef prop = PropsManager.Instance.getSelectedPropDef ();
 
 			GameObject goNew = World.Instance.createProp (prop, v3Pos, sName, _levelEditor.goProps.transform, prop.useCollider, prop.useGravity);
 			goNew.transform.forward = _levelEditor.goCurItem.transform.forward;

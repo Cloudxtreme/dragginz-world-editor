@@ -172,6 +172,8 @@ namespace DragginzWorldEditor
 		//
 		private void resetWorld()
 		{
+			PropsManager.Instance.reset ();
+
 			_numCubes = 0;
 
 			foreach (Transform child in _levelEditor.goWorld.transform) {

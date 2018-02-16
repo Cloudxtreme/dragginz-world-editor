@@ -63,8 +63,8 @@ namespace DragginzWorldEditor
 
 		private List<undoAction> _undoActions;
 
-		private List<propDef> _levelPropDefs;
-		private int _iSelectedItem = 0;
+		//private List<propDef> _levelPropDefs;
+		//private int _iSelectedItem = 0;
 
 		private GameObject _goCurItem;
 		private List<GameObject> _selectedObjects;
@@ -97,13 +97,13 @@ namespace DragginzWorldEditor
 			get { return _aDictMaterials; }
 		}
 
-		public int iSelectedItem {
+		/*public int iSelectedItem {
 			get { return _iSelectedItem; }
 		}
 
 		public List<propDef> levelPropDefs {
 			get { return _levelPropDefs; }
-		}
+		}*/
 
 		public GameObject goCurItem {
 			get { return _goCurItem; }
@@ -131,7 +131,7 @@ namespace DragginzWorldEditor
 
 			_undoActions = new List<undoAction> ();
 
-			_levelPropDefs = new List<propDef> ();
+			//_levelPropDefs = new List<propDef> ();
 
 			_goCurItem = null;
 			_selectedObjects = new List<GameObject> ();
@@ -155,7 +155,7 @@ namespace DragginzWorldEditor
 		{
 			// init props
 
-			PropsList propList = Resources.Load<PropsList> ("Data/" + Globals.propListName);
+			/*PropsList propList = Resources.Load<PropsList> ("Data/" + Globals.propListName);
 			int i, len = propList.props.Count;
 			for (i = 0; i < len; ++i) {
 
@@ -171,11 +171,6 @@ namespace DragginzWorldEditor
 
 					_levelPropDefs.Add (p);
 				}
-			}
-
-			/*len = _levelPropDefs.Count;
-			for (i = 0; i < len; ++i) {
-				Debug.Log (_levelPropDefs [i].name + "->forward = " + _levelPropDefs [i].forward);
 			}*/
 
 			// other stuff
@@ -372,7 +367,7 @@ namespace DragginzWorldEditor
 				laserAim.SetActive (true);
 				itemAim.SetActive (true);
 				if (_goCurItem == null) {
-					newItemSelected (_iSelectedItem);
+					newItemSelected (PropsManager.Instance.iSelectedItem);
 				}
 			}
 
@@ -454,6 +449,8 @@ namespace DragginzWorldEditor
 		//
 		public void undoLastActions()
 		{
+			EditorObjectSelection.Instance.ClearSelection(false);
+
 			int effectedCubes = 0;
 
 			Shader shader = Shader.Find (Globals.defaultShaderName);
@@ -496,6 +493,7 @@ namespace DragginzWorldEditor
 				// ITEM
 				else if (undo.action == AppState.Props) {
 					if (undo.go != null) {
+						PropsManager.Instance.removeWorldProp (undo.go);
 						Destroy (undo.go);
 					}
 				}
@@ -590,17 +588,6 @@ namespace DragginzWorldEditor
 			//}
 		}
 
-		public void toggleItem(float toggle)
-		{
-			if (toggle < 0) {
-				_iSelectedItem = (_iSelectedItem > 0 ? _iSelectedItem - 1 : 0);
-			} else {
-				_iSelectedItem = (_iSelectedItem < (_levelPropDefs.Count - 1) ? _iSelectedItem + 1 : (_levelPropDefs.Count - 1));
-			}
-
-			newItemSelected (_iSelectedItem);
-		}
-
 		//
 		public void newItemSelected (int iSelectedItem)
 		{
@@ -613,7 +600,7 @@ namespace DragginzWorldEditor
 					Destroy (_goCurItem);
 					_goCurItem = null;
 				}
-				propDef prop = levelPropDefs [_iSelectedItem];
+				propDef prop = PropsManager.Instance.getSelectedPropDef ();
 				_goCurItem = _World.createProp (prop, Vector3.zero, prop.name , itemAim.transform, false, false);
 				_goCurItem.transform.localPosition = Vector3.zero;
 			}
