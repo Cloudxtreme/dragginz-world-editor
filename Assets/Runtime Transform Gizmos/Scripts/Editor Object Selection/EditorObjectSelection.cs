@@ -690,7 +690,8 @@ namespace RTEditor
             {
                 // Retrieve the object which is picked by the mouse cursor
                 GameObject pickedGameObject = PickObjectInScene();
-				if (pickedGameObject != null) {
+				if (pickedGameObject != null)
+				{
 					// Send a game object clicked event
 					if (GameObjectClicked != null)
 						GameObjectClicked (pickedGameObject);
@@ -715,11 +716,8 @@ namespace RTEditor
 						ObjectSelectionChangedEventArgs selChangedArgs = ObjectSelectionChangedEventArgs.FromSnapshots (_lastSelectActionType, _lastDeselectActionType, preChangeSnapshot, postChangeSnapshot);
 						OnSelectionChanged (selChangedArgs);
 					}
-					else {
-						Debug.LogWarning ("shit");
-					}
                 }
-                else
+                
                 // The user clicked in the air, so we clear the selection
                 if (!_multiDeselectShortcut.IsActive() && !_appendToSelectionShortcut.IsActive()) ClearSelection(true, ObjectDeselectActionType.ClearClickAir);
 
@@ -952,20 +950,7 @@ namespace RTEditor
                 // Retrieve all object ray hits and remove all object hits that reference objects which can not be selected
                 List<GameObjectRayHit> objectRayHits = cursorRayHit.SortedObjectRayHits;
 
-				for (int i = 0; i < objectRayHits.Count; ++i) {
-					Debug.Log ("objectRayHits "+i+": "+objectRayHits[i].HitObject.name);
-				}
-
-				/*if (objectRayHits.Count > 0) {
-					if (objectRayHits [0].HitObject.layer == 9) {
-						pickedObject = objectRayHits [0].HitObject.transform.parent.gameObject;
-						if (pickedObject.layer != 9) {
-							pickedObject = null;
-						}
-					}
-				}*/
-
-                /*if (!ObjectSelectionSettings.CanSelectLightObjects) objectRayHits.RemoveAll(item => !item.HitObject.HasMesh() && item.HitObject.HasLight());
+                if (!ObjectSelectionSettings.CanSelectLightObjects) objectRayHits.RemoveAll(item => !item.HitObject.HasMesh() && item.HitObject.HasLight());
                 if (!ObjectSelectionSettings.CanSelectParticleSystemObjects) objectRayHits.RemoveAll(item => !item.HitObject.HasMesh() && item.HitObject.HasParticleSystem());
                 if (!ObjectSelectionSettings.CanSelectSpriteObjects) objectRayHits.RemoveAll(item => item.HitObject.IsSprite());
                 if (!ObjectSelectionSettings.CanSelectEmptyObjects) objectRayHits.RemoveAll(item => item.HitObject.IsEmpty());
@@ -975,7 +960,7 @@ namespace RTEditor
                 {
                     gameObjectRayHit = objectRayHits[0];
                     pickedObject = gameObjectRayHit.HitObject;
-                }*/
+                }
             }
 
             return pickedObject;

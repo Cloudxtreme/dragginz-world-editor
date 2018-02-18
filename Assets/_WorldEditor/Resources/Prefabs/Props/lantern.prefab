@@ -54,8 +54,6 @@ GameObject:
   - component: {fileID: 4910453026833234}
   - component: {fileID: 33150727989456830}
   - component: {fileID: 23818555125327586}
-  - component: {fileID: 54364999939526350}
-  - component: {fileID: 65077982801739530}
   m_Layer: 9
   m_Name: Cover
   m_TagString: Untagged
@@ -71,6 +69,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4049452845945794}
+  - component: {fileID: 54405405898282038}
+  - component: {fileID: 65135581237472734}
   m_Layer: 9
   m_Name: lantern
   m_TagString: Untagged
@@ -244,12 +244,12 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1249633930555666}
   m_Mesh: {fileID: 4300002, guid: 220499ee7b8406e479c6d05317305e07, type: 3}
---- !u!54 &54364999939526350
+--- !u!54 &54405405898282038
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1297131070304748}
+  m_GameObject: {fileID: 1581331245749186}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0.5
@@ -259,18 +259,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &65077982801739530
+--- !u!65 &65135581237472734
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1297131070304748}
+  m_GameObject: {fileID: 1581331245749186}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.199456, y: 1.3105875, z: 0.15120903}
-  m_Center: {x: 0, y: -4.268298, z: 0.21330956}
+  m_Size: {x: 0.19, y: 0.35, z: 0.25}
+  m_Center: {x: 0, y: -0.03, z: 0}
 --- !u!108 &108965193415229564
 Light:
   m_ObjectHideFlags: 1
