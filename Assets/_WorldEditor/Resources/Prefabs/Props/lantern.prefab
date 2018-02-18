@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4638638544468978}
   - component: {fileID: 108965193415229564}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4423371276583038}
   - component: {fileID: 33718711176376782}
   - component: {fileID: 23957060326478488}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Glass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,9 @@ GameObject:
   - component: {fileID: 4910453026833234}
   - component: {fileID: 33150727989456830}
   - component: {fileID: 23818555125327586}
-  m_Layer: 0
+  - component: {fileID: 54364999939526350}
+  - component: {fileID: 65077982801739530}
+  m_Layer: 9
   m_Name: Cover
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69,8 +71,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4049452845945794}
-  - component: {fileID: 65460255061749168}
-  - component: {fileID: 54957728613864452}
   m_Layer: 9
   m_Name: lantern
   m_TagString: Untagged
@@ -86,7 +86,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4690563243364680}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: StreetLamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -244,12 +244,12 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1249633930555666}
   m_Mesh: {fileID: 4300002, guid: 220499ee7b8406e479c6d05317305e07, type: 3}
---- !u!54 &54957728613864452
+--- !u!54 &54364999939526350
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1581331245749186}
+  m_GameObject: {fileID: 1297131070304748}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0.5
@@ -259,18 +259,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &65460255061749168
+--- !u!65 &65077982801739530
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1581331245749186}
+  m_GameObject: {fileID: 1297131070304748}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.25, y: 0.4, z: 0.25}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.199456, y: 1.3105875, z: 0.15120903}
+  m_Center: {x: 0, y: -4.268298, z: 0.21330956}
 --- !u!108 &108965193415229564
 Light:
   m_ObjectHideFlags: 1

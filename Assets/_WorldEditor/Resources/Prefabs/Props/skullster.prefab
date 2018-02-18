@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4199540710960352}
-  - component: {fileID: 54705707465621176}
-  - component: {fileID: 135386845926561008}
-  m_Layer: 0
+  - component: {fileID: 54113606487126492}
+  - component: {fileID: 135770944682545206}
+  m_Layer: 9
   m_Name: skullster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1689610960058040}
   m_Mesh: {fileID: 4300004, guid: 1e9026d8612b8044aa71f0ad299303e3, type: 3}
---- !u!54 &54705707465621176
+--- !u!54 &54113606487126492
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -128,7 +128,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!135 &135386845926561008
+--- !u!135 &135770944682545206
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

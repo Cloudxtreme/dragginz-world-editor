@@ -690,32 +690,34 @@ namespace RTEditor
             {
                 // Retrieve the object which is picked by the mouse cursor
                 GameObject pickedGameObject = PickObjectInScene();
-                if (pickedGameObject != null)
-                {
-                    // Send a game object clicked event
-                    if (GameObjectClicked != null) GameObjectClicked(pickedGameObject);
+				if (pickedGameObject != null) {
+					// Send a game object clicked event
+					if (GameObjectClicked != null)
+						GameObjectClicked (pickedGameObject);
                     
-                    // If a game object was picked, the selection may need to change. It all depends on how the click
-                    // handler handles the pick operation. So we will take a snapshot of the current object selection
-                    // in order to use it later if the selection has indeed changed.
-                    var preChangeSnapshot = new ObjectSelectionSnapshot();
-                    preChangeSnapshot.TakeSnapshot();
+					// If a game object was picked, the selection may need to change. It all depends on how the click
+					// handler handles the pick operation. So we will take a snapshot of the current object selection
+					// in order to use it later if the selection has indeed changed.
+					var preChangeSnapshot = new ObjectSelectionSnapshot ();
+					preChangeSnapshot.TakeSnapshot ();
 
-                    // Handle the object click
-                    if (HandleObjectClick(pickedGameObject))
-                    {
-                        // The selection has changed. Take a snapshot post-change.
-                        var postChangeSnapshot = new ObjectSelectionSnapshot();
-                        postChangeSnapshot.TakeSnapshot();
+					// Handle the object click
+					if (HandleObjectClick (pickedGameObject)) {
+						// The selection has changed. Take a snapshot post-change.
+						var postChangeSnapshot = new ObjectSelectionSnapshot ();
+						postChangeSnapshot.TakeSnapshot ();
 
-                        // Execute a post selection changed action to allow for undo/redo
-                        var action = new PostObjectSelectionChangedAction(preChangeSnapshot, postChangeSnapshot);
-                        action.Execute();
+						// Execute a post selection changed action to allow for undo/redo
+						var action = new PostObjectSelectionChangedAction (preChangeSnapshot, postChangeSnapshot);
+						action.Execute ();
 
-                        // The selection has changed
-                        ObjectSelectionChangedEventArgs selChangedArgs = ObjectSelectionChangedEventArgs.FromSnapshots(_lastSelectActionType, _lastDeselectActionType, preChangeSnapshot, postChangeSnapshot);
-                        OnSelectionChanged(selChangedArgs);
-                    }
+						// The selection has changed
+						ObjectSelectionChangedEventArgs selChangedArgs = ObjectSelectionChangedEventArgs.FromSnapshots (_lastSelectActionType, _lastDeselectActionType, preChangeSnapshot, postChangeSnapshot);
+						OnSelectionChanged (selChangedArgs);
+					}
+					else {
+						Debug.LogWarning ("shit");
+					}
                 }
                 else
                 // The user clicked in the air, so we clear the selection
@@ -949,7 +951,21 @@ namespace RTEditor
             {
                 // Retrieve all object ray hits and remove all object hits that reference objects which can not be selected
                 List<GameObjectRayHit> objectRayHits = cursorRayHit.SortedObjectRayHits;
-                if (!ObjectSelectionSettings.CanSelectLightObjects) objectRayHits.RemoveAll(item => !item.HitObject.HasMesh() && item.HitObject.HasLight());
+
+				for (int i = 0; i < objectRayHits.Count; ++i) {
+					Debug.Log ("objectRayHits "+i+": "+objectRayHits[i].HitObject.name);
+				}
+
+				/*if (objectRayHits.Count > 0) {
+					if (objectRayHits [0].HitObject.layer == 9) {
+						pickedObject = objectRayHits [0].HitObject.transform.parent.gameObject;
+						if (pickedObject.layer != 9) {
+							pickedObject = null;
+						}
+					}
+				}*/
+
+                /*if (!ObjectSelectionSettings.CanSelectLightObjects) objectRayHits.RemoveAll(item => !item.HitObject.HasMesh() && item.HitObject.HasLight());
                 if (!ObjectSelectionSettings.CanSelectParticleSystemObjects) objectRayHits.RemoveAll(item => !item.HitObject.HasMesh() && item.HitObject.HasParticleSystem());
                 if (!ObjectSelectionSettings.CanSelectSpriteObjects) objectRayHits.RemoveAll(item => item.HitObject.IsSprite());
                 if (!ObjectSelectionSettings.CanSelectEmptyObjects) objectRayHits.RemoveAll(item => item.HitObject.IsEmpty());
@@ -959,7 +975,7 @@ namespace RTEditor
                 {
                     gameObjectRayHit = objectRayHits[0];
                     pickedObject = gameObjectRayHit.HitObject;
-                }
+                }*/
             }
 
             return pickedObject;

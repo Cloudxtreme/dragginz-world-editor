@@ -21,16 +21,16 @@ namespace DragginzWorldEditor
 			FileStream file = File.Open(filename, FileMode.Open);
 
 			LevelFile levelFile = null;
-			//try {
+			try {
 				levelFile = bf.Deserialize(file) as LevelFile;
 				if (levelFile != null) {
 					createLevel (levelFile, parent);
 				}
-			//}
-			//catch (System.Exception e) {
-			//	Debug.LogWarning (e.Message);
-			//	AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat);
-			//}
+			}
+			catch (System.Exception e) {
+				Debug.LogWarning (e.Message);
+				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat);
+			}
 
 			file.Close();
 			file.Dispose();
@@ -108,7 +108,7 @@ namespace DragginzWorldEditor
 					pos.z = levelProp.position.z;
 
 					prop = propsManager.getPropDefForId(levelProp.id);
-					if (prop.id == -1) {
+					if (prop.id != -1) {
 					
 						goProp = world.createProp (prop, pos, levelProp.name, levelEditor.goProps.transform);
 
