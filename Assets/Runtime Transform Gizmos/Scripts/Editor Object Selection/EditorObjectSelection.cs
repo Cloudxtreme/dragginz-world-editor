@@ -719,7 +719,10 @@ namespace RTEditor
                 }
                 
                 // The user clicked in the air, so we clear the selection
-                if (!_multiDeselectShortcut.IsActive() && !_appendToSelectionShortcut.IsActive()) ClearSelection(true, ObjectDeselectActionType.ClearClickAir);
+				//Debug.Log("_multiDeselectShortcut.IsActive:"+_multiDeselectShortcut.IsActive());
+				//Debug.Log("_appendToSelectionShortcut.IsActive:"+_appendToSelectionShortcut.IsActive());
+
+                //if (!_multiDeselectShortcut.IsActive() && !_appendToSelectionShortcut.IsActive()) ClearSelection(true, ObjectDeselectActionType.ClearClickAir);
 
                 // When the left mouse button is pressed, we have to prepare for the possibility that the user
                 // is trying to select objects using the object selection shape. So we will take a snapshot of

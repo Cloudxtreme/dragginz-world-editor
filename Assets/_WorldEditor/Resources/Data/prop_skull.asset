@@ -13,5 +13,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   propName: Skull
-  prefab: {fileID: 1356763988813370, guid: 0c9cfd40b3272e44d9bbd5d6537cd9b5, type: 2}
+  prefab: {fileID: 1356763988813370, guid: 87f220c619f3ce445a5b40caa528ebeb, type: 2}
+  isUsingCollider: 1
   isUsingGravity: 1

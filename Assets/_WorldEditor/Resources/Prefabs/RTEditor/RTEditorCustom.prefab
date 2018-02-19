@@ -990,7 +990,7 @@ MonoBehaviour:
     _canSelectLightObjects: 0
     _canSelectParticleSystemObjects: 0
     _canSelectSpriteObjects: 0
-    _canSelectEmptyObjects: 0
+    _canSelectEmptyObjects: 1
     _canClickSelect: 1
     _canMultiSelect: 0
     _objectSelectionBoxRenderSettings:
@@ -1001,23 +1001,23 @@ MonoBehaviour:
       _boxSizeAdd: 0.005
       _drawBoxes: 1
   _appendToSelectionShortcut:
-    _keys: 0000000000000000
-    _numberOfKeys: 0
+    _keys: 7000000000000000
+    _numberOfKeys: 1
     _lCtrl: 1
     _lCmd: 0
     _lAlt: 0
     _lShift: 0
     _useModifiers: 1
     _useStrictModifierCheck: 0
-    _lMouseBtn: 0
+    _lMouseBtn: 1
     _rMouseBtn: 0
     _mMouseBtn: 0
-    _useMouseButtons: 0
+    _useMouseButtons: 1
     _useStrictMouseCheck: 0
     _name: Append to selection
   _multiDeselectShortcut:
-    _keys: 0000000000000000
-    _numberOfKeys: 0
+    _keys: 7100000000000000
+    _numberOfKeys: 1
     _lCtrl: 0
     _lCmd: 0
     _lAlt: 0
@@ -1026,8 +1026,8 @@ MonoBehaviour:
     _useStrictModifierCheck: 0
     _lMouseBtn: 0
     _rMouseBtn: 0
-    _mMouseBtn: 0
-    _useMouseButtons: 0
+    _mMouseBtn: 1
+    _useMouseButtons: 1
     _useStrictMouseCheck: 0
     _name: Multi deselect
   _duplicateSelectionShortcut:

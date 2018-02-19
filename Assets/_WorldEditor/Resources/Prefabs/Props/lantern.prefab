@@ -87,7 +87,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4690563243364680}
   m_Layer: 9
-  m_Name: StreetLamp
+  m_Name: prop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

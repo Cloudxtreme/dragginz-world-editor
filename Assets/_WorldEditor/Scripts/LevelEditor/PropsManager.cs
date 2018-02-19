@@ -104,6 +104,19 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public propDef getPropDefForGameObject(GameObject go)
+		{
+			propDef p = new propDef();
+			p.id = -1;
+
+			if (_worldProps.ContainsKey (go)) {
+				p = getPropDefForId(_worldProps [go].id);
+			}
+
+			return p;
+		}
+
+		//
 		public void reset()
 		{
 			_worldProps.Clear ();

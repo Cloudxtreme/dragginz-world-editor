@@ -527,16 +527,23 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void setSelectedObjects(List<GameObject> selectedObjects = null) {
+		public void setSelectedObjects(List<GameObject> selectedObjects = null)
+		{
+			propDef prop;
 
 			int i, len = _selectedObjects.Count;
 			for (i = 0; i < len; ++i) {
 				if (_selectedObjects [i] != null) {
-					if (_selectedObjects [i].GetComponent<Rigidbody> () != null) {
-						_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = true;
-					}
-					if (_selectedObjects [i].GetComponent<Collider> () != null) {
-						_selectedObjects [i].GetComponent<Collider> ().enabled = true;
+
+					prop = PropsManager.Instance.getPropDefForGameObject (_selectedObjects [i]);
+					if (prop.id != -1)
+					{
+						if (_selectedObjects [i].GetComponent<Rigidbody> () != null) {
+							_selectedObjects [i].GetComponent<Rigidbody> ().useGravity = prop.useGravity;
+						}
+						if (_selectedObjects [i].GetComponent<Collider> () != null) {
+							_selectedObjects [i].GetComponent<Collider> ().enabled = prop.useCollider;
+						}
 					}
 				}
 			}

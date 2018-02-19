@@ -110,13 +110,15 @@ namespace DragginzWorldEditor
 					prop = propsManager.getPropDefForId(levelProp.id);
 					if (prop.id != -1) {
 					
-						goProp = world.createProp (prop, pos, levelProp.name, levelEditor.goProps.transform);
+						goProp = world.createProp (prop, pos, levelProp.name, levelEditor.goProps.transform, prop.useCollider, prop.useGravity);
 
 						rotation.w = levelProp.rotation.w;
 						rotation.x = levelProp.rotation.x;
 						rotation.y = levelProp.rotation.y;
 						rotation.z = levelProp.rotation.z;
 						goProp.transform.rotation = rotation;
+
+						PropsManager.Instance.addWorldProp (prop.id, goProp);
 					}
 				}
 			}
