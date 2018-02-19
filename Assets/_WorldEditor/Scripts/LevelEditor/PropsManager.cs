@@ -131,7 +131,7 @@ namespace DragginzWorldEditor
 				_iSelectedItem = (_iSelectedItem < (_levelPropDefs.Count - 1) ? _iSelectedItem + 1 : (_levelPropDefs.Count - 1));
 			}
 
-			LevelEditor.Instance.newItemSelected (_iSelectedItem);
+			LevelEditor.Instance.newPropSelected ();
 		}
 
 		//

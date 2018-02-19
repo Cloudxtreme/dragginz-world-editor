@@ -494,7 +494,7 @@ MonoBehaviour:
   laserAim: {fileID: 1209775551}
   laserAimCenterCube: {fileID: 764806981}
   laserAimMaterial: {fileID: 2100000, guid: 3877836b3e3455d4a831a75fb9f5691a, type: 2}
-  itemAim: {fileID: 1300222925}
+  propAim: {fileID: 1300222925}
   materialsWalls:
   - {fileID: 2100000, guid: 6bd787e00820ed64ab274fa05081fdc7, type: 2}
   - {fileID: 2100000, guid: 30134efa1826c0648b3e40394960a8f1, type: 2}
@@ -1657,7 +1657,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1300222926}
   m_Layer: 0
-  m_Name: ItemAim
+  m_Name: PropAim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

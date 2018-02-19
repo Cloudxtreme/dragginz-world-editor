@@ -13,9 +13,6 @@ namespace DragginzWorldEditor
 {
 	public class EditorToolItem : EditorTool {
 
-		private Collider _collider;
-		private GameObject _goCurItem;
-
 		public EditorToolItem() : base(Globals.EDITOR_TOOL_ITEMS)
 		{
 			//
@@ -32,30 +29,23 @@ namespace DragginzWorldEditor
 
 			doRayCast ();
 
-			if (_goHit != null && _levelEditor.goCurItem != null)
+			if (_goHit != null && _goCurProp != null)
 			{
-				_goCurItem = _levelEditor.goCurItem;
-
-				if (_hit.normal.y != 0) {
-					_goCurItem.transform.forward = Vector3.forward;
-				} else {
-					_goCurItem.transform.forward = _hit.normal;
-				}
-
-				if (_goCurItem.GetComponent<BoxCollider> () != null) {
-					_collider = _goCurItem.GetComponent<BoxCollider> ();
-					_bounds = _collider.bounds;
-					Debug.Log (_goCurItem.name+": "+_bounds.size.ToString("F4")+", "+_bounds.extents.ToString("F4"));
-				}
-				else if (_goCurItem.GetComponent<Collider> () != null) {
-					_collider = _goCurItem.GetComponent<Collider> ();
-					_bounds = _collider.bounds;
-				}
-
 				_v3Pos = _hit.point;// _goHit.transform.position;
-				_v3Pos += _bounds.size;
 
-				_goCurItem.transform.position = _v3Pos;
+				if (_hit.normal.y > 0) {
+					_goCurProp.transform.forward = Vector3.forward;
+					_v3Pos.y += (_yOffset + 0.05f);
+				}
+				else if (_hit.normal.y < 0) {
+					_goCurProp.transform.forward = Vector3.forward;
+					_v3Pos.y -= (_yOffset + 0.05f);
+				} else {
+					_goCurProp.transform.forward = _hit.normal;
+					_v3Pos += (_hit.normal * (_zOffset + 0.05f));
+				}
+
+				_goCurProp.transform.position = _v3Pos;
 
 				if (_mouseIsDown) {
 					placeIt (_v3Pos);
@@ -64,18 +54,18 @@ namespace DragginzWorldEditor
 
 			}
 			else {
-				resetItem ();
+				resetProp ();
 			}
 		}
 
 		public void placeIt(Vector3 v3Pos)
 		{
-			string sName = _goCurItem.name+"_"+_levelEditor.goProps.transform.childCount;
+			string sName = _goCurProp.name+"_"+_levelEditor.goProps.transform.childCount;
 
 			propDef prop = PropsManager.Instance.getSelectedPropDef ();
 
 			GameObject goNew = World.Instance.createProp (prop, v3Pos, sName, _levelEditor.goProps.transform, prop.useCollider, prop.useGravity);
-			goNew.transform.forward = _goCurItem.transform.forward;
+			goNew.transform.forward = _goCurProp.transform.forward;
 
 			PropsManager.Instance.addWorldProp (prop.id, goNew);
 

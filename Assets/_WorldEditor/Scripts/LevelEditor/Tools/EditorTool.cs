@@ -19,7 +19,7 @@ namespace DragginzWorldEditor
 
 		protected static Transform _trfmAimTool;
 		protected static Transform _trfmAimCenterCube;
-		protected static Transform _trfmAimItem;
+		protected static Transform _trfmAimProp;
 
 		protected static Renderer _rendererAimTool;
 		protected static Renderer _rendererAimCenterCube;
@@ -32,7 +32,12 @@ namespace DragginzWorldEditor
 		protected static GameObject _goHitLast;
 		protected static bool _raycastedObjectHasChanged;
 
+		protected static GameObject _goCurProp;
+		protected static Collider _collider;
 		protected static Bounds _bounds;
+
+		protected static float _yOffset;
+		protected static float _zOffset;
 		protected static Vector3 _v3Pos;
 
 		protected static Dictionary<string, Shader> _aUsedShaders;
@@ -75,7 +80,7 @@ namespace DragginzWorldEditor
 
 				_trfmAimTool = _levelEditor.laserAim.transform;
 				_trfmAimCenterCube = _levelEditor.laserAimCenterCube.transform;
-				_trfmAimItem = _levelEditor.itemAim.transform;
+				_trfmAimProp = _levelEditor.propAim.transform;
 
 				_rendererAimTool = _trfmAimTool.GetComponent<Renderer> ();
 				_rendererAimCenterCube = _trfmAimCenterCube.GetComponent<Renderer> ();
@@ -135,11 +140,12 @@ namespace DragginzWorldEditor
 		// PUBLIC METHODS
 		//
 
-		public void resetAll() {
+		public void resetAll()
+		{
 			resetAim ();
 			_goLastShaderChange = null;
 			resetMaterial ();
-			resetItem ();
+			resetProp ();
 		}
 
 		public void resetAim()
@@ -169,11 +175,30 @@ namespace DragginzWorldEditor
 			//_tempMaterial = null;
 		}
 
-		public void resetItem()
+		public void resetProp()
 		{
-			_trfmAimItem.position = new Vector3(9999,9999,9999);
-			_trfmAimItem.forward = Vector3.forward;
-			_trfmAimTool.position = new Vector3(9999,9999,9999);
+			_trfmAimProp.forward = Vector3.forward;
+			_trfmAimProp.position = new Vector3(0,0,0);
+
+			if (_levelEditor.goCurItem != null)
+			{
+				_goCurProp = _levelEditor.goCurItem;
+				if (_goCurProp.GetComponent<Collider> () != null)
+				{
+					_goCurProp.transform.position = new Vector3(0,0,0);
+					_collider = _goCurProp.GetComponent<Collider> ();
+					_collider.enabled = true;
+					_bounds = _collider.bounds;
+					_yOffset = _bounds.extents.y - _bounds.center.y;
+					_zOffset = _bounds.extents.z - _bounds.center.z;
+					_collider.enabled = false;
+				}
+			}
+			else {
+				_goCurProp = null;
+			}
+
+			_trfmAimProp.position = new Vector3(9999,9999,9999);
 		}
 
 		private void changeSingleShader(GameObject go, string shaderName = Globals.defaultShaderName)

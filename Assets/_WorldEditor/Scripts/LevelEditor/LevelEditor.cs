@@ -48,7 +48,7 @@ namespace DragginzWorldEditor
 		public GameObject laserAimCenterCube;
 		public Material laserAimMaterial;
 
-		public GameObject itemAim;
+		public GameObject propAim;
 
 		//public List<GameObject> itemPrefabs;
         public List<Material> materialsWalls;
@@ -66,7 +66,7 @@ namespace DragginzWorldEditor
 		//private List<propDef> _levelPropDefs;
 		//private int _iSelectedItem = 0;
 
-		private GameObject _goCurItem;
+		private GameObject _goCurProp;
 		private List<GameObject> _selectedObjects;
 
 		private float _fRockSize;
@@ -106,7 +106,7 @@ namespace DragginzWorldEditor
 		}*/
 
 		public GameObject goCurItem {
-			get { return _goCurItem; }
+			get { return _goCurProp; }
 		}
 
 		#endregion
@@ -133,7 +133,7 @@ namespace DragginzWorldEditor
 
 			//_levelPropDefs = new List<propDef> ();
 
-			_goCurItem = null;
+			_goCurProp = null;
 			_selectedObjects = new List<GameObject> ();
 
 			_fRockSize = 0.5f;
@@ -307,7 +307,7 @@ namespace DragginzWorldEditor
 				_curEditorTool.setSingleMaterial (laserAim, laserAimMaterial, false);
 				_curEditorTool.resetMaterial ();
 				_curEditorTool.resetAim ();
-				_curEditorTool.resetItem ();
+				_curEditorTool.resetProp ();
 				_curEditorTool.deactivate ();
 			}
 			_curEditorTool = null;
@@ -318,7 +318,7 @@ namespace DragginzWorldEditor
 			MainMenu.Instance.showItemsBox (false);
 
 			laserAim.SetActive (false);
-			itemAim.SetActive (false);
+			propAim.SetActive (false);
 
 			editCam.enabled = true;
 			itemCam.enabled = false;
@@ -365,9 +365,9 @@ namespace DragginzWorldEditor
 				//MainMenu.Instance.showItemsBox (true);
 				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_ITEMS];
 				laserAim.SetActive (true);
-				itemAim.SetActive (true);
-				if (_goCurItem == null) {
-					newItemSelected (PropsManager.Instance.iSelectedItem);
+				propAim.SetActive (true);
+				if (_goCurProp == null) {
+					newPropSelected ();
 				}
 			}
 
@@ -596,24 +596,24 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void newItemSelected (int iSelectedItem)
+		public void newPropSelected ()
 		{
 			if (AppController.Instance.appState == AppState.Null) {
 				return;
 			}
 				
-			if (itemAim != null) {
-				if (_goCurItem != null) {
-					Destroy (_goCurItem);
-					_goCurItem = null;
+			if (propAim != null) {
+				if (_goCurProp != null) {
+					Destroy (_goCurProp);
+					_goCurProp = null;
 				}
 				propDef prop = PropsManager.Instance.getSelectedPropDef ();
-				_goCurItem = _World.createProp (prop, Vector3.zero, prop.name , itemAim.transform, false, false);
-				_goCurItem.transform.localPosition = Vector3.zero;
+				_goCurProp = _World.createProp (prop, Vector3.zero, prop.name , propAim.transform, false, false);
+				_goCurProp.transform.localPosition = Vector3.zero;
 			}
 
 			if (_curEditorTool != null) {
-				_curEditorTool.resetItem ();
+				_curEditorTool.resetProp ();
 			}
 		}
 
