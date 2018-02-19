@@ -125,7 +125,7 @@ namespace DragginzWorldEditor
 			//
 		}
 
-		//
+		// LateUpdate call
 		public virtual void customUpdate(float time, float timeDelta)
 		{
 			//

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 2
   propName: Pipe
-  prefab: {fileID: 1487334898027488, guid: 8abb7a93364931b4f9d3fb30ecbf5284, type: 2}
+  prefab: {fileID: 1846139071145574, guid: 8abb7a93364931b4f9d3fb30ecbf5284, type: 2}
   isUsingCollider: 1
   isUsingGravity: 0

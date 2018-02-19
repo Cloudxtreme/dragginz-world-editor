@@ -285,7 +285,7 @@ namespace DragginzWorldEditor
 			_World.customUpdate ();
 		}
 
-		//
+		// LateUpdate call
 		public void customUpdate(float time, float timeDelta)
 		{
 			if (_curEditorTool != null) {

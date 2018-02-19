@@ -11,7 +11,7 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v02.19.1a";
+		static public readonly string version = "Level Editor v02.19.2a";
 		static public readonly int levelSaveFormatVersion = 5;
 
 		public const string propListName = "props_list_leveleditor";
@@ -41,20 +41,6 @@ namespace DragginzWorldEditor
 		static public readonly string containerGameObjectPrepend = "q_";
 
 		static public readonly float RAYCAST_DISTANCE_EDIT = 10.24f;
-
-		//
-		/*public static int getItemIndexFromName(string name)
-		{
-			string correctName = name;
-
-			int indexOfUnderScore = name.IndexOf ("_");
-			if (indexOfUnderScore > 0) {
-				correctName = name.Substring (0, indexOfUnderScore);
-				Debug.Log (correctName);
-			}
-
-			return items.IndexOf (correctName);
-		}*/
 
 		/// <summary>
 		/// ...
