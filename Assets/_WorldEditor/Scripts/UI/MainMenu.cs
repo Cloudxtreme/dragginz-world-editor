@@ -23,6 +23,7 @@ namespace DragginzWorldEditor
 		public GameObject goItemsSelection;
 		public GameObject goDigSettings;
 
+		public Transform panelTools;
         public Transform panelMenu;
         public Transform blocker;
         public Transform panelPopup;
@@ -178,7 +179,7 @@ namespace DragginzWorldEditor
 			LevelEditor.Instance.setMode(AppState.Play);
 		}
 		public void onButtonModeLookClicked() {
-			LevelEditor.Instance.setMode(AppState.Look);
+			LevelEditor.Instance.setMode(AppState.Select);
 		}
 		public void onButtonModeDigClicked() {
 			LevelEditor.Instance.setMode(AppState.Dig);
@@ -197,11 +198,17 @@ namespace DragginzWorldEditor
 		public void setModeButtons(AppState mode)
 		{
 			btnModePlay.interactable  = (mode != AppState.Play);
-			btnModeLook.interactable  = (mode != AppState.Look);
+			btnModeLook.interactable  = (mode != AppState.Select);
 			btnModeDig.interactable   = (mode != AppState.Dig);
 			btnModePaint.interactable = (mode != AppState.Paint);
 			btnModeBuild.interactable = (mode != AppState.Build);
 			btnModeProps.interactable = (mode != AppState.Props);
+		}
+
+		public void setMenuPanels(AppState mode)
+		{
+			panelTools.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
+			panelMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 		}
 
 		//
@@ -570,7 +577,7 @@ namespace DragginzWorldEditor
         public void onPointerDown(BaseEventData data) {
             if (_trfmDropDownFile) {
                 resetDropDown(_trfmDropDownFile);
-				LevelEditor.Instance.setMode (AppState.Look);
+				LevelEditor.Instance.setMode (AppState.Select);
             }
         }
 

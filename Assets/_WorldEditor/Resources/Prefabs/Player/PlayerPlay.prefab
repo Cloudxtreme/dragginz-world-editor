@@ -216,7 +216,7 @@ MonoBehaviour:
     StrafeSpeed: 4
     RunMultiplier: 2
     RunKey: 304
-    JumpForce: 25
+    JumpForce: 40
     SlopeCurveModifier:
       serializedVersion: 2
       m_Curve:

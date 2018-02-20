@@ -23,7 +23,7 @@ namespace DragginzWorldEditor
 		{
 			Debug.LogWarning ("OnCanBeSelected "+name);
 
-			if (AppController.Instance.appState != AppState.Look) {
+			if (AppController.Instance.appState != AppState.Select) {
 				return false;
 			}
 

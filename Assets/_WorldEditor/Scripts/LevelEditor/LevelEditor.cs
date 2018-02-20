@@ -215,7 +215,7 @@ namespace DragginzWorldEditor
 		public void startUpPopupCallback(int buttonId) {
 
 			AppController.Instance.hidePopup ();
-			setMode (AppState.Look);
+			setMode (AppState.Select);
 		}
 
 		//
@@ -246,17 +246,21 @@ namespace DragginzWorldEditor
 			{
 				if (Input.GetKeyDown (KeyCode.Escape)) {
 					AppController.Instance.hidePopup ();
+					if (AppController.Instance.appState == AppState.Null) {
+						startUpPopupCallback (-1);
+					}
 				}
 			}
 			else {
 				
 				if (Input.GetKeyDown (KeyCode.F1)) {
 					showHelpPopup ();
-				}
-				else if (Input.GetKeyDown (KeyCode.Escape)) {
-					if (AppController.Instance.appState != AppState.Look) {
-						setMode (AppState.Look);
+				} else if (Input.GetKeyDown (KeyCode.Escape)) {
+					if (AppController.Instance.appState != AppState.Select) {
+						setMode (AppState.Select);
 					}
+				} else if (Input.GetKeyDown (KeyCode.Tab) || Input.GetKeyDown (KeyCode.BackQuote)) {
+					setMode (AppController.Instance.appState == AppState.Play ? AppState.Select : AppState.Play);
 				}
 				else if (Input.GetKeyDown(KeyCode.H)) {
 					resetCamToStartPos ();
@@ -265,7 +269,7 @@ namespace DragginzWorldEditor
 					setMode (AppState.Play);
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha1)) {
-					setMode (AppState.Look);
+					setMode (AppState.Select);
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha2)) {
 					setMode (AppState.Dig);
@@ -305,6 +309,7 @@ namespace DragginzWorldEditor
 
 			AppController.Instance.setAppState (mode);
 			MainMenu.Instance.setModeButtons (mode);
+			MainMenu.Instance.setMenuPanels (mode);
 
 			if (_curEditorTool != null) {
 				_curEditorTool.setSingleMaterial (laserAim, laserAimMaterial, false);
@@ -344,7 +349,7 @@ namespace DragginzWorldEditor
 			{
 				resetCamToStartPos ();
 			}
-			else if (mode == AppState.Look)
+			else if (mode == AppState.Select)
 			{
 				MainMenu.Instance.showTransformBox (true);
 				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_LOOK];

@@ -15,7 +15,7 @@ namespace DragginzWorldEditor
 	//
 	public enum AppState {
 		Null,
-		Look,
+		Select,
 		Dig,
 		Paint,
 		Build,
