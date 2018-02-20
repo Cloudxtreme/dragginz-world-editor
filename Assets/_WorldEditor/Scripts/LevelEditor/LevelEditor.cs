@@ -259,7 +259,10 @@ namespace DragginzWorldEditor
 					}
 				}
 				else if (Input.GetKeyDown(KeyCode.H)) {
-					resetFlyCam ();
+					resetCamToStartPos ();
+				}
+				else if (Input.GetKeyDown(KeyCode.Alpha0)) {
+					setMode (AppState.Play);
 				}
 				else if (Input.GetKeyDown(KeyCode.Alpha1)) {
 					setMode (AppState.Look);
@@ -329,7 +332,19 @@ namespace DragginzWorldEditor
 
 			SceneGizmo.Instance.editorCameraTransform = EditorCamera.Instance.transform;
 
-			if (mode == AppState.Look)
+			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
+
+			if (goPlayer != null && goPlayerEdit != null) {
+				goPlayer.SetActive ((mode == AppState.Play));
+				goPlayerEdit.SetActive (!goPlayer.activeSelf);
+			}
+
+			if (mode == AppState.Play)
+			{
+				resetCamToStartPos ();
+			}
+			else if (mode == AppState.Look)
 			{
 				MainMenu.Instance.showTransformBox (true);
 				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_LOOK];
@@ -371,12 +386,9 @@ namespace DragginzWorldEditor
 				}
 			}
 
-			if (goPlayer != null && goPlayerEdit != null) {
-				goPlayer.SetActive ((mode == AppState.Play));
-				goPlayerEdit.SetActive (!goPlayer.activeSelf);
-			}
-
 			SceneGizmo.Instance.editorCameraTransform = (itemCam.enabled ? EditorCamera.Instance.transform : FlyCam.Instance.player);
+
+			RuntimeEditorApplication.Instance.gameObject.SetActive(mode != AppState.Play);
 
 			MainMenu.Instance.resetDigSettings (new Vector3 (1, 1, 1));
 			updateDigSettings (MainMenu.Instance.v3DigSettings);
@@ -618,17 +630,22 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void resetFlyCam()
+		public void resetCamToStartPos()
 		{
 			FlyCam.Instance.reset ();
-			//PlayerEditCollision.Instance.isColliding = false;
+
+			if (AppController.Instance.appState == AppState.Play) {
+				goPlayer.transform.position = FlyCam.Instance.player.position;
+				goPlayer.transform.eulerAngles = FlyCam.Instance.player.eulerAngles;
+			}
 		}
 
-		//
-		public void toggleFlyCamOffset()
+		/*public void toggleFlyCamOffset()
 		{
-			FlyCam.Instance.toggleOffset ();
-		}
+			if (AppController.Instance.appState != AppState.Play) {
+				FlyCam.Instance.toggleOffset ();
+			}
+		}*/
 
 		//
 		public List<GameObject> getOverlappingObjects(Vector3 v3Pos, Vector3 extents)

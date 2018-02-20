@@ -27,12 +27,12 @@ namespace DragginzWorldEditor
         public Transform blocker;
         public Transform panelPopup;
 
+		public Button btnModePlay;
 		public Button btnModeLook;
 		public Button btnModeDig;
 		public Button btnModePaint;
 		public Button btnModeBuild;
-		public Button btnModeItems;
-		public Button btnModePlay;
+		public Button btnModeProps;
 
 		public Button btnUNDO;
 
@@ -174,6 +174,9 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public void onButtonModePlayClicked() {
+			LevelEditor.Instance.setMode(AppState.Play);
+		}
 		public void onButtonModeLookClicked() {
 			LevelEditor.Instance.setMode(AppState.Look);
 		}
@@ -186,21 +189,19 @@ namespace DragginzWorldEditor
 		public void onButtonModeBuildClicked() {
 			LevelEditor.Instance.setMode(AppState.Build);
 		}
-		public void onButtonModePlayClicked() {
-			LevelEditor.Instance.setMode(AppState.Play);
-		}
-		public void onButtonModeItemsClicked() {
+		public void onButtonModePropsClicked() {
 			LevelEditor.Instance.setMode(AppState.Props);
 		}
 
 		//
-		public void setModeButtons(AppState mode) {
+		public void setModeButtons(AppState mode)
+		{
+			btnModePlay.interactable  = (mode != AppState.Play);
 			btnModeLook.interactable  = (mode != AppState.Look);
 			btnModeDig.interactable   = (mode != AppState.Dig);
 			btnModePaint.interactable = (mode != AppState.Paint);
 			btnModeBuild.interactable = (mode != AppState.Build);
-			btnModeItems.interactable = (mode != AppState.Props);
-			//btnModePlay.interactable  = (mode != AppState.Play);
+			btnModeProps.interactable = (mode != AppState.Props);
 		}
 
 		//
