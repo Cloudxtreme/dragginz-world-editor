@@ -849,16 +849,6 @@ Prefab:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 195
-      objectReference: {fileID: 0}
-    - target: {fileID: 224459571649686112, guid: c891010f2fd945b488775603e1678256,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 224145464089200884, guid: c891010f2fd945b488775603e1678256,
         type: 2}
       propertyPath: m_AnchorMax.y
@@ -1354,7 +1344,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 60
   orthographic: 0

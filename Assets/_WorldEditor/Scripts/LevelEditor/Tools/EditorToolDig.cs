@@ -34,9 +34,7 @@ namespace DragginzWorldEditor
 		public override void customUpdate(float time, float timeDelta)
 		{
 			if (Input.GetAxis ("Mouse ScrollWheel") != 0) {
-				//if (Input.GetKey (KeyCode.LeftShift)) {
-					MainMenu.Instance.toggleDigSize (Input.GetAxis ("Mouse ScrollWheel"));
-				//}
+				MainMenu.Instance.toggleDigSize (Input.GetAxis ("Mouse ScrollWheel"));
 			}
 
 			doRayCast ();

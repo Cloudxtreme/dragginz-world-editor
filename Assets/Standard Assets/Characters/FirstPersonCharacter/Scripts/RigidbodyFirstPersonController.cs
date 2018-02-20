@@ -137,7 +137,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
 
-        private void FixedUpdate()
+        private void LateUpdate()
         {
             GroundCheck();
             Vector2 input = GetInput();

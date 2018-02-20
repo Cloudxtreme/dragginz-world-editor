@@ -29,6 +29,7 @@ namespace DragginzWorldEditor
 		//private Vector3 dragOrigin;
 		//private Vector3 dragDiff;
 
+		private RaycastHit hitInfo;
 		private Vector3 _playerPosSave;
 		private LayerMask _layermask;
 		private Collider[] _hitColliders;
@@ -180,14 +181,15 @@ namespace DragginzWorldEditor
 				// did camera move?
 				if (_player.position != _playerPosSave) {
 				
-					_hitColliders = Physics.OverlapBox (_player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
+					//if (Physics.SphereCast(_player.position, 0.2f, Vector3.forward, out hitInfo, 0.01f, _layermask)) {
+
+					_hitColliders = Physics.OverlapSphere (_player.position, 0.26f, _layermask);// .OverlapBox (_player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
 					if (_hitColliders.Length > 0) {
 						_player.position = _playerPosSave;
-						//dragOrigin = _myCam.ScreenToWorldPoint (mousePos);
-						//_camCanMove = false;
-						_move = false;
+						//_move = false;
 						Input.ResetInputAxes();
-					} else {
+					}
+					else {
 						_playerPosSave = _player.position;
 					}
 				}

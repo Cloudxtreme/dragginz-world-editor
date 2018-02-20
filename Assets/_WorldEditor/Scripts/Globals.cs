@@ -11,7 +11,7 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v02.19.3a";
+		static public readonly string version = "Level Editor v02.20.0a";
 		static public readonly int levelSaveFormatVersion = 5;
 
 		public const string propListName = "props_list_leveleditor";
