@@ -25,5 +25,20 @@ namespace DragginzWorldEditor
 
 		[SerializeField]
 		public DataTypeQuaternion rotation  { get; set; }
+
+		//
+		public string getJsonString()
+		{
+			string s = "{";
+
+			s += "\"id\":" + id.ToString();
+			s += ",\"n\":" + "\"" + name + "\"";
+			s += ",\"p\":" + position.getJsonString();
+			s += ",\"r\":" + rotation.getJsonString();
+
+			s += "}";
+
+			return s;
+		}
 	}
 }

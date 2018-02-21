@@ -26,5 +26,28 @@ namespace DragginzWorldEditor
 		[SerializeField]
 		public List<LevelObject> levelObjects { get; set; }
 
+		//
+		public string getJsonString()
+		{
+			int i, len;
+
+			string s = "{";
+
+			s += "\"n\":" + "\"" + name + "\"";
+			s += ",\"p\":" + position.getJsonString();
+			s += ",\"e\":" + isEdge.ToString();
+
+			s += ",\"objs\":[";
+			len = levelObjects.Count;
+			for (i = 0; i < len; ++i) {
+				s += (i > 0 ? "," : "");
+				s += levelObjects [i].getJsonString ();
+			}
+			s += "]";
+
+			s += "}";
+
+			return s;
+		}
 	}
 }

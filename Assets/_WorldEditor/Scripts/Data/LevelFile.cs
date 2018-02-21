@@ -31,5 +31,39 @@ namespace DragginzWorldEditor
 
 		[SerializeField]
 		public DataTypeVector3 playerEuler  { get; set; }
+
+		//
+		public string getJsonString()
+		{
+			int i, len;
+
+			string s = "{";
+
+			s += "\"v\":" + fileFormatVersion.ToString();
+			s += ",\"n\":" + "\"" + levelName + "\"";
+
+			s += ",\"quads\":[";
+			len = levelQuadrants.Count;
+			for (i = 0; i < len; ++i) {
+				s += (i > 0 ? "," : "");
+				s += levelQuadrants [i].getJsonString ();
+			}
+			s += "]";
+
+			s += ",\"props\":[";
+			len = levelProps.Count;
+			for (i = 0; i < len; ++i) {
+				s += (i > 0 ? "," : "");
+				s += levelProps [i].getJsonString ();
+			}
+			s += "]";
+
+			s += ",\"p\":" + playerPosition.getJsonString();
+			s += ",\"r\":" + playerEuler.getJsonString();
+
+			s += "}";
+
+			return s;
+		}
 	}
 }

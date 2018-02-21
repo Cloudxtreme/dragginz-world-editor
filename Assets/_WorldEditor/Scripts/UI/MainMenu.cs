@@ -310,7 +310,7 @@ namespace DragginzWorldEditor
 				return;
 			}
 
-			FileBrowser.OpenFilePanel("Open file Title", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), null, null, (bool canceled, string filePath) => {
+			FileBrowser.OpenFilePanel("Open file Title", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), new string[] { "json" }, null, (bool canceled, string filePath) => {
 				if (!canceled) {
 					LevelData.Instance.loadLevelData(LevelEditor.Instance.goWorld, filePath);
 				}
@@ -333,7 +333,7 @@ namespace DragginzWorldEditor
 				_popup.hide ();
 				setLevelNameText (levelName);
 
-				FileBrowser.SaveFilePanel ("Save Level", "Save Level", Environment.GetFolderPath (Environment.SpecialFolder.Desktop), "myLevel", new string[] { "dat" }, null, (bool canceled, string filePath) => {
+				FileBrowser.SaveFilePanel ("Save Level", "Save Level", Environment.GetFolderPath (Environment.SpecialFolder.Desktop), "myLevel", new string[] { "json" }, null, (bool canceled, string filePath) => {
 					if (!canceled) {
 						LevelData.Instance.saveLevelData (filePath, levelName);
 					}

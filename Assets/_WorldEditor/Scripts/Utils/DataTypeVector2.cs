@@ -13,5 +13,18 @@ namespace DragginzWorldEditor
 
 		public float x { get; set; }
 		public float y { get; set; }
+
+		//
+		public string getJsonString() {
+
+			string s = "{";
+
+			s += "\"x\":" + x.ToString();
+			s += ",\"y\":" + y.ToString();
+
+			s += "}";
+
+			return s;
+		}
 	}
 }

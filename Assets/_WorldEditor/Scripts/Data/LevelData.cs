@@ -134,6 +134,8 @@ namespace DragginzWorldEditor
 				return;
 			}
 
+			Debug.Log(levelFile.levelName+": "+levelFile.getJsonString());
+
 			BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Open(filename, FileMode.OpenOrCreate);
 
