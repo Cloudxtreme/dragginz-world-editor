@@ -134,15 +134,26 @@ namespace DragginzWorldEditor
 				return;
 			}
 
-			Debug.Log(levelFile.levelName+": "+levelFile.getJsonString());
+			string json = levelFile.getJsonString();
 
-			BinaryFormatter bf = new BinaryFormatter();
-			FileStream file = File.Open(filename, FileMode.OpenOrCreate);
+			//BinaryFormatter bf = new BinaryFormatter();
 
-			bf.Serialize(file, levelFile);
+			//FileStream file = File.Open(filename, FileMode.OpenOrCreate);
 
-			file.Close();
-			file.Dispose();
+			File.WriteAllText (filename, json);
+
+			//StreamWriter writer = new StreamWriter (file, System.Text.Encoding.ASCII);
+			//writer.Write (json);
+			//writer.Flush ();
+
+			//bf.Serialize(file, levelFile);
+
+			//file.Flush ();
+			//file.Close();
+			//file.Dispose();
+
+			//writer.Close ();
+			//writer.Dispose ();
 		}
 
 		//
