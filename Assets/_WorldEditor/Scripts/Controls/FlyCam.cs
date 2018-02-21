@@ -29,6 +29,8 @@ namespace DragginzWorldEditor
 		//private Vector3 dragOrigin;
 		//private Vector3 dragDiff;
 
+		private Vector3 _tempPos;
+
 		private RaycastHit hitInfo;
 		private Vector3 _playerPosSave;
 		private LayerMask _layermask;
@@ -105,18 +107,20 @@ namespace DragginzWorldEditor
 			GL.wireframe = false;
 		}
 
+		//
 		void Update ()
 		{
 			_time = Time.realtimeSinceStartup;
 
-			if (_camCanMove) {
+			//if (_camCanMove) {
 				_move = Input.GetAxis ("Horizontal") != 0.0f || Input.GetAxis ("Vertical") != 0.0f || Input.GetAxis ("Depth") != 0.0f;
-			} else {
+			//}
+			/*else {
 				if (!Input.anyKey) { //Input.GetAxis ("Horizontal") == 0.0f && Input.GetAxis ("Vertical") == 0.0f && Input.GetAxis ("Depth") == 0.0f) {
 					_camCanMove = true;
 					Input.ResetInputAxes();
 				}
-			}
+			}*/
 
 			if (!_mouseRightIsDown) {
 				if (Input.GetMouseButtonDown (1)) {
@@ -129,16 +133,6 @@ namespace DragginzWorldEditor
 				}
 			}
 
-			//_mouseWheel = 0;
-			//if (!Input.GetKey (KeyCode.LeftShift)) {
-			//	_mouseWheel = (AppController.Instance.appState != AppState.Null ? Input.GetAxis ("Mouse ScrollWheel") : 0);
-			//}
-
-			/*if (_mouseWheel != 0) {
-				_mouseWheel = (_mouseWheel < 0 ? -0.1f : 0.1f);
-				_player.position += transform.forward * _mouseWheel;// * movementSpeed;
-			}*/
-
 			// Looking around with the mouse
 			if (_mouseRightIsDown) {
 				//Debug.Log ("mouse is down - axis x: " + Input.GetAxis ("Mouse X"));
@@ -148,51 +142,60 @@ namespace DragginzWorldEditor
 				_player.eulerAngles = playerEuler;
 			}
 
-			if (_camCanMove) {
-				_player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
-			}
+			if (_move) {
 
-			/*if (AppController.Instance.appState == AppState.Look) {
-				
-				if (Input.GetMouseButtonDown(0))
+				if (drawWireframe) {
+					//if (_camCanMove) {
+					_player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
+					//}
+				}
+				else
 				{
-					mousePos = Input.mousePosition;
-					mousePos.z = 10;
-					dragOrigin = myCam.ScreenToWorldPoint(mousePos);
-				}
-
-				if (Input.GetMouseButton (0)) {
-					
-					mousePos = Input.mousePosition;
-					mousePos.z = 10;
-					dragDiff = myCam.ScreenToWorldPoint(mousePos) - player.position;
-					player.position = dragOrigin - dragDiff;
-				}
-			}*/
-			/*else
-			{
-				if (_mouseWheel == 0) {
-					player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
-					//player.position += (transform.up * Input.GetAxis ("Depth")) * movementSpeed;
-				}
-			}*/
-
-			if (_move && !drawWireframe) {
-
-				// did camera move?
-				if (_player.position != _playerPosSave) {
-				
-					//if (Physics.SphereCast(_player.position, 0.2f, Vector3.forward, out hitInfo, 0.01f, _layermask)) {
-
-					_hitColliders = Physics.OverlapSphere (_player.position, 0.26f, _layermask);// .OverlapBox (_player.position, _v3PlayerExtents, Quaternion.identity, _layermask);
-					if (_hitColliders.Length > 0) {
-						_player.position = _playerPosSave;
-						//_move = false;
-						Input.ResetInputAxes();
+					_tempPos = _player.position;
+					_tempPos += (transform.right * Input.GetAxis ("Horizontal")) * movementSpeed;
+					if (_tempPos != _playerPosSave)
+					{
+						_hitColliders = Physics.OverlapSphere (_tempPos, 0.26f, _layermask);
+						if (_hitColliders.Length <= 0) {
+							_player.position = _tempPos;
+						}
 					}
-					else {
-						_playerPosSave = _player.position;
+
+					_tempPos = _player.position;
+					_tempPos += (transform.forward * Input.GetAxis ("Vertical")) * movementSpeed;
+					if (_tempPos != _playerPosSave)
+					{
+						_hitColliders = Physics.OverlapSphere (_tempPos, 0.26f, _layermask);
+						if (_hitColliders.Length <= 0) {
+							_player.position = _tempPos;
+						}
 					}
+
+					_tempPos = _player.position;
+					_tempPos += (transform.up * Input.GetAxis ("Depth")) * movementSpeed;
+					if (_tempPos != _playerPosSave)
+					{
+						_hitColliders = Physics.OverlapSphere (_tempPos, 0.26f, _layermask);
+						if (_hitColliders.Length <= 0) {
+							_player.position = _tempPos;
+						}
+					}
+
+					_playerPosSave = _player.position;
+
+					// did camera move?
+					/*if (_player.position != _playerPosSave) {
+
+						_hitColliders = Physics.OverlapSphere (_player.position, 0.26f, _layermask);
+						if (_hitColliders.Length > 0) {
+							_player.position = _playerPosSave;
+							//_move = false;
+							Input.ResetInputAxes();
+						}
+						else {
+							_playerPosSave = _player.position;
+						}
+					}*/
 				}
 			}
 
@@ -207,6 +210,7 @@ namespace DragginzWorldEditor
 			}
 		}
 
+		//
 		public void setNewInitialPosition(Vector3 newPos, Vector3 newRot) {
 			initialPos = newPos;
 			initialRotation = newRot;
