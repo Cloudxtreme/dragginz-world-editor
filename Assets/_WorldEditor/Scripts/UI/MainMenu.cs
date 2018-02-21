@@ -418,6 +418,14 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public void setDigSliders(AppState mode)
+		{
+			if (sliderDigDepth != null) {
+				sliderDigDepth.transform.parent.gameObject.SetActive (mode != AppState.Paint);
+			}
+		}
+
+		//
 		public void toggleDigSize(float toggle)
 		{
 			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {

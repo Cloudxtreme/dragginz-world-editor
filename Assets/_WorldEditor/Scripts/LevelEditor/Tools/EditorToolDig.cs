@@ -27,7 +27,7 @@ namespace DragginzWorldEditor
 		//
 		public override void activate()
 		{
-			MainMenu.Instance.resetDigSettings (_v3AimSize);
+			//MainMenu.Instance.resetDigSettings (_v3AimSize);
 		}
 
 		//

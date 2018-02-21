@@ -122,7 +122,8 @@ namespace DragginzWorldEditor
 				if (Input.GetMouseButtonDown (1)) {
 					_mouseRightIsDown = true;
 				}
-			} else {
+			}
+			else {
 				if (Input.GetMouseButtonUp (1)) {
 					_mouseRightIsDown = false;
 				}

@@ -259,15 +259,15 @@ namespace DragginzWorldEditor
 					if (AppController.Instance.appState != AppState.Select) {
 						setMode (AppState.Select);
 					}
-				} else if (Input.GetKeyDown (KeyCode.Tab) || Input.GetKeyDown (KeyCode.BackQuote)) {
+				} else if (Input.GetKeyDown (KeyCode.P)) { // (Input.GetKeyDown (KeyCode.Tab) || Input.GetKeyDown (KeyCode.BackQuote)) {
 					setMode (AppController.Instance.appState == AppState.Play ? AppState.Select : AppState.Play);
 				}
 				else if (Input.GetKeyDown(KeyCode.H)) {
 					resetCamToStartPos ();
 				}
-				else if (Input.GetKeyDown(KeyCode.Alpha0)) {
-					setMode (AppState.Play);
-				}
+				//else if (Input.GetKeyDown(KeyCode.Alpha0)) {
+				//	setMode (AppState.Play);
+				//}
 				else if (Input.GetKeyDown(KeyCode.Alpha1)) {
 					setMode (AppState.Select);
 				}
@@ -395,7 +395,8 @@ namespace DragginzWorldEditor
 
 			RuntimeEditorApplication.Instance.gameObject.SetActive(mode != AppState.Play);
 
-			MainMenu.Instance.resetDigSettings (new Vector3 (1, 1, 1));
+			MainMenu.Instance.setDigSliders (mode);
+			//MainMenu.Instance.resetDigSettings (new Vector3 (1, 1, 1));
 			updateDigSettings (MainMenu.Instance.v3DigSettings);
 
 			if (_curEditorTool != null) {
@@ -589,12 +590,20 @@ namespace DragginzWorldEditor
 		public void updateDigSettings(Vector3 v3DigSettings)
 		{
 			float fScale = _fRockSize;
-			if (AppController.Instance.appState == AppState.Build) {
+			if (AppController.Instance.appState == AppState.Build)
+			{
 				laserAim.transform.localScale = v3DigSettings * fScale;
 				laserAimCenterCube.SetActive (true);
 				fScale -= 0.01f;
 				laserAimCenterCube.transform.localScale = new Vector3(fScale / laserAim.transform.localScale.x, fScale / laserAim.transform.localScale.y, fScale / laserAim.transform.localScale.z);
-			} else {
+			}
+			else if (AppController.Instance.appState == AppState.Paint)
+			{
+				fScale *= 0.5f;
+				laserAim.transform.localScale = new Vector3(v3DigSettings.x, v3DigSettings.y, 1) * fScale;
+				laserAimCenterCube.SetActive (false);
+			}
+			else {
 				fScale *= 0.75f;
 				laserAim.transform.localScale = v3DigSettings * fScale;
 				laserAimCenterCube.SetActive (false);
