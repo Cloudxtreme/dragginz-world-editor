@@ -44,6 +44,8 @@ namespace DragginzWorldEditor
 				return;
 			}
 
+			MainMenu.Instance.setLevelNameText(levelFile.levelName);
+
 			LevelEditor levelEditor = LevelEditor.Instance;
 			PropsManager propsManager = PropsManager.Instance;
 			World world = World.Instance;
@@ -125,9 +127,9 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void saveLevelData(string filename) {
+		public void saveLevelData(string filename, string levelName) {
 
-			LevelFile levelFile = createLevelData ();
+			LevelFile levelFile = createLevelData (levelName);
 			if (levelFile == null) {
 				return;
 			}
@@ -142,7 +144,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private LevelFile createLevelData() {
+		private LevelFile createLevelData(string levelName) {
 
 			GameObject parent = LevelEditor.Instance.goWorld;
 			if (parent == null) {
@@ -151,7 +153,7 @@ namespace DragginzWorldEditor
 
 			LevelFile levelFile         = new LevelFile ();
 			levelFile.fileFormatVersion = Globals.levelSaveFormatVersion;
-			levelFile.levelName         = "My Level";
+			levelFile.levelName         = levelName;
 
 			levelFile.playerPosition   = new DataTypeVector3 ();
 			levelFile.playerPosition.x = FlyCam.Instance.player.position.x;

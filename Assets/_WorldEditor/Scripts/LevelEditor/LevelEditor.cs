@@ -54,6 +54,7 @@ namespace DragginzWorldEditor
         public List<Material> materialsWalls;
 
 		private World _World;
+		private Popup _popup;
 
 		private List<EditorTool> _aEditorTools;
 		private EditorTool _curEditorTool;
@@ -181,6 +182,8 @@ namespace DragginzWorldEditor
 
 			_World.init ();
 
+			_popup = MainMenu.Instance.popup;
+
 			goPlayer.transform.position = new Vector3(0, 0.6f, -0.75f);
 
 			_aEditorTools = new List<EditorTool> (Globals.NUM_EDITOR_TOOLS);
@@ -233,16 +236,7 @@ namespace DragginzWorldEditor
 		//
 		public void customUpdateCheckControls(float time, float timeDelta)
 		{
-			if (Input.GetKeyDown (KeyCode.LeftShift)) {
-				FlyCam.Instance.drawWireframe = true;
-				itemCamScript.drawWireframe = true;
-			}
-			else if (Input.GetKeyUp (KeyCode.LeftShift)) {
-				FlyCam.Instance.drawWireframe = false;
-				itemCamScript.drawWireframe = false;
-			}
-
-			if (MainMenu.Instance.popup.isVisible ())
+			if (_popup.isVisible ())
 			{
 				if (Input.GetKeyDown (KeyCode.Escape)) {
 					AppController.Instance.hidePopup ();
@@ -253,6 +247,15 @@ namespace DragginzWorldEditor
 			}
 			else {
 				
+				if (Input.GetKeyDown (KeyCode.LeftShift)) {
+					FlyCam.Instance.drawWireframe = true;
+					itemCamScript.drawWireframe = true;
+				}
+				else if (Input.GetKeyUp (KeyCode.LeftShift)) {
+					FlyCam.Instance.drawWireframe = false;
+					itemCamScript.drawWireframe = false;
+				}
+
 				if (Input.GetKeyDown (KeyCode.F1)) {
 					showHelpPopup ();
 				} else if (Input.GetKeyDown (KeyCode.Escape)) {

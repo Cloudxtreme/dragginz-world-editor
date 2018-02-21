@@ -17,11 +17,24 @@ namespace DragginzWorldEditor
         public GameObject blocker;
         public Text txtHeader;
         public Text txtMessage;
+
+		public Text txtInputCaption;
+		public Text txtInputPlaceHolder;
+		public InputField inputField;
+
         public GameObject btnOkay;
         public GameObject btnYes;
         public GameObject btnNo;
 
         private Action<int> _callback;
+
+		#region Getters
+
+		public string inputText {
+			get { return inputField.text; }
+		}
+
+		#endregion
 
         //
         // System methods
@@ -44,6 +57,9 @@ namespace DragginzWorldEditor
                 txtMessage.text = message;
             }
 
+			txtInputCaption.text = "";
+			inputField.gameObject.SetActive(false);
+
             showButton(btnOkay, false);
             showButton(btnYes, false);
             showButton(btnNo, false);
@@ -51,6 +67,10 @@ namespace DragginzWorldEditor
                 showButton(btnYes, true);
                 showButton(btnNo, true);
             }
+			else if (mode == PopupMode.Input) {
+				showButton(btnYes, true);
+				showButton(btnNo, true);
+			}
             else if (mode == PopupMode.Notification) {
                 showButton(btnOkay, true);
             }
@@ -62,6 +82,19 @@ namespace DragginzWorldEditor
             gameObject.SetActive(true);
         }
 
+		//
+		public void showPopup(PopupMode mode, string header, string caption, string placeholder, Action<int> callback = null) {
+
+			showPopup (mode, header, "", callback);
+
+			inputField.gameObject.SetActive(true);
+
+			txtInputCaption.text = caption;
+			txtInputPlaceHolder.text = placeholder;
+			inputField.text = "";
+		}
+
+		//
         public void hide() {
 
             _callback = null;

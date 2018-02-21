@@ -45,6 +45,7 @@ namespace DragginzWorldEditor
 		public Slider sliderDigDepth;
 
 		public Text txtFileInfo;
+		public Text txtLevelName;
 		public Text txtCubeCount;
 		public Text txtMovementSpeed;
 		public Text txtCameraPosition;
@@ -150,11 +151,17 @@ namespace DragginzWorldEditor
 			onSelectTransformTool(0);
 			onSelectMaterial (0);
 			onSelectItem (0);
+			setLevelNameText ("New Level");
         }
 
 		#endregion
 
-		//
+		public void setLevelNameText(string name) {
+			if (txtLevelName != null) {
+				txtLevelName.text = name;
+			}
+		}
+
 		public void setCameraPositionText(Vector3 pos) {
 			if (txtCameraPosition != null) {
 				txtCameraPosition.text = "Position: x" + pos.x.ToString("F2") + ", y"+ pos.y.ToString("F2") + ", z" + pos.z.ToString("F2");
@@ -313,15 +320,30 @@ namespace DragginzWorldEditor
 		//
         private void showSaveFileDialog() {
 
-			//AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
 			EditorObjectSelection.Instance.ClearSelection(false);
 
-			FileBrowser.SaveFilePanel("Save Level", "Saving Level", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "myLevel", new string[] { "dat" }, null, (bool canceled, string filePath) => {
-                if (!canceled) {
-					LevelData.Instance.saveLevelData(filePath);
-                }
-            });
+			_popup.showPopup(PopupMode.Input, "Save Level", "Level Name: (50 chars max)", "Enter Level Name...", showSaveFileDialogContinue);
         }
+
+		private void showSaveFileDialogContinue(int buttonId) {
+
+			if (buttonId == 1)
+			{
+				string levelName = _popup.inputText;
+				_popup.hide ();
+				setLevelNameText (levelName);
+
+				FileBrowser.SaveFilePanel ("Save Level", "Save Level", Environment.GetFolderPath (Environment.SpecialFolder.Desktop), "myLevel", new string[] { "dat" }, null, (bool canceled, string filePath) => {
+					if (!canceled) {
+						LevelData.Instance.saveLevelData (filePath, levelName);
+					}
+				});
+			}
+			else
+			{
+				_popup.hide ();
+			}
+		}
 
 		//
 		public void toggleMaterial(float toggle)

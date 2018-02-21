@@ -46,6 +46,8 @@ namespace DragginzWorldEditor
 		private bool _camCanMove;
 		private bool _move;
 
+		private Popup _popup;
+
 		public bool drawWireframe;
 
 		#region Getters
@@ -97,7 +99,7 @@ namespace DragginzWorldEditor
 
 			_itemCam = LevelEditor.Instance.itemCam;
 
-			//playerCollision = PlayerEditCollision.Instance;
+			_popup = MainMenu.Instance.popup;
 		}
 
 		void OnPreRender() {
@@ -110,6 +112,10 @@ namespace DragginzWorldEditor
 		//
 		void Update ()
 		{
+			if (_popup.isVisible ()) {
+				return;
+			}
+
 			_time = Time.realtimeSinceStartup;
 
 			//if (_camCanMove) {

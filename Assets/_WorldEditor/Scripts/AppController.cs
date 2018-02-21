@@ -26,7 +26,8 @@ namespace DragginzWorldEditor
 	//
 	public enum PopupMode {
 		Notification,
-		Confirmation
+		Confirmation,
+		Input
 	};
 
 	//
@@ -59,20 +60,6 @@ namespace DragginzWorldEditor
 			timeDelta = Time.deltaTime;
 
 			LevelEditor.Instance.customUpdateCheckControls (time, timeDelta);
-
-            /*if (Input.GetKeyDown(KeyCode.B)) {
-                LevelEditor.Instance.toggleCubes();
-            }
-            else {*/
-            /*    else if (_appState == AppState.Play) {
-                    if (Input.GetKeyDown(KeyCode.Escape)) {
-                        //setAppState(AppState.Dig);
-                    }
-                    else if (Input.GetKeyDown(KeyCode.X)) {
-                        LevelEditor.Instance.toggleFlyCamOffset();
-                    }
-                }
-            }*/
         }
 
 		//
