@@ -17,12 +17,14 @@ namespace DragginzWorldEditor
 		//
 		public void loadLevelData(GameObject parent, string filename) {
 			
-			BinaryFormatter bf = new BinaryFormatter();
-			FileStream file = File.Open(filename, FileMode.Open);
+			//BinaryFormatter bf = new BinaryFormatter();
+			//FileStream file = File.Open(filename, FileMode.Open);
+			string json = File.ReadAllText(filename);
 
 			LevelFile levelFile = null;
 			try {
-				levelFile = bf.Deserialize(file) as LevelFile;
+				//levelFile = bf.Deserialize(file) as LevelFile;
+				levelFile = createDataFromJson(json);
 				if (levelFile != null) {
 					createLevel (levelFile, parent);
 				}
@@ -32,8 +34,18 @@ namespace DragginzWorldEditor
 				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat);
 			}
 
-			file.Close();
-			file.Dispose();
+			//file.Close();
+			//file.Dispose();
+		}
+
+		//
+		private LevelFile createDataFromJson(string json) {
+
+			LevelFile levelFile = new LevelFile ();
+
+			levelFile.parseJson (json);
+
+			return levelFile;
 		}
 
 		//

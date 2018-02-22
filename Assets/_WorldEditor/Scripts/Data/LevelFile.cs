@@ -9,6 +9,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using SimpleJSON;
+
 namespace DragginzWorldEditor
 {
 	[Serializable]
@@ -32,6 +34,70 @@ namespace DragginzWorldEditor
 		[SerializeField]
 		public DataTypeVector3 playerEuler  { get; set; }
 
+		//
+		// Parse JSON data
+		//
+		public void parseJson(string json)
+		{
+			int i, len;
+			LevelQuadrant levelQuadrant;
+			LevelProp levelProp;
+
+			JSONNode data = JSON.Parse(json);
+
+			fileFormatVersion = -1;
+			if (data ["v"] != null) {
+				fileFormatVersion = Int32.Parse (data ["v"]);
+			}
+
+			levelName = "";
+			if (data ["n"] != null) {
+				levelName = data ["n"];
+			}
+
+			levelQuadrants = new List<LevelQuadrant> ();
+			if (data ["quads"] != null) {
+				JSONArray quads = (JSONArray) data ["quads"];
+				if (quads != null) {
+					len = quads.Count;
+					for (i = 0; i < len; ++i) {
+						levelQuadrant = new LevelQuadrant ();
+						levelQuadrant.parseJson (quads [i]);
+						levelQuadrants.Add (levelQuadrant);
+					}
+				}
+			}
+				
+			levelProps = new List<LevelProp> ();
+			if (data ["props"] != null) {
+				JSONArray props = (JSONArray) data ["props"];
+				if (props != null) {
+					len = props.Count;
+					for (i = 0; i < len; ++i) {
+						levelProp = new LevelProp ();
+						levelProp.parseJson (props [i]);
+						levelProps.Add (levelProp);
+					}
+				}
+			}
+
+			playerPosition = new DataTypeVector3 ();
+			if (data ["p"] != null) {
+				playerPosition.x = data ["p"]["x"];
+				playerPosition.y = data ["p"]["y"];
+				playerPosition.z = data ["p"]["z"];
+			}
+
+			playerEuler = new DataTypeVector3 ();
+			if (data ["r"] != null) {
+				playerEuler.x = data ["r"]["x"];
+				playerEuler.y = data ["r"]["y"];
+				playerEuler.z = data ["r"]["z"];
+			}
+		}
+
+		//
+		// Create JSON string
 		//
 		public string getJsonString()
 		{

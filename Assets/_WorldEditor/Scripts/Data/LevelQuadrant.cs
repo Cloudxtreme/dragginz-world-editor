@@ -9,6 +9,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using SimpleJSON;
+
 namespace DragginzWorldEditor
 {
 	[Serializable]
@@ -26,6 +28,47 @@ namespace DragginzWorldEditor
 		[SerializeField]
 		public List<LevelObject> levelObjects { get; set; }
 
+		//
+		// Parse JSON data
+		//
+		public void parseJson(JSONNode data)
+		{
+			int i, len;
+			LevelObject levelObject;
+
+			name = "";
+			if (data ["n"] != null) {
+				name = data ["n"];
+			}
+
+			position = new DataTypeVector3 ();
+			if (data ["p"] != null) {
+				position.x = data ["p"]["x"];
+				position.y = data ["p"]["y"];
+				position.z = data ["p"]["z"];
+			}
+
+			isEdge = 0;
+			if (data ["e"] != null) {
+				isEdge = Int32.Parse (data ["e"]);
+			}
+
+			levelObjects = new List<LevelObject> ();
+			if (data ["objs"] != null) {
+				JSONArray objs = (JSONArray) data ["objs"];
+				if (objs != null) {
+					len = objs.Count;
+					for (i = 0; i < len; ++i) {
+						levelObject = new LevelObject ();
+						levelObject.parseJson (objs [i]);
+						levelObjects.Add (levelObject);
+					}
+				}
+			}
+		}
+
+		//
+		// Create JSON string
 		//
 		public string getJsonString()
 		{

@@ -1,23 +1,20 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_WorldEditor\Scripts\Controls\FlyCam.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_WorldEditor\Scripts\Data\LevelData.cs">
     <Files>
-      <File FileName="Assets\_WorldEditor\Scripts\Globals.cs" Line="14" Column="65" />
-      <File FileName="Assets\_WorldEditor\Scripts\AppController.cs" Line="105" Column="33" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="215" Column="3" />
+      <File FileName="Assets\_WorldEditor\Scripts\Globals.cs" Line="15" Column="57" />
+      <File FileName="Assets\_WorldEditor\Scripts\AppController.cs" Line="89" Column="28" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="258" Column="5" />
       <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\PropsManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\World.cs" Line="329" Column="31" />
-      <File FileName="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" Line="211" Column="81" />
-      <File FileName="Assets\_WorldEditor\Scripts\Controls\FlyCam.cs" Line="190" Column="27" />
-      <File FileName="Assets\Standard Assets\Characters\FirstPersonCharacter\Scripts\RigidbodyFirstPersonController.cs" Line="199" Column="31" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\World.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" Line="313" Column="134" />
+      <File FileName="Assets\_WorldEditor\Scripts\Controls\FlyCam.cs" Line="117" Column="5" />
       <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorTool.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolItem.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelData.cs" Line="1" Column="1" />
-      <File FileName="Assets\Runtime Transform Gizmos\Scripts\Editor Object Selection\EditorObjectSelection.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolDig.cs" Line="38" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolBuild.cs" Line="44" Column="7" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolPaint.cs" Line="39" Column="7" />
-      <File FileName="Assets\_WorldEditor\Scripts\UI\Popup.cs" Line="65" Column="9" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelData.cs" Line="156" Column="6" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelFile.cs" Line="53" Column="18" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelQuadrant.cs" Line="40" Column="17" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelProp.cs" Line="37" Column="14" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelObject.cs" Line="33" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

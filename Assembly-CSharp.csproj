@@ -60,6 +60,7 @@
      <Compile Include="Assets\_WorldEditor\Scripts\Data\LevelProp.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Data\LevelQuadrant.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Globals.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\JSON\SimpleJSON.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Block.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Prop.cs" />

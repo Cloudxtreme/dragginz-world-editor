@@ -9,6 +9,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using SimpleJSON;
+
 namespace DragginzWorldEditor
 {
 	[Serializable]
@@ -23,6 +25,31 @@ namespace DragginzWorldEditor
 		[SerializeField]
 		public string material { get; set; }
 
+		//
+		// Parse JSON data
+		//
+		public void parseJson(JSONNode data)
+		{
+			name = "";
+			if (data ["n"] != null) {
+				name = data ["n"];
+			}
+
+			position = new DataTypeVector3 ();
+			if (data ["p"] != null) {
+				position.x = data ["p"] ["x"];
+				position.y = data ["p"] ["y"];
+				position.z = data ["p"] ["z"];
+			}
+
+			material = "";
+			if (data ["m"] != null) {
+				material = data ["m"];
+			}
+		}
+
+		//
+		// Create JSON string
 		//
 		public string getJsonString()
 		{
