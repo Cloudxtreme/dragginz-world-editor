@@ -82,17 +82,35 @@ namespace DragginzWorldEditor
 			}
 
 			playerPosition = new DataTypeVector3 ();
+			playerPosition.x = 0;
+			playerPosition.y = 0;
+			playerPosition.z = 0;
 			if (data ["p"] != null) {
-				playerPosition.x = data ["p"]["x"];
-				playerPosition.y = data ["p"]["y"];
-				playerPosition.z = data ["p"]["z"];
+				if (data ["p"] ["x"] != null) {
+					playerPosition.x = (float)data ["p"] ["x"];
+				}
+				if (data ["p"] ["y"] != null) {
+					playerPosition.y = (float)data ["p"] ["y"];
+				}
+				if (data ["p"] ["z"] != null) {
+					playerPosition.z = (float)data ["p"] ["z"];
+				}
 			}
 
 			playerEuler = new DataTypeVector3 ();
+			playerEuler.x = 0;
+			playerEuler.y = 0;
+			playerEuler.z = 0;
 			if (data ["r"] != null) {
-				playerEuler.x = data ["r"]["x"];
-				playerEuler.y = data ["r"]["y"];
-				playerEuler.z = data ["r"]["z"];
+				if (data ["r"] ["x"] != null) {
+					playerEuler.x = (float)data ["r"] ["x"];
+				}
+				if (data ["r"] ["y"] != null) {
+					playerEuler.y = (float)data ["r"] ["y"];
+				}
+				if (data ["r"] ["z"] != null) {
+					playerEuler.z = (float)data ["r"] ["z"];
+				}
 			}
 		}
 

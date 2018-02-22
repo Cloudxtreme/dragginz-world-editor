@@ -19,8 +19,8 @@ namespace DragginzWorldEditor
 		[SerializeField]
 		public int id { get; set; }
 
-		[SerializeField]
-		public string name { get; set; }
+		//[SerializeField]
+		//public string name { get; set; }
 
 		[SerializeField]
 		public DataTypeVector3 position  { get; set; }
@@ -38,24 +38,45 @@ namespace DragginzWorldEditor
 				id = Int32.Parse (data ["id"]);
 			}
 
-			name = "";
+			/*name = "";
 			if (data ["n"] != null) {
 				name = data ["n"];
-			}
+			}*/
 
 			position = new DataTypeVector3 ();
+			position.x = 0;
+			position.y = 0;
+			position.z = 0;
 			if (data ["p"] != null) {
-				position.x = data ["p"]["x"];
-				position.y = data ["p"]["y"];
-				position.z = data ["p"]["z"];
+				if (data ["p"] ["x"] != null) {
+					position.x = (float)data ["p"] ["x"];
+				}
+				if (data ["p"] ["y"] != null) {
+					position.y = (float)data ["p"] ["y"];
+				}
+				if (data ["p"] ["z"] != null) {
+					position.z = (float)data ["p"] ["z"];
+				}
 			}
 
 			rotation = new DataTypeQuaternion ();
+			rotation.w = 0;
+			rotation.x = 0;
+			rotation.y = 0;
+			rotation.z = 0;
 			if (data ["r"] != null) {
-				rotation.w = data ["r"]["w"];
-				rotation.x = data ["r"]["x"];
-				rotation.y = data ["r"]["y"];
-				rotation.z = data ["r"]["z"];
+				if (data ["r"] ["w"] != null) {
+					rotation.w = (float)data ["r"] ["w"];
+				}
+				if (data ["r"] ["x"] != null) {
+					rotation.x = (float)data ["r"] ["x"];
+				}
+				if (data ["r"] ["y"] != null) {
+					rotation.y = (float)data ["r"] ["y"];
+				}
+				if (data ["r"] ["z"] != null) {
+					rotation.z = (float)data ["r"] ["z"];
+				}
 			}
 		}
 
@@ -67,7 +88,7 @@ namespace DragginzWorldEditor
 			string s = "{";
 
 			s += "\"id\":" + id.ToString();
-			s += ",\"n\":" + "\"" + name + "\"";
+			//s += ",\"n\":" + "\"" + name + "\"";
 			s += ",\"p\":" + position.getJsonString();
 			s += ",\"r\":" + rotation.getJsonString();
 

@@ -653,7 +653,9 @@ namespace DragginzWorldEditor
 
 			if (AppController.Instance.appState == AppState.Play) {
 				goPlayer.transform.position = FlyCam.Instance.player.position;
-				goPlayer.transform.eulerAngles = FlyCam.Instance.player.eulerAngles;
+				Vector3 playerPos = Vector3.zero;
+				playerPos.y = FlyCam.Instance.player.eulerAngles.y;
+				goPlayer.transform.eulerAngles = playerPos; //FlyCam.Instance.player.eulerAngles;
 			}
 		}
 

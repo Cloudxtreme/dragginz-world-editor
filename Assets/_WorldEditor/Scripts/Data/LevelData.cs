@@ -3,9 +3,10 @@
 // Company : Decentralised Team of Developers
 //
 
+using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using UnityEngine;
@@ -85,6 +86,7 @@ namespace DragginzWorldEditor
 				container = world.createContainer (goQuadrant.transform);
 
 				Vector3 pos2 = Vector3.zero;
+				string materialName;
 				Material material;
 				bool isEdge = false;
 				int j, len2 = levelFile.levelQuadrants [i].levelObjects.Count;
@@ -97,7 +99,9 @@ namespace DragginzWorldEditor
 						material = null;
 						isEdge = true;
 					} else {
-						material = levelEditor.aDictMaterials [levelFile.levelQuadrants [i].levelObjects [j].material];
+						//material = levelEditor.aDictMaterials [levelFile.levelQuadrants [i].levelObjects [j].material];
+						materialName = Globals.materials[levelFile.levelQuadrants [i].levelObjects [j].materialId];
+						material = levelEditor.aDictMaterials [materialName];
 						isEdge = false;
 					}
 					world.createRock (pos2, container, levelFile.levelQuadrants [i].levelObjects [j].name, material, isEdge);
@@ -112,6 +116,7 @@ namespace DragginzWorldEditor
 				GameObject goProp;
 				Quaternion rotation = Quaternion.identity;
 				propDef prop;
+				string name;
 
 				len = levelFile.levelProps.Count;
 				for (i = 0; i < len; ++i) {
@@ -124,7 +129,8 @@ namespace DragginzWorldEditor
 					prop = propsManager.getPropDefForId(levelProp.id);
 					if (prop.id != -1) {
 					
-						goProp = world.createProp (prop, pos, levelProp.name, levelEditor.goProps.transform, prop.useCollider, prop.useGravity);
+						name = prop.name + "_" + levelEditor.goProps.transform.childCount;
+						goProp = world.createProp (prop, pos, name, levelEditor.goProps.transform, prop.useCollider, prop.useGravity);
 
 						rotation.w = levelProp.rotation.w;
 						rotation.x = levelProp.rotation.x;
@@ -218,6 +224,8 @@ namespace DragginzWorldEditor
 				Transform container = child.Find ("container");
 				if (container != null)
 				{
+					string materialName;
+
 					foreach (Transform cube in container) {
 
 						if (!cube.gameObject.activeSelf) {
@@ -234,12 +242,13 @@ namespace DragginzWorldEditor
 						cubeObject.position.z = cube.localPosition.z;
 
 						if (isEdgeQuadrant) {
-							cubeObject.material = "";
+							cubeObject.materialId = -1;
 						}
 						else {
 							MeshRenderer renderer = cube.GetComponent<MeshRenderer> ();
 							if (renderer != null) {
-								cubeObject.material = renderer.material.name.Replace (" (Instance)", "");
+								materialName = renderer.material.name.Replace (" (Instance)", "");
+								cubeObject.materialId = Array.IndexOf(Globals.materials, materialName);
 							}
 						}
 
@@ -270,7 +279,7 @@ namespace DragginzWorldEditor
 
 				LevelProp levelProp = new LevelProp ();
 				levelProp.id   = propId;
-				levelProp.name = prop.name;
+				//levelProp.name = prop.name;
 
 				levelProp.position   = new DataTypeVector3 ();
 				levelProp.position.x = prop.go.transform.position.x;

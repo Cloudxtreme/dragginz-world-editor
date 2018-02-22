@@ -42,10 +42,19 @@ namespace DragginzWorldEditor
 			}
 
 			position = new DataTypeVector3 ();
+			position.x = 0;
+			position.y = 0;
+			position.z = 0;
 			if (data ["p"] != null) {
-				position.x = data ["p"]["x"];
-				position.y = data ["p"]["y"];
-				position.z = data ["p"]["z"];
+				if (data ["p"] ["x"] != null) {
+					position.x = (float)data ["p"] ["x"];
+				}
+				if (data ["p"] ["y"] != null) {
+					position.y = (float)data ["p"] ["y"];
+				}
+				if (data ["p"] ["z"] != null) {
+					position.z = (float)data ["p"] ["z"];
+				}
 			}
 
 			isEdge = 0;

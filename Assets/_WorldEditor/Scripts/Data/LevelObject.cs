@@ -22,8 +22,11 @@ namespace DragginzWorldEditor
 		[SerializeField]
 		public DataTypeVector3 position  { get; set; }
 
+		//[SerializeField]
+		//public string material { get; set; }
+
 		[SerializeField]
-		public string material { get; set; }
+		public int materialId { get; set; }
 
 		//
 		// Parse JSON data
@@ -36,16 +39,30 @@ namespace DragginzWorldEditor
 			}
 
 			position = new DataTypeVector3 ();
+			position.x = 0;
+			position.y = 0;
+			position.z = 0;
 			if (data ["p"] != null) {
-				position.x = data ["p"] ["x"];
-				position.y = data ["p"] ["y"];
-				position.z = data ["p"] ["z"];
+				if (data ["p"] ["x"] != null) {
+					position.x = (float)data ["p"] ["x"];
+				}
+				if (data ["p"] ["y"] != null) {
+					position.y = (float)data ["p"] ["y"];
+				}
+				if (data ["p"] ["z"] != null) {
+					position.z = (float)data ["p"] ["z"];
+				}
 			}
 
-			material = "";
+			materialId = 0;
+			if (data ["m"] != null) {
+				materialId = Int32.Parse (data ["m"]);
+			}
+
+			/*material = "";
 			if (data ["m"] != null) {
 				material = data ["m"];
-			}
+			}*/
 		}
 
 		//
@@ -57,7 +74,8 @@ namespace DragginzWorldEditor
 
 			s += "\"n\":" + "\"" + name + "\"";
 			s += ",\"p\":" + position.getJsonString();
-			s += ",\"m\":" + "\"" + material + "\"";
+			s += ",\"m\":" + materialId.ToString();
+			//s += ",\"m\":" + "\"" + material + "\"";
 
 			s += "}";
 

@@ -19,8 +19,16 @@ namespace DragginzWorldEditor
 
 			string s = "{";
 
-			s += "\"x\":" + x.ToString();
-			s += ",\"y\":" + y.ToString();
+			if (x != 0f) {
+				s += "\"x\":" + x.ToString ();
+			}
+
+			if (y != 0f) {
+				if (x != 0f) {
+					s += ",";
+				}
+				s += "\"y\":" + y.ToString ();
+			}
 
 			s += "}";
 
