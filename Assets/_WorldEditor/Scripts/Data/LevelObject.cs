@@ -16,8 +16,8 @@ namespace DragginzWorldEditor
 	[Serializable]
 	public class LevelObject {
 
-		[SerializeField]
-		public string name { get; set; }
+		//[SerializeField]
+		//public string name { get; set; }
 
 		[SerializeField]
 		public DataTypeVector3 position  { get; set; }
@@ -33,10 +33,10 @@ namespace DragginzWorldEditor
 		//
 		public void parseJson(JSONNode data)
 		{
-			name = "";
+			/*name = "";
 			if (data ["n"] != null) {
 				name = data ["n"];
-			}
+			}*/
 
 			position = new DataTypeVector3 ();
 			position.x = 0;
@@ -72,9 +72,20 @@ namespace DragginzWorldEditor
 		{
 			string s = "{";
 
-			s += "\"n\":" + "\"" + name + "\"";
-			s += ",\"p\":" + position.getJsonString();
-			s += ",\"m\":" + materialId.ToString();
+			//s += "\"n\":" + "\"" + name + "\"";
+
+			string p = position.getJsonString();
+			if (p != "{}") {
+				s += "\"p\":" +p;
+			}
+
+			if (materialId != 0) {
+				if (s.Length > 1) {
+					s += ",";
+				}
+				s += "\"m\":" + materialId.ToString ();
+			}
+
 			//s += ",\"m\":" + "\"" + material + "\"";
 
 			s += "}";

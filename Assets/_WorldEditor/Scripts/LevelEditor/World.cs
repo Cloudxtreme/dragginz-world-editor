@@ -240,6 +240,7 @@ namespace DragginzWorldEditor
 
 			int len = _levelEditor.cubesPerQuadrant;
 			float startPos = 0;
+			int id = 0;
 			string sName = "";
 
 			pos.x = startPos;
@@ -249,7 +250,8 @@ namespace DragginzWorldEditor
 					pos.z = startPos;
 					for (int z = 0; z < len; ++z) {
 
-						sName = "r-" + x.ToString () + "-" + y.ToString () + "-" + z.ToString ();
+						id = x * (len * len) + y * len + z;
+						sName = id.ToString (); //"r-" + x.ToString () + "-" + y.ToString () + "-" + z.ToString ();
 						createRock (pos, container, sName, null, isEdgeQuadrant);
 
 						pos.z += fRockSize;

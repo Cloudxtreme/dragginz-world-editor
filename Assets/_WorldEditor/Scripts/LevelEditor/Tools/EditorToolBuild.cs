@@ -137,17 +137,22 @@ namespace DragginzWorldEditor
 				Mathf.Abs(v3QuadrantPos.z-v3Pos.z)
 			);
 
-			string sName = "r";
-			sName += "-" + ((int)(v3LocalBlockPos.x / _levelEditor.fRockSize)).ToString ();
-			sName += "-" + ((int)(v3LocalBlockPos.y / _levelEditor.fRockSize)).ToString ();
-			sName += "-" + ((int)(v3LocalBlockPos.z / _levelEditor.fRockSize)).ToString ();
+			//string sName = "r";
+			//sName += "-" + ((int)(v3LocalBlockPos.x / _levelEditor.fRockSize)).ToString ();
+			//sName += "-" + ((int)(v3LocalBlockPos.y / _levelEditor.fRockSize)).ToString ();
+			//sName += "-" + ((int)(v3LocalBlockPos.z / _levelEditor.fRockSize)).ToString ();
+
+			int len = _levelEditor.cubesPerQuadrant;
+			int id = ((int)(v3LocalBlockPos.x / _levelEditor.fRockSize)) * (len * len);
+			id += ((int)(v3LocalBlockPos.y / _levelEditor.fRockSize)) * len;
+			id += ((int)(v3LocalBlockPos.z / _levelEditor.fRockSize));
 
 			Transform container = trfmQuadrant.Find ("container");
-			Transform trfmChild = container.Find (sName);
+			Transform trfmChild = container.Find (id.ToString ()); //sName);
 			if (trfmChild != null) {
-				//Debug.LogWarning ("child "+sName+" exists!");
+				Debug.LogWarning ("child "+id.ToString ()+" exists!");
 			} else {
-				GameObject goNew = World.Instance.createRock (v3LocalBlockPos, container.gameObject, sName);
+				GameObject goNew = World.Instance.createRock (v3LocalBlockPos, container.gameObject, id.ToString ()); //sName
 				setSingleMaterial (goNew, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial], false);
 				_levelEditor.resetUndoActions ();
 				_levelEditor.addUndoAction (AppState.Build, goNew);

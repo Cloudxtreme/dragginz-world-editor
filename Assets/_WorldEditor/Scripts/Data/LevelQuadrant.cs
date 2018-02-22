@@ -87,15 +87,26 @@ namespace DragginzWorldEditor
 
 			s += "\"n\":" + "\"" + name + "\"";
 			s += ",\"p\":" + position.getJsonString();
-			s += ",\"e\":" + isEdge.ToString();
 
-			s += ",\"objs\":[";
-			len = levelObjects.Count;
-			for (i = 0; i < len; ++i) {
-				s += (i > 0 ? "," : "");
-				s += levelObjects [i].getJsonString ();
+			if (isEdge != 0) {
+				s += ",\"e\":" + isEdge.ToString ();
 			}
-			s += "]";
+
+			len = levelObjects.Count;
+			if (len > 0) {
+				string o;
+				bool gotOne = false;
+				s += ",\"objs\":[";
+				for (i = 0; i < len; ++i) {
+					o = levelObjects [i].getJsonString ();
+					//if (o != "{}") {
+						s += (gotOne ? "," : "");
+						s += o;
+						gotOne = true;
+					//}
+				}
+				s += "]";
+			}
 
 			s += "}";
 

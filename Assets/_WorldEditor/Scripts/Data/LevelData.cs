@@ -73,7 +73,11 @@ namespace DragginzWorldEditor
 			GameObject goQuadrant;
 			GameObject container;
 			Vector3 pos = Vector3.zero;
-			int i, len = levelFile.levelQuadrants.Count;
+
+			int quadLen = levelEditor.cubesPerQuadrant;
+			float fRockSize = levelEditor.fRockSize;
+
+			int i, id, len = levelFile.levelQuadrants.Count;
 			for (i = 0; i < len; ++i)
 			{
 				pos.x = (int)levelFile.levelQuadrants[i].position.x;
@@ -104,7 +108,12 @@ namespace DragginzWorldEditor
 						material = levelEditor.aDictMaterials [materialName];
 						isEdge = false;
 					}
-					world.createRock (pos2, container, levelFile.levelQuadrants [i].levelObjects [j].name, material, isEdge);
+
+					id = ((int)(pos2.x / fRockSize)) * (quadLen * quadLen);
+					id += ((int)(pos2.y / fRockSize)) * quadLen;
+					id += ((int)(pos2.z / fRockSize));
+
+					world.createRock (pos2, container, id.ToString (), material, isEdge); //levelFile.levelQuadrants [i].levelObjects [j].name
 				}
 			}
 
@@ -233,7 +242,7 @@ namespace DragginzWorldEditor
 						}
 
 						LevelObject cubeObject = new LevelObject ();
-						cubeObject.name = cube.name;
+						//cubeObject.name = cube.name;
 						//Debug.Log ("    ->cube "+cubeObject.name);
 
 						cubeObject.position   = new DataTypeVector3 ();
