@@ -1156,7 +1156,7 @@ GameObject:
   - component: {fileID: 955594327}
   - component: {fileID: 955594326}
   m_Layer: 0
-  m_Name: (Singleton)RTEditor.RuntimeEditorApplication
+  m_Name: (Singleton)RTEditor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
