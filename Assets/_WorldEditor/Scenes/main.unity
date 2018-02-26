@@ -766,7 +766,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 506396706}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cc3972ee0de2e74ab3d9adbadb7708b, type: 3}
   m_Name: 
@@ -1282,7 +1282,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0.019607844}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -1290,7 +1290,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.1
-  far clip plane: 1000
+  far clip plane: 50
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -1871,10 +1871,10 @@ MonoBehaviour:
     _canSelectTerrainObjects: 0
     _canSelectLightObjects: 0
     _canSelectParticleSystemObjects: 0
-    _canSelectSpriteObjects: 1
+    _canSelectSpriteObjects: 0
     _canSelectEmptyObjects: 1
     _canClickSelect: 1
-    _canMultiSelect: 1
+    _canMultiSelect: 0
     _objectSelectionBoxRenderSettings:
       _selectionBoxStyle: 0
       _selectionBoxRenderMode: 0

@@ -3,6 +3,8 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
+using DragginzWorldEditor;
+
 namespace RTEditor
 {
     public class GameObjectSphereTree
@@ -280,7 +282,7 @@ namespace RTEditor
                 _nullCleanupTime = 0.0f;
             }
        
-            GameObject[] sceneObjects = MonoBehaviour.FindObjectsOfType<GameObject>();
+			GameObject[] sceneObjects = LevelEditor.Instance.goProps.GetAllChildren().ToArray();// MonoBehaviour.FindObjectsOfType<GameObject>();
             foreach(GameObject gameObject in sceneObjects)
             {
                 if (!IsGameObjectRegistered(gameObject)) 

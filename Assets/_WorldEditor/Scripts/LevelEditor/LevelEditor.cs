@@ -396,7 +396,7 @@ namespace DragginzWorldEditor
 
 			SceneGizmo.Instance.editorCameraTransform = (itemCam.enabled ? EditorCamera.Instance.transform : FlyCam.Instance.player);
 
-			RuntimeEditorApplication.Instance.gameObject.SetActive(mode != AppState.Play);
+			RuntimeEditorApplication.Instance.gameObject.SetActive(mode == AppState.Select);
 
 			MainMenu.Instance.setDigSliders (mode);
 			//MainMenu.Instance.resetDigSettings (new Vector3 (1, 1, 1));

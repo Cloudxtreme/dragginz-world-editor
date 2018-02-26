@@ -39,8 +39,9 @@ namespace RTEditor
 
         public List<GameObjectRayHit> RaycastAllBox(Ray ray)
         {
-            if (!RuntimeEditorApplication.Instance.UseUnityColliders)
-                return _gameObjectSphereTree.RaycastAllBox(ray);
+			if (!RuntimeEditorApplication.Instance.UseUnityColliders) {
+				return _gameObjectSphereTree.RaycastAllBox (ray);
+			}
             else
             {
                 RaycastHit[] hits = Physics.RaycastAll(ray);
