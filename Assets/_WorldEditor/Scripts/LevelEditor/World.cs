@@ -63,7 +63,9 @@ namespace DragginzWorldEditor
 
 			_coroutineIsRunning = false;
 
-			createWorld ();
+			//createWorld ();
+			Debug.Log(Application.dataPath);
+			LevelData.Instance.loadLevelData(_levelEditor.goWorld, Application.dataPath+"/_WorldEditor/Resources/Data/Levels/Genesis.json");
 		}
 
 		//

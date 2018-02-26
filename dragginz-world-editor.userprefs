@@ -1,16 +1,16 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_WorldEditor\Scripts\Globals.cs">
     <Files>
-      <File FileName="Assets\_WorldEditor\Scripts\Globals.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\AppController.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="492" Column="22" />
+      <File FileName="Assets\_WorldEditor\Scripts\Globals.cs" Line="14" Column="65" />
+      <File FileName="Assets\_WorldEditor\Scripts\AppController.cs" Line="68" Column="37" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="397" Column="45" />
       <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\PropsManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\World.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\Controls\FlyCam.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\World.cs" Line="301" Column="13" />
+      <File FileName="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" Line="335" Column="42" />
+      <File FileName="Assets\_WorldEditor\Scripts\Controls\FlyCam.cs" Line="153" Column="1" />
       <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorTool.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelData.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelData.cs" Line="91" Column="38" />
       <File FileName="Assets\_WorldEditor\Scripts\Data\LevelFile.cs" Line="1" Column="1" />
       <File FileName="Assets\_WorldEditor\Scripts\Data\LevelQuadrant.cs" Line="1" Column="1" />
       <File FileName="Assets\_WorldEditor\Scripts\Data\LevelProp.cs" Line="1" Column="1" />
@@ -18,6 +18,11 @@
       <File FileName="Assets\_WorldEditor\Scripts\Utils\DataTypeQuaternion.cs" Line="1" Column="1" />
       <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolItem.cs" Line="1" Column="1" />
       <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolBuild.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\UI\Popup.cs" Line="93" Column="68" />
+      <File FileName="Assets\Runtime Transform Gizmos\Scripts\Runtime Editor\RuntimeEditorApplication.cs" Line="129" Column="40" />
+      <File FileName="Assets\Runtime Transform Gizmos\Scripts\Scene Management\EditorScene.cs" Line="43" Column="1" />
+      <File FileName="Assets\Runtime Transform Gizmos\Scripts\Scene Management\Bounding Volume Hierarchies\Sphere Tree\Game Object Tree\GameObjectSphereTree.cs" Line="286" Column="1" />
+      <File FileName="Assets\Runtime Transform Gizmos\Scripts\Scene Management\Bounding Volume Hierarchies\Sphere Tree\SphereTree.cs" Line="16" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
