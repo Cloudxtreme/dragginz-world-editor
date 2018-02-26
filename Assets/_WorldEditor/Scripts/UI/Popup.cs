@@ -90,8 +90,13 @@ namespace DragginzWorldEditor
 			inputField.gameObject.SetActive(true);
 
 			txtInputCaption.text = caption;
-			txtInputPlaceHolder.text = placeholder;
-			inputField.text = "";
+			if (LevelData.Instance.lastLevelName == Globals.defaultLevelName) {
+				txtInputPlaceHolder.text = placeholder;
+				inputField.text = "";
+			} else {
+				txtInputPlaceHolder.text = "";
+				inputField.text = LevelData.Instance.lastLevelName;
+			}
 		}
 
 		//

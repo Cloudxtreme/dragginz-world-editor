@@ -331,9 +331,12 @@ namespace DragginzWorldEditor
 			{
 				string levelName = _popup.inputText;
 				_popup.hide ();
+				if (levelName == null || levelName == "") {
+					levelName = Globals.defaultLevelName;
+				}
 				setLevelNameText (levelName);
 
-				FileBrowser.SaveFilePanel ("Save Level", "Save Level", Environment.GetFolderPath (Environment.SpecialFolder.Desktop), "myLevel", new string[] { "json" }, null, (bool canceled, string filePath) => {
+				FileBrowser.SaveFilePanel ("Save Level", "Save Level", Environment.GetFolderPath (Environment.SpecialFolder.Desktop), levelName, new string[] { "json" }, null, (bool canceled, string filePath) => {
 					if (!canceled) {
 						LevelData.Instance.saveLevelData (filePath, levelName);
 					}

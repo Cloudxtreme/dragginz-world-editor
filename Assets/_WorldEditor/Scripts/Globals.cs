@@ -11,7 +11,7 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v02.22.2a";
+		static public readonly string version = "Level Editor v02.26.0a";
 		static public readonly int levelSaveFormatVersion = 6;
 
 		public const string propListName = "props_list_leveleditor";
@@ -39,6 +39,8 @@ namespace DragginzWorldEditor
 		static public readonly int LEVEL_DEPTH  = 36;
 
 		static public readonly string containerGameObjectPrepend = "q_";
+
+		static public readonly string defaultLevelName = "myLevel";
 
 		static public readonly float RAYCAST_DISTANCE_EDIT = 10.24f;
 

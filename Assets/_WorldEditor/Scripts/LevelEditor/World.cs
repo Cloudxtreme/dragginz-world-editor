@@ -165,6 +165,7 @@ namespace DragginzWorldEditor
 				}
 			}
 			Debug.Log ("quadrants: "+count.ToString());
+			Debug.Log ("cubes: "+_numCubes.ToString());
 
 			MainMenu.Instance.setCubeCountText (_numCubes);
 		}
@@ -270,6 +271,7 @@ namespace DragginzWorldEditor
 			GameObject quadrant = new GameObject(Globals.containerGameObjectPrepend + quadrantId);
 			quadrant.transform.SetParent(_levelEditor.goWorld.transform);
 			quadrant.transform.localPosition = v3CubePos;
+			quadrant.isStatic = true;
 
 			/*if (_levelEditor.cubePrefabCenter != null) {
 				GameObject go = GameObject.Instantiate(_levelEditor.cubePrefabCenter);
@@ -296,6 +298,7 @@ namespace DragginzWorldEditor
 			container.name = "container";
 			container.transform.SetParent (parent);
 			container.transform.localPosition = Vector3.zero;
+			container.isStatic = true;
 
 			return container;
 		}

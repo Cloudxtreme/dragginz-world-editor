@@ -15,6 +15,8 @@ namespace DragginzWorldEditor
 {
 	public class LevelData : Singleton<LevelData> {
 
+		public string lastLevelName = Globals.defaultLevelName;
+
 		//
 		public void loadLevelData(GameObject parent, string filename) {
 			
@@ -58,6 +60,7 @@ namespace DragginzWorldEditor
 			}
 
 			MainMenu.Instance.setLevelNameText(levelFile.levelName);
+			lastLevelName = levelFile.levelName;
 
 			LevelEditor levelEditor = LevelEditor.Instance;
 			PropsManager propsManager = PropsManager.Instance;
@@ -117,6 +120,8 @@ namespace DragginzWorldEditor
 				}
 			}
 
+			Debug.Log ("quadrants: "+len.ToString());
+			Debug.Log ("cubes: "+World.Instance.numCubes.ToString());
 			MainMenu.Instance.setCubeCountText (World.Instance.numCubes);
 
 			if (levelFile.levelProps != null) {
@@ -155,6 +160,8 @@ namespace DragginzWorldEditor
 
 		//
 		public void saveLevelData(string filename, string levelName) {
+
+			lastLevelName = levelName;
 
 			LevelFile levelFile = createLevelData (levelName);
 			if (levelFile == null) {
