@@ -38,6 +38,7 @@ namespace DragginzWorldEditor
 		public GameObject goWorld;
 		public GameObject goProps;
 		public GameObject goPlayer;
+		public GameObject goPlayerCameraRig;
 		public GameObject goPlayerEdit;
 
 		public GameObject cubePrefab;
@@ -185,6 +186,7 @@ namespace DragginzWorldEditor
 			_popup = MainMenu.Instance.popup;
 
 			goPlayer.transform.position = new Vector3(0, 0.6f, -0.75f);
+			goPlayerCameraRig.transform.position = goPlayer.transform.position;
 
 			_aEditorTools = new List<EditorTool> (Globals.NUM_EDITOR_TOOLS);
 			_aEditorTools.Add(new EditorToolLook());
@@ -345,6 +347,7 @@ namespace DragginzWorldEditor
 
 			if (goPlayer != null && goPlayerEdit != null) {
 				goPlayer.SetActive ((mode == AppState.Play));
+				goPlayerCameraRig.SetActive ((mode == AppState.Play));
 				goPlayerEdit.SetActive (!goPlayer.activeSelf);
 			}
 
@@ -655,16 +658,10 @@ namespace DragginzWorldEditor
 				goPlayer.transform.position = FlyCam.Instance.player.position;
 				Vector3 playerPos = Vector3.zero;
 				playerPos.y = FlyCam.Instance.player.eulerAngles.y;
-				goPlayer.transform.eulerAngles = playerPos; //FlyCam.Instance.player.eulerAngles;
+				goPlayer.transform.eulerAngles = playerPos;
+				goPlayerCameraRig.transform.position = goPlayer.transform.position;
 			}
 		}
-
-		/*public void toggleFlyCamOffset()
-		{
-			if (AppController.Instance.appState != AppState.Play) {
-				FlyCam.Instance.toggleOffset ();
-			}
-		}*/
 
 		//
 		public List<GameObject> getOverlappingObjects(Vector3 v3Pos, Vector3 extents)
