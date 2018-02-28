@@ -353,7 +353,7 @@ namespace DragginzWorldEditor
 
 			if (mode == AppState.Play)
 			{
-				resetCamToStartPos ();
+				resetCamToStartPos (false); // don't go back to starting pos
 			}
 			else if (mode == AppState.Select)
 			{
@@ -650,9 +650,11 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void resetCamToStartPos()
+		public void resetCamToStartPos(bool resetPos = true)
 		{
-			FlyCam.Instance.reset ();
+			if (resetPos) {
+				FlyCam.Instance.reset ();
+			}
 
 			if (AppController.Instance.appState == AppState.Play) {
 				goPlayer.transform.position = FlyCam.Instance.player.position;

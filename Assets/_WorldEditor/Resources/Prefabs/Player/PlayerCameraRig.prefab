@@ -248,7 +248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clipMoveTime: 0.05
   returnTime: 0
-  sphereCastRadius: 0.1
+  sphereCastRadius: 0.4
   visualiseInEditor: 1
   closestDistance: 0.1
   dontClipTag: Player
@@ -267,7 +267,7 @@ MonoBehaviour:
   m_AutoTargetPlayer: 1
   m_UpdateType: 0
   m_MoveSpeed: 3
-  m_TurnSpeed: 9
+  m_TurnSpeed: 16
   m_RollSpeed: 0.2
   m_FollowVelocity: 0
   m_FollowTilt: 1

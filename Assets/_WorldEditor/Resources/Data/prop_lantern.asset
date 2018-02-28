@@ -14,4 +14,5 @@ MonoBehaviour:
   id: 5
   propName: Lantern
   prefab: {fileID: 1581331245749186, guid: 2b8c38f3445cbf542ade43afb21e4ca3, type: 2}
+  isUsingCollider: 0
   isUsingGravity: 0
