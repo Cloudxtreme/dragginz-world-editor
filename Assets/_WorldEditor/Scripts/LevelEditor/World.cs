@@ -65,7 +65,8 @@ namespace DragginzWorldEditor
 
 			//createWorld ();
 			Debug.Log(Application.dataPath);
-			LevelData.Instance.loadLevelData(_levelEditor.goWorld, Application.dataPath+"/_WorldEditor/Resources/Data/Levels/Genesis.json");
+			//LevelData.Instance.loadLevelData(_levelEditor.goWorld, Application.dataPath+"/_WorldEditor/Resources/Data/Levels/Genesis.json");
+			LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
 		}
 
 		//
@@ -80,12 +81,12 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void customUpdate()
+		/*public void customUpdate()
 		{
 			if (!_coroutineIsRunning && _visibleQuadrants.Count > 0) {
 				StartCoroutine("updateQuadrantVisibility");
 			}
-		}
+		}*/
 
 		//
 		public void setQuadrantVisibilityFlag(GameObject quadrant, bool visible)

@@ -17,12 +17,31 @@ namespace DragginzWorldEditor
 
 		public string lastLevelName = Globals.defaultLevelName;
 
+		public void loadLevelResource(GameObject parent, string filePath) {
+
+			TextAsset levelAsset = Resources.Load<TextAsset>(filePath);
+
+			string json = levelAsset.text;
+
+			LevelFile levelFile = null;
+			try {
+				levelFile = createDataFromJson(json);
+				if (levelFile != null) {
+					createLevel (levelFile, parent);
+				}
+			}
+			catch (System.Exception e) {
+				Debug.LogWarning (e.Message);
+				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat);
+			}
+		}
+
 		//
-		public void loadLevelData(GameObject parent, string filename) {
+		public void loadLevelData(GameObject parent, string fileName) {
 			
 			//BinaryFormatter bf = new BinaryFormatter();
 			//FileStream file = File.Open(filename, FileMode.Open);
-			string json = File.ReadAllText(filename);
+			string json = File.ReadAllText(fileName);
 
 			LevelFile levelFile = null;
 			try {

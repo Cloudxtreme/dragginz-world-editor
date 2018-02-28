@@ -294,7 +294,7 @@ namespace DragginzWorldEditor
 				_curEditorTool.customUpdateControls (time, timeDelta);
 			}
 
-			_World.customUpdate ();
+			//_World.customUpdate ();
 		}
 
 		// LateUpdate call
