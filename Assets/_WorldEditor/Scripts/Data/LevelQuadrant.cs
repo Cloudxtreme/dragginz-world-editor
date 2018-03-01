@@ -16,8 +16,8 @@ namespace DragginzWorldEditor
 	[Serializable]
 	public class LevelQuadrant {
 
-		[SerializeField]
-		public string name { get; set; }
+		//[SerializeField]
+		//public string name { get; set; }
 
 		[SerializeField]
 		public DataTypeVector3 position  { get; set; }
@@ -36,10 +36,10 @@ namespace DragginzWorldEditor
 			int i, len;
 			LevelObject levelObject;
 
-			name = "";
+			/*name = "";
 			if (data ["n"] != null) {
 				name = data ["n"];
-			}
+			}*/
 
 			position = new DataTypeVector3 ();
 			position.x = 0;
@@ -85,8 +85,8 @@ namespace DragginzWorldEditor
 
 			string s = "{";
 
-			s += "\"n\":" + "\"" + name + "\"";
-			s += ",\"p\":" + position.getJsonString();
+			//s += "\"n\":" + "\"" + name + "\"";
+			s += "\"p\":" + position.getJsonString();
 
 			if (isEdge != 0) {
 				s += ",\"e\":" + isEdge.ToString ();

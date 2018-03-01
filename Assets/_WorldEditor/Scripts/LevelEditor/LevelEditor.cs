@@ -41,6 +41,7 @@ namespace DragginzWorldEditor
 		public GameObject goPlayerCameraRig;
 		public GameObject goPlayerEdit;
 
+		public GameObject quadrantPrefab;
 		public GameObject cubePrefab;
 		public GameObject cubePrefabEdge;
 		public GameObject cubePrefabCenter;

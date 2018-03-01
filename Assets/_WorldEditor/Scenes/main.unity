@@ -639,6 +639,8 @@ MonoBehaviour:
   goPlayer: {fileID: 824515733}
   goPlayerCameraRig: {fileID: 195152411}
   goPlayerEdit: {fileID: 1608281686}
+  quadrantPrefab: {fileID: 1089392622912026, guid: 5fa6272d2a075aa48b1522a6e7352eaa,
+    type: 2}
   cubePrefab: {fileID: 1025387082872192, guid: 2a7b586c77ed6c14bafc60094e325eba, type: 2}
   cubePrefabEdge: {fileID: 1025387082872192, guid: 6e27e818ad2e29147ba6bfb7df97be9b,
     type: 2}

@@ -19,11 +19,14 @@ namespace DragginzWorldEditor
 		//[SerializeField]
 		//public string name { get; set; }
 
-		[SerializeField]
-		public DataTypeVector3 position  { get; set; }
+		//[SerializeField]
+		//public DataTypeVector3 position  { get; set; }
 
 		//[SerializeField]
 		//public string material { get; set; }
+
+		[SerializeField]
+		public int isActive { get; set; }
 
 		[SerializeField]
 		public int materialId { get; set; }
@@ -38,7 +41,7 @@ namespace DragginzWorldEditor
 				name = data ["n"];
 			}*/
 
-			position = new DataTypeVector3 ();
+			/*position = new DataTypeVector3 ();
 			position.x = 0;
 			position.y = 0;
 			position.z = 0;
@@ -52,6 +55,11 @@ namespace DragginzWorldEditor
 				if (data ["p"] ["z"] != null) {
 					position.z = (float)data ["p"] ["z"];
 				}
+			}*/
+
+			isActive = 1;
+			if (data ["a"] != null) {
+				isActive = Int32.Parse (data ["a"]);
 			}
 
 			materialId = 0;
@@ -74,16 +82,20 @@ namespace DragginzWorldEditor
 
 			//s += "\"n\":" + "\"" + name + "\"";
 
-			string p = position.getJsonString();
+			/*string p = position.getJsonString();
 			if (p != "{}") {
 				s += "\"p\":" +p;
-			}
+			}*/
 
-			if (materialId != 0) {
-				if (s.Length > 1) {
-					s += ",";
+			if (isActive == 0) {
+				s += "\"a\":" + isActive.ToString ();
+			} else {
+				if (materialId != 0) {
+					/*if (s.Length > 1) {
+						s += ",";
+					}*/
+					s += "\"m\":" + materialId.ToString ();
 				}
-				s += "\"m\":" + materialId.ToString ();
 			}
 
 			//s += ",\"m\":" + "\"" + material + "\"";

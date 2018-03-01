@@ -93,6 +93,7 @@ namespace DragginzWorldEditor
 			FlyCam.Instance.reset ();
 
 			GameObject goQuadrant;
+			Transform trfmContainer;
 			GameObject container;
 			Vector3 pos = Vector3.zero;
 
@@ -109,33 +110,51 @@ namespace DragginzWorldEditor
 				string quadrantId = (int)pos.x + "_" + (int)pos.y + "_" + (int)pos.z;
 				goQuadrant = world.createQuadrant (pos, quadrantId);
 
-				container = world.createContainer (goQuadrant.transform);
+				trfmContainer = goQuadrant.transform.Find (Globals.cubesContainerName); // world.createContainer (goQuadrant.transform);
+				if (trfmContainer == null) {
+					continue;
+				}
+				container = trfmContainer.gameObject;
 
+				Transform trfmCube;
+				GameObject cube;
 				Vector3 pos2 = Vector3.zero;
 				string materialName;
 				Material material;
+
 				bool isEdge = false;
 				int j, len2 = levelFile.levelQuadrants [i].levelObjects.Count;
 				for (j = 0; j < len2; ++j)
 				{
-					pos2.x = levelFile.levelQuadrants [i].levelObjects [j].position.x;
-					pos2.y = levelFile.levelQuadrants [i].levelObjects [j].position.y;
-					pos2.z = levelFile.levelQuadrants [i].levelObjects [j].position.z;
-					if (levelFile.levelQuadrants [i].isEdge == 1) {
-						material = null;
-						isEdge = true;
-					} else {
-						//material = levelEditor.aDictMaterials [levelFile.levelQuadrants [i].levelObjects [j].material];
-						materialName = Globals.materials[levelFile.levelQuadrants [i].levelObjects [j].materialId];
-						material = levelEditor.aDictMaterials [materialName];
-						isEdge = false;
+					trfmCube = trfmContainer.Find (j.ToString());
+					if (trfmCube == null) {
+						continue;
 					}
+					cube = trfmCube.gameObject;
 
-					id = ((int)(pos2.x / fRockSize)) * (quadLen * quadLen);
-					id += ((int)(pos2.y / fRockSize)) * quadLen;
-					id += ((int)(pos2.z / fRockSize));
+					if (levelFile.levelQuadrants [i].levelObjects [j].isActive == 0) {
+						cube.SetActive (false);
+					}
+					else {
+						//pos2.x = levelFile.levelQuadrants [i].levelObjects [j].position.x;
+						//pos2.y = levelFile.levelQuadrants [i].levelObjects [j].position.y;
+						//pos2.z = levelFile.levelQuadrants [i].levelObjects [j].position.z;
+						if (levelFile.levelQuadrants [i].isEdge == 1) {
+							material = null;
+							isEdge = true;
+						} else {
+							materialName = Globals.materials[levelFile.levelQuadrants [i].levelObjects [j].materialId];
+							material = levelEditor.aDictMaterials [materialName];
+							isEdge = false;
+						}
 
-					world.createRock (pos2, container, id.ToString (), material, isEdge); //levelFile.levelQuadrants [i].levelObjects [j].name
+						id = ((int)(pos2.x / fRockSize)) * (quadLen * quadLen);
+						id += ((int)(pos2.y / fRockSize)) * quadLen;
+						id += ((int)(pos2.z / fRockSize));
+
+						world.setCube (cube, material, isEdge);
+						//world.createRock (pos2, container, id.ToString (), material, isEdge);
+					}
 				}
 			}
 
@@ -240,8 +259,7 @@ namespace DragginzWorldEditor
 				}
 
 				LevelQuadrant quadrant = new LevelQuadrant ();
-				quadrant.name = child.name;
-				//Debug.LogWarning ("quadrant "+quadrant.name);
+				//quadrant.name = child.name;
 
 				quadrant.position   = new DataTypeVector3 ();
 				quadrant.position.x = child.localPosition.x;
@@ -263,27 +281,33 @@ namespace DragginzWorldEditor
 
 					foreach (Transform cube in container) {
 
-						if (!cube.gameObject.activeSelf) {
-							continue;
-						}
+						//if (!cube.gameObject.activeSelf) {
+						//	continue;
+						//}
 
 						LevelObject cubeObject = new LevelObject ();
+
+						cubeObject.isActive = (cube.gameObject.activeSelf ? 1 : 0);
+						cubeObject.materialId = 0;
+
 						//cubeObject.name = cube.name;
 						//Debug.Log ("    ->cube "+cubeObject.name);
 
-						cubeObject.position   = new DataTypeVector3 ();
+						/*cubeObject.position   = new DataTypeVector3 ();
 						cubeObject.position.x = cube.localPosition.x;
 						cubeObject.position.y = cube.localPosition.y;
-						cubeObject.position.z = cube.localPosition.z;
+						cubeObject.position.z = cube.localPosition.z;*/
 
-						if (isEdgeQuadrant) {
-							cubeObject.materialId = -1;
-						}
-						else {
-							MeshRenderer renderer = cube.GetComponent<MeshRenderer> ();
-							if (renderer != null) {
-								materialName = renderer.material.name.Replace (" (Instance)", "");
-								cubeObject.materialId = Array.IndexOf(Globals.materials, materialName);
+						if (cubeObject.isActive == 1)
+						{
+							if (isEdgeQuadrant) {
+								cubeObject.materialId = -1;
+							} else {
+								MeshRenderer renderer = cube.GetComponent<MeshRenderer> ();
+								if (renderer != null) {
+									materialName = renderer.material.name.Replace (" (Instance)", "");
+									cubeObject.materialId = Array.IndexOf (Globals.materials, materialName);
+								}
 							}
 						}
 

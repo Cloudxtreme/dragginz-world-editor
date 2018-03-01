@@ -63,10 +63,8 @@ namespace DragginzWorldEditor
 
 			_coroutineIsRunning = false;
 
-			//createWorld ();
-			Debug.Log(Application.dataPath);
-			//LevelData.Instance.loadLevelData(_levelEditor.goWorld, Application.dataPath+"/_WorldEditor/Resources/Data/Levels/Genesis.json");
-			LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
+			createWorld ();
+			//LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
 		}
 
 		//
@@ -232,16 +230,23 @@ namespace DragginzWorldEditor
 			//Debug.Log (quadrantId + ":isEdgeQuadrant: " + isEdgeQuadrant);
 
 			GameObject cubeParent = createQuadrant (v3CubePos, quadrantId);
-			GameObject container = createContainer (cubeParent.transform);
+			//GameObject container = createContainer (cubeParent.transform);
 
-			if (!fillQuadrant) {
+			Transform trfmContainer = cubeParent.transform.Find (Globals.cubesContainerName);
+			if (trfmContainer == null) {
 				return;
 			}
+			GameObject container = trfmContainer.gameObject;
 
-			float fRockSize = _levelEditor.fRockSize;
+			if (!fillQuadrant) {
 
+				foreach (Transform cube in trfmContainer) {
+					cube.gameObject.SetActive(false);
+				}
+			}
+
+			/*float fRockSize = _levelEditor.fRockSize;
 			Vector3 pos = Vector3.zero;
-
 			int len = _levelEditor.cubesPerQuadrant;
 			float startPos = 0;
 			int id = 0;
@@ -255,7 +260,7 @@ namespace DragginzWorldEditor
 					for (int z = 0; z < len; ++z) {
 
 						id = x * (len * len) + y * len + z;
-						sName = id.ToString (); //"r-" + x.ToString () + "-" + y.ToString () + "-" + z.ToString ();
+						sName = id.ToString ();
 						createRock (pos, container, sName, null, isEdgeQuadrant);
 
 						pos.z += fRockSize;
@@ -263,7 +268,7 @@ namespace DragginzWorldEditor
 					pos.y += fRockSize;
 				}
 				pos.x += fRockSize;
-			}
+			}*/
 		}
 
 		//
@@ -271,13 +276,14 @@ namespace DragginzWorldEditor
 		{
 			//string sPos = v3CubePos.x.ToString () + "_" + v3CubePos.y.ToString () + "_" + v3CubePos.z.ToString ();
 
-			GameObject quadrant = new GameObject(Globals.containerGameObjectPrepend + quadrantId);
+			GameObject quadrant = Instantiate(_levelEditor.quadrantPrefab); // new GameObject(Globals.containerGameObjectPrepend + quadrantId);
+			quadrant.name = Globals.containerGameObjectPrepend + quadrantId;
 			quadrant.transform.SetParent(_levelEditor.goWorld.transform);
 			quadrant.transform.localPosition = v3CubePos;
 			quadrant.isStatic = true;
 
 			/*if (_levelEditor.cubePrefabCenter != null) {
-				GameObject go = GameObject.Instantiate(_levelEditor.cubePrefabCenter);
+				GameObject go = Instantiate(_levelEditor.cubePrefabCenter);
 				go.name = "center_" + quadrantId;
 				go.transform.SetParent(quadrant.transform);
 				go.transform.localPosition = new Vector3(0.25f, 0.25f, 0.25f);
@@ -295,7 +301,7 @@ namespace DragginzWorldEditor
 			return quadrant;
 		}
 
-		public GameObject createContainer(Transform parent) {
+		/*public GameObject createContainer(Transform parent) {
 			
 			GameObject container = new GameObject ();
 			container.name = "container";
@@ -304,6 +310,20 @@ namespace DragginzWorldEditor
 			container.isStatic = true;
 
 			return container;
+		}*/
+
+		//
+		public void setCube(GameObject go, Material material = null, bool isEdge = false) {
+
+			if (!isEdge) {
+				if (material != null) {
+					go.GetComponent<MeshRenderer> ().material = material;
+				} else {
+					go.GetComponent<MeshRenderer> ().material = _levelEditor.materialsWalls [UnityEngine.Random.Range (0, _levelEditor.materialsWalls.Count)];
+				}
+			}
+
+			_numCubes++;
 		}
 
 		//
@@ -315,7 +335,7 @@ namespace DragginzWorldEditor
 
 			prefab = (isEdge ? _levelEditor.cubePrefabEdge : _levelEditor.cubePrefab);
 			if (prefab) {
-				go = GameObject.Instantiate(prefab);
+				go = Instantiate(prefab);
 				go.name = name;
 				go.transform.SetParent(parent.transform);
 				go.transform.localPosition = pos;
@@ -336,7 +356,7 @@ namespace DragginzWorldEditor
 		//
 		public GameObject createProp(propDef prop, Vector3 v3Pos, string name, Transform parent, bool useCollider = true, bool useGravity = true)
 		{
-			GameObject goNew = GameObject.Instantiate (prop.prefab);
+			GameObject goNew = Instantiate (prop.prefab);
 			goNew.transform.SetParent (parent);
 			goNew.transform.position = v3Pos;
 			goNew.name = name;
