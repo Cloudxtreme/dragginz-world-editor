@@ -109,6 +109,9 @@ namespace DragginzWorldEditor
 			
 				string quadrantId = (int)pos.x + "_" + (int)pos.y + "_" + (int)pos.z;
 				goQuadrant = world.createQuadrant (pos, quadrantId);
+				if (goQuadrant == null) {
+					continue;
+				}
 
 				trfmContainer = goQuadrant.transform.Find (Globals.cubesContainerName); // world.createContainer (goQuadrant.transform);
 				if (trfmContainer == null) {
@@ -134,6 +137,7 @@ namespace DragginzWorldEditor
 
 					if (levelFile.levelQuadrants [i].levelObjects [j].isActive == 0) {
 						cube.SetActive (false);
+						world.numCubes--;
 					}
 					else {
 						//pos2.x = levelFile.levelQuadrants [i].levelObjects [j].position.x;
@@ -159,8 +163,8 @@ namespace DragginzWorldEditor
 			}
 
 			Debug.Log ("quadrants: "+len.ToString());
-			Debug.Log ("cubes: "+World.Instance.numCubes.ToString());
-			MainMenu.Instance.setCubeCountText (World.Instance.numCubes);
+			Debug.Log ("cubes: "+world.numCubes.ToString());
+			MainMenu.Instance.setCubeCountText (world.numCubes);
 
 			if (levelFile.levelProps != null) {
 				

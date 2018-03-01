@@ -63,8 +63,8 @@ namespace DragginzWorldEditor
 
 			_coroutineIsRunning = false;
 
-			createWorld ();
-			//LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
+			//createWorld ();
+			LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
 		}
 
 		//
@@ -72,10 +72,10 @@ namespace DragginzWorldEditor
 
 			resetWorld();
 
-			if (_coroutineIsRunning) {
+			/*if (_coroutineIsRunning) {
 				StopCoroutine("updateQuadrantVisibility");
 				_coroutineIsRunning = false;
-			}
+			}*/
 		}
 
 		//
@@ -101,7 +101,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private IEnumerator updateQuadrantVisibility()
+		/*private IEnumerator updateQuadrantVisibility()
 		{
 			int len = _aQuadrantChangedVisibility.Count;
 			while (len > 0) {
@@ -134,7 +134,7 @@ namespace DragginzWorldEditor
 			}
 
 			_coroutineIsRunning = false;
-		}
+		}*/
 
 		//
 		private void createWorld() {
@@ -218,9 +218,9 @@ namespace DragginzWorldEditor
 			string quadrantId = qX.ToString() + "_" + qY.ToString() + "_" + qZ.ToString();
 
 			// cube already created at that position
-			if (_quadrantFlagsNew.ContainsKey (quadrantId)) {
-				return;
-			}
+			//if (_quadrantFlagsNew.ContainsKey (quadrantId)) {
+			//	return;
+			//}
 
 			//if (_quadrantFlags [(int)v3CubePos.x] [(int)v3CubePos.y] [(int)v3CubePos.z] == 1) {
 			//	return;
@@ -230,6 +230,9 @@ namespace DragginzWorldEditor
 			//Debug.Log (quadrantId + ":isEdgeQuadrant: " + isEdgeQuadrant);
 
 			GameObject cubeParent = createQuadrant (v3CubePos, quadrantId);
+			if (cubeParent == null) {
+				return;
+			}
 			//GameObject container = createContainer (cubeParent.transform);
 
 			Transform trfmContainer = cubeParent.transform.Find (Globals.cubesContainerName);
@@ -285,6 +288,12 @@ namespace DragginzWorldEditor
 		{
 			//string sPos = v3CubePos.x.ToString () + "_" + v3CubePos.y.ToString () + "_" + v3CubePos.z.ToString ();
 
+			// cube already created at that position
+			if (_quadrantFlagsNew.ContainsKey (quadrantId)) {
+				Debug.Log ("whatwhatwhat?");
+				return null;
+			}
+
 			GameObject quadrant = Instantiate(_levelEditor.quadrantPrefab); // new GameObject(Globals.containerGameObjectPrepend + quadrantId);
 			quadrant.name = Globals.containerGameObjectPrepend + quadrantId;
 			quadrant.transform.SetParent(_levelEditor.goWorld.transform);
@@ -335,8 +344,6 @@ namespace DragginzWorldEditor
 			if (isEdge) {
 				go.tag = "Untagged";
 			}
-
-			_numCubes++;
 		}
 
 		//
