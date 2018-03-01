@@ -53,6 +53,7 @@ namespace DragginzWorldEditor
 		public GameObject propAim;
 
 		//public List<GameObject> itemPrefabs;
+		public Material materialEdge;
         public List<Material> materialsWalls;
 
 		private World _World;
@@ -492,16 +493,21 @@ namespace DragginzWorldEditor
 
 				// DIG
 				if (undo.action == AppState.Dig) {
-					if (undo.parent != null) {
+					if (undo.go != null) {
+						undo.go.SetActive (true);
+						effectedCubes++;
+					}
+					/*if (undo.parent != null) {
 						World.Instance.createRock (undo.position, undo.parent.gameObject, undo.name, undo.material);
 						undo.material.shader = shader;
 						effectedCubes++;
-					}
+					}*/
 				}
 				// BUILD
 				else if (undo.action == AppState.Build) {
 					if (undo.go != null) {
-						Destroy (undo.go);
+						//Destroy (undo.go);
+						undo.go.SetActive (false);
 						effectedCubes--;
 					}
 				}

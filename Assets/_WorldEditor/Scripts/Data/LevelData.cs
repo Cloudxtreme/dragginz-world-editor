@@ -140,7 +140,7 @@ namespace DragginzWorldEditor
 						//pos2.y = levelFile.levelQuadrants [i].levelObjects [j].position.y;
 						//pos2.z = levelFile.levelQuadrants [i].levelObjects [j].position.z;
 						if (levelFile.levelQuadrants [i].isEdge == 1) {
-							material = null;
+							material = levelEditor.materialEdge;
 							isEdge = true;
 						} else {
 							materialName = Globals.materials[levelFile.levelQuadrants [i].levelObjects [j].materialId];

@@ -650,6 +650,7 @@ MonoBehaviour:
   laserAimCenterCube: {fileID: 764806981}
   laserAimMaterial: {fileID: 2100000, guid: 3877836b3e3455d4a831a75fb9f5691a, type: 2}
   propAim: {fileID: 1300222925}
+  materialEdge: {fileID: 2100000, guid: b972e92ab45c92946848afb3343c36cd, type: 2}
   materialsWalls:
   - {fileID: 2100000, guid: 6bd787e00820ed64ab274fa05081fdc7, type: 2}
   - {fileID: 2100000, guid: 30134efa1826c0648b3e40394960a8f1, type: 2}

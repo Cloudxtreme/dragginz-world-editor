@@ -239,9 +239,18 @@ namespace DragginzWorldEditor
 			GameObject container = trfmContainer.gameObject;
 
 			if (!fillQuadrant) {
-
 				foreach (Transform cube in trfmContainer) {
-					cube.gameObject.SetActive(false);
+					cube.gameObject.SetActive (false);
+					_numCubes--;
+				}
+			} else if (isEdgeQuadrant) {
+				Renderer renderer;
+				foreach (Transform cube in trfmContainer) {
+					renderer = cube.GetComponent<Renderer> ();
+					if (renderer != null) {
+						renderer.material = _levelEditor.materialEdge;
+					}
+					cube.gameObject.tag = "Untagged";
 				}
 			}
 
@@ -282,6 +291,8 @@ namespace DragginzWorldEditor
 			quadrant.transform.localPosition = v3CubePos;
 			quadrant.isStatic = true;
 
+			_numCubes += 8;
+				
 			/*if (_levelEditor.cubePrefabCenter != null) {
 				GameObject go = Instantiate(_levelEditor.cubePrefabCenter);
 				go.name = "center_" + quadrantId;
@@ -315,19 +326,21 @@ namespace DragginzWorldEditor
 		//
 		public void setCube(GameObject go, Material material = null, bool isEdge = false) {
 
-			if (!isEdge) {
-				if (material != null) {
-					go.GetComponent<MeshRenderer> ().material = material;
-				} else {
-					go.GetComponent<MeshRenderer> ().material = _levelEditor.materialsWalls [UnityEngine.Random.Range (0, _levelEditor.materialsWalls.Count)];
-				}
+			if (material != null) {
+				go.GetComponent<MeshRenderer> ().material = material;
+			} else {
+				go.GetComponent<MeshRenderer> ().material = _levelEditor.materialsWalls [UnityEngine.Random.Range (0, _levelEditor.materialsWalls.Count)];
+			}
+
+			if (isEdge) {
+				go.tag = "Untagged";
 			}
 
 			_numCubes++;
 		}
 
 		//
-		public GameObject createRock(Vector3 pos, GameObject parent, string name, Material material = null, bool isEdge = false) {
+		/*public GameObject createRock(Vector3 pos, GameObject parent, string name, Material material = null, bool isEdge = false) {
 
 			GameObject go = null;
 			GameObject prefab = null;
@@ -351,7 +364,7 @@ namespace DragginzWorldEditor
 			}
 
 			return go;
-		}
+		}*/
 
 		//
 		public GameObject createProp(propDef prop, Vector3 v3Pos, string name, Transform parent, bool useCollider = true, bool useGravity = true)

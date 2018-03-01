@@ -79,10 +79,12 @@ namespace DragginzWorldEditor
 					listcubeTransforms.Add (listCollidingObjects [i].transform.parent);
 				}
 
-				_levelEditor.addUndoAction (AppState.Dig, listCollidingObjects [i]);
-
-				GameObject.Destroy (listCollidingObjects [i]);
-				destroyedCubes++;
+				if (listCollidingObjects [i].activeSelf) {
+					_levelEditor.addUndoAction (AppState.Dig, listCollidingObjects [i]);
+					//GameObject.Destroy (listCollidingObjects [i]);
+					listCollidingObjects [i].SetActive (false);
+					destroyedCubes++;
+				}
 			}
 			listCollidingObjects.Clear ();
 			listCollidingObjects = null;
