@@ -289,9 +289,29 @@ namespace DragginzWorldEditor
         }
 
 		//
+		private void showNewLevelDialog()
+		{
+			EditorObjectSelection.Instance.ClearSelection(false);
+
+			if (_popup) {
+				_popup.showPopup (PopupMode.Confirmation, "New Level", "Are you sure?\nAll unsaved changes will be lost!", createNewLevel);
+			} else {
+				showLoadFileBrowser (1);
+			}
+		}
+
+		//
+		private void createNewLevel(int buttonId) {
+
+			_popup.hide();
+			if (buttonId == 1) {
+				LevelEditor.Instance.createNewLevel ();
+			}
+		}
+
+		//
         private void showLoadFileDialog() {
 
-			//AppController.Instance.showPopup(PopupMode.Notification, "Sorry!", "This section is currently under construction!");
 			EditorObjectSelection.Instance.ClearSelection(false);
 
 			if (_popup) {
@@ -620,10 +640,12 @@ namespace DragginzWorldEditor
         public void onDropDownFileValueChanged(int value) {
             if (_trfmDropDownFile && value < _iDropDownFileOptions) {
                 if (value == 0) {
-                    showLoadFileDialog();
+                    showNewLevelDialog();
                 } else if (value == 1) {
-                    showSaveFileDialog();
-                }
+					showLoadFileDialog();
+				} else if (value == 2) {
+					showSaveFileDialog();
+				}
             }
         }
     }

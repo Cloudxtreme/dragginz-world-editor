@@ -63,7 +63,6 @@ namespace DragginzWorldEditor
 
 			_coroutineIsRunning = false;
 
-			//createWorld ();
 			LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
 		}
 
@@ -76,6 +75,11 @@ namespace DragginzWorldEditor
 				StopCoroutine("updateQuadrantVisibility");
 				_coroutineIsRunning = false;
 			}*/
+		}
+
+		public void createEmptyLevel() {
+			
+			createEmptyWorld ();
 		}
 
 		//
@@ -137,9 +141,7 @@ namespace DragginzWorldEditor
 		}*/
 
 		//
-		private void createWorld() {
-
-			resetWorld ();
+		private void createEmptyWorld() {
 
 			float fQuadrantSize = _levelEditor.fQuadrantSize;
 			int count = 0;

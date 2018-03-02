@@ -157,28 +157,6 @@ namespace DragginzWorldEditor
 		//
 		void Start()
 		{
-			// init props
-
-			/*PropsList propList = Resources.Load<PropsList> ("Data/" + Globals.propListName);
-			int i, len = propList.props.Count;
-			for (i = 0; i < len; ++i) {
-
-				PropDefinition propDef = propList.props [i];
-				if (propDef.prefab != null) {
-					
-					propDef p   = new propDef ();
-					p.id          = propDef.id;
-					p.name        = propDef.propName;
-					p.prefab      = propDef.prefab;
-					p.useCollider = propDef.isUsingCollider;
-					p.useGravity  = propDef.isUsingGravity;
-
-					_levelPropDefs.Add (p);
-				}
-			}*/
-
-			// other stuff
-
 			setMode (AppState.Null, true);
 
 			MainMenu.Instance.setUndoButton (false);
@@ -234,7 +212,24 @@ namespace DragginzWorldEditor
 				_curEditorTool.resetAll ();
 			}
 
-			World.Instance.resetAll ();
+			_World.resetAll ();
+		}
+
+		//
+		public void createNewLevel()
+		{
+			resetAll ();
+
+			LevelData.Instance.lastLevelName = Globals.defaultLevelName;
+
+			_World.createEmptyLevel ();
+
+			Vector3 savedPos = new Vector3 (18.35f, 18.90f, 17.25f);
+			Vector3 savedRot = Vector2.zero;
+			FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
+			resetCamToStartPos ();
+
+			setMode (AppState.Select, true);
 		}
 
 		//
@@ -498,7 +493,7 @@ namespace DragginzWorldEditor
 						effectedCubes++;
 					}
 					/*if (undo.parent != null) {
-						World.Instance.createRock (undo.position, undo.parent.gameObject, undo.name, undo.material);
+						_World.createRock (undo.position, undo.parent.gameObject, undo.name, undo.material);
 						undo.material.shader = shader;
 						effectedCubes++;
 					}*/
@@ -552,8 +547,8 @@ namespace DragginzWorldEditor
 			MainMenu.Instance.setUndoButton (false);
 
 			if (effectedCubes != 0) {
-				World.Instance.numCubes += effectedCubes;
-				MainMenu.Instance.setCubeCountText (World.Instance.numCubes);
+				_World.numCubes += effectedCubes;
+				MainMenu.Instance.setCubeCountText (_World.numCubes);
 			}
 		}
 
