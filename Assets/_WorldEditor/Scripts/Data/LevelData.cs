@@ -100,7 +100,7 @@ namespace DragginzWorldEditor
 			int quadLen = levelEditor.cubesPerQuadrant;
 			float fRockSize = levelEditor.fRockSize;
 
-			int i, id, len = levelFile.levelQuadrants.Count;
+			int i, len = levelFile.levelQuadrants.Count; //id
 			for (i = 0; i < len; ++i)
 			{
 				pos.x = (int)levelFile.levelQuadrants[i].position.x;
@@ -152,9 +152,9 @@ namespace DragginzWorldEditor
 							isEdge = false;
 						}
 
-						id = ((int)(pos2.x / fRockSize)) * (quadLen * quadLen);
-						id += ((int)(pos2.y / fRockSize)) * quadLen;
-						id += ((int)(pos2.z / fRockSize));
+						//id = ((int)(pos2.x / fRockSize)) * (quadLen * quadLen);
+						//id += ((int)(pos2.y / fRockSize)) * quadLen;
+						//id += ((int)(pos2.z / fRockSize));
 
 						world.setCube (cube, material, isEdge);
 						//world.createRock (pos2, container, id.ToString (), material, isEdge);

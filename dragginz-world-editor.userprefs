@@ -5,12 +5,7 @@
       <File FileName="Assets\_WorldEditor\Scripts\Globals.cs" Line="1" Column="1" />
       <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="1" Column="1" />
       <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\World.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelData.cs" Line="159" Column="13" />
-      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelFile.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelQuadrant.cs" Line="89" Column="45" />
-      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelObject.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolDig.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\Tools\EditorToolBuild.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelData.cs" Line="103" Column="53" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
