@@ -20,6 +20,9 @@ namespace DragginzWorldEditor
 		public int fileFormatVersion { get; set; }
 
 		[SerializeField]
+		public uint levelId { get; set; }
+
+		[SerializeField]
 		public string levelName { get; set; }
 
 		[SerializeField]
@@ -48,6 +51,11 @@ namespace DragginzWorldEditor
 			fileFormatVersion = -1;
 			if (data ["v"] != null) {
 				fileFormatVersion = Int32.Parse (data ["v"]);
+			}
+
+			levelId = 0;
+			if (data ["id"] != null) {
+				levelId = UInt32.Parse (data ["id"]);
 			}
 
 			levelName = "";
@@ -124,6 +132,7 @@ namespace DragginzWorldEditor
 			string s = "{";
 
 			s += "\"v\":" + fileFormatVersion.ToString();
+			s += ",\"id\":" + levelId.ToString();
 			s += ",\"n\":" + "\"" + levelName + "\"";
 
 			s += ",\"quads\":[";
