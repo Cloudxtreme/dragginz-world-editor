@@ -23,6 +23,9 @@ namespace DragginzWorldEditor
 		public uint levelId { get; set; }
 
 		[SerializeField]
+		public DataTypeVector3 levelPos { get; set; }
+
+		[SerializeField]
 		public string levelName { get; set; }
 
 		[SerializeField]
@@ -56,6 +59,19 @@ namespace DragginzWorldEditor
 			levelId = 0;
 			if (data ["id"] != null) {
 				levelId = UInt32.Parse (data ["id"]);
+			}
+
+			levelPos = new DataTypeVector3 ();
+			if (data ["pos"] != null) {
+				if (data ["pos"] ["x"] != null) {
+					levelPos.x = (float)data ["pos"] ["x"];
+				}
+				if (data ["pos"] ["y"] != null) {
+					levelPos.y = (float)data ["pos"] ["y"];
+				}
+				if (data ["pos"] ["z"] != null) {
+					levelPos.z = (float)data ["pos"] ["z"];
+				}
 			}
 
 			levelName = "";
@@ -133,6 +149,7 @@ namespace DragginzWorldEditor
 
 			s += "\"v\":" + fileFormatVersion.ToString();
 			s += ",\"id\":" + levelId.ToString();
+			s += ",\"pos\":" + levelPos.getJsonString();
 			s += ",\"n\":" + "\"" + levelName + "\"";
 
 			s += ",\"quads\":[";

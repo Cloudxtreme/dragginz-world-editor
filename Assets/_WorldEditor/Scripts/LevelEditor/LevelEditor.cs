@@ -135,8 +135,6 @@ namespace DragginzWorldEditor
 
 			_undoActions = new List<undoAction> ();
 
-			//_levelPropDefs = new List<propDef> ();
-
 			_goCurProp = null;
 			_selectedObjects = new List<GameObject> ();
 
@@ -144,6 +142,7 @@ namespace DragginzWorldEditor
 			_cubesPerQuadrant = 2;
 			_fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
 
+			LevelManager.Instance.init ();
 			PropsManager.Instance.init ();
 
 			// Instantiate app controller singleton

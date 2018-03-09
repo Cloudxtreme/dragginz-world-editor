@@ -45,6 +45,8 @@ namespace DragginzWorldEditor
 
 		static public readonly float RAYCAST_DISTANCE_EDIT = 10.24f;
 
+		static public readonly string[] levelIndex = {"Genesis;0;0;0", "Level-1-0-0;1;0;0"};
+
 		/// <summary>
 		/// ...
 		/// </summary>
