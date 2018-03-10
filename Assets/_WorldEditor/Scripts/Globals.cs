@@ -31,8 +31,9 @@ namespace DragginzWorldEditor
 
         static public readonly string[] materials = {"Marble", "Moss", "Shape", "Stone"};
 
-		static public readonly string warningObsoleteFileFormat = "Can't load level:\nFile format is obsolete!";
-		static public readonly string warningInvalidFileFormat  = "Can't load level:\nFile format is invalid!";
+		static public readonly string warningObsoleteFileFormat  = "Can't load level:\nFile format is obsolete!";
+		static public readonly string warningInvalidFileFormat   = "Can't load level:\nFile format is invalid!";
+		static public readonly string errorLevelFileInvalidIndex = "Invalid Level Index!";
 
 		static public readonly int LEVEL_WIDTH  = 36;
 		static public readonly int LEVEL_HEIGHT = 36;

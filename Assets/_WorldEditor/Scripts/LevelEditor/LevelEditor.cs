@@ -31,6 +31,8 @@ namespace DragginzWorldEditor
 
 	public class LevelEditor : MonoSingleton<LevelEditor>
 	{
+		public TextAsset levelListJson;
+
 		public Camera editCam;
 		public Camera itemCam;
 		public RTEditorCam itemCamScript;

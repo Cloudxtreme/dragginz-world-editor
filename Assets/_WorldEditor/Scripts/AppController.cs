@@ -82,7 +82,6 @@ namespace DragginzWorldEditor
 			if (MainMenu.Instance.popup != null) {
 				MainMenu.Instance.popup.showPopup(mode, header, message, callback);
 			}
-
 		}
 
 		//

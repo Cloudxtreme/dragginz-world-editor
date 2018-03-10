@@ -24,7 +24,8 @@ namespace DragginzWorldEditor
 		public GameObject goDigSettings;
 
 		public Transform panelTools;
-        public Transform panelMenu;
+        public Transform panelFileMenu;
+		public Transform panelLevelMenu;
         public Transform blocker;
         public Transform panelPopup;
 
@@ -59,6 +60,10 @@ namespace DragginzWorldEditor
             
         private Dropdown _trfmDropDownFile = null;
         private int _iDropDownFileOptions = 0;
+
+		private Dropdown _trfmDropDownLevel = null;
+		private int _iDropDownLevelOptions = 0;
+		private int _iSelectedLevel = -1;
 
         private int _iSelectedTool = -1;
 
@@ -104,8 +109,9 @@ namespace DragginzWorldEditor
                 _popup = panelPopup.GetComponent<Popup>();
             }
 
-            if (panelMenu) {
-                Transform trfmMenu = panelMenu.Find("DropdownFile");
+			Transform trfmMenu;
+            if (panelFileMenu) {
+                trfmMenu = panelFileMenu.Find("DropdownFile");
                 if (trfmMenu) {
                     _trfmDropDownFile = trfmMenu.GetComponent<Dropdown>();
                     if (_trfmDropDownFile) {
@@ -113,6 +119,16 @@ namespace DragginzWorldEditor
                     }
                 }
             }
+
+			if (panelLevelMenu) {
+				trfmMenu = panelLevelMenu.Find("DropdownFile");
+				if (trfmMenu) {
+					_trfmDropDownLevel = trfmMenu.GetComponent<Dropdown>();
+					if (_trfmDropDownLevel) {
+						_iDropDownLevelOptions = _trfmDropDownLevel.options.Count;
+					}
+				}
+			}
 
 			if (sliderDigWidth != null) {
 				sliderDigWidth.value = sliderDigWidth.minValue = 1;
@@ -155,6 +171,13 @@ namespace DragginzWorldEditor
         }
 
 		#endregion
+
+		public void addLevelToMenu(string name) {
+			if (_trfmDropDownLevel != null) {
+				_trfmDropDownLevel.options.Add(new Dropdown.OptionData() { text = name });
+				_iDropDownLevelOptions++;
+			}
+		}
 
 		public void setLevelNameText(string name) {
 			if (txtLevelName != null) {
@@ -215,7 +238,8 @@ namespace DragginzWorldEditor
 		public void setMenuPanels(AppState mode)
 		{
 			panelTools.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
-			panelMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
+			panelFileMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
+			panelLevelMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 		}
 
 		//
@@ -365,6 +389,27 @@ namespace DragginzWorldEditor
 			else
 			{
 				_popup.hide ();
+			}
+		}
+
+		//
+		private void showLoadLevelDialog(int value, string name) {
+
+			EditorObjectSelection.Instance.ClearSelection(false);
+
+			if (_popup) {
+				_popup.showPopup (PopupMode.Confirmation, "Load Level '"+name+"'", "Are you sure?\nAll unsaved changes will be lost!", showLoadLevelDialogContinue);
+			}
+		}
+
+		private void showLoadLevelDialogContinue(int buttonId) {
+
+			_popup.hide ();
+
+			if (buttonId == 1)
+			{
+				LevelManager.Instance.loadLevel(_iSelectedLevel);
+				_iSelectedLevel = -1;
 			}
 		}
 
@@ -627,16 +672,21 @@ namespace DragginzWorldEditor
 		}
 
 		// -------------------------------------------------------------------------------------
-        public void onPointerDown(BaseEventData data) {
+        public void onPointerDownFile(BaseEventData data) {
             if (_trfmDropDownFile) {
                 resetDropDown(_trfmDropDownFile);
 				LevelEditor.Instance.setMode (AppState.Select);
             }
         }
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		public void onPointerDownLevel(BaseEventData data) {
+			if (_trfmDropDownLevel) {
+				resetDropDown(_trfmDropDownLevel);
+				LevelEditor.Instance.setMode (AppState.Select);
+			}
+		}
+
+		//
         public void onDropDownFileValueChanged(int value) {
             if (_trfmDropDownFile && value < _iDropDownFileOptions) {
                 if (value == 0) {
@@ -648,5 +698,12 @@ namespace DragginzWorldEditor
 				}
             }
         }
+
+		public void onDropDownLevelValueChanged(int value) {
+			if (_trfmDropDownLevel && value < _iDropDownLevelOptions) {
+				_iSelectedLevel = value;
+				showLoadLevelDialog (value, _trfmDropDownLevel.options [value].text);
+			}
+		}
     }
 }

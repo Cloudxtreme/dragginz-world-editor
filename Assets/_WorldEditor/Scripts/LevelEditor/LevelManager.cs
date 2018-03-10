@@ -9,32 +9,33 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using SimpleJSON;
+
 namespace DragginzWorldEditor
 {
-	public struct levelStruct {
+	public struct LevelStruct {
 		public int id;
-		public string name; 
+		public string filename; 
 		public int x;
 		public int y;
 		public int z;
-		public string jsonFile;
 		public string jsonData;
-		public levelStruct(int id, string name, int x, int y, int z, string jf, string jd) {
+		public LevelStruct(int id, string filename, int x, int y, int z, string jd = null) {
 			this.id = id;
-			this.name = name;
+			this.filename = filename;
 			this.x = x;
 			this.y = y;
 			this.z = z;
-			this.jsonFile = jf;
 			this.jsonData = jd;
 		}
 	};
 
 	//
-	public class LevelManager : Singleton<PropsManager>
+	public class LevelManager : Singleton<LevelManager>
 	{
-		private Dictionary<int, Dictionary<int, Dictionary<int, levelStruct>>> _levelMapByPos;
-		private Dictionary<int, levelStruct> _levelMapById;
+		private Dictionary<int, Dictionary<int, Dictionary<int, LevelStruct>>> _levelMapByPos;
+		private Dictionary<int, LevelStruct> _levelMapById;
+		private LevelStruct[] _levelByIndex;
 
 		#region Getters
 
@@ -44,20 +45,41 @@ namespace DragginzWorldEditor
 
 		public void init()
 		{
-			_levelMapByPos = new Dictionary<int, Dictionary<int, Dictionary<int, levelStruct>>> ();
-			_levelMapById = new Dictionary<int, levelStruct> ();
+			_levelMapByPos = new Dictionary<int, Dictionary<int, Dictionary<int, LevelStruct>>> ();
+			_levelMapById = new Dictionary<int, LevelStruct> ();
 
-			for (int lev = 0; lev < Globals.levelIndex.Length; ++lev) {
-				string[] levInfo = Globals.levelIndex [lev].Split (new char[]{';'});
-				if (levInfo.Length != 4) {
-					Debug.LogWarning ("wrong level index data");
-				} else {
-					levelStruct ls = new levelStruct (-1, levInfo[0], int.Parse(levInfo[1]), int.Parse(levInfo[2]), int.Parse(levInfo[3]), "", "");
-					saveLevelInfo (ls);
-				}
+			if (LevelEditor.Instance.levelListJson == null) {
+				return;
+			}
+
+			JSONNode data = JSON.Parse(LevelEditor.Instance.levelListJson.text);
+			if (data == null || data ["levels"] == null) {
+				return;
+			}
+
+			JSONArray levels = (JSONArray) data ["levels"];
+			int i, len = levels.Count;
+			_levelByIndex = new LevelStruct[len];
+			for (i = 0; i < len; ++i) {
+				JSONNode level = levels [i];
+				LevelStruct ls = new LevelStruct (int.Parse(level["id"]), level["filename"], int.Parse(level["x"]), int.Parse(level["y"]), int.Parse(level["z"]));
+				_levelByIndex [i] = ls;
+				saveLevelInfo (ls);
+				MainMenu.Instance.addLevelToMenu (level ["filename"]);
 			}
 		}
 
+		//
+		public void loadLevel(int index)
+		{
+			if (index < 0 || index >= _levelByIndex.Length) {
+				AppController.Instance.showPopup (PopupMode.Notification, "Error", Globals.errorLevelFileInvalidIndex);
+			}
+			// get level data from LevelManager
+			// 
+		}
+
+		//
 		public string getLevelJson(int id) 
 		{
 			if (_levelMapById.ContainsKey (id)) {
@@ -84,7 +106,7 @@ namespace DragginzWorldEditor
 
 		#region PrivateMethods
 
-		private void saveLevelInfo(levelStruct ls)
+		private void saveLevelInfo(LevelStruct ls)
 		{
 			if (ls.id != -1) {
 				if (!_levelMapById.ContainsKey (ls.id)) {
@@ -93,11 +115,11 @@ namespace DragginzWorldEditor
 			}
 
 			if (!_levelMapByPos.ContainsKey (ls.x)) {
-				_levelMapByPos.Add(ls.x, new Dictionary<int, Dictionary<int, levelStruct>> ());
+				_levelMapByPos.Add(ls.x, new Dictionary<int, Dictionary<int, LevelStruct>> ());
 			}
 
 			if (!_levelMapByPos[ls.x].ContainsKey (ls.y)) {
-				_levelMapByPos[ls.x].Add(ls.y, new Dictionary<int, levelStruct> ());
+				_levelMapByPos[ls.x].Add(ls.y, new Dictionary<int, LevelStruct> ());
 			}
 
 			if (!_levelMapByPos[ls.x][ls.y].ContainsKey (ls.z)) {

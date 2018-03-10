@@ -631,6 +631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 216e9e3bf1f101d4cb3904d43bd2e1e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelListJson: {fileID: 4900000, guid: c239641011983f846a554533fa0e1e64, type: 3}
   editCam: {fileID: 677500482}
   itemCam: {fileID: 1135323822}
   itemCamScript: {fileID: 1135323824}
