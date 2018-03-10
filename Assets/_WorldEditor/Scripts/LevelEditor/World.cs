@@ -25,7 +25,7 @@ namespace DragginzWorldEditor
 
 		private int _numCubes;
 
-		private bool _coroutineIsRunning;
+		//private bool _coroutineIsRunning;
 
 		#region Getters
 
@@ -61,9 +61,10 @@ namespace DragginzWorldEditor
 
 			_numCubes = 0;
 
-			_coroutineIsRunning = false;
+			//_coroutineIsRunning = false;
 
-			LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
+			//LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
+			LevelManager.Instance.loadLevelByIndex (0);
 		}
 
 		//

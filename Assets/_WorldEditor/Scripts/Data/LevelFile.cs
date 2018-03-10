@@ -49,6 +49,7 @@ namespace DragginzWorldEditor
 			LevelQuadrant levelQuadrant;
 			LevelProp levelProp;
 
+			Debug.Log (json);
 			JSONNode data = JSON.Parse(json);
 
 			fileFormatVersion = -1;

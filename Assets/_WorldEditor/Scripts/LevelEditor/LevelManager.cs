@@ -4,7 +4,6 @@
 //
 
 using System.Collections;
-using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -21,6 +20,7 @@ namespace DragginzWorldEditor
 		public int z;
 		public string jsonData;
 		public LevelStruct(int id, string filename, int x, int y, int z, string jd = null) {
+			Debug.Log ("creating level struct id "+id);
 			this.id = id;
 			this.filename = filename;
 			this.x = x;
@@ -70,13 +70,29 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void loadLevel(int index)
+		public void loadLevelByIndex(int index)
 		{
 			if (index < 0 || index >= _levelByIndex.Length) {
 				AppController.Instance.showPopup (PopupMode.Notification, "Error", Globals.errorLevelFileInvalidIndex);
 			}
-			// get level data from LevelManager
-			// 
+
+			LevelStruct ls = _levelByIndex [index];
+			if (ls.jsonData == null || ls.jsonData == "") {
+				TextAsset levelAsset = Resources.Load<TextAsset>("Data/Levels/"+ls.filename);
+				if (levelAsset != null) {
+					string json = levelAsset.text;
+					ls.jsonData = json;
+					_levelByIndex [index] = ls;
+				} else {
+					Debug.Log ("Fuck");
+				}
+			}
+
+			if (ls.jsonData == null || ls.jsonData == "") {
+				AppController.Instance.showPopup (PopupMode.Notification, "Error", Globals.errorLevelFileInvalidFilename.Replace("%1",ls.filename));
+			} else {
+				LevelData.Instance.loadLevelResource (LevelEditor.Instance.goWorld, ls.jsonData);
+			}
 		}
 
 		//

@@ -356,7 +356,7 @@ namespace DragginzWorldEditor
 
 			FileBrowser.OpenFilePanel("Open file Title", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), new string[] { "json" }, null, (bool canceled, string filePath) => {
 				if (!canceled) {
-					LevelData.Instance.loadLevelData(LevelEditor.Instance.goWorld, filePath);
+					LevelData.Instance.loadLevelDataFromFile(LevelEditor.Instance.goWorld, filePath);
 				}
 			});
 		}
@@ -408,7 +408,7 @@ namespace DragginzWorldEditor
 
 			if (buttonId == 1)
 			{
-				LevelManager.Instance.loadLevel(_iSelectedLevel);
+				LevelManager.Instance.loadLevelByIndex(_iSelectedLevel);
 				_iSelectedLevel = -1;
 			}
 		}

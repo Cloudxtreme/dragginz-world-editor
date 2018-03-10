@@ -180,7 +180,9 @@ namespace DragginzWorldEditor
 
 			//updateDigSettings (new Vector3(1,1,1));
 
-			showHelpPopup ();
+			if (!_popup.isVisible ()) {
+				showHelpPopup ();
+			}
 		}
 
         #endregion
