@@ -20,7 +20,7 @@ namespace DragginzWorldEditor
 		public int fileFormatVersion { get; set; }
 
 		[SerializeField]
-		public uint levelId { get; set; }
+		public int levelId { get; set; }
 
 		[SerializeField]
 		public DataTypeVector3 levelPos { get; set; }
@@ -49,7 +49,7 @@ namespace DragginzWorldEditor
 			LevelQuadrant levelQuadrant;
 			LevelProp levelProp;
 
-			Debug.Log (json);
+			//Debug.Log (json);
 			JSONNode data = JSON.Parse(json);
 
 			fileFormatVersion = -1;
@@ -57,9 +57,9 @@ namespace DragginzWorldEditor
 				fileFormatVersion = Int32.Parse (data ["v"]);
 			}
 
-			levelId = 0;
+			levelId = -1;
 			if (data ["id"] != null) {
-				levelId = UInt32.Parse (data ["id"]);
+				levelId = Int32.Parse (data ["id"]);
 			}
 
 			levelPos = new DataTypeVector3 ();

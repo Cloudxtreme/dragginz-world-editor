@@ -20,7 +20,7 @@ namespace DragginzWorldEditor
 		public int z;
 		public string jsonData;
 		public LevelStruct(int id, string filename, int x, int y, int z, string jd = null) {
-			Debug.Log ("creating level struct id "+id);
+			//Debug.Log ("creating level struct id "+id);
 			this.id = id;
 			this.filename = filename;
 			this.x = x;
@@ -70,6 +70,16 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public int getLevelIdByIndex(int index)
+		{
+			if (index < 0 || index >= _levelByIndex.Length) {
+				return -1;
+			}
+
+			return _levelByIndex [index].id;
+		}
+
+		//
 		public void loadLevelByIndex(int index)
 		{
 			if (index < 0 || index >= _levelByIndex.Length) {
@@ -83,8 +93,6 @@ namespace DragginzWorldEditor
 					string json = levelAsset.text;
 					ls.jsonData = json;
 					_levelByIndex [index] = ls;
-				} else {
-					Debug.Log ("Fuck");
 				}
 			}
 

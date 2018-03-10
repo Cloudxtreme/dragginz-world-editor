@@ -395,9 +395,15 @@ namespace DragginzWorldEditor
 		//
 		private void showLoadLevelDialog(int value, string name) {
 
+			_iSelectedLevel = value;
+
 			EditorObjectSelection.Instance.ClearSelection(false);
 
-			if (_popup) {
+			int levelId = LevelManager.Instance.getLevelIdByIndex (value);
+			if (levelId == LevelData.Instance.currentLevelId) {
+				_popup.showPopup (PopupMode.Confirmation, "Load Level '"+name+"'", "Level already loaded!\nReload Level?", showLoadLevelDialogContinue);
+			}
+			else {
 				_popup.showPopup (PopupMode.Confirmation, "Load Level '"+name+"'", "Are you sure?\nAll unsaved changes will be lost!", showLoadLevelDialogContinue);
 			}
 		}
@@ -701,7 +707,6 @@ namespace DragginzWorldEditor
 
 		public void onDropDownLevelValueChanged(int value) {
 			if (_trfmDropDownLevel && value < _iDropDownLevelOptions) {
-				_iSelectedLevel = value;
 				showLoadLevelDialog (value, _trfmDropDownLevel.options [value].text);
 			}
 		}

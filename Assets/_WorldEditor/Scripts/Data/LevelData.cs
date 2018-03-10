@@ -16,6 +16,7 @@ namespace DragginzWorldEditor
 	public class LevelData : Singleton<LevelData> {
 
 		public string lastLevelName = Globals.defaultLevelName;
+		public int currentLevelId = -1;
 
 		public void loadLevelResource(GameObject parent, string json) { //string filePath) {
 
@@ -23,16 +24,16 @@ namespace DragginzWorldEditor
 			//string json = levelAsset.text;
 
 			LevelFile levelFile = null;
-			//try {
+			try {
 				levelFile = createDataFromJson(json);
 				if (levelFile != null) {
 					createLevel (levelFile, parent);
 				}
-			//}
-			//catch (System.Exception e) {
-			//	Debug.LogWarning (e.Message);
-			//	AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat.Replace("%1",""));
-			//}
+			}
+			catch (System.Exception e) {
+				Debug.LogWarning (e.Message);
+				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat.Replace("%1",""));
+			}
 		}
 
 		//
@@ -76,6 +77,8 @@ namespace DragginzWorldEditor
 				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningObsoleteFileFormat);
 				return;
 			}
+
+			currentLevelId = levelFile.levelId;
 
 			MainMenu.Instance.setLevelNameText(levelFile.levelName);
 			lastLevelName = levelFile.levelName;
