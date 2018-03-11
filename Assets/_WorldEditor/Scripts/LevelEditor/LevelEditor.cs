@@ -144,25 +144,31 @@ namespace DragginzWorldEditor
 			_cubesPerQuadrant = 2;
 			_fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
 
-			LevelManager.Instance.init ();
-			PropsManager.Instance.init ();
-
 			// Instantiate app controller singleton
-			if (GameObject.Find(Globals.appContainerName) == null) {
-				GameObject goAppController = new GameObject(Globals.appContainerName);
-				DontDestroyOnLoad(goAppController);
-				goAppController.AddComponent<AppController>();
+			if (GameObject.Find (Globals.appContainerName) == null) {
+				GameObject goAppController = new GameObject (Globals.appContainerName);
+				DontDestroyOnLoad (goAppController);
+				goAppController.AddComponent<AppController> ();
 			}
+
+			if (GameObject.Find (Globals.netContainerName) == null) {
+				GameObject goNetManager = new GameObject (Globals.netContainerName);
+				DontDestroyOnLoad (goNetManager);
+				goNetManager.AddComponent<NetManager> ();
+			}
+
+			//LevelManager.Instance.init ();
+			//PropsManager.Instance.init ();
 		}
 
 		//
-		void Start()
+		public void init()
 		{
-			setMode (AppState.Null, true);
+			//setMode (AppState.Null, true);
 
 			MainMenu.Instance.setUndoButton (false);
 
-			_World.init ();
+			//_World.init ();
 
 			_popup = MainMenu.Instance.popup;
 
@@ -178,11 +184,9 @@ namespace DragginzWorldEditor
 
 			_curEditorTool = null;
 
-			//updateDigSettings (new Vector3(1,1,1));
-
-			if (!_popup.isVisible ()) {
+			/*if (!_popup.isVisible ()) {
 				showHelpPopup ();
-			}
+			}*/
 		}
 
         #endregion

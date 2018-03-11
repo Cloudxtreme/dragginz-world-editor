@@ -15,6 +15,7 @@ namespace DragginzWorldEditor
 	//
 	public enum AppState {
 		Null,
+		Splash,
 		Select,
 		Dig,
 		Paint,
@@ -33,6 +34,8 @@ namespace DragginzWorldEditor
 	//
     public class AppController : MonoSingletonBase<AppController>
     {
+		private bool _editorIsInOfflineMode;
+
         private AppState _appState;
 
 		private float time;
@@ -44,14 +47,32 @@ namespace DragginzWorldEditor
 			get { return _appState; }
 		}
 
+		public bool editorIsInOfflineMode {
+			get { return _editorIsInOfflineMode; }
+			set { _editorIsInOfflineMode = value; }
+		}
+
 		#endregion
 
 		#region PublicMethods
 
         void Awake() {
 
+			Application.targetFrameRate = Globals.TargetClientFramerate;
+
+			_editorIsInOfflineMode = true;
+
 			_appState = AppState.Null;
         }
+
+		//
+		void Start() {
+
+			_appState = AppState.Splash;
+
+			SceneManager.LoadScene(BuildSettings.SplashScreenScene, LoadSceneMode.Additive);
+			//SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
+		}
 
 		//
         void Update() {
@@ -59,13 +80,21 @@ namespace DragginzWorldEditor
 			time = Time.realtimeSinceStartup;
 			timeDelta = Time.deltaTime;
 
-			LevelEditor.Instance.customUpdateCheckControls (time, timeDelta);
+			if (_appState == AppState.Splash) {
+				//
+			} else {
+				LevelEditor.Instance.customUpdateCheckControls (time, timeDelta);
+			}
         }
 
 		//
 		void LateUpdate()
 		{
-			LevelEditor.Instance.customUpdate (time, timeDelta);
+			if (_appState == AppState.Splash) {
+				//
+			} else {
+				LevelEditor.Instance.customUpdate (time, timeDelta);
+			}
 		}
 
 		//

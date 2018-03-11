@@ -11,12 +11,15 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
+		public static readonly int TargetClientFramerate = 120;
+
 		static public readonly string version = "Level Editor v03.02.0a";
 		static public readonly int levelSaveFormatVersion = 7;
 
 		public const string propListName = "props_list_leveleditor";
 
         static public readonly string appContainerName   = "{AppController}";
+		static public readonly string netContainerName   = "{NetManager}";
         static public readonly string worldContainerName = "[World]";
 
 		static public readonly int EDITOR_TOOL_LOOK  = 0;
@@ -47,7 +50,7 @@ namespace DragginzWorldEditor
 
 		static public readonly float RAYCAST_DISTANCE_EDIT = 10.24f;
 
-		static public readonly string[] levelIndex = {"Genesis;0;0;0", "Level-1-0-0;1;0;0"};
+		static public readonly string urlLevelList = "http://obrodhage.rocks/dragginz-world-editor/level-data/";
 
 		/// <summary>
 		/// ...

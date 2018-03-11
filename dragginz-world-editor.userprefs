@@ -1,19 +1,29 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_WorldEditor\Scripts\Data\LevelFile.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_WorldEditor\Scripts\SplashScreen\Spinner.cs">
     <Files>
-      <File FileName="Assets\_WorldEditor\Scripts\Globals.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Core\AppController.cs" Line="97" Column="5" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="171" Column="6" />
       <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\World.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelManager.cs" Line="73" Column="31" />
-      <File FileName="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" Line="404" Column="109" />
-      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelData.cs" Line="81" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelFile.cs" Line="62" Column="15" />
-      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelQuadrant.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Server\NetManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\SplashScreen\SplashScreenController.cs" Line="45" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelData.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelFile.cs" Line="1" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelQuadrant.cs" Line="14" Column="30" />
+      <File FileName="Assets\_WorldEditor\Scripts\Core\BuildSettings.cs" Line="11" Column="66" />
+      <File FileName="Assets\_WorldEditor\Scripts\SplashScreen\Spinner.cs" Line="12" Column="60" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="C:\POWLEX\dragginz-world-editor\Assets\_WorldEditor\Scripts\Globals.cs" line="53" column="49" />
+      <Breakpoint file="C:\POWLEX\dragginz-world-editor\Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" line="161" column="4" />
+      <Breakpoint file="C:\POWLEX\dragginz-world-editor\Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" line="165" column="9" />
+      <Breakpoint file="C:\POWLEX\dragginz-world-editor\Assets\_WorldEditor\Scripts\Core\AppController.cs" line="71" column="30" />
+      <Breakpoint file="C:\POWLEX\dragginz-world-editor\Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" line="187" column="4" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
