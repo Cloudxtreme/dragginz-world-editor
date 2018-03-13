@@ -51,8 +51,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\_WorldEditor\Scripts\Controls\FlyCam.cs" />
-     <Compile Include="Assets\_WorldEditor\Scripts\Controls\RTEditorCam.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Assets\AssetFactory.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Cameras\FlyCam.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Cameras\RTEditorCam.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Core\AppController.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Core\BuildSettings.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Core\Globals.cs" />
@@ -63,6 +64,7 @@
      <Compile Include="Assets\_WorldEditor\Scripts\Data\LevelQuadrant.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\JSON\SimpleJSON.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Block.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\LevelChunk.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\LevelManager.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\LevelEditor\Prop.cs" />

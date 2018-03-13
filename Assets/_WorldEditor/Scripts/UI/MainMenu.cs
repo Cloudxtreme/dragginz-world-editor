@@ -163,15 +163,27 @@ namespace DragginzWorldEditor
             }
 		}
 
-        void Start() {
+        /*void Start() {
 			onSelectTransformTool(0);
 			onSelectMaterial (0);
 			onSelectItem (0);
 			setLevelNameText ("New Level");
-        }
+        }*/
 
 		#endregion
 
+		#region PublicMethods
+
+		public void init()
+		{
+			onSelectTransformTool(0);
+			onSelectMaterial (0);
+			onSelectItem (0);
+			setLevelNameText ("New Level");
+			setUndoButton (false);
+		}
+
+		//
 		public void addLevelToMenu(string name) {
 			if (_trfmDropDownLevel != null) {
 				_trfmDropDownLevel.options.Add(new Dropdown.OptionData() { text = name });
@@ -239,7 +251,7 @@ namespace DragginzWorldEditor
 		{
 			panelTools.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 			panelFileMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
-			panelLevelMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
+			panelLevelMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null && !AppController.Instance.editorIsInOfflineMode);
 		}
 
 		//
@@ -274,6 +286,8 @@ namespace DragginzWorldEditor
 				goDigSettings.SetActive (state);
 			}
 		}
+
+		#endregion
 
 		#region PrivateMethods
 

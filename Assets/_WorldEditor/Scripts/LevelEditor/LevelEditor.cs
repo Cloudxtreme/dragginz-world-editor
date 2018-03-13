@@ -44,11 +44,6 @@ namespace DragginzWorldEditor
 		public GameObject goPlayerCameraRig;
 		public GameObject goPlayerEdit;
 
-		public GameObject quadrantPrefab;
-		public GameObject cubePrefab;
-		public GameObject cubePrefabEdge;
-		public GameObject cubePrefabCenter;
-
 		public GameObject laserAim;
 		public GameObject laserAimCenterCube;
 		public Material laserAimMaterial;
@@ -59,6 +54,7 @@ namespace DragginzWorldEditor
 		public Material materialEdge;
         public List<Material> materialsWalls;
 
+		private Dictionary<int, LevelChunk> _levelChunks;
 		private World _World;
 		private Popup _popup;
 
@@ -125,6 +121,8 @@ namespace DragginzWorldEditor
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
 
+			_levelChunks = new Dictionary<int, LevelChunk> ();
+
 			gameObject.AddComponent<World> ();
 			_World = World.Instance;
 
@@ -168,8 +166,8 @@ namespace DragginzWorldEditor
 			SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
 			setMode (AppState.Null, true);
 
-			MainMenu.Instance.setUndoButton (false);
-
+			//MainMenu.Instance.setUndoButton (false);
+			MainMenu.Instance.init();
 			LevelManager.Instance.init ();
 			PropsManager.Instance.init ();
 			_World.init ();
@@ -301,8 +299,6 @@ namespace DragginzWorldEditor
 			if (_curEditorTool != null) {
 				_curEditorTool.customUpdateControls (time, timeDelta);
 			}
-
-			//_World.customUpdate ();
 		}
 
 		// LateUpdate call

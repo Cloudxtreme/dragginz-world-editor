@@ -14,6 +14,7 @@ namespace DragginzWorldEditor
 	public class World : MonoSingleton<World> {
 
 		private LevelEditor _levelEditor;
+		private AssetFactory _assetFactory;
 
 		//private Dictionary<int, Dictionary<int, Dictionary<int, int>>> _quadrantFlags;
 		private Dictionary<string, int> _quadrantFlagsNew;
@@ -39,6 +40,7 @@ namespace DragginzWorldEditor
 		public void init()
 		{
 			_levelEditor = LevelEditor.Instance;
+			_assetFactory = AssetFactory.Instance;
 
 			//_iMinLevelCoord = -50;
 			//_iMaxLevelCoord = 50;
@@ -297,7 +299,7 @@ namespace DragginzWorldEditor
 				return null;
 			}
 
-			GameObject quadrant = Instantiate(_levelEditor.quadrantPrefab); // new GameObject(Globals.containerGameObjectPrepend + quadrantId);
+			GameObject quadrant = _assetFactory.createQuadrantClone ();
 			quadrant.name = Globals.containerGameObjectPrepend + quadrantId;
 			quadrant.transform.SetParent(_levelEditor.goWorld.transform);
 			quadrant.transform.localPosition = v3CubePos;

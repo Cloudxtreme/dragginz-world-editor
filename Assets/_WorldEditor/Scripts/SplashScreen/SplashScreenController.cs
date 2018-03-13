@@ -13,22 +13,33 @@ namespace DragginzWorldEditor
     {
 		[SerializeField]
 		private Text FileInfo;
-        [SerializeField]
+		[SerializeField]
+		private Text Message;
+		[SerializeField]
+		private Text Update;
+
+		[SerializeField]
         private Button ButtonOnline;
 		[SerializeField]
 		private Button ButtonOffline;
-        [SerializeField]
+        
+		[SerializeField]
         private GameObject Spinner;
 
 		void Awake() {
 
 			FileInfo.text = Globals.version;
+			Message.text  = "";
+			Update.text   = "";
 		}
 
         public void workOnline()
         {
 			ButtonOnline.gameObject.SetActive(false);
 			ButtonOffline.gameObject.SetActive(false);
+
+			Message.gameObject.SetActive (true);
+			Message.text = "Connecting...";
 
             Spinner.SetActive(true);
 
