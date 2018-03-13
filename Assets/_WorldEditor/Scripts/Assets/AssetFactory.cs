@@ -9,9 +9,12 @@ namespace DragginzWorldEditor
 {
 	public class AssetFactory : MonoSingleton<AssetFactory>
 	{
-		public GameObject prefabQuadrant;
-		public GameObject prefabLevelChunk;
-		public GameObject prefabLevelContainer;
+		[SerializeField]
+		private GameObject prefabQuadrant;
+		[SerializeField]
+		private GameObject prefabLevelChunk;
+		[SerializeField]
+		private GameObject prefabLevelContainer;
 
 		#region SystemMethods
 

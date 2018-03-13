@@ -37,7 +37,17 @@ namespace DragginzWorldEditor
 		private Dictionary<int, LevelStruct> _levelMapById;
 		private LevelStruct[] _levelByIndex;
 
+		private int _numLevels;
+
 		#region Getters
+
+		public int numLevels {
+			get { return _numLevels; }
+		}
+
+		public LevelStruct[] levelByIndex {
+			get { return _levelByIndex; }
+		}
 
 		#endregion
 
@@ -47,6 +57,8 @@ namespace DragginzWorldEditor
 		{
 			_levelMapByPos = new Dictionary<int, Dictionary<int, Dictionary<int, LevelStruct>>> ();
 			_levelMapById = new Dictionary<int, LevelStruct> ();
+
+			_numLevels = 0;
 
 			if (LevelEditor.Instance.levelListJson == null) {
 				return;
@@ -66,6 +78,7 @@ namespace DragginzWorldEditor
 				_levelByIndex [i] = ls;
 				saveLevelInfo (ls);
 				MainMenu.Instance.addLevelToMenu (level ["filename"]);
+				_numLevels++;
 			}
 		}
 

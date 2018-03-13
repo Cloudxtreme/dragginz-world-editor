@@ -78,6 +78,8 @@ namespace DragginzWorldEditor
 
         private int _numCubes;
 
+		private bool _isInitialised;
+
 		#region Getters
 
 		public float fRockSize {
@@ -121,6 +123,8 @@ namespace DragginzWorldEditor
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
 
+			_isInitialised = false;
+
 			_levelChunks = new Dictionary<int, LevelChunk> ();
 
 			gameObject.AddComponent<World> ();
@@ -155,9 +159,6 @@ namespace DragginzWorldEditor
 				DontDestroyOnLoad (goNetManager);
 				goNetManager.AddComponent<NetManager> ();
 			}
-
-			//LevelManager.Instance.init ();
-			//PropsManager.Instance.init ();
 		}
 
 		//
@@ -166,9 +167,7 @@ namespace DragginzWorldEditor
 			SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
 			setMode (AppState.Null, true);
 
-			//MainMenu.Instance.setUndoButton (false);
 			MainMenu.Instance.init();
-			LevelManager.Instance.init ();
 			PropsManager.Instance.init ();
 			_World.init ();
 
@@ -185,6 +184,8 @@ namespace DragginzWorldEditor
 			_aEditorTools.Add(new EditorToolItem());
 
 			_curEditorTool = null;
+
+			_isInitialised = true;
 
 			if (!_popup.isVisible ()) {
 				showHelpPopup ();

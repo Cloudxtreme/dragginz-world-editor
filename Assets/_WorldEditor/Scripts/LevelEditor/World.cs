@@ -65,8 +65,13 @@ namespace DragginzWorldEditor
 
 			//_coroutineIsRunning = false;
 
-			//LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
-			LevelManager.Instance.loadLevelByIndex (0);
+			if (AppController.Instance.editorIsInOfflineMode) {
+				TextAsset levelAsset = Resources.Load<TextAsset>("Data/Levels/Genesis");
+				string json = levelAsset.text;
+				LevelData.Instance.loadLevelResource (_levelEditor.goWorld, json);
+			} else {
+				LevelManager.Instance.loadLevelByIndex (0);
+			}
 		}
 
 		//

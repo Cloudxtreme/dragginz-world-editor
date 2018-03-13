@@ -26,17 +26,38 @@ namespace DragginzWorldEditor
 		[SerializeField]
         private GameObject Spinner;
 
+		private int _iCurLevelChunk;
+
+		//
 		void Awake() {
 
 			FileInfo.text = Globals.version;
-			Message.text  = "";
-			Update.text   = "";
+
+			resetScreen ();
+			ButtonOnline.gameObject.SetActive(true);
+			ButtonOffline.gameObject.SetActive(true);
+
+			_iCurLevelChunk = 0;
 		}
+
+		private void resetScreen()
+		{
+			ButtonOnline.gameObject.SetActive(false);
+			ButtonOffline.gameObject.SetActive(false);
+
+			Message.text = "";
+			Update.text = "";
+
+			Spinner.SetActive(false);
+		}
+
+		//
+		// CONNECT
+		//
 
         public void workOnline()
         {
-			ButtonOnline.gameObject.SetActive(false);
-			ButtonOffline.gameObject.SetActive(false);
+			resetScreen ();
 
 			Message.gameObject.SetActive (true);
 			Message.text = "Connecting...";
@@ -46,44 +67,117 @@ namespace DragginzWorldEditor
             AttemptConnection();
         }
 
+		//
 		public void workOffline()
 		{
 			AppController.Instance.editorIsInOfflineMode = true;
 
-			ButtonOnline.gameObject.SetActive(false);
-			ButtonOffline.gameObject.SetActive(false);
+			resetScreen ();
 
 			LevelEditor.Instance.init ();
 		}
 
+		//
 		private void AttemptConnection()
         {
-			NetManager.Instance.loadLevelList (ConnectionSuccess);
+			NetManager.Instance.loadLevelList (ConnectionSuccess, ConnectionFail);
 
             StartCoroutine(TimerUtils.WaitAndPerform(5.0f, ConnectionTimeout));
         }
 
+		//
 		private void ConnectionSuccess()
 		{
 			AppController.Instance.editorIsInOfflineMode = false;
 
 			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, ConnectionTimeout));
 
-			Spinner.SetActive(false);
-			LevelEditor.Instance.init ();
+			LevelManager.Instance.init ();
+
+			Message.text = "Loading Level...";
+			Update.gameObject.SetActive (true);
+
+			loadLevelChunks ();
 		}
 
-        private void ConnectionTimeout()
-        {
+		//
+		private void ConnectionFail(string error)
+		{
 			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, ConnectionTimeout));
 
-			Spinner.SetActive(false);
-			AppController.Instance.showPopup (PopupMode.Notification, "Warning", "Could not connect to Server!\n\nEditor will run in Offline Mode!", timeOutPopupContinue);
-        }
+			resetScreen ();
 
+			AppController.Instance.showPopup (PopupMode.Notification, "ERROR", error, timeOutPopupContinue);
+		}
+
+		private void ConnectionTimeout()
+		{
+			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, ConnectionTimeout));
+
+			resetScreen ();
+
+			AppController.Instance.showPopup (PopupMode.Notification, "Warning", "Could not connect to Server!\n\nEditor will run in Offline Mode!", timeOutPopupContinue);
+		}
+
+		//
+		// LEVEL CHUNKS
+		//
+
+		private void loadLevelChunks()
+		{
+			// done loading?
+			if (_iCurLevelChunk >= LevelManager.Instance.numLevels)
+			{
+				resetScreen ();
+				LevelEditor.Instance.init ();	
+			}
+			else 
+			{
+				Update.text = (_iCurLevelChunk + 1).ToString () + " of " + LevelManager.Instance.numLevels.ToString ();
+				NetManager.Instance.loadLevelChunk (LevelManager.Instance.levelByIndex[_iCurLevelChunk].filename, LoadSuccess, loadFail);
+				StartCoroutine(TimerUtils.WaitAndPerform(5.0f, LoadTimeout));
+			}
+		}
+
+		//
+		private void LoadSuccess()
+		{
+			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, LoadTimeout));
+
+			_iCurLevelChunk++;
+
+			loadLevelChunks ();
+		}
+
+		//
+		private void loadFail(string error)
+		{
+			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, LoadTimeout));
+
+			resetScreen ();
+
+			AppController.Instance.showPopup (PopupMode.Notification, "ERROR", error, timeOutPopupContinue);
+		}
+
+		//
+		private void LoadTimeout()
+		{
+			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, LoadTimeout));
+
+			resetScreen ();
+
+			AppController.Instance.showPopup (PopupMode.Notification, "Warning", "Could not load all level chunks!\n\nEditor will run in Offline Mode!", timeOutPopupContinue);
+		}
+
+		//
+		// POPUP BUTTON CLICK
+		//
+
+		//
 		private void timeOutPopupContinue(int buttonId)
 		{
 			MainMenu.Instance.popup.hide();
+
 			workOffline ();
 		}
     }

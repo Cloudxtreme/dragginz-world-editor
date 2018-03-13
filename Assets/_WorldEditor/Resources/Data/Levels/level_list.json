@@ -2,28 +2,28 @@
   "levels": [
     {
       "id": 0,
-      "filename": "level_id_0",
+      "filename": "level_id_0.json",
       "x": 0,
       "y": 0,
       "z": 0
     },
     {
       "id": 1,
-      "filename": "level_id_1",
+      "filename": "level_id_1.json",
       "x": 1,
       "y": 0,
       "z": 0
     },
     {
       "id": 2,
-      "filename": "level_id_0",
+      "filename": "level_id_2.json",
       "x": 2,
       "y": 0,
       "z": 0
     },
     {
       "id": 13,
-      "filename": "genesis",
+      "filename": "genesis.json",
       "x": 1,
       "y": 1,
       "z": 1
