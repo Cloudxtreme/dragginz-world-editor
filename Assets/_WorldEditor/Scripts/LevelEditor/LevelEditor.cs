@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using RTEditor;
 
@@ -164,11 +165,14 @@ namespace DragginzWorldEditor
 		//
 		public void init()
 		{
-			//setMode (AppState.Null, true);
+			SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
+			setMode (AppState.Null, true);
 
 			MainMenu.Instance.setUndoButton (false);
 
-			//_World.init ();
+			LevelManager.Instance.init ();
+			PropsManager.Instance.init ();
+			_World.init ();
 
 			_popup = MainMenu.Instance.popup;
 
@@ -184,9 +188,9 @@ namespace DragginzWorldEditor
 
 			_curEditorTool = null;
 
-			/*if (!_popup.isVisible ()) {
+			if (!_popup.isVisible ()) {
 				showHelpPopup ();
-			}*/
+			}
 		}
 
         #endregion

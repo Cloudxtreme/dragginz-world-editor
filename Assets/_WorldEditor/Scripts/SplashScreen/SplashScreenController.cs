@@ -27,11 +27,9 @@ namespace DragginzWorldEditor
 
         public void workOnline()
         {
-            // Disable buttons
-			ButtonOnline.interactable = false;
-			ButtonOffline.interactable = false;
+			ButtonOnline.gameObject.SetActive(false);
+			ButtonOffline.gameObject.SetActive(false);
 
-            // Start loading spinner
             Spinner.SetActive(true);
 
             AttemptConnection();
@@ -39,28 +37,43 @@ namespace DragginzWorldEditor
 
 		public void workOffline()
 		{
-			// Disable buttons
-			ButtonOnline.interactable = false;
-			ButtonOffline.interactable = false;
+			AppController.Instance.editorIsInOfflineMode = true;
+
+			ButtonOnline.gameObject.SetActive(false);
+			ButtonOffline.gameObject.SetActive(false);
+
+			LevelEditor.Instance.init ();
 		}
 
 		private void AttemptConnection()
         {
-            /*Bootstrap bootstrap = FindObjectOfType<Bootstrap>();
-            if (!bootstrap)
-            {
-                throw new Exception("Couldn't find Bootstrap script on GameEntry in UnityScene");
-            }
-            bootstrap.ConnectToClient();
+			NetManager.Instance.loadLevelList (ConnectionSuccess);
 
-            // In case the client connection is successful this coroutine is destroyed as part of unloading
-            // the splash screen so ConnectionTimeout won't be called
-            StartCoroutine(TimerUtils.WaitAndPerform(SimulationSettings.ClientConnectionTimeoutSecs, ConnectionTimeout));*/
+            StartCoroutine(TimerUtils.WaitAndPerform(5.0f, ConnectionTimeout));
         }
+
+		private void ConnectionSuccess()
+		{
+			AppController.Instance.editorIsInOfflineMode = false;
+
+			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, ConnectionTimeout));
+
+			Spinner.SetActive(false);
+			LevelEditor.Instance.init ();
+		}
 
         private void ConnectionTimeout()
         {
-            Spinner.SetActive(false);
+			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, ConnectionTimeout));
+
+			Spinner.SetActive(false);
+			AppController.Instance.showPopup (PopupMode.Notification, "Warning", "Could not connect to Server!\n\nEditor will run in Offline Mode!", timeOutPopupContinue);
         }
+
+		private void timeOutPopupContinue(int buttonId)
+		{
+			MainMenu.Instance.popup.hide();
+			workOffline ();
+		}
     }
 }

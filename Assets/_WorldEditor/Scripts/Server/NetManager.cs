@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.Networking;
+
+using System;
+using System.Collections;
 
 namespace DragginzWorldEditor
 {
@@ -8,14 +10,17 @@ namespace DragginzWorldEditor
 	{
 		private readonly string scriptGetLevelList = "level_list.json";
 
-		void Start()
+		private Action _callback;
+
+		public void loadLevelList(Action callback = null)
 		{
-			StartCoroutine(GetText());
+			_callback = callback;
+			StartCoroutine(GetData(Globals.urlLevelList + scriptGetLevelList));
 		}
 
-		IEnumerator GetText()
+		IEnumerator GetData(string url)
 		{
-			UnityWebRequest www = UnityWebRequest.Get(Globals.urlLevelList + scriptGetLevelList);
+			UnityWebRequest www = UnityWebRequest.Get(url);
 			yield return www.SendWebRequest();
 
 			if(www.isNetworkError || www.isHttpError) {
@@ -24,7 +29,11 @@ namespace DragginzWorldEditor
 			}
 			else {
 				// Show results as text
-				Debug.Log(www.downloadHandler.text);
+				if (_callback != null) {
+					_callback.Invoke ();
+				} else {
+					Debug.Log (www.downloadHandler.text);
+				}
 
 				// Or retrieve results as binary data
 				// byte[] results = www.downloadHandler.data;

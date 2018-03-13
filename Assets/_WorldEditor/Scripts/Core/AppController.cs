@@ -71,7 +71,6 @@ namespace DragginzWorldEditor
 			_appState = AppState.Splash;
 
 			SceneManager.LoadScene(BuildSettings.SplashScreenScene, LoadSceneMode.Additive);
-			//SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
 		}
 
 		//
@@ -127,10 +126,10 @@ namespace DragginzWorldEditor
 		#region PrivateMethods
 
 		//
-		private void popupCallback(int buttonId) {
+		/*private void popupCallback(int buttonId) {
 
 			MainMenu.Instance.popup.hide();
-		}
+		}*/
 
 		#endregion
     }
