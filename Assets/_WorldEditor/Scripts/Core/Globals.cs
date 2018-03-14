@@ -13,7 +13,7 @@ namespace DragginzWorldEditor
     {
 		public static readonly int TargetClientFramerate = 120;
 
-		static public readonly string version = "Level Editor v03.02.0a";
+		static public readonly string version = "Level Editor v03.14.0a";
 		static public readonly int levelSaveFormatVersion = 7;
 
 		public const string propListName = "props_list_leveleditor";
