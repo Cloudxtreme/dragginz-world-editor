@@ -38,8 +38,8 @@ namespace DragginzWorldEditor
 		public Camera itemCam;
 		public RTEditorCam itemCamScript;
 
-		public GameObject goWorld;
-		public GameObject goProps;
+		//public GameObject goWorld;
+		//public GameObject goProps;
 		public GameObject goPlayer;
 		public GameObject goPlayerCameraRig;
 		public GameObject goPlayerEdit;
@@ -55,7 +55,9 @@ namespace DragginzWorldEditor
         public List<Material> materialsWalls;
 
 		private Dictionary<int, LevelChunk> _levelChunks;
-		private World _World;
+		private LevelChunk _curLevelChunk;
+
+		//private World _World;
 		private Popup _popup;
 
 		private List<EditorTool> _aEditorTools;
@@ -65,9 +67,6 @@ namespace DragginzWorldEditor
 		private Dictionary<string, Material> _aDictMaterials;
 
 		private List<undoAction> _undoActions;
-
-		//private List<propDef> _levelPropDefs;
-		//private int _iSelectedItem = 0;
 
 		private GameObject _goCurProp;
 		private List<GameObject> _selectedObjects;
@@ -102,16 +101,12 @@ namespace DragginzWorldEditor
 			get { return _aDictMaterials; }
 		}
 
-		/*public int iSelectedItem {
-			get { return _iSelectedItem; }
-		}
-
-		public List<propDef> levelPropDefs {
-			get { return _levelPropDefs; }
-		}*/
-
 		public GameObject goCurItem {
 			get { return _goCurProp; }
+		}
+
+		public LevelChunk curLevelChunk {
+			get { return _curLevelChunk; }
 		}
 
 		#endregion
@@ -126,9 +121,10 @@ namespace DragginzWorldEditor
 			_isInitialised = false;
 
 			_levelChunks = new Dictionary<int, LevelChunk> ();
+			_curLevelChunk = null;
 
-			gameObject.AddComponent<World> ();
-			_World = World.Instance;
+			//gameObject.AddComponent<World> ();
+			//_World = World.Instance;
 
 			_aMaterials = new List<Material> ();
 			_aDictMaterials = new Dictionary<string, Material> ();
@@ -168,9 +164,12 @@ namespace DragginzWorldEditor
 			setMode (AppState.Null, true);
 
 			if (AppController.Instance.editorIsInOfflineMode) {
-				_World.init ();
+				//_World.init ();
+				_curLevelChunk = LevelManager.Instance.createOfflineLevelChunk ();
+				_curLevelChunk.createOfflineLevel ();
 			} else {
 				_levelChunks = LevelManager.Instance.createLevelChunks();
+				//_curLevelChunk = LevelManager.Instance.loadLevelByIndex (0);
 			}
 
 			MainMenu.Instance.init();
@@ -227,17 +226,20 @@ namespace DragginzWorldEditor
 				_curEditorTool.resetAll ();
 			}
 
-			_World.resetAll ();
+			//_World.resetAll ();
 		}
 
 		//
 		public void createNewLevel()
 		{
-			resetAll ();
+			if (!AppController.Instance.editorIsInOfflineMode) {
+				return;
+			}
 
 			LevelData.Instance.lastLevelName = Globals.defaultLevelName;
 
-			_World.createEmptyLevel ();
+			_curLevelChunk.reset ();
+			_curLevelChunk.createOfflineLevel ();
 
 			Vector3 savedPos = new Vector3 (18.35f, 18.90f, 17.25f);
 			Vector3 savedRot = Vector2.zero;
@@ -438,7 +440,7 @@ namespace DragginzWorldEditor
 
 			// items
 			undo.items = new List<undoItem> ();
-			foreach (Transform child in goProps.transform) {
+			foreach (Transform child in _curLevelChunk.trfmProps) {
 				undoItem item = new undoItem ();
 				item.go = child.gameObject;
 				item.position = child.position;
@@ -532,7 +534,7 @@ namespace DragginzWorldEditor
 				// ITEM
 				else if (undo.action == AppState.Props) {
 					if (undo.go != null) {
-						PropsManager.Instance.removeWorldProp (undo.go);
+						_curLevelChunk.removeWorldProp (undo.go);
 						Destroy (undo.go);
 					}
 				}
@@ -560,8 +562,8 @@ namespace DragginzWorldEditor
 			MainMenu.Instance.setUndoButton (false);
 
 			if (effectedCubes != 0) {
-				_World.numCubes += effectedCubes;
-				MainMenu.Instance.setCubeCountText (_World.numCubes);
+				_curLevelChunk.numCubes += effectedCubes;
+				MainMenu.Instance.setCubeCountText (_curLevelChunk.numCubes);
 			}
 		}
 
@@ -574,7 +576,7 @@ namespace DragginzWorldEditor
 			for (i = 0; i < len; ++i) {
 				if (_selectedObjects [i] != null) {
 
-					prop = PropsManager.Instance.getPropDefForGameObject (_selectedObjects [i]);
+					prop = _curLevelChunk.getPropDefForGameObject (_selectedObjects [i]);
 					if (prop.id != -1)
 					{
 						if (_selectedObjects [i].GetComponent<Rigidbody> () != null) {
@@ -655,7 +657,7 @@ namespace DragginzWorldEditor
 					_goCurProp = null;
 				}
 				propDef prop = PropsManager.Instance.getSelectedPropDef ();
-				_goCurProp = _World.createProp (prop, Vector3.zero, prop.name , propAim.transform, false, false);
+				_goCurProp = PropsManager.Instance.createProp (prop, Vector3.zero, prop.name , propAim.transform, false, false);
 				_goCurProp.transform.localPosition = Vector3.zero;
 			}
 

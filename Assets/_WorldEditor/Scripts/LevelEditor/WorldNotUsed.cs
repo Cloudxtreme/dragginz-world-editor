@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace DragginzWorldEditor
 {
-	public class World : MonoSingleton<World> {
+	public class WorldNotUsed : MonoBehaviour { // MonoSingleton<World> {
 
 		private LevelEditor _levelEditor;
 		private AssetFactory _assetFactory;
@@ -68,7 +68,7 @@ namespace DragginzWorldEditor
 			if (AppController.Instance.editorIsInOfflineMode) {
 				TextAsset levelAsset = Resources.Load<TextAsset>("Data/Levels/Genesis");
 				string json = levelAsset.text;
-				LevelData.Instance.loadLevelFromJson (_levelEditor.goWorld, json);
+				LevelData.Instance.loadLevelFromJson (json);
 			} else {
 				LevelManager.Instance.loadLevelByIndex (0);
 			}
@@ -184,9 +184,7 @@ namespace DragginzWorldEditor
 		//
 		private void resetWorld()
 		{
-			PropsManager.Instance.reset ();
-
-			_numCubes = 0;
+			/*PropsManager.Instance.reset ();
 
 			foreach (Transform child in _levelEditor.goWorld.transform) {
 				Destroy (child.gameObject);
@@ -195,9 +193,11 @@ namespace DragginzWorldEditor
 			foreach (Transform child in _levelEditor.goProps.transform) {
 				Destroy (child.gameObject);
 			}
+			*/
 
 			_visibleQuadrants.Clear ();
 			_aQuadrantChangedVisibility.Clear ();
+			_numCubes = 0;
 
 			/*for (int x = _iMinLevelCoord; x <= _iMaxLevelCoord; ++x) {
 				for (int y = _iMinLevelCoord; y <= _iMaxLevelCoord; ++y) {
@@ -306,7 +306,7 @@ namespace DragginzWorldEditor
 
 			GameObject quadrant = _assetFactory.createQuadrantClone ();
 			quadrant.name = Globals.containerGameObjectPrepend + quadrantId;
-			quadrant.transform.SetParent(_levelEditor.goWorld.transform);
+			quadrant.transform.SetParent(_levelEditor.curLevelChunk.trfmCubes);
 			quadrant.transform.localPosition = v3CubePos;
 			quadrant.isStatic = true;
 
@@ -384,7 +384,7 @@ namespace DragginzWorldEditor
 		}*/
 
 		//
-		public GameObject createProp(propDef prop, Vector3 v3Pos, string name, Transform parent, bool useCollider = true, bool useGravity = true)
+		/*public GameObject createProp(propDef prop, Vector3 v3Pos, string name, Transform parent, bool useCollider = true, bool useGravity = true)
 		{
 			GameObject goNew = Instantiate (prop.prefab);
 			goNew.transform.SetParent (parent);
@@ -402,6 +402,6 @@ namespace DragginzWorldEditor
 			}
 
 			return goNew;
-		}
+		}*/
 	}
 }

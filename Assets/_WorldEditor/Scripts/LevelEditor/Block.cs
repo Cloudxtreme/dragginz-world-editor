@@ -11,6 +11,7 @@ namespace DragginzWorldEditor
 {
 	public class Block : MonoBehaviour {
 
+		/*
 		private World _world;
 		private GameObject _parent;
 
@@ -26,5 +27,6 @@ namespace DragginzWorldEditor
 		void OnBecameInvisible () {
 			_world.setQuadrantVisibilityFlag (_parent, false);
 		}
+		*/
 	}
 }

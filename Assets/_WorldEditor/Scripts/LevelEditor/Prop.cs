@@ -30,7 +30,7 @@ namespace DragginzWorldEditor
 			EditorObjectSelection selection = EditorObjectSelection.Instance;
 
 			Transform trfmParent = transform.parent;
-			while (trfmParent != null && trfmParent.gameObject != LevelEditor.Instance.goProps) {
+			while (trfmParent != null && trfmParent != LevelEditor.Instance.curLevelChunk.trfmProps) {
 				selection.AddObjectToSelection(trfmParent.gameObject, false);
 				Debug.Log ("    ->"+trfmParent.name);
 				trfmParent = trfmParent.parent;

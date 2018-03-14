@@ -282,7 +282,11 @@ namespace RTEditor
                 _nullCleanupTime = 0.0f;
             }
        
-			GameObject[] sceneObjects = LevelEditor.Instance.goProps.GetAllChildren().ToArray();// MonoBehaviour.FindObjectsOfType<GameObject>();
+			if (LevelEditor.Instance.curLevelChunk == null) {
+				return;
+			}
+			GameObject container = LevelEditor.Instance.curLevelChunk.trfmProps.gameObject;
+			GameObject[] sceneObjects = container.GetAllChildren().ToArray();// MonoBehaviour.FindObjectsOfType<GameObject>();
             foreach(GameObject gameObject in sceneObjects)
             {
                 if (!IsGameObjectRegistered(gameObject)) 

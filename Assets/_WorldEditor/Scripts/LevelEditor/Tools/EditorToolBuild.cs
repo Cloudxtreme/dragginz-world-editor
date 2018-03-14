@@ -123,7 +123,7 @@ namespace DragginzWorldEditor
 			Vector3 v3QuadrantPos = new Vector3 ((float)x / 1f, (float)y / 1f, (float)z / 1f);
 			string quadrantId = (int)v3QuadrantPos.x + "_" + (int)v3QuadrantPos.y + "_" + (int)v3QuadrantPos.z;
 			string sQuadrantName = Globals.containerGameObjectPrepend + quadrantId;
-			Transform trfmQuadrant = _levelEditor.goWorld.transform.Find (sQuadrantName);
+			Transform trfmQuadrant = _levelEditor.curLevelChunk.trfmCubes.Find (sQuadrantName);
 
 			//Debug.Log ("quadrant: "+trfmQuadrant+" - "+trfmQuadrant.name);
 			if (trfmQuadrant == null) {

@@ -18,16 +18,15 @@ namespace DragginzWorldEditor
 		public string lastLevelName = Globals.defaultLevelName;
 		public int currentLevelId = -1;
 
-		public void loadLevelFromJson(GameObject parent, string json) { //string filePath) {
-
-			//TextAsset levelAsset = Resources.Load<TextAsset>(filePath);
-			//string json = levelAsset.text;
+		public void loadLevelFromJson(string json)
+		{
+			LevelEditor.Instance.curLevelChunk.reset ();
 
 			LevelFile levelFile = null;
 			try {
 				levelFile = createDataFromJson(json);
 				if (levelFile != null) {
-					createLevel (levelFile, parent);
+					createLevel (levelFile);
 				}
 			}
 			catch (System.Exception e) {
@@ -37,8 +36,10 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void loadLevelDataFromFile(GameObject parent, string fileName) {
-			
+		public void loadLevelDataFromFile(string fileName)
+		{
+			LevelEditor.Instance.curLevelChunk.reset ();
+
 			//BinaryFormatter bf = new BinaryFormatter();
 			//FileStream file = File.Open(filename, FileMode.Open);
 			string json = File.ReadAllText(fileName);
@@ -48,7 +49,7 @@ namespace DragginzWorldEditor
 				//levelFile = bf.Deserialize(file) as LevelFile;
 				levelFile = createDataFromJson(json);
 				if (levelFile != null) {
-					createLevel (levelFile, parent);
+					createLevel (levelFile);
 				}
 			}
 			catch (System.Exception e) {
@@ -71,7 +72,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void createLevel(LevelFile levelFile, GameObject parent) {
+		private void createLevel(LevelFile levelFile) {
 
 			if (levelFile.fileFormatVersion != Globals.levelSaveFormatVersion) {
 				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningObsoleteFileFormat);
@@ -85,7 +86,8 @@ namespace DragginzWorldEditor
 
 			LevelEditor levelEditor = LevelEditor.Instance;
 			PropsManager propsManager = PropsManager.Instance;
-			World world = World.Instance;
+			//World world = World.Instance;
+			LevelChunk levelChunk = levelEditor.curLevelChunk;
 
 			levelEditor.resetAll ();
 
@@ -110,7 +112,7 @@ namespace DragginzWorldEditor
 				pos.z = (int)levelFile.levelQuadrants[i].position.z;
 			
 				string quadrantId = (int)pos.x + "_" + (int)pos.y + "_" + (int)pos.z;
-				goQuadrant = world.createQuadrant (pos, quadrantId);
+				goQuadrant = levelChunk.createQuadrant (pos, quadrantId);
 				if (goQuadrant == null) {
 					continue;
 				}
@@ -139,7 +141,7 @@ namespace DragginzWorldEditor
 
 					if (levelFile.levelQuadrants [i].levelObjects [j].isActive == 0) {
 						cube.SetActive (false);
-						world.numCubes--;
+						levelChunk.numCubes--;
 					}
 					else {
 						//pos2.x = levelFile.levelQuadrants [i].levelObjects [j].position.x;
@@ -158,15 +160,15 @@ namespace DragginzWorldEditor
 						//id += ((int)(pos2.y / fRockSize)) * quadLen;
 						//id += ((int)(pos2.z / fRockSize));
 
-						world.setCube (cube, material, isEdge);
+						levelChunk.setCube (cube, material, isEdge);
 						//world.createRock (pos2, container, id.ToString (), material, isEdge);
 					}
 				}
 			}
 
 			Debug.Log ("quadrants: "+len.ToString());
-			Debug.Log ("cubes: "+world.numCubes.ToString());
-			MainMenu.Instance.setCubeCountText (world.numCubes);
+			Debug.Log ("cubes: "+levelChunk.numCubes.ToString());
+			MainMenu.Instance.setCubeCountText (levelChunk.numCubes);
 
 			if (levelFile.levelProps != null) {
 				
@@ -187,8 +189,8 @@ namespace DragginzWorldEditor
 					prop = propsManager.getPropDefForId(levelProp.id);
 					if (prop.id != -1) {
 					
-						name = prop.name + "_" + levelEditor.goProps.transform.childCount;
-						goProp = world.createProp (prop, pos, name, levelEditor.goProps.transform, prop.useCollider, prop.useGravity);
+						name = prop.name + "_" + levelChunk.trfmProps.childCount;
+						goProp = propsManager.createProp (prop, pos, name, levelChunk.trfmProps, prop.useCollider, prop.useGravity);
 
 						rotation.w = levelProp.rotation.w;
 						rotation.x = levelProp.rotation.x;
@@ -196,7 +198,7 @@ namespace DragginzWorldEditor
 						rotation.z = levelProp.rotation.z;
 						goProp.transform.rotation = rotation;
 
-						PropsManager.Instance.addWorldProp (prop.id, goProp);
+						levelChunk.addWorldProp (prop.id, goProp);
 					}
 				}
 			}
@@ -237,14 +239,21 @@ namespace DragginzWorldEditor
 		//
 		private LevelFile createLevelData(string levelName) {
 
-			GameObject parent = LevelEditor.Instance.goWorld;
+			Transform parent = LevelEditor.Instance.curLevelChunk.trfmCubes;
 			if (parent == null) {
 				return null;
 			}
 
-			LevelFile levelFile         = new LevelFile ();
+			LevelFile levelFile = new LevelFile ();
 			levelFile.fileFormatVersion = Globals.levelSaveFormatVersion;
-			levelFile.levelName         = levelName;
+
+			levelFile.levelId    = -1;
+			levelFile.levelName  = levelName;
+
+			levelFile.levelPos   = new DataTypeVector3 ();
+			levelFile.levelPos.x = 0;
+			levelFile.levelPos.y = 0;
+			levelFile.levelPos.z = 0;
 
 			levelFile.playerPosition   = new DataTypeVector3 ();
 			levelFile.playerPosition.x = FlyCam.Instance.player.position.x;
@@ -256,16 +265,15 @@ namespace DragginzWorldEditor
 			levelFile.playerEuler.y = FlyCam.Instance.player.eulerAngles.y;
 			levelFile.playerEuler.z = FlyCam.Instance.player.eulerAngles.z;
 
-			levelFile.levelQuadrants    = new List<LevelQuadrant> ();
+			levelFile.levelQuadrants = new List<LevelQuadrant> ();
 
-			foreach (Transform child in parent.transform) {
+			foreach (Transform child in parent) {
 
 				if (!child.gameObject.activeSelf) {
 					continue;
 				}
 
 				LevelQuadrant quadrant = new LevelQuadrant ();
-				//quadrant.name = child.name;
 
 				quadrant.position   = new DataTypeVector3 ();
 				quadrant.position.x = child.localPosition.x;
@@ -328,7 +336,7 @@ namespace DragginzWorldEditor
 
 			List<LevelProp> levelProps = new List<LevelProp> ();
 
-			Dictionary<GameObject, worldProp> worldProps = PropsManager.Instance.worldProps;
+			Dictionary<GameObject, worldProp> worldProps = LevelEditor.Instance.curLevelChunk.worldProps;
 			foreach (KeyValuePair<GameObject, worldProp> p in worldProps) {
 
 				worldProp prop = p.Value;

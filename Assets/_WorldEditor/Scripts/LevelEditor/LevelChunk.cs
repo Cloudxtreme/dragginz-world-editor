@@ -13,6 +13,10 @@ namespace DragginzWorldEditor
 {
 	public class LevelChunk : MonoSingleton<LevelChunk>
 	{
+		private Transform _trfmPlaceholder;
+		private Transform _trfmCubes;
+		private Transform _trfmProps;
+
 		private int _levelId;
 
 		private LevelEditor _levelEditor;
@@ -20,9 +24,23 @@ namespace DragginzWorldEditor
 
 		private Dictionary<string, int> _quadrantFlags;
 
+		private Dictionary<GameObject, worldProp> _worldProps;
+
 		private int _numCubes;
 
 		#region Getters
+
+		public Transform trfmCubes {
+			get { return _trfmCubes; }
+		}
+
+		public Transform trfmProps {
+			get { return _trfmProps; }
+		}
+
+		public Dictionary<GameObject, worldProp> worldProps {
+			get { return _worldProps; }
+		}
 
 		public int numCubes {
 			get { return _numCubes; }
@@ -31,19 +49,40 @@ namespace DragginzWorldEditor
 
 		#endregion
 
-		public void init(LevelStruct level)
+		#region SystemMethods
+
+		void Awake()
 		{
-			_levelId = level.id;
+			_trfmPlaceholder = transform.Find ("placeholderContainer");
+			_trfmCubes = transform.Find ("cubesContainer");
+			_trfmProps = transform.Find ("propsContainer");
+		}
+
+		#endregion
+
+		public void init()
+		{
+			_levelId = -1;
 
 			_levelEditor = LevelEditor.Instance;
 			_assetFactory = AssetFactory.Instance;
 
 			_quadrantFlags = new Dictionary<string, int> ();
 
+			_worldProps = new Dictionary<GameObject, worldProp> ();
+
 			_numCubes = 0;
 
+			//LevelManager.Instance.loadLevelByIndex (_levelId);
+		}
+
+		//
+		public void setLevelData(LevelStruct level)
+		{
+			_levelId = level.id;
+
 			GameObject levelChunk = _assetFactory.createLevelChunkClone ();
-			levelChunk.transform.parent = transform;
+			levelChunk.transform.parent = _trfmPlaceholder;
 			levelChunk.transform.localScale = new Vector3 (Globals.LEVEL_WIDTH, Globals.LEVEL_HEIGHT, Globals.LEVEL_DEPTH);
 			levelChunk.transform.position = new Vector3 (level.x * Globals.LEVEL_WIDTH, -level.y * Globals.LEVEL_HEIGHT, level.z * Globals.LEVEL_DEPTH);
 
@@ -59,23 +98,27 @@ namespace DragginzWorldEditor
 					}
 				}
 			}
-
-			//LevelManager.Instance.loadLevelByIndex (_levelId);
 		}
 
 		//
-		public void resetAll() {
+		public void reset()
+		{
+			foreach (Transform child in _trfmCubes) {
+				Destroy (child.gameObject);
+			}
 
-			resetWorld();
+			foreach (Transform child in _trfmProps) {
+				Destroy (child.gameObject);
+			}
+
+			_worldProps.Clear ();
+
+			_quadrantFlags.Clear ();
+
+			_numCubes = 0;
 		}
 
-		public void createEmptyLevel() {
-			
-			createEmptyWorld ();
-		}
-
-		//
-		private void createEmptyWorld() {
+		public void createOfflineLevel() {
 
 			float fQuadrantSize = _levelEditor.fQuadrantSize;
 			int count = 0;
@@ -107,25 +150,8 @@ namespace DragginzWorldEditor
 			MainMenu.Instance.setCubeCountText (_numCubes);
 		}
 
-		//
-		private void resetWorld()
-		{
-			PropsManager.Instance.reset ();
+		#region Cubes
 
-			_numCubes = 0;
-
-			foreach (Transform child in _levelEditor.goWorld.transform) {
-				Destroy (child.gameObject);
-			}
-
-			foreach (Transform child in _levelEditor.goProps.transform) {
-				Destroy (child.gameObject);
-			}
-
-			_quadrantFlags.Clear ();
-		}
-
-		//
 		public void createRockCube (Vector3 v3CubePos, bool fillQuadrant = true)
 		{
 			int qX = (int)v3CubePos.x;
@@ -178,13 +204,13 @@ namespace DragginzWorldEditor
 		{
 			// cube already created at that position
 			if (_quadrantFlags.ContainsKey (quadrantId)) {
-				Debug.Log ("whatwhatwhat?");
+				//Debug.Log ("whatwhatwhat?");
 				return null;
 			}
 
 			GameObject quadrant = _assetFactory.createQuadrantClone ();
 			quadrant.name = Globals.containerGameObjectPrepend + quadrantId;
-			quadrant.transform.SetParent(_levelEditor.goWorld.transform);
+			quadrant.transform.SetParent(_trfmCubes);
 			quadrant.transform.localPosition = v3CubePos;
 			quadrant.isStatic = true;
 
@@ -209,25 +235,35 @@ namespace DragginzWorldEditor
 			}
 		}
 
-		//
-		public GameObject createProp(propDef prop, Vector3 v3Pos, string name, Transform parent, bool useCollider = true, bool useGravity = true)
+		#endregion
+
+		#region Props
+
+		public void addWorldProp(int id, GameObject go)
 		{
-			GameObject goNew = Instantiate (prop.prefab);
-			goNew.transform.SetParent (parent);
-			goNew.transform.position = v3Pos;
-			goNew.name = name;
-
-			Collider collider = goNew.GetComponent<Collider> ();
-			if (collider != null) {
-				collider.enabled = useCollider;
-			}
-
-			Rigidbody rigidBody = goNew.GetComponent<Rigidbody> ();
-			if (rigidBody != null) {
-				rigidBody.useGravity = useGravity;
-			}
-
-			return goNew;
+			_worldProps.Add (go, new worldProp (id, go.name, go));
 		}
+
+		//
+		public void removeWorldProp(GameObject go)
+		{
+			if (_worldProps.ContainsKey (go)) {
+				_worldProps.Remove (go);
+			}
+		}
+
+		public propDef getPropDefForGameObject(GameObject go)
+		{
+			propDef p = new propDef();
+			p.id = -1;
+
+			if (_worldProps.ContainsKey (go)) {
+				p = PropsManager.Instance.getPropDefForId(_worldProps [go].id);
+			}
+
+			return p;
+		}
+
+		#endregion
 	}
 }

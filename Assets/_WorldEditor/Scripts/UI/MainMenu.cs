@@ -59,9 +59,11 @@ namespace DragginzWorldEditor
         private EditorGizmoSystem _gizmoSystem;
             
         private Dropdown _trfmDropDownFile = null;
+		private Text _txtPanelFile = null;
         private int _iDropDownFileOptions = 0;
 
 		private Dropdown _trfmDropDownLevel = null;
+		private Text _txtPanelLevel = null;
 		private int _iDropDownLevelOptions = 0;
 		private int _iSelectedLevel = -1;
 
@@ -110,7 +112,13 @@ namespace DragginzWorldEditor
             }
 
 			Transform trfmMenu;
-            if (panelFileMenu) {
+			Transform trfmText;
+
+            if (panelFileMenu != null) {
+				trfmText = panelFileMenu.Find("Text");
+				if (trfmText != null) {
+					_txtPanelFile = trfmText.GetComponent<Text> ();
+				}
                 trfmMenu = panelFileMenu.Find("DropdownFile");
                 if (trfmMenu) {
                     _trfmDropDownFile = trfmMenu.GetComponent<Dropdown>();
@@ -120,7 +128,11 @@ namespace DragginzWorldEditor
                 }
             }
 
-			if (panelLevelMenu) {
+			if (panelLevelMenu != null) {
+				trfmText = panelLevelMenu.Find("Text");
+				if (trfmText != null) {
+					_txtPanelLevel = trfmText.GetComponent<Text> ();
+				}
 				trfmMenu = panelLevelMenu.Find("DropdownFile");
 				if (trfmMenu) {
 					_trfmDropDownLevel = trfmMenu.GetComponent<Dropdown>();
@@ -251,7 +263,13 @@ namespace DragginzWorldEditor
 		{
 			panelTools.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 			panelFileMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
-			panelLevelMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null && !AppController.Instance.editorIsInOfflineMode);
+			panelLevelMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
+
+			_txtPanelFile.color = (AppController.Instance.editorIsInOfflineMode ? Color.black : Color.gray);
+			_trfmDropDownFile.interactable = AppController.Instance.editorIsInOfflineMode;
+
+			_txtPanelLevel.color = (!AppController.Instance.editorIsInOfflineMode ? Color.black : Color.gray);
+			_trfmDropDownLevel.interactable = !AppController.Instance.editorIsInOfflineMode;
 		}
 
 		//
@@ -370,7 +388,7 @@ namespace DragginzWorldEditor
 
 			FileBrowser.OpenFilePanel("Open file Title", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), new string[] { "json" }, null, (bool canceled, string filePath) => {
 				if (!canceled) {
-					LevelData.Instance.loadLevelDataFromFile(LevelEditor.Instance.goWorld, filePath);
+					LevelData.Instance.loadLevelDataFromFile(filePath);
 				}
 			});
 		}

@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 65376882433365108}
   - component: {fileID: 23309412091287048}
   m_Layer: 0
-  m_Name: prefabLevelChunk
+  m_Name: prefabLevelPlaceholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

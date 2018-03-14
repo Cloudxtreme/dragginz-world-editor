@@ -115,7 +115,7 @@ namespace DragginzWorldEditor
 			if (ls.jsonData == null || ls.jsonData == "") {
 				AppController.Instance.showPopup (PopupMode.Notification, "Error", Globals.warningInvalidFileFormat.Replace("%1",ls.filename));
 			} else {
-				LevelData.Instance.loadLevelFromJson (LevelEditor.Instance.goWorld, ls.jsonData);
+				LevelData.Instance.loadLevelFromJson (ls.jsonData);
 			}
 		}
 
@@ -159,6 +159,7 @@ namespace DragginzWorldEditor
 			return json;
 		}
 
+		//
 		public string getLevelJson(int x, int y, int z) 
 		{
 			/*if (_levelMapByPos.ContainsKey (x)) {
@@ -172,6 +173,21 @@ namespace DragginzWorldEditor
 			return null;
 		}
 
+		//
+		public LevelChunk createOfflineLevelChunk()
+		{
+			LevelChunk chunk;
+
+			GameObject gameObject = AssetFactory.Instance.createLevelContainerClone ();
+			gameObject.name = "LevelChunk_Offline";
+
+			chunk = gameObject.AddComponent<LevelChunk> ();
+			chunk.init ();
+
+			return chunk;
+		}
+
+		//
 		public Dictionary<int, LevelChunk> createLevelChunks()
 		{
 			Dictionary<int, LevelChunk> chunks = new Dictionary<int, LevelChunk> ();
@@ -185,7 +201,8 @@ namespace DragginzWorldEditor
 				gameObject.name = "LevelChunk_" + level.id.ToString ();
 
 				LevelChunk chunk = gameObject.AddComponent<LevelChunk> ();
-				chunk.init (level);
+				chunk.init ();
+				chunk.setLevelData (level);
 			}
 
 			return chunks;

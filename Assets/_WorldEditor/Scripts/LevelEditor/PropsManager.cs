@@ -33,7 +33,7 @@ namespace DragginzWorldEditor
 	{
 		private List<propDef> _levelPropDefs;
 		private int _iSelectedItem;
-		private Dictionary<GameObject, worldProp> _worldProps;
+		//private Dictionary<GameObject, worldProp> _worldProps;
 
 		#region Getters
 
@@ -45,9 +45,9 @@ namespace DragginzWorldEditor
 			get { return _iSelectedItem; }
 		}
 
-		public Dictionary<GameObject, worldProp> worldProps {
+		/*public Dictionary<GameObject, worldProp> worldProps {
 			get { return _worldProps; }
-		}
+		}*/
 
 		#endregion
 
@@ -77,7 +77,7 @@ namespace DragginzWorldEditor
 
 			_iSelectedItem = 0;
 
-			_worldProps = new Dictionary<GameObject, worldProp> ();
+			//_worldProps = new Dictionary<GameObject, worldProp> ();
 		}
 
 		//
@@ -104,7 +104,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public propDef getPropDefForGameObject(GameObject go)
+		/*public propDef getPropDefForGameObject(GameObject go)
 		{
 			propDef p = new propDef();
 			p.id = -1;
@@ -114,13 +114,34 @@ namespace DragginzWorldEditor
 			}
 
 			return p;
+		}*/
+
+		//
+		public GameObject createProp(propDef prop, Vector3 v3Pos, string name, Transform parent, bool useCollider = true, bool useGravity = true)
+		{
+			GameObject goNew = GameObject.Instantiate (prop.prefab);
+			goNew.transform.SetParent (parent);
+			goNew.transform.position = v3Pos;
+			goNew.name = name;
+
+			Collider collider = goNew.GetComponent<Collider> ();
+			if (collider != null) {
+				collider.enabled = useCollider;
+			}
+
+			Rigidbody rigidBody = goNew.GetComponent<Rigidbody> ();
+			if (rigidBody != null) {
+				rigidBody.useGravity = useGravity;
+			}
+
+			return goNew;
 		}
 
 		//
-		public void reset()
+		/*public void reset()
 		{
 			_worldProps.Clear ();
-		}
+		}*/
 
 		//
 		public void toggleSelectedProp(float toggle)
@@ -135,18 +156,16 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void addWorldProp(int id, GameObject go)
+		/*public void addWorldProp(int id, GameObject go)
 		{
 			_worldProps.Add (go, new worldProp (id, go.name, go));
 		}
-
-		//
 		public void removeWorldProp(GameObject go)
 		{
 			if (_worldProps.ContainsKey (go)) {
 				_worldProps.Remove (go);
 			}
-		}
+		}*/
 
 		#endregion
 	}

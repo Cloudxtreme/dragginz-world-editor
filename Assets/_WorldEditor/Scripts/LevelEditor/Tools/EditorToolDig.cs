@@ -65,7 +65,7 @@ namespace DragginzWorldEditor
 			int i, len;
 			int destroyedCubes = 0;
 
-			World world = World.Instance;
+			//World world = World.Instance;
 
 			_levelEditor.resetUndoActions ();
 
@@ -93,8 +93,8 @@ namespace DragginzWorldEditor
 				MainMenu.Instance.setUndoButton (true);
 			}
 
-			world.numCubes -= destroyedCubes;
-			MainMenu.Instance.setCubeCountText (world.numCubes);
+			_levelEditor.curLevelChunk.numCubes -= destroyedCubes;
+			MainMenu.Instance.setCubeCountText (_levelEditor.curLevelChunk.numCubes);
 
 			// extend level if necessary
 			len = listcubeTransforms.Count;
@@ -104,7 +104,7 @@ namespace DragginzWorldEditor
 
 				int j, len2 = adjacentCubes.Count;
 				for (j = 0; j < len2; ++j) {
-					world.createRockCube (adjacentCubes [j]);
+					_levelEditor.curLevelChunk.createRockCube (adjacentCubes [j]);
 				}
 			}
 			listcubeTransforms.Clear ();
