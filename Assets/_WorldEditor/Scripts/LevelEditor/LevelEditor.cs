@@ -163,17 +163,24 @@ namespace DragginzWorldEditor
 			SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
 			setMode (AppState.Null, true);
 
+			PropsManager.Instance.init ();
+
 			if (AppController.Instance.editorIsInOfflineMode) {
 				//_World.init ();
 				_curLevelChunk = LevelManager.Instance.createOfflineLevelChunk ();
 				_curLevelChunk.createOfflineLevel ();
-			} else {
+			}
+			else
+			{
 				_levelChunks = LevelManager.Instance.createLevelChunks();
-				//_curLevelChunk = LevelManager.Instance.loadLevelByIndex (0);
+				int firstLevelId = LevelManager.Instance.getLevelIdByIndex (0);
+				_curLevelChunk = _levelChunks [firstLevelId];
+				LevelManager.Instance.loadLevelByIndex (0);
 			}
 
+			_curLevelChunk.showPlaceHolder (false);
+
 			MainMenu.Instance.init();
-			PropsManager.Instance.init ();
 
 			_popup = MainMenu.Instance.popup;
 

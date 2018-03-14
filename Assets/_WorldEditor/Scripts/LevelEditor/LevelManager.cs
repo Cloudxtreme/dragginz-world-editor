@@ -199,10 +199,13 @@ namespace DragginzWorldEditor
 
 				GameObject gameObject = AssetFactory.Instance.createLevelContainerClone ();
 				gameObject.name = "LevelChunk_" + level.id.ToString ();
+				gameObject.transform.position = new Vector3 (level.x * Globals.LEVEL_WIDTH, -level.y * Globals.LEVEL_HEIGHT, level.z * Globals.LEVEL_DEPTH);
 
 				LevelChunk chunk = gameObject.AddComponent<LevelChunk> ();
 				chunk.init ();
 				chunk.setLevelData (level);
+
+				chunks.Add (level.id, chunk);
 			}
 
 			return chunks;

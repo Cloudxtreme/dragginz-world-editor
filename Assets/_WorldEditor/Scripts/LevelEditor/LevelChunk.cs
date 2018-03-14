@@ -84,7 +84,7 @@ namespace DragginzWorldEditor
 			GameObject levelChunk = _assetFactory.createLevelChunkClone ();
 			levelChunk.transform.parent = _trfmPlaceholder;
 			levelChunk.transform.localScale = new Vector3 (Globals.LEVEL_WIDTH, Globals.LEVEL_HEIGHT, Globals.LEVEL_DEPTH);
-			levelChunk.transform.position = new Vector3 (level.x * Globals.LEVEL_WIDTH, -level.y * Globals.LEVEL_HEIGHT, level.z * Globals.LEVEL_DEPTH);
+			levelChunk.transform.localPosition = new Vector3 (Globals.LEVEL_WIDTH / 2, Globals.LEVEL_HEIGHT / 2, Globals.LEVEL_DEPTH / 2);
 
 			int i;
 			Transform txt;
@@ -118,6 +118,13 @@ namespace DragginzWorldEditor
 			_numCubes = 0;
 		}
 
+		//
+		public void showPlaceHolder(bool state)
+		{
+			_trfmPlaceholder.gameObject.SetActive (state);
+		}
+
+		//
 		public void createOfflineLevel() {
 
 			float fQuadrantSize = _levelEditor.fQuadrantSize;
