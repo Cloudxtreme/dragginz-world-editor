@@ -2,6 +2,7 @@
   "levels": [
     {
       "id": 0,
+      "name": "Chunky Cheese",
       "filename": "level_id_0.json",
       "x": 0,
       "y": 0,
@@ -9,6 +10,7 @@
     },
     {
       "id": 1,
+      "name": "Chunk Berry",
       "filename": "level_id_1.json",
       "x": 1,
       "y": 0,
@@ -16,6 +18,7 @@
     },
     {
       "id": 2,
+      "name": "Chunk Norris",
       "filename": "level_id_2.json",
       "x": 2,
       "y": 0,
@@ -23,6 +26,7 @@
     },
     {
       "id": 13,
+      "name": "The Genesis Chunk",
       "filename": "genesis.json",
       "x": 1,
       "y": 1,

@@ -18,7 +18,7 @@ namespace DragginzWorldEditor
 		public string lastLevelName = Globals.defaultLevelName;
 		public int currentLevelId = -1;
 
-		public void loadLevelResource(GameObject parent, string json) { //string filePath) {
+		public void loadLevelFromJson(GameObject parent, string json) { //string filePath) {
 
 			//TextAsset levelAsset = Resources.Load<TextAsset>(filePath);
 			//string json = levelAsset.text;

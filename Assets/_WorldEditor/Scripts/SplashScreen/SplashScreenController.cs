@@ -86,13 +86,13 @@ namespace DragginzWorldEditor
         }
 
 		//
-		private void ConnectionSuccess()
+		private void ConnectionSuccess(string data)
 		{
 			AppController.Instance.editorIsInOfflineMode = false;
 
 			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, ConnectionTimeout));
 
-			LevelManager.Instance.init ();
+			LevelManager.Instance.init (data);
 
 			Message.text = "Loading Level...";
 			Update.gameObject.SetActive (true);
@@ -140,9 +140,11 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		private void LoadSuccess()
+		private void LoadSuccess(string data)
 		{
 			StopCoroutine(TimerUtils.WaitAndPerform(5.0f, LoadTimeout));
+
+			LevelManager.Instance.setLevelJson (LevelManager.Instance.levelByIndex [_iCurLevelChunk].id, data);
 
 			_iCurLevelChunk++;
 

@@ -11,12 +11,14 @@ using UnityEngine;
 
 namespace DragginzWorldEditor
 {
-	public class LevelChunk : MonoSingleton<LevelChunk> {
+	public class LevelChunk : MonoSingleton<LevelChunk>
+	{
+		private int _levelId;
 
 		private LevelEditor _levelEditor;
 		private AssetFactory _assetFactory;
 
-		private Dictionary<string, int> _quadrantFlagsNew;
+		private Dictionary<string, int> _quadrantFlags;
 
 		private int _numCubes;
 
@@ -29,17 +31,36 @@ namespace DragginzWorldEditor
 
 		#endregion
 
-		public void init()
+		public void init(LevelStruct level)
 		{
+			_levelId = level.id;
+
 			_levelEditor = LevelEditor.Instance;
 			_assetFactory = AssetFactory.Instance;
 
-			_quadrantFlagsNew = new Dictionary<string, int> ();
+			_quadrantFlags = new Dictionary<string, int> ();
 
 			_numCubes = 0;
 
-			//LevelData.Instance.loadLevelResource(_levelEditor.goWorld, "Data/Levels/Genesis");
-			LevelManager.Instance.loadLevelByIndex (0);
+			GameObject levelChunk = _assetFactory.createLevelChunkClone ();
+			levelChunk.transform.parent = transform;
+			levelChunk.transform.localScale = new Vector3 (Globals.LEVEL_WIDTH, Globals.LEVEL_HEIGHT, Globals.LEVEL_DEPTH);
+			levelChunk.transform.position = new Vector3 (level.x * Globals.LEVEL_WIDTH, -level.y * Globals.LEVEL_HEIGHT, level.z * Globals.LEVEL_DEPTH);
+
+			int i;
+			Transform txt;
+			TextMesh textMesh;
+			for (i = 1; i <= 6; ++i) {
+				txt = levelChunk.transform.Find ("txt" + i.ToString ());
+				if (txt != null) {
+					textMesh = txt.GetComponent<TextMesh> ();
+					if (textMesh != null) {
+						textMesh.text = "Level id: " + _levelId.ToString () + "\n" + "'" + level.name + "'";
+					}
+				}
+			}
+
+			//LevelManager.Instance.loadLevelByIndex (_levelId);
 		}
 
 		//
@@ -101,7 +122,7 @@ namespace DragginzWorldEditor
 				Destroy (child.gameObject);
 			}
 
-			_quadrantFlagsNew.Clear ();
+			_quadrantFlags.Clear ();
 		}
 
 		//
@@ -156,7 +177,7 @@ namespace DragginzWorldEditor
 		public GameObject createQuadrant(Vector3 v3CubePos, string quadrantId)
 		{
 			// cube already created at that position
-			if (_quadrantFlagsNew.ContainsKey (quadrantId)) {
+			if (_quadrantFlags.ContainsKey (quadrantId)) {
 				Debug.Log ("whatwhatwhat?");
 				return null;
 			}
@@ -169,7 +190,7 @@ namespace DragginzWorldEditor
 
 			_numCubes += 8;
 				
-			_quadrantFlagsNew.Add(quadrantId, 1);
+			_quadrantFlags.Add(quadrantId, 1);
 
 			return quadrant;
 		}

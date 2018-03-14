@@ -14,14 +14,16 @@ namespace DragginzWorldEditor
 {
 	public struct LevelStruct {
 		public int id;
+		public string name; 
 		public string filename; 
 		public int x;
 		public int y;
 		public int z;
 		public string jsonData;
-		public LevelStruct(int id, string filename, int x, int y, int z, string jd = null) {
+		public LevelStruct(int id, string name, string filename, int x, int y, int z, string jd = null) {
 			//Debug.Log ("creating level struct id "+id);
 			this.id = id;
+			this.name = name;
 			this.filename = filename;
 			this.x = x;
 			this.y = y;
@@ -33,8 +35,8 @@ namespace DragginzWorldEditor
 	//
 	public class LevelManager : Singleton<LevelManager>
 	{
-		private Dictionary<int, Dictionary<int, Dictionary<int, LevelStruct>>> _levelMapByPos;
-		private Dictionary<int, LevelStruct> _levelMapById;
+		//private Dictionary<int, Dictionary<int, Dictionary<int, LevelStruct>>> _levelMapByPos;
+		//private Dictionary<int, LevelStruct> _levelMapById;
 		private LevelStruct[] _levelByIndex;
 
 		private int _numLevels;
@@ -53,10 +55,10 @@ namespace DragginzWorldEditor
 
 		#region PublicMethods
 
-		public void init()
+		public void init(string json)
 		{
-			_levelMapByPos = new Dictionary<int, Dictionary<int, Dictionary<int, LevelStruct>>> ();
-			_levelMapById = new Dictionary<int, LevelStruct> ();
+			//_levelMapByPos = new Dictionary<int, Dictionary<int, Dictionary<int, LevelStruct>>> ();
+			//_levelMapById = new Dictionary<int, LevelStruct> ();
 
 			_numLevels = 0;
 
@@ -64,21 +66,22 @@ namespace DragginzWorldEditor
 				return;
 			}
 
-			JSONNode data = JSON.Parse(LevelEditor.Instance.levelListJson.text);
+			JSONNode data = JSON.Parse (json);//LevelEditor.Instance.levelListJson.text);
 			if (data == null || data ["levels"] == null) {
 				return;
 			}
 
 			JSONArray levels = (JSONArray) data ["levels"];
-			int i, len = levels.Count;
-			_levelByIndex = new LevelStruct[len];
-			for (i = 0; i < len; ++i) {
+			_numLevels = levels.Count;
+			_levelByIndex = new LevelStruct[_numLevels];
+
+			int i;
+			for (i = 0; i < _numLevels; ++i) {
 				JSONNode level = levels [i];
-				LevelStruct ls = new LevelStruct (int.Parse(level["id"]), level["filename"], int.Parse(level["x"]), int.Parse(level["y"]), int.Parse(level["z"]));
+				LevelStruct ls = new LevelStruct (int.Parse(level["id"]), level["name"], level["filename"], int.Parse(level["x"]), int.Parse(level["y"]), int.Parse(level["z"]));
 				_levelByIndex [i] = ls;
 				saveLevelInfo (ls);
 				MainMenu.Instance.addLevelToMenu (level ["filename"]);
-				_numLevels++;
 			}
 		}
 
@@ -100,43 +103,92 @@ namespace DragginzWorldEditor
 			}
 
 			LevelStruct ls = _levelByIndex [index];
-			if (ls.jsonData == null || ls.jsonData == "") {
+			/*if (ls.jsonData == null || ls.jsonData == "") {
 				TextAsset levelAsset = Resources.Load<TextAsset>("Data/Levels/"+ls.filename);
 				if (levelAsset != null) {
 					string json = levelAsset.text;
 					ls.jsonData = json;
 					_levelByIndex [index] = ls;
 				}
-			}
+			}*/
 
 			if (ls.jsonData == null || ls.jsonData == "") {
-				AppController.Instance.showPopup (PopupMode.Notification, "Error", Globals.errorLevelFileInvalidFilename.Replace("%1",ls.filename));
+				AppController.Instance.showPopup (PopupMode.Notification, "Error", Globals.warningInvalidFileFormat.Replace("%1",ls.filename));
 			} else {
-				LevelData.Instance.loadLevelResource (LevelEditor.Instance.goWorld, ls.jsonData);
+				LevelData.Instance.loadLevelFromJson (LevelEditor.Instance.goWorld, ls.jsonData);
 			}
+		}
+
+		//
+		public void setLevelJson(int id, string json) 
+		{
+			int i;
+			for (i = 0; i < _numLevels; ++i) {
+				if (_levelByIndex [i].id == id) {
+					LevelStruct level = _levelByIndex [i];
+					level.jsonData = json;
+					_levelByIndex [i] = level;
+					break;
+				}
+			}
+
+			/*if (_levelMapById.ContainsKey (id)) {
+				LevelStruct level = _levelMapById [id];
+				level.jsonData = json;
+				_levelMapById [id] = level;
+			}*/
 		}
 
 		//
 		public string getLevelJson(int id) 
 		{
-			if (_levelMapById.ContainsKey (id)) {
-				return _levelMapById [id].jsonData;
+			string json = null;
+
+			int i;
+			for (i = 0; i < _numLevels; ++i) {
+				if (_levelByIndex [i].id == id) {
+					json = _levelByIndex [i].jsonData;
+					break;
+				}
 			}
 
-			return null;
+			/*if (_levelMapById.ContainsKey (id)) {
+				return _levelMapById [id].jsonData;
+			}*/
+
+			return json;
 		}
 
 		public string getLevelJson(int x, int y, int z) 
 		{
-			if (_levelMapByPos.ContainsKey (x)) {
+			/*if (_levelMapByPos.ContainsKey (x)) {
 				if (_levelMapByPos [x].ContainsKey (y)) {
 					if (_levelMapByPos [x] [y].ContainsKey (z)) {
 						return _levelMapByPos [x] [y] [z].jsonData;
 					}
 				}
-			}
+			}*/
 
 			return null;
+		}
+
+		public Dictionary<int, LevelChunk> createLevelChunks()
+		{
+			Dictionary<int, LevelChunk> chunks = new Dictionary<int, LevelChunk> ();
+
+			int i;
+			for (i = 0; i < _numLevels; ++i) {
+
+				LevelStruct level = _levelByIndex [i];
+
+				GameObject gameObject = AssetFactory.Instance.createLevelContainerClone ();
+				gameObject.name = "LevelChunk_" + level.id.ToString ();
+
+				LevelChunk chunk = gameObject.AddComponent<LevelChunk> ();
+				chunk.init (level);
+			}
+
+			return chunks;
 		}
 
 		#endregion
@@ -145,7 +197,7 @@ namespace DragginzWorldEditor
 
 		private void saveLevelInfo(LevelStruct ls)
 		{
-			if (ls.id != -1) {
+			/*if (ls.id != -1) {
 				if (!_levelMapById.ContainsKey (ls.id)) {
 					_levelMapById.Add (ls.id, ls);
 				}
@@ -161,7 +213,7 @@ namespace DragginzWorldEditor
 
 			if (!_levelMapByPos[ls.x][ls.y].ContainsKey (ls.z)) {
 				_levelMapByPos[ls.x][ls.y].Add(ls.z, ls);
-			}
+			}*/
 		}
 
 		#endregion

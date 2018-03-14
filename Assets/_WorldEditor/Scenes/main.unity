@@ -640,8 +640,6 @@ MonoBehaviour:
   goPlayer: {fileID: 824515733}
   goPlayerCameraRig: {fileID: 195152411}
   goPlayerEdit: {fileID: 1608281686}
-  quadrantPrefab: {fileID: 1089392622912026, guid: 5fa6272d2a075aa48b1522a6e7352eaa,
-    type: 2}
   laserAim: {fileID: 1209775551}
   laserAimCenterCube: {fileID: 764806981}
   laserAimMaterial: {fileID: 2100000, guid: 3877836b3e3455d4a831a75fb9f5691a, type: 2}

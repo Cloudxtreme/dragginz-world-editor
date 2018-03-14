@@ -10,11 +10,11 @@ namespace DragginzWorldEditor
 	{
 		private readonly string scriptGetLevelList = "level_list.json";
 
-		private Action _callbackSuccess;
+		private Action<string> _callbackSuccess;
 		private Action<string> _callbackFail;
 
 		//
-		public void loadLevelList(Action callbackSuccess = null, Action<string> callbackFail = null)
+		public void loadLevelList(Action<string> callbackSuccess = null, Action<string> callbackFail = null)
 		{
 			_callbackSuccess = callbackSuccess;
 			_callbackFail = callbackFail;
@@ -23,7 +23,7 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void loadLevelChunk(string filename, Action callbackSuccess = null, Action<string> callbackFail = null)
+		public void loadLevelChunk(string filename, Action<string> callbackSuccess = null, Action<string> callbackFail = null)
 		{
 			_callbackSuccess = callbackSuccess;
 			_callbackFail = callbackFail;
@@ -50,7 +50,7 @@ namespace DragginzWorldEditor
 			else
 			{
 				if (_callbackSuccess != null) {
-					_callbackSuccess.Invoke ();
+					_callbackSuccess.Invoke (www.downloadHandler.text);
 				} else {
 					 Debug.Log (www.downloadHandler.text);
 				}

@@ -167,9 +167,14 @@ namespace DragginzWorldEditor
 			SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
 			setMode (AppState.Null, true);
 
+			if (AppController.Instance.editorIsInOfflineMode) {
+				_World.init ();
+			} else {
+				_levelChunks = LevelManager.Instance.createLevelChunks();
+			}
+
 			MainMenu.Instance.init();
 			PropsManager.Instance.init ();
-			_World.init ();
 
 			_popup = MainMenu.Instance.popup;
 
