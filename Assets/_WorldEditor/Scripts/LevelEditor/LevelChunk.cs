@@ -151,8 +151,8 @@ namespace DragginzWorldEditor
 					}
 				}
 			}
-			Debug.Log ("quadrants: "+count.ToString());
-			Debug.Log ("cubes: "+_numCubes.ToString());
+			Debug.Log ("Offline Level - quadrants: "+count.ToString());
+			Debug.Log ("Offline Level - cubes: "+_numCubes.ToString());
 
 			MainMenu.Instance.setCubeCountText (_numCubes);
 		}
@@ -166,17 +166,19 @@ namespace DragginzWorldEditor
 			int qZ = (int)v3CubePos.z;
 
 			// out of level bounds?
-			if (qX < -1 || qY < -1 || qZ < -1) {
+			if (qX <= -1 || qY <= -1 || qZ <= -1) {
 				return;
 			}
-			else if (qX > Globals.LEVEL_WIDTH || qY > Globals.LEVEL_HEIGHT || qZ > Globals.LEVEL_DEPTH) {
+			else if (qX >= Globals.LEVEL_WIDTH || qY >= Globals.LEVEL_HEIGHT || qZ >= Globals.LEVEL_DEPTH) {
 				return;
 			}
 
 			string quadrantId = qX.ToString() + "_" + qY.ToString() + "_" + qZ.ToString();
 
 			bool isEdgeQuadrant = ((qX == -1 || qY == -1 || qZ == -1) || (qX == Globals.LEVEL_WIDTH || qY == Globals.LEVEL_HEIGHT || qZ == Globals.LEVEL_DEPTH));
-			//Debug.Log (quadrantId + ":isEdgeQuadrant: " + isEdgeQuadrant);
+			if (isEdgeQuadrant) {
+				Debug.Log (quadrantId + ":isEdgeQuadrant: " + isEdgeQuadrant);
+			}
 
 			GameObject cubeParent = createQuadrant (v3CubePos, quadrantId);
 			if (cubeParent == null) {

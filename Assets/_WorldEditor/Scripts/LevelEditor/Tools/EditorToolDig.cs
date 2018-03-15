@@ -11,17 +11,17 @@ namespace DragginzWorldEditor
 {
 	public class EditorToolDig : EditorTool {
 
-		private Vector3 _v3AimSize;
+		//private Vector3 _v3AimSize;
 
 		public EditorToolDig() : base(Globals.EDITOR_TOOL_DIG)
 		{
-			_v3AimSize = new Vector3 (1, 1, 1);
+			//_v3AimSize = new Vector3 (1, 1, 1);
 		}
 
 		//
 		public override void deactivate()
 		{
-			_v3AimSize = MainMenu.Instance.v3DigSettings;
+			//_v3AimSize = MainMenu.Instance.v3DigSettings;
 		}
 
 		//

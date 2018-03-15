@@ -38,6 +38,7 @@ namespace DragginzWorldEditor
 
 		public Button btnUNDO;
 
+		public Image imgMaterialHilight;
 		public RawImage imgSelectedMaterial;
 		public RawImage imgSelectedItem;
 
@@ -76,6 +77,8 @@ namespace DragginzWorldEditor
 
 		private float _lastMouseWheelUpdate;
 
+		private int _iMatHiliteIndex   = 0;
+		private int _iMaterialBoxIndex = 0;
 		private int _iSelectedMaterial = 0;
 		public int iSelectedMaterial {
 			get { return _iSelectedMaterial; }
@@ -452,21 +455,45 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void toggleMaterial(float toggle)
+		public void toggleMaterial(int toggle)
 		{
-			if (Time.realtimeSinceStartup > _lastMouseWheelUpdate) {
-
-				_lastMouseWheelUpdate = Time.realtimeSinceStartup + 0.2f;
-
-				int materialIndex = _iSelectedMaterial;
-				if (toggle < 0) {
-					materialIndex = (materialIndex > 0 ? materialIndex - 1 : 0);//Globals.materials.Length - 1);
-				} else {
-					materialIndex = (materialIndex < (Globals.materials.Length - 1) ? materialIndex + 1 : (Globals.materials.Length - 1));//0);
-				}
-
-				changeMaterial (materialIndex);
+			//Debug.Log ("_iSelectedMaterial before: " + _iSelectedMaterial);
+			int materialIndex = _iSelectedMaterial;
+			if (toggle < 0) {
+				materialIndex = (materialIndex > 0 ? materialIndex - 1 : 0);
+			} else {
+				materialIndex = (materialIndex < (Globals.materials.Length - 1) ? materialIndex + 1 : (Globals.materials.Length - 1));
 			}
+			//Debug.Log ("_iSelectedMaterial after: " + materialIndex);
+
+			//Debug.Log ("_iMaterialBoxIndex before: " + _iMaterialBoxIndex);
+			//Debug.Log ("_iMatHiliteIndex before: " + _iMatHiliteIndex);
+
+			_iMatHiliteIndex += toggle;
+			if (_iMatHiliteIndex < 0) {
+				_iMatHiliteIndex = 0;
+				_iMaterialBoxIndex = (_iMaterialBoxIndex > 0 ? _iMaterialBoxIndex - 1 : 0);
+			}
+			else if (_iMatHiliteIndex > 5) {
+				_iMatHiliteIndex = 5;
+				int maxBoxIndex = Globals.materials.Length - 6;
+				_iMaterialBoxIndex = (_iMaterialBoxIndex < maxBoxIndex ? _iMaterialBoxIndex + 1 : maxBoxIndex);
+			}
+
+			//Debug.Log ("_iMaterialBoxIndex after: " + _iMaterialBoxIndex);
+			//Debug.Log ("_iMatHiliteIndex after: " + _iMatHiliteIndex);
+
+			imgMaterialHilight.transform.localPosition = new Vector2 (_iMatHiliteIndex * 38, 0);
+
+			int i;
+			for (i = 1; i <= 6; ++i) {
+				Transform child = goMaterialSelection.transform.Find ("Material-" + i.ToString ());
+				if (child != null) {
+					child.GetComponent<RawImage> ().texture = LevelEditor.Instance.aTextures[_iMaterialBoxIndex + (i-1)];
+				}
+			}
+
+			changeMaterial (materialIndex);
 		}
 
 		//
@@ -665,8 +692,13 @@ namespace DragginzWorldEditor
         }
 
 		// -------------------------------------------------------------------------------------
-		public void onSelectMaterial(int value) {
-			changeMaterial (value);
+		public void onSelectMaterial(int value)
+		{
+			_iMatHiliteIndex = value;
+			imgMaterialHilight.transform.localPosition = new Vector2 (_iMatHiliteIndex * 38, 0);
+
+			int newMatIndex = _iMaterialBoxIndex + _iMatHiliteIndex;
+			changeMaterial (newMatIndex);
 		}
 
 		public void onSelectItem(int value) {

@@ -13,20 +13,20 @@ namespace DragginzWorldEditor
 {
 	public class EditorToolBuild : EditorTool {
 
-		private Vector3 _v3AimSize;
+		//private Vector3 _v3AimSize;
 
 		private Vector3 _v3BuildSize = Vector3.zero;
 		private float _fOffset;
 
 		public EditorToolBuild() : base(Globals.EDITOR_TOOL_BUILD)
 		{
-			_v3AimSize = new Vector3 (1, 1, 1);
+			//_v3AimSize = new Vector3 (1, 1, 1);
 		}
 
 		//
 		public override void deactivate()
 		{
-			_v3AimSize = MainMenu.Instance.v3DigSettings;
+			//_v3AimSize = MainMenu.Instance.v3DigSettings;
 		}
 
 		//

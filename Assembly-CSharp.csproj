@@ -269,6 +269,7 @@
      <None Include="Assets\Runtime Transform Gizmos\Resources\Shaders\Gizmo Line.shader" />
      <None Include="Assets\Runtime Transform Gizmos\Readme\Readme.txt" />
      <None Include="Assets\Runtime Transform Gizmos\Resources\Shaders\Gradient Camera Bk.shader" />
+     <None Include="Assets\_WorldEditor\Shader\TextMeshShader.shader" />
      <None Include="Assets\Runtime Transform Gizmos\Resources\Shaders\XZGrid.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

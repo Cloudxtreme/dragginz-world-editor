@@ -22,8 +22,8 @@ namespace DragginzWorldEditor
 		[SerializeField]
 		public DataTypeVector3 position  { get; set; }
 
-		[SerializeField]
-		public int isEdge { get; set; }
+		//[SerializeField]
+		//public int isEdge { get; set; }
 
 		[SerializeField]
 		public List<LevelObject> levelObjects { get; set; }
@@ -57,10 +57,10 @@ namespace DragginzWorldEditor
 				}
 			}
 
-			isEdge = 0;
+			/*isEdge = 0;
 			if (data ["e"] != null) {
 				isEdge = Int32.Parse (data ["e"]);
-			}
+			}*/
 
 			levelObjects = new List<LevelObject> ();
 			if (data ["objs"] != null) {
@@ -88,9 +88,9 @@ namespace DragginzWorldEditor
 			//s += "\"n\":" + "\"" + name + "\"";
 			s += "\"p\":" + position.getJsonString();
 
-			if (isEdge != 0) {
+			/*if (isEdge != 0) {
 				s += ",\"e\":" + isEdge.ToString ();
-			}
+			}*/
 
 			len = levelObjects.Count;
 			if (len > 0) {

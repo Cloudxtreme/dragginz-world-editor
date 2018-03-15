@@ -98,7 +98,7 @@ namespace DragginzWorldEditor
 			int quadLen = levelEditor.cubesPerQuadrant;
 			float fRockSize = levelEditor.fRockSize;
 
-			int i, len = levelFile.levelQuadrants.Count; //id
+			int i, len = levelFile.levelQuadrants.Count;
 			for (i = 0; i < len; ++i)
 			{
 				pos.x = (int)levelFile.levelQuadrants[i].position.x;
@@ -119,7 +119,7 @@ namespace DragginzWorldEditor
 
 				Transform trfmCube;
 				GameObject cube;
-				Vector3 pos2 = Vector3.zero;
+				//Vector3 pos2 = Vector3.zero;
 				string materialName;
 				Material material;
 
@@ -133,35 +133,29 @@ namespace DragginzWorldEditor
 					}
 					cube = trfmCube.gameObject;
 
-					if (levelFile.levelQuadrants [i].levelObjects [j].isActive == 0) {
+					if (levelFile.levelQuadrants [i].levelObjects [j].isActive == 0)
+					{
 						cube.SetActive (false);
 						levelChunk.numCubes--;
 					}
-					else {
-						//pos2.x = levelFile.levelQuadrants [i].levelObjects [j].position.x;
-						//pos2.y = levelFile.levelQuadrants [i].levelObjects [j].position.y;
-						//pos2.z = levelFile.levelQuadrants [i].levelObjects [j].position.z;
-						if (levelFile.levelQuadrants [i].isEdge == 1) {
+					else
+					{
+						/*if (levelFile.levelQuadrants [i].isEdge == 1) {
 							material = levelEditor.materialEdge;
 							isEdge = true;
-						} else {
+						} else {*/
 							materialName = Globals.materials[levelFile.levelQuadrants [i].levelObjects [j].materialId];
 							material = levelEditor.aDictMaterials [materialName];
 							isEdge = false;
-						}
-
-						//id = ((int)(pos2.x / fRockSize)) * (quadLen * quadLen);
-						//id += ((int)(pos2.y / fRockSize)) * quadLen;
-						//id += ((int)(pos2.z / fRockSize));
+						//}
 
 						levelChunk.setCube (cube, material, isEdge);
-						//world.createRock (pos2, container, id.ToString (), material, isEdge);
 					}
 				}
 			}
 
-			Debug.Log ("quadrants: "+len.ToString());
-			Debug.Log ("cubes: "+levelChunk.numCubes.ToString());
+			Debug.Log ("Level id "+levelFile.levelId.ToString()+" - quadrants: "+len.ToString());
+			Debug.Log ("Level id "+levelFile.levelId.ToString()+" - cubes: "+levelChunk.numCubes.ToString());
 			MainMenu.Instance.setCubeCountText (levelChunk.numCubes);
 
 			if (levelFile.levelProps != null) {
@@ -277,8 +271,14 @@ namespace DragginzWorldEditor
 				int qX = (int)quadrant.position.x;
 				int qY = (int)quadrant.position.y;
 				int qZ = (int)quadrant.position.z;
-				bool isEdgeQuadrant = ((qX == -1 || qY == -1 || qZ == -1) || (qX == Globals.LEVEL_WIDTH || qY == Globals.LEVEL_HEIGHT || qZ == Globals.LEVEL_DEPTH));
-				quadrant.isEdge = (isEdgeQuadrant ? 1 : 0);
+
+				// sanity check!
+				bool isEdgeQuadrant = ((qX <= -1 || qY <= -1 || qZ <= -1) || (qX >= Globals.LEVEL_WIDTH || qY >= Globals.LEVEL_HEIGHT || qZ >= Globals.LEVEL_DEPTH));
+				if (isEdgeQuadrant) {
+					continue;
+				}
+
+				//quadrant.isEdge = (isEdgeQuadrant ? 1 : 0);
 
 				quadrant.levelObjects = new List<LevelObject> ();
 

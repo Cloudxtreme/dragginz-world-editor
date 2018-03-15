@@ -35,7 +35,6 @@ namespace DragginzWorldEditor
 		private Vector3 _playerPosSave;
 		private LayerMask _layermask;
 		private Collider[] _hitColliders;
-		private Vector3 _v3PlayerExtents;
 
 		//private float _mouseWheel;
 		private bool _mouseRightIsDown;
@@ -43,7 +42,7 @@ namespace DragginzWorldEditor
 		private float _time;
 		private float _nextPosUpdate;
 
-		private bool _camCanMove;
+		//private bool _camCanMove;
 		private bool _move;
 
 		private Popup _popup;
@@ -81,7 +80,6 @@ namespace DragginzWorldEditor
 
 			_playerPosSave = _player.position;
 			_layermask = 1 << 8;
-			_v3PlayerExtents = new Vector3 (0.3f, 0.2f, 0.2f);
 
 			//_mouseWheel = 0;
 			_mouseRightIsDown = false;
@@ -89,7 +87,7 @@ namespace DragginzWorldEditor
 			_time = 0;
 			_nextPosUpdate = 0;
 
-			_camCanMove = true;
+			//_camCanMove = true;
 			_move = false;
 
 			drawWireframe = false;

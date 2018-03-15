@@ -11,10 +11,13 @@ namespace DragginzWorldEditor
 {
 	public static class Globals
     {
-		public static readonly int TargetClientFramerate = 120;
+		static public readonly string version = "Level Editor v03.15.0a";
 
-		static public readonly string version = "Level Editor v03.14.0a";
-		static public readonly int levelSaveFormatVersion = 7;
+		static public readonly int levelSaveFormatVersion = 8;
+
+		//
+
+		public static readonly int TargetClientFramerate = 120;
 
 		public const string propListName = "props_list_leveleditor";
 
@@ -32,7 +35,7 @@ namespace DragginzWorldEditor
 		public const string defaultShaderName   = "Mobile/Diffuse"; // "Standard"
 		public const string highlightShaderName = "Legacy Shaders/Reflective/Diffuse";
 
-        static public readonly string[] materials = {"Marble", "Moss", "Shape", "Stone"};
+		static public readonly string[] materials = {"marble", "moss", "shape", "stone", "volcano", "cube-0", "cube-1", "cube-2", "cube-3", "cube-4", "cube-5", "cube-6", "cube-7", "cube-8", "cube-9"};
 
 		static public readonly string warningObsoleteFileFormat  = "Can't load level:\n\nFile format is obsolete!";
 		static public readonly string warningInvalidFileFormat   = "Can't load level '%1'\n\nFile format is invalid!";

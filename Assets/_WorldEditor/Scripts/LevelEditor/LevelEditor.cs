@@ -63,6 +63,7 @@ namespace DragginzWorldEditor
 		private List<EditorTool> _aEditorTools;
 		private EditorTool _curEditorTool;
 
+		private List<Texture> _aTextures;
 		private List<Material> _aMaterials;
 		private Dictionary<string, Material> _aDictMaterials;
 
@@ -91,6 +92,10 @@ namespace DragginzWorldEditor
 
 		public float fQuadrantSize {
 			get { return _fQuadrantSize; }
+		}
+
+		public List<Texture> aTextures {
+			get { return _aTextures; }
 		}
 
 		public List<Material> aMaterials {
@@ -126,11 +131,13 @@ namespace DragginzWorldEditor
 			//gameObject.AddComponent<World> ();
 			//_World = World.Instance;
 
+			_aTextures = new List<Texture> ();
 			_aMaterials = new List<Material> ();
 			_aDictMaterials = new Dictionary<string, Material> ();
 			int i, len = Globals.materials.Length;
 			for (i = 0; i < len; ++i) {
-				_aMaterials.Add(Resources.Load<Material> ("Materials/" + Globals.materials [i]));
+				_aTextures.Add(Resources.Load<Texture> ("Textures/Cubes/" + Globals.materials [i]));
+				_aMaterials.Add(Resources.Load<Material> ("Materials/Cubes/" + Globals.materials [i]));
 				_aDictMaterials.Add(Globals.materials [i], _aMaterials[_aMaterials.Count-1]);
 			}
 
@@ -160,6 +167,10 @@ namespace DragginzWorldEditor
 		//
 		public void init()
 		{
+			if (_isInitialised) {
+				return;
+			}
+
 			SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
 			setMode (AppState.Null, true);
 
