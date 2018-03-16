@@ -27,7 +27,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1092270764711582
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,7 +44,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1196212945497790
 GameObject:
   m_ObjectHideFlags: 0
@@ -61,7 +61,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1311120504870144
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,7 +96,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1545605439866924
 GameObject:
   m_ObjectHideFlags: 0
@@ -113,7 +113,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1564390617689212
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,7 +130,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4195243709590986
 Transform:
   m_ObjectHideFlags: 1
@@ -344,7 +344,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 94d6fef9bf1913246a2608adee486916, type: 2}
+  - {fileID: 2100000, guid: b972e92ab45c92946848afb3343c36cd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

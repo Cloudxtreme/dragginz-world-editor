@@ -4,6 +4,8 @@
 //
 
 using System;
+using System.Collections;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -74,7 +76,7 @@ namespace DragginzWorldEditor
 
 			resetScreen ();
 
-			LevelEditor.Instance.init ();
+			LevelEditor.Instance.initOfflineMode ();
 		}
 
 		//
@@ -129,7 +131,9 @@ namespace DragginzWorldEditor
 			if (_iCurLevelChunk >= LevelManager.Instance.numLevels)
 			{
 				resetScreen ();
-				LevelEditor.Instance.init ();	
+				LevelEditor.Instance.initOnlineMode ();
+				Message.text = "Creating Level...";
+				StartCoroutine("createLevels");
 			}
 			else 
 			{
@@ -169,6 +173,25 @@ namespace DragginzWorldEditor
 			resetScreen ();
 
 			AppController.Instance.showPopup (PopupMode.Notification, "Warning", "Could not load all level chunks!\n\nEditor will run in Offline Mode!", timeOutPopupContinue);
+		}
+
+		//
+		// LOAD LEVEL DATA
+		//
+		private IEnumerator createLevels()
+		{
+			int i, len = LevelManager.Instance.numLevels;
+			for (i = 0; i < len; ++i) {
+
+				Update.text = (i + 1).ToString () + " of " + len.ToString ();
+
+				int levelId = LevelManager.Instance.getLevelIdByIndex (i);
+				LevelEditor.Instance.createLevelChunkWithIndex (levelId, i);
+
+				yield return new WaitForEndOfFrame();
+			}
+
+			LevelEditor.Instance.launch ();
 		}
 
 		//

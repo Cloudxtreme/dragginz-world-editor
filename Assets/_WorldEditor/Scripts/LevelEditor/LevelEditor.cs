@@ -165,38 +165,54 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void init()
+		public void initOfflineMode()
 		{
 			if (_isInitialised) {
 				return;
 			}
 
-			SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
-			setMode (AppState.Null, true);
+			PropsManager.Instance.init ();
+
+			_curLevelChunk = LevelManager.Instance.createOfflineLevelChunk ();
+			_curLevelChunk.createOfflineLevel ();
+			_curLevelChunk.showPlaceHolder (false);
+
+			_isInitialised = true;
+
+			launch ();
+		}
+
+		//
+		public void initOnlineMode()
+		{
+			if (_isInitialised) {
+				return;
+			}
 
 			PropsManager.Instance.init ();
 
-			if (AppController.Instance.editorIsInOfflineMode) {
-				//_World.init ();
-				_curLevelChunk = LevelManager.Instance.createOfflineLevelChunk ();
-				_curLevelChunk.createOfflineLevel ();
-			}
-			else
-			{
-				_levelChunks = LevelManager.Instance.createLevelChunks();
-				int firstLevelId = LevelManager.Instance.getLevelIdByIndex (0);
-				_curLevelChunk = _levelChunks [firstLevelId];
-				LevelManager.Instance.loadLevelByIndex (0);
-			}
+			_levelChunks = LevelManager.Instance.createLevelChunks();
 
-			_curLevelChunk.showPlaceHolder (false);
+			_isInitialised = true;
+		}
 
+		//
+		public void createLevelChunkWithIndex(int levelId, int levelIndex)
+		{
+			_curLevelChunk = _levelChunks [levelId];
+			LevelManager.Instance.loadLevelByIndex (levelIndex);
+			_curLevelChunk.showLevel (false);
+		}
+
+		//
+		public void launch()
+		{
 			MainMenu.Instance.init();
 
 			_popup = MainMenu.Instance.popup;
 
-			goPlayer.transform.position = new Vector3(0, 0.6f, -0.75f);
-			goPlayerCameraRig.transform.position = goPlayer.transform.position;
+			//goPlayer.transform.position = new Vector3(0, 0.6f, -0.75f);
+			//goPlayerCameraRig.transform.position = goPlayer.transform.position;
 
 			_aEditorTools = new List<EditorTool> (Globals.NUM_EDITOR_TOOLS);
 			_aEditorTools.Add(new EditorToolLook());
@@ -207,11 +223,27 @@ namespace DragginzWorldEditor
 
 			_curEditorTool = null;
 
-			_isInitialised = true;
+			if (!AppController.Instance.editorIsInOfflineMode) {
+				int firstLevelId = LevelManager.Instance.getLevelIdByIndex (0);
+				teleportToLevelWithId (firstLevelId);
+			}
+
+			SceneManager.UnloadSceneAsync(BuildSettings.SplashScreenScene);
+			setMode (AppState.Null, true);
 
 			if (!_popup.isVisible ()) {
 				showHelpPopup ();
 			}
+		}
+
+		//
+		public void teleportToLevelWithId(int levelId)
+		{
+			_curLevelChunk = _levelChunks [levelId];
+			_curLevelChunk.showPlaceHolder (false);
+			_curLevelChunk.showLevel (true);
+
+			resetCamToStartPos ();
 		}
 
         #endregion

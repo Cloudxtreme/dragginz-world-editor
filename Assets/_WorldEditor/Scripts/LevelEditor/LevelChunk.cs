@@ -125,6 +125,13 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public void showLevel(bool state)
+		{
+			_trfmCubes.gameObject.SetActive (state);
+			_trfmProps.gameObject.SetActive (state);
+		}
+
+		//
 		public void createOfflineLevel() {
 
 			float fQuadrantSize = _levelEditor.fQuadrantSize;
