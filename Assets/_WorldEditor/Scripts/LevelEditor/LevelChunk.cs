@@ -28,6 +28,11 @@ namespace DragginzWorldEditor
 
 		private int _numCubes;
 
+		private Vector3 _chunkPos;
+		private Vector3 _startPos;
+		private Vector3 _startRotation;
+
+
 		#region Getters
 
 		public Transform trfmCubes {
@@ -36,6 +41,10 @@ namespace DragginzWorldEditor
 
 		public Transform trfmProps {
 			get { return _trfmProps; }
+		}
+
+		public Vector3 chunkPos {
+			get { return _chunkPos; }
 		}
 
 		public Dictionary<GameObject, worldProp> worldProps {
@@ -60,8 +69,10 @@ namespace DragginzWorldEditor
 
 		#endregion
 
-		public void init()
+		public void init(Vector3 chunkPos)
 		{
+			_chunkPos = chunkPos;
+
 			_levelId = -1;
 
 			_levelEditor = LevelEditor.Instance;
@@ -72,8 +83,6 @@ namespace DragginzWorldEditor
 			_worldProps = new Dictionary<GameObject, worldProp> ();
 
 			_numCubes = 0;
-
-			//LevelManager.Instance.loadLevelByIndex (_levelId);
 		}
 
 		//
@@ -98,6 +107,23 @@ namespace DragginzWorldEditor
 					}
 				}
 			}
+		}
+
+		//
+		public void setStartPos(Vector3 pos, Vector3 rot)
+		{
+			_startPos = pos;
+			_startRotation = rot;
+		}
+
+		public Vector3 getStartPos()
+		{
+			return _chunkPos + _startPos;
+		}
+
+		public Vector3 getStartRotation()
+		{
+			return _startRotation;
 		}
 
 		//

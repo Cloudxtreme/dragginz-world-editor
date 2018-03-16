@@ -237,12 +237,25 @@ namespace DragginzWorldEditor
 		}
 
 		//
+		public void teleportToLevelWithIndex(int index)
+		{
+			int levelId = LevelManager.Instance.getLevelIdByIndex (index);
+			teleportToLevelWithId (levelId);
+		}
+
+		//
 		public void teleportToLevelWithId(int levelId)
 		{
+			if (_curEditorTool != null) {
+				_curLevelChunk.showPlaceHolder (true);
+				_curLevelChunk.showLevel (false);
+			}
+
 			_curLevelChunk = _levelChunks [levelId];
 			_curLevelChunk.showPlaceHolder (false);
 			_curLevelChunk.showLevel (true);
 
+			FlyCam.Instance.setNewInitialPosition (_curLevelChunk.getStartPos(), _curLevelChunk.getStartRotation());
 			resetCamToStartPos ();
 		}
 

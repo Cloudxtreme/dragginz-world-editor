@@ -771,7 +771,9 @@ namespace DragginzWorldEditor
 
 		public void onDropDownLevelValueChanged(int value) {
 			if (_trfmDropDownLevel && value < _iDropDownLevelOptions) {
-				showLoadLevelDialog (value, _trfmDropDownLevel.options [value].text);
+				_iSelectedLevel = value;
+				LevelEditor.Instance.teleportToLevelWithIndex(_iSelectedLevel);
+				//showLoadLevelDialog (value, _trfmDropDownLevel.options [value].text);
 			}
 		}
     }

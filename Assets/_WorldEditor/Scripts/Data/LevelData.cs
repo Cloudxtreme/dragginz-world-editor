@@ -87,6 +87,7 @@ namespace DragginzWorldEditor
 
 			Vector3 savedPos = new Vector3 (levelFile.playerPosition.x, levelFile.playerPosition.y, levelFile.playerPosition.z);
 			Vector3 savedRot = new Vector3 (levelFile.playerEuler.x, levelFile.playerEuler.y, levelFile.playerEuler.z);
+			levelChunk.setStartPos (savedPos, savedRot);
 			FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
 			FlyCam.Instance.reset ();
 
@@ -111,7 +112,7 @@ namespace DragginzWorldEditor
 					continue;
 				}
 
-				trfmContainer = goQuadrant.transform.Find (Globals.cubesContainerName); // world.createContainer (goQuadrant.transform);
+				trfmContainer = goQuadrant.transform.Find (Globals.cubesContainerName);
 				if (trfmContainer == null) {
 					continue;
 				}

@@ -130,9 +130,10 @@ namespace DragginzWorldEditor
 			// done loading?
 			if (_iCurLevelChunk >= LevelManager.Instance.numLevels)
 			{
-				resetScreen ();
+				//resetScreen ();
 				LevelEditor.Instance.initOnlineMode ();
 				Message.text = "Creating Level...";
+				Update.text = "";
 				StartCoroutine("createLevels");
 			}
 			else 
@@ -191,6 +192,7 @@ namespace DragginzWorldEditor
 				yield return new WaitForEndOfFrame();
 			}
 
+			resetScreen ();
 			LevelEditor.Instance.launch ();
 		}
 

@@ -121,7 +121,7 @@ namespace DragginzWorldEditor
 		{
 			GameObject goNew = GameObject.Instantiate (prop.prefab);
 			goNew.transform.SetParent (parent);
-			goNew.transform.position = v3Pos;
+			goNew.transform.localPosition = v3Pos;
 			goNew.name = name;
 
 			Collider collider = goNew.GetComponent<Collider> ();

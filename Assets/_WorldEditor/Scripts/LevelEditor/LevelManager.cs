@@ -182,7 +182,7 @@ namespace DragginzWorldEditor
 			gameObject.name = "LevelChunk_Offline";
 
 			chunk = gameObject.AddComponent<LevelChunk> ();
-			chunk.init ();
+			chunk.init (Vector3.zero);
 
 			return chunk;
 		}
@@ -199,10 +199,12 @@ namespace DragginzWorldEditor
 
 				GameObject gameObject = AssetFactory.Instance.createLevelContainerClone ();
 				gameObject.name = "LevelChunk_" + level.id.ToString ();
-				gameObject.transform.position = new Vector3 (level.x * Globals.LEVEL_WIDTH, -level.y * Globals.LEVEL_HEIGHT, level.z * Globals.LEVEL_DEPTH);
+
+				Vector3 chunkPos = new Vector3 (level.x * Globals.LEVEL_WIDTH, -level.y * Globals.LEVEL_HEIGHT, level.z * Globals.LEVEL_DEPTH);
+				gameObject.transform.position = chunkPos;
 
 				LevelChunk chunk = gameObject.AddComponent<LevelChunk> ();
-				chunk.init ();
+				chunk.init (chunkPos);
 				chunk.setLevelData (level);
 
 				chunks.Add (level.id, chunk);
