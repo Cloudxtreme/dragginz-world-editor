@@ -64,7 +64,7 @@ namespace DragginzWorldEditor
 			Message.gameObject.SetActive (true);
 			Message.text = "Connecting...";
 
-            Spinner.SetActive(true);
+            //Spinner.SetActive(true);
 
             AttemptConnection();
         }

@@ -41,6 +41,7 @@ namespace DragginzWorldEditor
 
 		private float _time;
 		private float _nextPosUpdate;
+		private float _nextDistanceUpdate;
 
 		//private bool _camCanMove;
 		private bool _move;
@@ -86,6 +87,7 @@ namespace DragginzWorldEditor
 
 			_time = 0;
 			_nextPosUpdate = 0;
+			_nextDistanceUpdate = 0;
 
 			//_camCanMove = true;
 			_move = false;
@@ -208,7 +210,11 @@ namespace DragginzWorldEditor
 				_itemCam.transform.rotation = _myCam.transform.rotation;
 			}
 
-			if (_time > _nextPosUpdate) {
+			if (_time > _nextDistanceUpdate) {
+				_nextDistanceUpdate = _time + 1.0f;
+				LevelEditor.Instance.checkLevelChunkDistances ();
+			}
+			else if (_time > _nextPosUpdate) {
 				_nextPosUpdate = _time + 0.5f;
 				MainMenu.Instance.setCameraPositionText (_player.position);
 			}

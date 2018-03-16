@@ -175,7 +175,7 @@ namespace DragginzWorldEditor
 
 			_curLevelChunk = LevelManager.Instance.createOfflineLevelChunk ();
 			_curLevelChunk.createOfflineLevel ();
-			_curLevelChunk.showPlaceHolder (false);
+			_curLevelChunk.activate (true, true);
 
 			_isInitialised = true;
 
@@ -201,7 +201,7 @@ namespace DragginzWorldEditor
 		{
 			_curLevelChunk = _levelChunks [levelId];
 			LevelManager.Instance.loadLevelByIndex (levelIndex);
-			_curLevelChunk.showLevel (false);
+			_curLevelChunk.activate (false, true);
 		}
 
 		//
@@ -246,17 +246,31 @@ namespace DragginzWorldEditor
 		//
 		public void teleportToLevelWithId(int levelId)
 		{
-			if (_curEditorTool != null) {
-				_curLevelChunk.showPlaceHolder (true);
-				_curLevelChunk.showLevel (false);
+			if (_curLevelChunk != null) {
+				_curLevelChunk.activate (false);
 			}
 
 			_curLevelChunk = _levelChunks [levelId];
-			_curLevelChunk.showPlaceHolder (false);
-			_curLevelChunk.showLevel (true);
+			_curLevelChunk.activate (true);
 
 			FlyCam.Instance.setNewInitialPosition (_curLevelChunk.getStartPos(), _curLevelChunk.getStartRotation());
 			resetCamToStartPos ();
+
+			checkLevelChunkDistances ();
+		}
+
+		//
+		public void checkLevelChunkDistances()
+		{
+			if (AppController.Instance.appState != AppState.Null && AppController.Instance.appState != AppState.Splash) {
+				
+				foreach (KeyValuePair<int, LevelChunk> chunk in _levelChunks) {
+					if (chunk.Value.levelId != _curLevelChunk.levelId) {
+						float dist = Vector3.Distance (FlyCam.Instance.player.position, chunk.Value.chunkPos);
+						chunk.Value.activate (dist < 18.0f);
+					}
+				}
+			}
 		}
 
         #endregion
@@ -269,7 +283,7 @@ namespace DragginzWorldEditor
 			AppController.Instance.showPopup(
 				PopupMode.Notification,
 				"Controls",
-				"Normal movement: AWSD\nUp and down: QE\nLook around: Right mouse button\nWireframe mode: Shift\nToggle tools: Mouse wheel\n\nPress ESC to reset speed and position.",
+				"Normal movement: AWSD\nUp and down: QE\nLook around: Right mouse button\nWireframe mode: Shift\nToggle tools: Mouse wheel\n\nPress H to jump back to starting position.",
 				startUpPopupCallback
 			);
 		}

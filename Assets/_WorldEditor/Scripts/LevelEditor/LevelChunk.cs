@@ -32,6 +32,7 @@ namespace DragginzWorldEditor
 		private Vector3 _startPos;
 		private Vector3 _startRotation;
 
+		private bool _isVisible;
 
 		#region Getters
 
@@ -45,6 +46,10 @@ namespace DragginzWorldEditor
 
 		public Vector3 chunkPos {
 			get { return _chunkPos; }
+		}
+
+		public int levelId {
+			get { return _levelId; }
 		}
 
 		public Dictionary<GameObject, worldProp> worldProps {
@@ -72,6 +77,8 @@ namespace DragginzWorldEditor
 		public void init(Vector3 chunkPos)
 		{
 			_chunkPos = chunkPos;
+
+			_isVisible = false;
 
 			_levelId = -1;
 
@@ -145,13 +152,32 @@ namespace DragginzWorldEditor
 		}
 
 		//
-		public void showPlaceHolder(bool state)
+		public void activate(bool state, bool forceUpdate = false)
+		{
+			if (state) {
+				if (forceUpdate || !_isVisible) {
+					_isVisible = true;
+					showPlaceHolder (false);
+					showLevel (true);
+				}
+			}
+			else {
+				if (forceUpdate || _isVisible) {
+					_isVisible = false;
+					showPlaceHolder (true);
+					showLevel (false);
+				}
+			}
+		}
+
+		//
+		private void showPlaceHolder(bool state)
 		{
 			_trfmPlaceholder.gameObject.SetActive (state);
 		}
 
 		//
-		public void showLevel(bool state)
+		private void showLevel(bool state)
 		{
 			_trfmCubes.gameObject.SetActive (state);
 			_trfmProps.gameObject.SetActive (state);
