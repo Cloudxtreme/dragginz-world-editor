@@ -29,6 +29,8 @@ namespace DragginzWorldEditor
 		private int _numCubes;
 
 		private Vector3 _chunkPos;
+		private Bounds _chunkBounds;
+
 		private Vector3 _startPos;
 		private Vector3 _startRotation;
 
@@ -46,6 +48,10 @@ namespace DragginzWorldEditor
 
 		public Vector3 chunkPos {
 			get { return _chunkPos; }
+		}
+
+		public Bounds chunkBounds {
+			get { return _chunkBounds; }
 		}
 
 		public int levelId {
@@ -101,6 +107,9 @@ namespace DragginzWorldEditor
 			levelChunk.transform.parent = _trfmPlaceholder;
 			levelChunk.transform.localScale = new Vector3 (Globals.LEVEL_WIDTH, Globals.LEVEL_HEIGHT, Globals.LEVEL_DEPTH);
 			levelChunk.transform.localPosition = new Vector3 (Globals.LEVEL_WIDTH / 2, Globals.LEVEL_HEIGHT / 2, Globals.LEVEL_DEPTH / 2);
+
+			_chunkBounds = levelChunk.GetComponent<BoxCollider>().bounds;
+			Debug.Log ("bounds for level id " + _levelId + ": " + _chunkBounds);
 
 			int i;
 			Transform txt;

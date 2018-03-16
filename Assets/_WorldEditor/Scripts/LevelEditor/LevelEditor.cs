@@ -263,10 +263,11 @@ namespace DragginzWorldEditor
 		public void checkLevelChunkDistances()
 		{
 			if (AppController.Instance.appState != AppState.Null && AppController.Instance.appState != AppState.Splash) {
-				
+
+				float dist;
 				foreach (KeyValuePair<int, LevelChunk> chunk in _levelChunks) {
 					if (chunk.Value.levelId != _curLevelChunk.levelId) {
-						float dist = Vector3.Distance (FlyCam.Instance.player.position, chunk.Value.chunkPos);
+						dist = chunk.Value.chunkBounds.SqrDistance (FlyCam.Instance.player.position); // Vector3.Distance (FlyCam.Instance.player.position, chunk.Value.chunkPos);
 						chunk.Value.activate (dist < 18.0f);
 					}
 				}
