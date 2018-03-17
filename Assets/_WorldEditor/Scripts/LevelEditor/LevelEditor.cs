@@ -264,12 +264,18 @@ namespace DragginzWorldEditor
 		{
 			if (AppController.Instance.appState != AppState.Null && AppController.Instance.appState != AppState.Splash) {
 
+				Vector3 playerPoint = FlyCam.Instance.player.position;
+				Vector3 closestPoint;
 				float dist;
 				foreach (KeyValuePair<int, LevelChunk> chunk in _levelChunks) {
-					if (chunk.Value.levelId != _curLevelChunk.levelId) {
-						dist = chunk.Value.chunkBounds.SqrDistance (FlyCam.Instance.player.position); // Vector3.Distance (FlyCam.Instance.player.position, chunk.Value.chunkPos);
+					//if (chunk.Value.levelId != _curLevelChunk.levelId) {
+						// dist = Vector3.Distance (FlyCam.Instance.player.position, chunk.Value.chunkPos);
+						// dist = chunk.Value.chunkBounds.SqrDistance (FlyCam.Instance.player.position);
+						closestPoint = chunk.Value.chunkBounds.ClosestPoint(playerPoint);
+						dist = Vector3.Distance (playerPoint, closestPoint);
+						// Debug.Log ("distance to level id "+chunk.Value.levelId+" = "+dist);
 						chunk.Value.activate (dist < 18.0f);
-					}
+					//}
 				}
 			}
 		}
