@@ -36,6 +36,7 @@ namespace DragginzWorldEditor
 
 		public Camera editCam;
 		public Camera itemCam;
+		public Camera playRigCam;
 		public RTEditorCam itemCamScript;
 
 		//public GameObject goWorld;
@@ -71,6 +72,10 @@ namespace DragginzWorldEditor
 
 		private GameObject _goCurProp;
 		private List<GameObject> _selectedObjects;
+
+		private Camera _activeCam;
+		private Plane[] _planes;
+		private float _nextDistanceUpdate;
 
 		private float _fRockSize;
         private int _cubesPerQuadrant;
@@ -145,6 +150,9 @@ namespace DragginzWorldEditor
 
 			_goCurProp = null;
 			_selectedObjects = new List<GameObject> ();
+
+			_activeCam = editCam;
+			_nextDistanceUpdate = 0;
 
 			_fRockSize = 0.5f;
 			_cubesPerQuadrant = 2;
@@ -257,27 +265,6 @@ namespace DragginzWorldEditor
 			resetCamToStartPos ();
 
 			checkLevelChunkDistances ();
-		}
-
-		//
-		public void checkLevelChunkDistances()
-		{
-			if (AppController.Instance.appState != AppState.Null && AppController.Instance.appState != AppState.Splash) {
-
-				Vector3 playerPoint = FlyCam.Instance.player.position;
-				Vector3 closestPoint;
-				float dist;
-				foreach (KeyValuePair<int, LevelChunk> chunk in _levelChunks) {
-					//if (chunk.Value.levelId != _curLevelChunk.levelId) {
-						// dist = Vector3.Distance (FlyCam.Instance.player.position, chunk.Value.chunkPos);
-						// dist = chunk.Value.chunkBounds.SqrDistance (FlyCam.Instance.player.position);
-						closestPoint = chunk.Value.chunkBounds.ClosestPoint(playerPoint);
-						dist = Vector3.Distance (playerPoint, closestPoint);
-						// Debug.Log ("distance to level id "+chunk.Value.levelId+" = "+dist);
-						chunk.Value.activate (dist < 18.0f);
-					//}
-				}
-			}
 		}
 
         #endregion
@@ -399,6 +386,40 @@ namespace DragginzWorldEditor
 			if (_curEditorTool != null) {
 				_curEditorTool.customUpdate (time, timeDelta);
 			}
+
+			if (time > _nextDistanceUpdate) {
+				_nextDistanceUpdate = time + 1.0f;
+				checkLevelChunkDistances ();
+			}
+		}
+
+		//
+		private void checkLevelChunkDistances()
+		{
+			if (AppController.Instance.appState != AppState.Null && AppController.Instance.appState != AppState.Splash) {
+
+				Vector3 playerPoint = FlyCam.Instance.player.position;
+				Vector3 closestPoint;
+				float dist;
+				foreach (KeyValuePair<int, LevelChunk> chunk in _levelChunks) {
+					//// if (chunk.Value.levelId != _curLevelChunk.levelId) {
+					//// dist = Vector3.Distance (FlyCam.Instance.player.position, chunk.Value.chunkPos);
+					//// dist = chunk.Value.chunkBounds.SqrDistance (FlyCam.Instance.player.position);
+					closestPoint = chunk.Value.chunkBounds.ClosestPoint(playerPoint);
+					dist = Vector3.Distance (playerPoint, closestPoint);
+					if (dist > 18.0f) {
+						chunk.Value.activate (false);
+					} else {
+						_planes = GeometryUtility.CalculateFrustumPlanes(_activeCam);
+						if (GeometryUtility.TestPlanesAABB (_planes, chunk.Value.chunkBounds)) {
+							chunk.Value.activate (true);
+						} else {
+							chunk.Value.activate (false);
+						}
+					}
+					//// }
+				}
+			}
 		}
 
 		//
@@ -431,6 +452,7 @@ namespace DragginzWorldEditor
 
 			editCam.enabled = true;
 			itemCam.enabled = false;
+			_activeCam = editCam;
 
 			EditorObjectSelection.Instance.ClearSelection(false);
 
@@ -445,6 +467,7 @@ namespace DragginzWorldEditor
 				goPlayer.SetActive ((mode == AppState.Play));
 				goPlayerCameraRig.SetActive ((mode == AppState.Play));
 				goPlayerEdit.SetActive (!goPlayer.activeSelf);
+				_activeCam = playRigCam;
 			}
 
 			if (mode == AppState.Play)
@@ -457,6 +480,7 @@ namespace DragginzWorldEditor
 				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_LOOK];
 				itemCam.enabled = true;
 				itemCam.transform.position = editCam.transform.position;
+				_activeCam = itemCam;
 				editCam.enabled = false;
 			}
 			else if (mode == AppState.Dig)

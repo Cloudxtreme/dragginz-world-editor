@@ -268,6 +268,11 @@ GameObject:
   m_PrefabParentObject: {fileID: 1194390018848980, guid: 5c7fa39a5911c1d4c8fc126c9a37e515,
     type: 2}
   m_PrefabInternal: {fileID: 195152410}
+--- !u!20 &195152412 stripped
+Camera:
+  m_PrefabParentObject: {fileID: 20426055199405636, guid: 5c7fa39a5911c1d4c8fc126c9a37e515,
+    type: 2}
+  m_PrefabInternal: {fileID: 195152410}
 --- !u!1001 &276285297
 Prefab:
   m_ObjectHideFlags: 0
@@ -398,6 +403,7 @@ MonoBehaviour:
   levelListJson: {fileID: 4900000, guid: c239641011983f846a554533fa0e1e64, type: 3}
   editCam: {fileID: 677500482}
   itemCam: {fileID: 1135323822}
+  playRigCam: {fileID: 195152412}
   itemCamScript: {fileID: 1135323824}
   goPlayer: {fileID: 824515733}
   goPlayerCameraRig: {fileID: 195152411}
