@@ -5,7 +5,9 @@
 
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace VoxelChunks
 {
@@ -14,14 +16,36 @@ namespace VoxelChunks
 		public GameObject prefabCube;
 		public GameObject prefabCut;
 
+		public Text txtHelp;
+		public Text txtCount;
+
+
 		private int _iCount;
 
 		private List<VoxelUtils.VoxelChunk> _aVoxelChunks;
+
+		// DEBUG
+		private bool subtracted;
+		private bool stillSplitting;
+		private VoxelUtils.VoxelChunk vsSubtract;
+		private List<Vector3> cutHolesPos;
+		private List<Vector3> cutHolesSize;
+		private int cutHolesIndex;
 
 
 		// ---------------------------------------------------------------------------------------------
 		// Init shit
 		// ---------------------------------------------------------------------------------------------
+		void Awake () {
+
+			// DEBUG
+			subtracted     = false;
+			stillSplitting = false;
+			cutHolesPos    = new List<Vector3> (){ new Vector3 (33, 33, 33), new Vector3 (71 , -1, -1), new Vector3 (-1, -1, -1) };
+			cutHolesSize   = new List<Vector3> (){ new Vector3 (6, 6, 6), new Vector3 (2, 2, 2), new Vector3 (2, 2, 2) };
+			cutHolesIndex  = 0;
+		}
+
 		void Start () {
 
 			_iCount = 0;
@@ -33,9 +57,8 @@ namespace VoxelChunks
 			VoxelUtils.VoxelChunk vs = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
 			_aVoxelChunks.Add (vs);
 
-			// cut out center section and separate voxels
-			pos = VoxelUtils.convertVector3ToVoxelVector3Int(new Vector3(33,33,33));
-			subtractChunk(pos, 6, 6, 6);
+			txtHelp.text = "Click to cut a hole...";
+			txtCount.text = "Chunks: " + _aVoxelChunks.Count.ToString();
 		}
 		
 		// ---------------------------------------------------------------------------------------------
@@ -43,12 +66,41 @@ namespace VoxelChunks
 		// ---------------------------------------------------------------------------------------------
 		void Update () {
 
+			if (Input.GetMouseButtonDown (0)) {
+
+				if (!subtracted)
+				{
+					// cut out center section and separate voxels
+					VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int (cutHolesPos[cutHolesIndex]);
+					vsSubtract = createCutGameObject(pos, (int)cutHolesSize[cutHolesIndex].x, (int)cutHolesSize[cutHolesIndex].y, (int)cutHolesSize[cutHolesIndex].z);
+					subtracted = true;
+					stillSplitting = true;
+					txtHelp.text = "Click to split chunks...";
+				}
+				else if (stillSplitting)
+				{
+					stillSplitting = splitVoxels (vsSubtract);
+					if (!stillSplitting) {
+						Destroy (vsSubtract.go);
+						vsSubtract.go = null;
+
+						if (++cutHolesIndex < cutHolesPos.Count) {
+							txtHelp.text = "Click to cut another hole...";
+							subtracted = false;
+						} else {
+							txtHelp.text = "No more holes to cut!";
+						}
+					}
+				}
+
+				txtCount.text = "Chunks: " + _aVoxelChunks.Count.ToString();
+			}
 		}
 
 		// ---------------------------------------------------------------------------------------------
 		// cut a hole!
 		// ---------------------------------------------------------------------------------------------
-		private void subtractChunk(VoxelUtils.VoxelVector3Int pos, int w, int h, int d)
+		/*private void subtractChunk(VoxelUtils.VoxelVector3Int pos, int w, int h, int d)
 		{
 			VoxelUtils.VoxelChunk vsCut = createCutGameObject(pos, w, h, d);
 
@@ -61,7 +113,7 @@ namespace VoxelChunks
 			}
 
 			if (loops >= 1000) Debug.LogWarning("looks like we got ourselves an endless loop here!");
-		}
+		}*/
 
 		// ---------------------------------------------------------------------------------------------
 		// split them voxels one at a time
@@ -86,16 +138,16 @@ namespace VoxelChunks
 						_aVoxelChunks.RemoveAt (i);
 						intersectDetected = true;
 					}
-					// check for collision along left X axis
-					else if (_aVoxelChunks [i].IntersectsX( vsCut.corners.bot_left_front )) {
+					// check for identical size and position
+					else if (_aVoxelChunks [i].Encased (vsCut)) {
 
-						separateVoxelChunkAlongXAxis (i, vsCut.corners.bot_left_front.x);
+						Debug.LogWarning ("    ->ENCASED!");
+						Destroy (_aVoxelChunks [i].go);
+						_aVoxelChunks.RemoveAt (i);
 						intersectDetected = true;
 					}
-					// check for collision along right X axis
-					else if (_aVoxelChunks [i].IntersectsX( vsCut.corners.bot_right_front )) {
+					else if (checkVoxelChunkIntersectX (i, vsCut)) {
 
-						separateVoxelChunkAlongXAxis (i, vsCut.corners.bot_right_front.x + 1);
 						intersectDetected = true;
 					}
 					// check for collision along bottom Y axis
@@ -132,6 +184,69 @@ namespace VoxelChunks
 			return intersectDetected;
 		}
 
+		// ---------------------------------------------------------------------------------------------
+		// CHECK ALL 8 CORNERS FOR INTERSECTION ALONG X AXIS
+		// ---------------------------------------------------------------------------------------------
+		private bool checkVoxelChunkIntersectX(int index, VoxelUtils.VoxelChunk vsCut)
+		{
+			bool intersectDetected = false;
+
+			VoxelUtils.VoxelChunk vs = _aVoxelChunks [index];
+
+			if (_aVoxelChunks [index].IntersectsRightX (vsCut.corners.bot_left_front)) {
+
+				Debug.Log ("1");
+				separateVoxelChunkAlongXAxis (index, vsCut.corners.bot_left_front.x);
+				intersectDetected = true;
+			}
+			else if (_aVoxelChunks [index].IntersectsRightX (vsCut.corners.top_left_front)) {
+
+				Debug.Log ("2");
+				separateVoxelChunkAlongXAxis (index, vsCut.corners.top_left_front.x);
+				intersectDetected = true;
+			}
+			else if (_aVoxelChunks [index].IntersectsRightX (vsCut.corners.top_left_back)) {
+
+				Debug.Log ("3");
+				separateVoxelChunkAlongXAxis (index, vsCut.corners.top_left_back.x);
+				intersectDetected = true;
+			}
+			else if (_aVoxelChunks [index].IntersectsRightX (vsCut.corners.bot_left_back)) {
+
+				Debug.Log ("4");
+				separateVoxelChunkAlongXAxis (index, vsCut.corners.bot_left_back.x);
+				intersectDetected = true;
+			}
+			else if (_aVoxelChunks [index].IntersectsLeftX( vsCut.corners.bot_right_front )) {
+
+				Debug.Log ("5");
+				separateVoxelChunkAlongXAxis (index, vsCut.corners.bot_right_front.x + 1);
+				intersectDetected = true;
+			}
+			else if (_aVoxelChunks [index].IntersectsLeftX( vsCut.corners.top_right_front )) {
+
+				Debug.Log ("6");
+				separateVoxelChunkAlongXAxis (index, vsCut.corners.top_right_front.x + 1);
+				intersectDetected = true;
+			}
+			else if (_aVoxelChunks [index].IntersectsLeftX( vsCut.corners.top_right_back )) {
+
+				Debug.Log ("7");
+				separateVoxelChunkAlongXAxis (index, vsCut.corners.top_right_back.x + 1);
+				intersectDetected = true;
+			}
+			else if (_aVoxelChunks [index].IntersectsLeftX( vsCut.corners.bot_right_back )) {
+
+				Debug.Log ("8");
+				separateVoxelChunkAlongXAxis (index, vsCut.corners.bot_right_back.x + 1);
+				intersectDetected = true;
+			}
+
+			return intersectDetected;
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		//
 		// ---------------------------------------------------------------------------------------------
 		private void separateVoxelChunkAlongXAxis(int index, int pointCutX) {
 
@@ -252,12 +367,14 @@ namespace VoxelChunks
 			cube.transform.position = pos;
 
 			BoxCollider coll = cube.GetComponent<BoxCollider> ();
+			Bounds b = coll.bounds;
+			b.size = new Vector3 (b.size.x - VoxelUtils.CHUNK_SIZE, b.size.y - VoxelUtils.CHUNK_SIZE, b.size.z - VoxelUtils.CHUNK_SIZE);
 
 			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
 			vs.go      = cube;
 			vs.pos     = p;
 			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
-			vs.bounds  = coll.bounds;
+			vs.bounds = b; //coll.bounds;
 			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
 
 			//Debug.Log ("cut chunk corners: "+vs.corners.ToString());

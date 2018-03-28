@@ -90,10 +90,33 @@ namespace VoxelChunks
 				return identical;
 			}
 
-			public bool IntersectsX(VoxelVector3Int point)
+			public bool Encased(VoxelChunk vsOther)
+			{
+				bool encased = false;
+				if (vsOther.pos.x <= pos.x && (vsOther.pos.x + vsOther.size.x) >= (pos.x + size.x)) {
+					if (vsOther.pos.y <= pos.y && (vsOther.pos.y + vsOther.size.y) >= (pos.y + size.y)) {
+						if (vsOther.pos.z <= pos.z && (vsOther.pos.z + vsOther.size.z) >= (pos.z + size.z)) {
+							encased = true;
+						}
+					}
+				}
+				return encased;
+			}
+
+			public bool IntersectsLeftX(VoxelVector3Int point)
 			{
 				bool intersecting = false;
-				if (point.x > corners.bot_left_front.x && point.x < corners.bot_right_front.x) {
+				if (point.x >= corners.bot_left_front.x && point.x < corners.bot_right_front.x) { // && point.x <= corners.bot_right_front.x
+					intersecting = true;
+				}
+				return intersecting;
+			}
+
+			public bool IntersectsRightX(VoxelVector3Int point)
+			{
+				//Debug.Log (point.ToString()+" - corners.bot_right_front.x: "+corners.bot_right_front.x);
+				bool intersecting = false;
+				if (point.x > corners.bot_left_front.x && point.x <= corners.bot_right_front.x) { //point.x >= corners.bot_left_front.x && 
 					intersecting = true;
 				}
 				return intersecting;
