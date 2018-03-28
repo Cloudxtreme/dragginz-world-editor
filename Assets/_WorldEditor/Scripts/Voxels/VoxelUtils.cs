@@ -103,10 +103,11 @@ namespace VoxelChunks
 				return encased;
 			}
 
+			//
 			public bool IntersectsLeftX(VoxelVector3Int point)
 			{
 				bool intersecting = false;
-				if (point.x >= corners.bot_left_front.x && point.x < corners.bot_right_front.x) { // && point.x <= corners.bot_right_front.x
+				if (point.x >= corners.bot_left_front.x && point.x < corners.bot_right_front.x) {
 					intersecting = true;
 				}
 				return intersecting;
@@ -114,32 +115,52 @@ namespace VoxelChunks
 
 			public bool IntersectsRightX(VoxelVector3Int point)
 			{
-				//Debug.Log (point.ToString()+" - corners.bot_right_front.x: "+corners.bot_right_front.x);
 				bool intersecting = false;
-				if (point.x > corners.bot_left_front.x && point.x <= corners.bot_right_front.x) { //point.x >= corners.bot_left_front.x && 
+				if (point.x > corners.bot_left_front.x && point.x <= corners.bot_right_front.x) {
 					intersecting = true;
 				}
 				return intersecting;
 			}
 
-			public bool IntersectsY(VoxelVector3Int point)
+			//
+			public bool IntersectsBottomY(VoxelVector3Int point)
 			{
 				bool intersecting = false;
-				if (point.y > corners.bot_left_front.y && point.y < corners.top_right_front.y) {
+				if (point.y >= corners.bot_left_front.y && point.y < corners.top_left_front.y) {
 					intersecting = true;
 				}
 				return intersecting;
 			}
 
-			public bool IntersectsZ(VoxelVector3Int point)
+			public bool IntersectsTopY(VoxelVector3Int point)
 			{
 				bool intersecting = false;
-				if (point.z > corners.bot_left_front.z && point.z < corners.bot_left_back.z) {
+				if (point.y > corners.bot_left_front.y && point.y <= corners.top_left_front.y) {
 					intersecting = true;
 				}
 				return intersecting;
 			}
 
+			//
+			public bool IntersectsFrontZ(VoxelVector3Int point)
+			{
+				bool intersecting = false;
+				if (point.z >= corners.bot_left_front.z && point.z < corners.bot_left_back.z) {
+					intersecting = true;
+				}
+				return intersecting;
+			}
+
+			public bool IntersectsBackZ(VoxelVector3Int point)
+			{
+				bool intersecting = false;
+				if (point.z > corners.bot_left_front.z && point.z <= corners.bot_left_back.z) {
+					intersecting = true;
+				}
+				return intersecting;
+			}
+
+			//
 			public bool Intersects(VoxelVector3Int point)
 			{
 				bool intersecting = false;
