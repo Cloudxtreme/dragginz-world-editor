@@ -12,7 +12,7 @@ using UnityEngine.EventSystems;
 
 namespace VoxelChunks
 {
-	public class VoxelChunkDemo : MonoBehaviour
+	public class VoxelChunkDemo1 : MonoBehaviour
 	{
 		public GameObject prefabCube;
 		public GameObject prefabCut;
@@ -62,8 +62,8 @@ namespace VoxelChunks
 			VoxelUtils.VoxelChunk vs = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
 			_aVoxelChunks.Add (vs);
 
-			txtHelp.text  = "Click to cut a hole...";
-			txtCount.text = "Chunks: " + _aVoxelChunks.Count.ToString();
+			txtHelp.text  = "Click to place a chunk...";
+			txtCount.text = _aVoxelChunks.Count.ToString() + " Voxel Chunk" + (_aVoxelChunks.Count > 1 ? "s" : "");
 			txtError.text = "";
 		}
 		
@@ -94,10 +94,10 @@ namespace VoxelChunks
 						stillSplitting = false;
 					} else {
 						if (++cutHolesIndex < cutHolesPos.Count) {
-							txtHelp.text = "Click to cut another hole...";
+							txtHelp.text = "Click to place another chunk...";
 							subtracted = false;
 						} else {
-							txtHelp.text = "No more holes to cut!";
+							txtHelp.text = "All done here!";
 							txtError.text = "";
 						}
 					}
@@ -119,7 +119,7 @@ namespace VoxelChunks
 					}*/
 				}
 
-				txtCount.text = "Chunks: " + _aVoxelChunks.Count.ToString();
+				txtCount.text = _aVoxelChunks.Count.ToString() + " Voxel Chunk" + (_aVoxelChunks.Count > 1 ? "s" : "");
 			}
 		}
 
