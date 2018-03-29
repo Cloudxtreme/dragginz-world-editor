@@ -93,10 +93,9 @@
      <Compile Include="Assets\_WorldEditor\Scripts\Utils\Singleton.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Utils\SphereObjects.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Utils\TimerUtils.cs" />
-     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\CameraRotate.cs" />
-     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\VoxelChunkDemo.cs" />
-     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\VoxelTest.cs" />
-     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\VoxelUtils.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo1\VoxelChunkDemo.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\utils\VoxelUtils.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\VoxelDemosController.cs" />
      <Compile Include="Assets\PygmyMonkey\FileBrowser\Demo\FileBrowserDemo.cs" />
      <Compile Include="Assets\PygmyMonkey\FileBrowser\Scripts\FileBrowser.cs" />
      <Compile Include="Assets\PygmyMonkey\FileBrowser\Scripts\FileBrowserDispatcher.cs" />

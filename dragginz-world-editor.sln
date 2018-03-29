@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dragginz-world-editor", "As
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dragginz-world-editor", "Assembly-CSharp-firstpass.csproj", "{155C7BD2-2BA5-C517-4D4A-8F495846959A}"
 EndProject
+Project("{36AC0693-9524-12C0-E569-387A249DCC8A}") = "dragginz-world-editor", "Assembly-UnityScript.unityproj", "{2EEB0E95-3135-2970-3B39-6ECA7F9B947E}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dragginz-world-editor", "Assembly-CSharp-Editor-firstpass.csproj", "{8FE4D555-F8DD-1B3A-ACB6-92CAADFD6FA7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dragginz-world-editor", "Assembly-CSharp-Editor.csproj", "{372747C8-5BAA-B72E-1E79-B7329AB6370A}"
@@ -23,6 +25,10 @@ Global
 		{155C7BD2-2BA5-C517-4D4A-8F495846959A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{155C7BD2-2BA5-C517-4D4A-8F495846959A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{155C7BD2-2BA5-C517-4D4A-8F495846959A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EEB0E95-3135-2970-3B39-6ECA7F9B947E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EEB0E95-3135-2970-3B39-6ECA7F9B947E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EEB0E95-3135-2970-3B39-6ECA7F9B947E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EEB0E95-3135-2970-3B39-6ECA7F9B947E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8FE4D555-F8DD-1B3A-ACB6-92CAADFD6FA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8FE4D555-F8DD-1B3A-ACB6-92CAADFD6FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FE4D555-F8DD-1B3A-ACB6-92CAADFD6FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU

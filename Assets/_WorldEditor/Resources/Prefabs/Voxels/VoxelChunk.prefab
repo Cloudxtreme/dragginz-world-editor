@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 65583886368654258}
   - component: {fileID: 23730179616797894}
   m_Layer: 8
-  m_Name: CubeCut
+  m_Name: VoxelChunk
   m_TagString: DigAndDestroy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

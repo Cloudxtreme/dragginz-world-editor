@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace VoxelChunks
 {
@@ -23,6 +24,7 @@ namespace VoxelChunks
 		public Transform _voxelChunkContainer;
 
 
+		//
 		private int _iCount;
 
 		private List<VoxelUtils.VoxelChunk> _aVoxelChunks;
@@ -72,6 +74,10 @@ namespace VoxelChunks
 
 			if (Input.GetMouseButtonDown (0)) {
 
+				if (EventSystem.current.IsPointerOverGameObject ()) {
+					return;
+				}
+					
 				if (!subtracted)
 				{
 					// cut out center section and separate voxels
@@ -124,8 +130,6 @@ namespace VoxelChunks
 		{
 			bool success = true;
 
-			//VoxelUtils.VoxelChunk vsCut = createCutGameObject(pos, w, h, d);
-
 			// does the new voxel intersect with any existing voxels?
 			bool splittage = splitVoxels (vsCut);
 			int loops = 0;
@@ -156,7 +160,7 @@ namespace VoxelChunks
 				// do a bounds intersect check first
 				if (vsCut.bounds.Intersects(_aVoxelChunks[i].bounds)) {
 
-					Debug.Log ("bounds intersect detected: "+_aVoxelChunks[i].go.name);
+					//Debug.Log ("bounds intersect detected: "+_aVoxelChunks[i].go.name);
 
 					// check for identical size and position
 					if (_aVoxelChunks [i].Identical (vsCut)) {
@@ -363,7 +367,7 @@ namespace VoxelChunks
 		// ---------------------------------------------------------------------------------------------
 		private void separateVoxelChunkAlongXAxis(int index, int pointCutX) {
 
-			Debug.Log ("    ->separateVoxelChunkAlongXAxis "+pointCutX.ToString());
+			//Debug.Log ("    ->separateVoxelChunkAlongXAxis "+pointCutX.ToString());
 
 			VoxelUtils.VoxelChunk vs = _aVoxelChunks [index];
 			Destroy (vs.go);
@@ -386,7 +390,7 @@ namespace VoxelChunks
 		// ---------------------------------------------------------------------------------------------
 		private void separateVoxelChunkAlongYAxis(int index, int pointCutY) {
 
-			Debug.Log ("    ->separateVoxelChunkAlongYAxis "+pointCutY.ToString());
+			//Debug.Log ("    ->separateVoxelChunkAlongYAxis "+pointCutY.ToString());
 
 			VoxelUtils.VoxelChunk vs = _aVoxelChunks [index];
 			Destroy (vs.go);
@@ -409,7 +413,7 @@ namespace VoxelChunks
 		// ---------------------------------------------------------------------------------------------
 		private void separateVoxelChunkAlongZAxis(int index, int pointCutZ) {
 
-			Debug.Log ("    ->separateVoxelChunkAlongZAxis "+pointCutZ.ToString());
+			//Debug.Log ("    ->separateVoxelChunkAlongZAxis "+pointCutZ.ToString());
 
 			VoxelUtils.VoxelChunk vs = _aVoxelChunks [index];
 			Destroy (vs.go);
