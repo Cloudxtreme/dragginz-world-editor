@@ -78,6 +78,8 @@ namespace VoxelChunks
 		// ---------------------------------------------------------------------------------------------
 		private void onMouseClick()
 		{
+			float timer = Time.realtimeSinceStartup;
+
 			if (cutHolesIndex >= cutHolesPos.Count) {
 				return;
 			}
@@ -99,8 +101,10 @@ namespace VoxelChunks
 				}
 			}
 
-			Destroy (vsSubtract.go);
-			vsSubtract.go = null;
+			//Destroy (vsSubtract.go);
+			//vsSubtract.go = null;
+
+			Debug.Log ("time to create chunks: " + (Time.realtimeSinceStartup - timer).ToString ());
 
 			txtCount.text = _aVoxelChunks.Count.ToString() + " Voxel Chunk" + (_aVoxelChunks.Count > 1 ? "s" : "");
 		}
@@ -125,6 +129,13 @@ namespace VoxelChunks
 				txtError.text = "Looks like we got ourselves an endless loop here!";
 				success = false;
 			}
+			else
+			{
+				int i, len = _aVoxelChunks.Count;
+				for (i = 0; i < len; ++i) {
+					setVoxelChunkMesh (_aVoxelChunks [i]);
+				}
+			}
 
 			return success;
 		}
@@ -147,7 +158,7 @@ namespace VoxelChunks
 					// check for identical size and position
 					if (_aVoxelChunks [i].Identical (vsCut)) {
 
-						Debug.LogWarning ("    ->IDENTICAL: "+i+" - "+_aVoxelChunks [i].go.name);
+						//Debug.LogWarning ("    ->IDENTICAL: "+i+" - "+_aVoxelChunks [i].go.name);
 						Destroy (_aVoxelChunks [i].go);
 						_aVoxelChunks.RemoveAt (i);
 						intersectDetected = true;
@@ -155,7 +166,7 @@ namespace VoxelChunks
 					// check for identical size and position
 					else if (_aVoxelChunks [i].Encased (vsCut)) {
 
-						Debug.LogWarning ("    ->ENCASED!");
+						//Debug.LogWarning ("    ->ENCASED!");
 						Destroy (_aVoxelChunks [i].go);
 						_aVoxelChunks.RemoveAt (i);
 						intersectDetected = true;
@@ -428,24 +439,32 @@ namespace VoxelChunks
 			float width  = w * VoxelUtils.CHUNK_SIZE;
 			float height = h * VoxelUtils.CHUNK_SIZE;
 			float depth  = d * VoxelUtils.CHUNK_SIZE;
-			cube.transform.localScale = new Vector3(width, height, depth);
+			/*
+			cube.transform.localScale = Vector3.one;// new Vector3(width, height, depth);
+
+			Mesh mesh = cube.GetComponent<MeshFilter> ().mesh;
+			VoxelChunkMesh.create (mesh, width, height, depth, w, h, d, false);
+						*/
 
 			Vector3 pos = new Vector3 ((p.x * VoxelUtils.CHUNK_SIZE) + (width / 2f), (p.y * VoxelUtils.CHUNK_SIZE) + (height / 2f), (p.z * VoxelUtils.CHUNK_SIZE) + (depth / 2f));
-			cube.transform.localPosition = pos;
+			//cube.transform.localPosition = pos;
 
-			BoxCollider coll = cube.GetComponent<BoxCollider> ();
+			//BoxCollider coll = cube.GetComponent<BoxCollider> ();
+			//coll.size = new Vector3 (width, height, depth);
+			//coll.center = Vector3.zero;
+			//Debug.Log (coll.bounds);
+			Bounds b = new Bounds ();
+			b.size = new Vector3 (width, height, depth);
+			b.center = pos;
+			//Debug.Log (b);
 
 			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
 			vs.go      = cube;
+			vs.goPos   = pos;
 			vs.pos     = p;
 			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
-			vs.bounds  = coll.bounds;
+			vs.bounds = b;//coll.bounds;
 			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
-
-			//Debug.Log ("pos: "+vs.pos.ToString());
-			//Debug.Log ("size: "+vs.size.ToString());
-			//Debug.Log ("new chunk corners: "+vs.corners.ToString());
-			//Debug.Log (vs.bounds);
 
 			return vs;
 		}
@@ -453,26 +472,38 @@ namespace VoxelChunks
 		// ---------------------------------------------------------------------------------------------
 		// 
 		// ---------------------------------------------------------------------------------------------
+		private void setVoxelChunkMesh(VoxelUtils.VoxelChunk vc)
+		{
+			vc.go.transform.localPosition = vc.goPos;
+			Mesh mesh = vc.go.GetComponent<MeshFilter> ().mesh;
+			VoxelChunkMesh.create (mesh, vc.size.x * VoxelUtils.CHUNK_SIZE, vc.size.y * VoxelUtils.CHUNK_SIZE, vc.size.z * VoxelUtils.CHUNK_SIZE, vc.size.x, vc.size.x, vc.size.x, false);
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		// 
+		// ---------------------------------------------------------------------------------------------
 		private VoxelUtils.VoxelChunk createCutGameObject(VoxelUtils.VoxelVector3Int p, int w, int h, int d) {
 
-			GameObject cube = Instantiate(prefabCut);
-			cube.transform.SetParent (_voxelChunkContainer);
-			cube.name = "cube_cut";
+			//GameObject cube = Instantiate(prefabCut);
+			//cube.transform.SetParent (_voxelChunkContainer);
+			//cube.name = "cube_cut";
 
 			float width  = w * VoxelUtils.CHUNK_SIZE;
 			float height = h * VoxelUtils.CHUNK_SIZE;
 			float depth  = d * VoxelUtils.CHUNK_SIZE;
-			cube.transform.localScale = new Vector3(width, height, depth);
+			//cube.transform.localScale = new Vector3(width, height, depth);
 
 			Vector3 pos = new Vector3 ((p.x * VoxelUtils.CHUNK_SIZE) + (width / 2f), (p.y * VoxelUtils.CHUNK_SIZE) + (height / 2f), (p.z * VoxelUtils.CHUNK_SIZE) + (depth / 2f));
-			cube.transform.localPosition = pos;
+			//cube.transform.localPosition = pos;
 
-			BoxCollider coll = cube.GetComponent<BoxCollider> ();
-			Bounds b = coll.bounds;
-			b.size = new Vector3 (b.size.x - VoxelUtils.CHUNK_SIZE, b.size.y - VoxelUtils.CHUNK_SIZE, b.size.z - VoxelUtils.CHUNK_SIZE);
+			//BoxCollider coll = cube.GetComponent<BoxCollider> ();
+			Bounds b = new Bounds (); //coll.bounds;
+			b.size = new Vector3 (width- VoxelUtils.CHUNK_SIZE, height- VoxelUtils.CHUNK_SIZE, depth- VoxelUtils.CHUNK_SIZE);
+			b.center = pos;
+			//b.size = new Vector3 (b.size.x - VoxelUtils.CHUNK_SIZE, b.size.y - VoxelUtils.CHUNK_SIZE, b.size.z - VoxelUtils.CHUNK_SIZE);
 
 			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
-			vs.go      = cube;
+			//vs.go      = cube;
 			vs.pos     = p;
 			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
 			vs.bounds = b; //coll.bounds;

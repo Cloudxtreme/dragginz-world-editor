@@ -74,6 +74,7 @@ namespace VoxelChunks
 		public struct VoxelChunk
 		{
 			public GameObject      go;
+			public Vector3         goPos;
 			public VoxelVector3Int pos;
 			public VoxelVector3Int size;
 			public Bounds          bounds;
