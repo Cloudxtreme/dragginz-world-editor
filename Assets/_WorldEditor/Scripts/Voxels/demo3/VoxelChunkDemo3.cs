@@ -12,10 +12,12 @@ using UnityEngine.EventSystems;
 
 namespace VoxelChunks
 {
-	public class VoxelChunkDemo1 : MonoBehaviour
+	public class VoxelChunkDemo3 : MonoBehaviour
 	{
 		public GameObject prefabCube;
 		public GameObject prefabCut;
+
+		public Transform aimHelper;
 
 		public Text txtHelp;
 		public Text txtCount;
@@ -23,35 +25,29 @@ namespace VoxelChunks
 
 		public Transform _voxelChunkContainer;
 
+		public Camera _curCam;
 
 		//
 		private int _iCount;
 
 		private List<VoxelUtils.VoxelChunk> _aVoxelChunks;
 
-		// DEBUG
-		private bool subtracted;
-		private bool stillSplitting;
-		private VoxelUtils.VoxelChunk vsSubtract;
-		private List<Vector3> cutHolesPos;
-		private List<Vector3> cutHolesSize;
-		private int cutHolesIndex;
-
+		private Ray _ray;
+		private RaycastHit _hit;
+		private GameObject _goHit;
 
 		// ---------------------------------------------------------------------------------------------
 		// Init shit
 		// ---------------------------------------------------------------------------------------------
 		void Awake () {
 
-			// DEBUG
-			subtracted     = false;
-			stillSplitting = false;
-			cutHolesPos    = new List<Vector3> (){ new Vector3 (30, 30, 30), new Vector3 ( 4, 62,  4), new Vector3 ( 60,  4, 60), new Vector3 ( 4, 52,  4) }; //,new Vector3 (-5, 32, 33), new Vector3 (33, 33, 33), new Vector3 (71 , -1, 71), new Vector3 (-1, -1, 71), new Vector3 (-1, 71, 71), new Vector3 (71, 71, 71), new Vector3 (71 , -1, -1), new Vector3 (-1, -1, -1), new Vector3 (-1, 71, -1), new Vector3 (71, 71, -1) };
-			cutHolesSize   = new List<Vector3> (){ new Vector3 (12, 12, 12), new Vector3 ( 4,  4,  8), new Vector3 (  8, 12,  4), new Vector3 (64,  4,  4) }; //,new Vector3 (80, 8, 8), new Vector3 (6, 6, 6), new Vector3 (2, 2, 2), new Vector3 (2, 2, 2), new Vector3 (2, 2, 2), new Vector3 (2, 2, 2), new Vector3 (2, 2, 2), new Vector3 (2, 2, 2), new Vector3 (2, 2, 2), new Vector3 (2, 2, 2) };
-			cutHolesIndex  = 0;
+			//
 		}
 
 		void Start () {
+
+			txtError.text = "";
+			txtHelp.text  = "Click anywhere to dig a 0.5m cube";
 
 			_iCount = 0;
 
@@ -62,9 +58,7 @@ namespace VoxelChunks
 			VoxelUtils.VoxelChunk vs = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
 			_aVoxelChunks.Add (vs);
 
-			txtHelp.text  = "Click to place a chunk...";
-			txtCount.text = _aVoxelChunks.Count.ToString() + " Voxel Chunk" + (_aVoxelChunks.Count > 1 ? "s" : "");
-			txtError.text = "";
+			subtractChunk (new Vector3 (30, 30, 30), new Vector3 (12, 12, 12));
 		}
 		
 		// ---------------------------------------------------------------------------------------------
@@ -74,61 +68,67 @@ namespace VoxelChunks
 
 			if (Input.GetMouseButtonDown (0)) {
 
-				if (EventSystem.current.IsPointerOverGameObject ()) {
-					return;
+				if (!EventSystem.current.IsPointerOverGameObject ()) {
+					onMouseClick ();
 				}
-					
-				if (!subtracted)
-				{
-					// cut out center section and separate voxels
-					VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int (cutHolesPos[cutHolesIndex]);
-					vsSubtract = createCutGameObject(pos, (int)cutHolesSize[cutHolesIndex].x, (int)cutHolesSize[cutHolesIndex].y, (int)cutHolesSize[cutHolesIndex].z);
-					subtracted = true;
-					stillSplitting = true;
-					txtHelp.text = "Click to split " + (_aVoxelChunks.Count > 1 ? "voxels" : "voxel") + " into smaller chunks...";
-				}
-				else if (stillSplitting)
-				{
-					if (!subtractChunk (vsSubtract)) {
-						txtHelp.text = ":(";
-						stillSplitting = false;
-					} else {
-						if (++cutHolesIndex < cutHolesPos.Count) {
-							txtHelp.text = "Click to place another chunk...";
-							subtracted = false;
-						} else {
-							txtHelp.text = "All done here!";
-							txtError.text = "";
-						}
-					}
-
-					Destroy (vsSubtract.go);
-					vsSubtract.go = null;
-
-					/*stillSplitting = splitVoxels (vsSubtract);
-					if (!stillSplitting) {
-						Destroy (vsSubtract.go);
-						vsSubtract.go = null;
-
-						if (++cutHolesIndex < cutHolesPos.Count) {
-							txtHelp.text = "Click to cut another hole...";
-							subtracted = false;
-						} else {
-							txtHelp.text = "No more holes to cut!";
-						}
-					}*/
-				}
-
-				txtCount.text = _aVoxelChunks.Count.ToString() + " Voxel Chunk" + (_aVoxelChunks.Count > 1 ? "s" : "");
 			}
+			else {
+
+				doRayCast ();
+			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void doRayCast()
+		{
+			_goHit = null;
+
+			_ray = _curCam.ScreenPointToRay (Input.mousePosition);
+			if (Physics.Raycast (_ray, out _hit, 10))
+			{
+				if (_hit.collider.gameObject.tag == "DigAndDestroy")
+				{
+					_goHit = _hit.collider.gameObject;
+
+					float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
+
+					float xChunk = (int)((_hit.point.x + (_hit.normal.x * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+					float yChunk = (int)((_hit.point.y + (_hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+					float zChunk = (int)((_hit.point.z + (_hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+
+					aimHelper.localPosition = new Vector3 (xChunk + vcsHalf, yChunk + vcsHalf, zChunk + vcsHalf);
+				}
+			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void onMouseClick()
+		{
+			if (_goHit == null) {
+				return;
+			}
+
+			float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
+
+			float xChunk = (int)((_hit.point.x + (_hit.normal.x * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			float yChunk = (int)((_hit.point.y + (_hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			float zChunk = (int)((_hit.point.z + (_hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+
+			subtractChunk (new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE)), new Vector3(1, 1, 1));
+			//createDummyGameObject (new Vector3 (xChunk, yChunk, zChunk), 2, 2, 2);
 		}
 
 		// ---------------------------------------------------------------------------------------------
 		// cut a hole!
 		// ---------------------------------------------------------------------------------------------
-		private bool subtractChunk(VoxelUtils.VoxelChunk vsCut)
+		private bool subtractChunk(Vector3 v3Pos, Vector3 v3Size)
 		{
 			bool success = true;
+
+			float timer = Time.realtimeSinceStartup;
+
+			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int (v3Pos);
+			VoxelUtils.VoxelChunk vsCut = createCutVoxelChunk(pos, (int)v3Size.x, (int)v3Size.y, (int)v3Size.z);
 
 			// does the new voxel intersect with any existing voxels?
 			bool splittage = splitVoxels (vsCut);
@@ -143,6 +143,17 @@ namespace VoxelChunks
 				txtError.text = "Looks like we got ourselves an endless loop here!";
 				success = false;
 			}
+			else
+			{
+				int i, len = _aVoxelChunks.Count;
+				for (i = 0; i < len; ++i) {
+					setVoxelChunkMesh (_aVoxelChunks [i]);
+				}
+			}
+
+			Debug.Log ("Time to create chunk(s): " + (Time.realtimeSinceStartup - timer).ToString ());
+
+			txtCount.text = _aVoxelChunks.Count.ToString() + " Voxel Chunk" + (_aVoxelChunks.Count > 1 ? "s" : "");
 
 			return success;
 		}
@@ -446,24 +457,32 @@ namespace VoxelChunks
 			float width  = w * VoxelUtils.CHUNK_SIZE;
 			float height = h * VoxelUtils.CHUNK_SIZE;
 			float depth  = d * VoxelUtils.CHUNK_SIZE;
-			cube.transform.localScale = new Vector3(width, height, depth);
+			/*
+			cube.transform.localScale = Vector3.one;// new Vector3(width, height, depth);
+
+			Mesh mesh = cube.GetComponent<MeshFilter> ().mesh;
+			VoxelChunkMesh.create (mesh, width, height, depth, w, h, d, false);
+						*/
 
 			Vector3 pos = new Vector3 ((p.x * VoxelUtils.CHUNK_SIZE) + (width / 2f), (p.y * VoxelUtils.CHUNK_SIZE) + (height / 2f), (p.z * VoxelUtils.CHUNK_SIZE) + (depth / 2f));
-			cube.transform.localPosition = pos;
+			//cube.transform.localPosition = pos;
 
-			BoxCollider coll = cube.GetComponent<BoxCollider> ();
+			//BoxCollider coll = cube.GetComponent<BoxCollider> ();
+			//coll.size = new Vector3 (width, height, depth);
+			//coll.center = Vector3.zero;
+			//Debug.Log (coll.bounds);
+			Bounds b = new Bounds ();
+			b.size = new Vector3 (width, height, depth);
+			b.center = pos;
+			//Debug.Log (b);
 
 			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
 			vs.go      = cube;
+			vs.goPos   = pos;
 			vs.pos     = p;
 			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
-			vs.bounds  = coll.bounds;
+			vs.bounds = b;//coll.bounds;
 			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
-
-			//Debug.Log ("pos: "+vs.pos.ToString());
-			//Debug.Log ("size: "+vs.size.ToString());
-			//Debug.Log ("new chunk corners: "+vs.corners.ToString());
-			//Debug.Log (vs.bounds);
 
 			return vs;
 		}
@@ -471,7 +490,54 @@ namespace VoxelChunks
 		// ---------------------------------------------------------------------------------------------
 		// 
 		// ---------------------------------------------------------------------------------------------
-		private VoxelUtils.VoxelChunk createCutGameObject(VoxelUtils.VoxelVector3Int p, int w, int h, int d) {
+		private void setVoxelChunkMesh(VoxelUtils.VoxelChunk vc)
+		{
+			vc.go.transform.localPosition = vc.goPos;
+			Mesh mesh = vc.go.GetComponent<MeshFilter> ().mesh;
+			VoxelChunkMesh.create (mesh, vc.size.x * VoxelUtils.CHUNK_SIZE, vc.size.y * VoxelUtils.CHUNK_SIZE, vc.size.z * VoxelUtils.CHUNK_SIZE, vc.size.x, vc.size.x, vc.size.x, false);
+
+			BoxCollider coll = vc.go.GetComponent<BoxCollider> ();
+			coll.size = new Vector3 (vc.size.x * VoxelUtils.CHUNK_SIZE, vc.size.y * VoxelUtils.CHUNK_SIZE, vc.size.z * VoxelUtils.CHUNK_SIZE);
+			//coll.center = Vector3.zero;
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		// 
+		// ---------------------------------------------------------------------------------------------
+		private VoxelUtils.VoxelChunk createCutVoxelChunk(VoxelUtils.VoxelVector3Int p, int w, int h, int d) {
+
+			//GameObject cube = Instantiate(prefabCut);
+			//cube.transform.SetParent (_voxelChunkContainer);
+			//cube.name = "cube_cut";
+
+			float width  = w * VoxelUtils.CHUNK_SIZE;
+			float height = h * VoxelUtils.CHUNK_SIZE;
+			float depth  = d * VoxelUtils.CHUNK_SIZE;
+			//cube.transform.localScale = new Vector3(width, height, depth);
+
+			Vector3 pos = new Vector3 ((p.x * VoxelUtils.CHUNK_SIZE) + (width / 2f), (p.y * VoxelUtils.CHUNK_SIZE) + (height / 2f), (p.z * VoxelUtils.CHUNK_SIZE) + (depth / 2f));
+			//cube.transform.localPosition = pos;
+
+			//BoxCollider coll = cube.GetComponent<BoxCollider> ();
+			Bounds b = new Bounds (); //coll.bounds;
+			b.size = new Vector3 (width- VoxelUtils.CHUNK_SIZE, height- VoxelUtils.CHUNK_SIZE, depth- VoxelUtils.CHUNK_SIZE);
+			b.center = pos;
+			//b.size = new Vector3 (b.size.x - VoxelUtils.CHUNK_SIZE, b.size.y - VoxelUtils.CHUNK_SIZE, b.size.z - VoxelUtils.CHUNK_SIZE);
+
+			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
+			//vs.go      = cube;
+			vs.pos     = p;
+			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
+			vs.bounds = b; //coll.bounds;
+			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
+
+			//Debug.Log ("cut chunk corners: "+vs.corners.ToString());
+
+			return vs;
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void createDummyGameObject(Vector3 p, int w, int h, int d) {
 
 			GameObject cube = Instantiate(prefabCut);
 			cube.transform.SetParent (_voxelChunkContainer);
@@ -484,21 +550,6 @@ namespace VoxelChunks
 
 			Vector3 pos = new Vector3 ((p.x * VoxelUtils.CHUNK_SIZE) + (width / 2f), (p.y * VoxelUtils.CHUNK_SIZE) + (height / 2f), (p.z * VoxelUtils.CHUNK_SIZE) + (depth / 2f));
 			cube.transform.localPosition = pos;
-
-			BoxCollider coll = cube.GetComponent<BoxCollider> ();
-			Bounds b = coll.bounds;
-			b.size = new Vector3 (b.size.x - VoxelUtils.CHUNK_SIZE, b.size.y - VoxelUtils.CHUNK_SIZE, b.size.z - VoxelUtils.CHUNK_SIZE);
-
-			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
-			vs.go      = cube;
-			vs.pos     = p;
-			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
-			vs.bounds = b; //coll.bounds;
-			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
-
-			//Debug.Log ("cut chunk corners: "+vs.corners.ToString());
-
-			return vs;
 		}
 	}
 }

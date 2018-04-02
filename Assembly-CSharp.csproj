@@ -96,6 +96,8 @@
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo1\VoxelChunkDemo1.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo2\FlyCamVoxelsDemo2.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo2\VoxelChunkDemo2.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo3\FlyCamVoxelsDemo3.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo3\VoxelChunkDemo3.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\utils\Utils.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\utils\VoxelChunkMesh.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\utils\VoxelCubeMesh.cs" />

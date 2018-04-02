@@ -23,6 +23,8 @@ namespace VoxelChunks
 		static public readonly int   MAX_CHUNK_UNITS = 72;
 		static public readonly float CHUNK_SIZE = 0.5f;
 
+		static public readonly Vector3 LEVEL_CENTER_POS = new Vector3(MAX_CHUNK_UNITS * CHUNK_SIZE * 0.5f, MAX_CHUNK_UNITS * CHUNK_SIZE * 0.5f, MAX_CHUNK_UNITS * CHUNK_SIZE * 0.5f);
+
 		// ---------------------------------------------------------------------------------------------
 		public struct VoxelVector3Int
 		{

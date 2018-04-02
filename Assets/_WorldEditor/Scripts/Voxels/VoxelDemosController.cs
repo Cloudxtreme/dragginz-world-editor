@@ -25,10 +25,10 @@ namespace VoxelChunks
 		//
 		void Awake()
 		{
-			_demoScenes = new string[]{"voxels_demo_1", "voxels_demo_2"};
-			_sceneDesc  = new string[]{"Voxel Chunk Splitting", "VoxelUtils Chunk Level Creation"};
+			_demoScenes = new string[]{"voxels_demo_1", "voxels_demo_2", "voxels_demo_3"};
+			_sceneDesc  = new string[]{"Voxel Chunk Splitting", "VoxelUtils Chunk Level Creation", "Voxel Chunk Diggitty Dig Dig Dig!"};
 
-			_curSceneIndex = -1;
+			_curSceneIndex = 1;
 
 			loadNextScene ();
 		}
@@ -53,7 +53,9 @@ namespace VoxelChunks
 			}
 
 			if (_curSceneIndex != -1) {
-				SceneManager.UnloadSceneAsync (_demoScenes [_curSceneIndex]);
+				if (SceneManager.sceneCount > 1) {
+					SceneManager.UnloadSceneAsync (_demoScenes [_curSceneIndex]);
+				}
 			}
 
 			_curSceneIndex = sceneIndex;
