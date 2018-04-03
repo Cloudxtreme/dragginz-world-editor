@@ -113,6 +113,49 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &54591379
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 54591380}
+  - component: {fileID: 54591381}
+  m_Layer: 0
+  m_Name: '[VoxelChunkMeshes]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &54591380
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 54591379}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &54591381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 54591379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 682f611aee3d7e04e9c6cdc5c79cfe16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_material: {fileID: 2100000, guid: 31d1291bd013b254496fe8d318d4cce8, type: 2}
+  mode: 0
+  seed: 0
 --- !u!1 &150383686
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,6 +422,8 @@ MonoBehaviour:
   txtCount: {fileID: 1641634904}
   txtError: {fileID: 150383688}
   _voxelChunkContainer: {fileID: 1689682326}
+  _voxelChunkMeshesContainer: {fileID: 54591380}
+  _ConvertLevelToMesh: {fileID: 54591381}
   _curCam: {fileID: 667899926}
 --- !u!4 &546570722
 Transform:
@@ -430,7 +475,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4596493871141592, guid: d3242e8f834d31540b14f644706fa782, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114707736112159884, guid: d3242e8f834d31540b14f644706fa782, type: 2}
@@ -1082,5 +1127,5 @@ Transform:
   m_LocalScale: {x: 0.55, y: 0.55, z: 0.55}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

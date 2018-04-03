@@ -24,10 +24,15 @@ namespace VoxelChunks
 		public Text txtError;
 
 		public Transform _voxelChunkContainer;
+		public Transform _voxelChunkMeshesContainer;
+
+		public ConvertLevelToMesh _ConvertLevelToMesh;
 
 		public Camera _curCam;
 
 		//
+		private int _editMode;
+
 		private int _iCount;
 
 		private List<VoxelUtils.VoxelChunk> _aVoxelChunks;
@@ -41,7 +46,7 @@ namespace VoxelChunks
 		// ---------------------------------------------------------------------------------------------
 		void Awake () {
 
-			//
+			_editMode = 0;
 		}
 
 		void Start () {
@@ -72,9 +77,33 @@ namespace VoxelChunks
 					onMouseClick ();
 				}
 			}
+			else if (Input.GetKeyDown(KeyCode.P))
+			{
+				toggleEditMode ();
+			}
 			else {
 
 				doRayCast ();
+			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void toggleEditMode()
+		{
+			_editMode = (_editMode == 0 ? 1 : 0);
+
+			_voxelChunkContainer.gameObject.SetActive (_editMode == 0);
+			_voxelChunkMeshesContainer.gameObject.SetActive (_editMode == 1);
+
+			if (_editMode == 1)
+			{
+				float fCenter  = (float)VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f;
+				float[] voxels = convertChunksToVoxels ();
+
+				_ConvertLevelToMesh.create (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero); //new Vector3(fCenter, fCenter, fCenter));
+			}
+			else {
+				_ConvertLevelToMesh.resetAll ();
 			}
 		}
 
@@ -116,6 +145,76 @@ namespace VoxelChunks
 
 			subtractChunk (new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE)), new Vector3(1, 1, 1));
 			//createDummyGameObject (new Vector3 (xChunk, yChunk, zChunk), 2, 2, 2);
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private float[] convertChunksToVoxels()
+		{
+			int seed = (int)(Time.time * 10f);
+			INoise perlin = new PerlinNoise(seed, 2.0f);
+			FractalNoise fractal = new FractalNoise(perlin, 3, 1.0f);
+
+			int size = VoxelUtils.MAX_CHUNK_UNITS;
+			float[] voxels = new float[size * size * size];
+			int numVoxels = voxels.Length;
+
+			//Random.InitState ((int)(Time.time * 10f));
+
+			VoxelUtils.VoxelChunk vc;
+			float fx, fy, fz;
+			int x, y, z, index;
+			int maxX, maxY, maxZ;
+
+			int i, len = _aVoxelChunks.Count;
+			for (i = 0; i < len; ++i) {
+	
+				vc = _aVoxelChunks [i];
+				//Debug.LogWarning (i + "::vc.size: " + vc.size.ToString ());
+
+				maxX = (vc.corners.bot_left_front.x + vc.size.x);
+				maxY = (vc.corners.bot_left_front.y + vc.size.y);
+				maxZ = (vc.corners.bot_left_front.z + vc.size.z);
+
+				for (x = vc.corners.bot_left_front.x; x < maxX; x++) {
+					for (y = vc.corners.bot_left_front.y; y < maxY; y++) {
+						for (z = vc.corners.bot_left_front.z; z < maxZ; z++) {
+
+							/*if (y > vc.corners.bot_left_front.y) {
+								skipped++;
+								continue;
+							}*/
+
+							if ((x > vc.corners.bot_left_front.x && x < (maxX - 1))
+							&&	(y > vc.corners.bot_left_front.y && y < (maxY - 1))
+							&&	(z > vc.corners.bot_left_front.z && z < (maxZ - 1))) {
+								//continue;
+							}
+
+							fx = x / (vc.size.x - 1.0f);
+							fy = y / (vc.size.y - 1.0f);
+							fz = z / (vc.size.z - 1.0f);
+
+							index = x + y * vc.size.x + z * vc.size.x * vc.size.y;
+							voxels[index] = fractal.Sample3D(fx, fy, fz);
+							//voxels [index] = -1.0f + Random.value * 2.0f;
+
+							/*if (index >= numVoxels) {
+								Debug.LogWarning (i+"::index out of bounds: " + index + " - x, y, z: " + x + ", " + y + ", " + z);
+							} else {
+								voxels [index] = -1.0f + Random.value * 2.0f;
+							}*/
+						}
+					}
+				}
+			}
+
+			/*for (i = 0; i < numVoxels; ++i) {
+				if (voxels [i] == 0) {
+					voxels [i] = -1.0f + Random.value * 2.0f;
+				}
+			}*/
+
+			return voxels;
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -520,7 +619,7 @@ namespace VoxelChunks
 
 			//BoxCollider coll = cube.GetComponent<BoxCollider> ();
 			Bounds b = new Bounds (); //coll.bounds;
-			b.size = new Vector3 (width- VoxelUtils.CHUNK_SIZE, height- VoxelUtils.CHUNK_SIZE, depth- VoxelUtils.CHUNK_SIZE);
+			b.size = new Vector3 (width - VoxelUtils.CHUNK_SIZE, height - VoxelUtils.CHUNK_SIZE, depth - VoxelUtils.CHUNK_SIZE);
 			b.center = pos;
 			//b.size = new Vector3 (b.size.x - VoxelUtils.CHUNK_SIZE, b.size.y - VoxelUtils.CHUNK_SIZE, b.size.z - VoxelUtils.CHUNK_SIZE);
 

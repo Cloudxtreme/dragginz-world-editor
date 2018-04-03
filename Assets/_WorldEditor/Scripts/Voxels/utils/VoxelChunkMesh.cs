@@ -118,6 +118,9 @@ namespace VoxelChunks
             mesh.vertices = vertices;
             mesh.uv = uvs;
             mesh.triangles = triangles;
+
+			// Editor only :( -> MeshUtility.Optimize(mesh);
+
             mesh.RecalculateNormals();
             //CalculateTangents(mesh);
             mesh.RecalculateBounds();
