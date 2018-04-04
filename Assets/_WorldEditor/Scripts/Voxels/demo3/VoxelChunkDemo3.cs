@@ -29,6 +29,7 @@ namespace VoxelChunks
 		public ConvertLevelToMesh _ConvertLevelToMesh;
 
 		public Camera _curCam;
+		public Light _light;
 
 		//
 		private int _editMode;
@@ -41,12 +42,15 @@ namespace VoxelChunks
 		private RaycastHit _hit;
 		private GameObject _goHit;
 
+		private Vector3 _curDigSize;
+
 		// ---------------------------------------------------------------------------------------------
 		// Init shit
 		// ---------------------------------------------------------------------------------------------
 		void Awake () {
 
 			_editMode = 0;
+			_curDigSize = new Vector3 (4, 6, 4);
 		}
 
 		void Start () {
@@ -64,6 +68,8 @@ namespace VoxelChunks
 			_aVoxelChunks.Add (vs);
 
 			subtractChunk (new Vector3 (30, 30, 30), new Vector3 (12, 12, 12));
+
+			aimHelper.localScale = new Vector3(_curDigSize.x * VoxelUtils.CHUNK_SIZE * 1.01f, _curDigSize.y * VoxelUtils.CHUNK_SIZE * 1.01f, _curDigSize.z * VoxelUtils.CHUNK_SIZE * 1.01f);
 		}
 		
 		// ---------------------------------------------------------------------------------------------
@@ -94,6 +100,7 @@ namespace VoxelChunks
 
 			_voxelChunkContainer.gameObject.SetActive (_editMode == 0);
 			_voxelChunkMeshesContainer.gameObject.SetActive (_editMode == 1);
+			_light.enabled = (_editMode == 1);
 
 			if (_editMode == 1)
 			{
@@ -125,7 +132,11 @@ namespace VoxelChunks
 					float yChunk = (int)((_hit.point.y + (_hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 					float zChunk = (int)((_hit.point.z + (_hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 
-					aimHelper.localPosition = new Vector3 (xChunk + vcsHalf, yChunk + vcsHalf, zChunk + vcsHalf);
+					aimHelper.forward = _hit.normal;
+
+					Vector3 aimPos = new Vector3 (xChunk + vcsHalf, yChunk + vcsHalf, zChunk + vcsHalf);
+					//aimPos += (_curDigSize * 0.5f);
+					aimHelper.localPosition = aimPos;
 				}
 			}
 		}
@@ -143,7 +154,7 @@ namespace VoxelChunks
 			float yChunk = (int)((_hit.point.y + (_hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 			float zChunk = (int)((_hit.point.z + (_hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 
-			subtractChunk (new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE)), new Vector3(1, 1, 1));
+			subtractChunk (new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE)), _curDigSize);
 			//createDummyGameObject (new Vector3 (xChunk, yChunk, zChunk), 2, 2, 2);
 		}
 
@@ -169,33 +180,35 @@ namespace VoxelChunks
 			for (i = 0; i < len; ++i) {
 	
 				vc = _aVoxelChunks [i];
-				//Debug.LogWarning (i + "::vc.size: " + vc.size.ToString ());
 
 				maxX = (vc.corners.bot_left_front.x + vc.size.x);
 				maxY = (vc.corners.bot_left_front.y + vc.size.y);
 				maxZ = (vc.corners.bot_left_front.z + vc.size.z);
 
+				//Debug.LogWarning (i + "::vc.size: " + vc.size.ToString ());
+				//Debug.LogWarning ("   ->"+vc.corners.bot_left_front.ToString());
+				//Debug.LogWarning ("   ->"+maxX+", "+maxY+", "+maxZ);
+				float f = -0.3f;
 				for (x = vc.corners.bot_left_front.x; x < maxX; x++) {
 					for (y = vc.corners.bot_left_front.y; y < maxY; y++) {
 						for (z = vc.corners.bot_left_front.z; z < maxZ; z++) {
 
-							/*if (y > vc.corners.bot_left_front.y) {
-								skipped++;
-								continue;
-							}*/
+							index = x + y * size + z * size * size;
 
 							if ((x > vc.corners.bot_left_front.x && x < (maxX - 1))
-							&&	(y > vc.corners.bot_left_front.y && y < (maxY - 1))
-							&&	(z > vc.corners.bot_left_front.z && z < (maxZ - 1))) {
+							    &&	(y > vc.corners.bot_left_front.y && y < (maxY - 1))
+							    &&	(z > vc.corners.bot_left_front.z && z < (maxZ - 1))) {
+								voxels [index] = 1 - Random.value;
 								//continue;
+							} else {
+								voxels [index] = -1 + Random.value;
 							}
 
-							fx = x / (vc.size.x - 1.0f);
-							fy = y / (vc.size.y - 1.0f);
-							fz = z / (vc.size.z - 1.0f);
+							//fx = x / (vc.size.x - 1.0f);
+							//fy = y / (vc.size.y - 1.0f);
+							//fz = z / (vc.size.z - 1.0f);
 
-							index = x + y * vc.size.x + z * vc.size.x * vc.size.y;
-							voxels[index] = fractal.Sample3D(fx, fy, fz);
+							//voxels [index] = fractal.Sample3D(fx, fy, fz);
 							//voxels [index] = -1.0f + Random.value * 2.0f;
 
 							/*if (index >= numVoxels) {

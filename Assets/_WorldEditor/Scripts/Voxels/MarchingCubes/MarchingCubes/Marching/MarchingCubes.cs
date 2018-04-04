@@ -42,9 +42,9 @@ namespace VoxelChunks
                 {
                     offset = GetOffset(cube[EdgeConnection[i, 0]], cube[EdgeConnection[i, 1]]);
 
-                    EdgeVertex[i].x = x + (VertexOffset[EdgeConnection[i, 0], 0] + offset * EdgeDirection[i, 0]);
-                    EdgeVertex[i].y = y + (VertexOffset[EdgeConnection[i, 0], 1] + offset * EdgeDirection[i, 1]);
-                    EdgeVertex[i].z = z + (VertexOffset[EdgeConnection[i, 0], 2] + offset * EdgeDirection[i, 2]);
+					EdgeVertex[i].x = 0.5f * (x + (VertexOffset[EdgeConnection[i, 0], 0] + offset * EdgeDirection[i, 0]));
+					EdgeVertex[i].y = 0.5f * (y + (VertexOffset[EdgeConnection[i, 0], 1] + offset * EdgeDirection[i, 1]));
+					EdgeVertex[i].z = 0.5f * (z + (VertexOffset[EdgeConnection[i, 0], 2] + offset * EdgeDirection[i, 2]));
                 }
             }
 

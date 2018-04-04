@@ -425,6 +425,7 @@ MonoBehaviour:
   _voxelChunkMeshesContainer: {fileID: 54591380}
   _ConvertLevelToMesh: {fileID: 54591381}
   _curCam: {fileID: 667899926}
+  _light: {fileID: 990568332}
 --- !u!4 &546570722
 Transform:
   m_ObjectHideFlags: 0
@@ -582,17 +583,17 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &990568332
 Light:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 990568331}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 0.6993915, b: 0.42647058, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
