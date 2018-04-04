@@ -3,6 +3,7 @@
 // Company : Decentralised Team of Developers
 //
 
+//using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -95,39 +96,55 @@ namespace VoxelChunks
             int maxVertsPerMesh = 30000; //must be divisible by 3, ie 3 verts == 1 triangle
             int numMeshes = verts.Count / maxVertsPerMesh + 1;
 
-            for (int i = 0; i < numMeshes; i++)
-            {
-                List<Vector3> splitVerts = new List<Vector3>();
-                List<int> splitIndices = new List<int>();
+			List<Vector3> splitVerts = new List<Vector3>();
+			List<int> splitIndices = new List<int>();
+			List<Vector2> splitUVs = new List<Vector2> ();
 
-                for (int j = 0; j < maxVertsPerMesh; j++)
+			Renderer renderer;
+			MeshFilter filter;
+			int i, j, idx;
+            for (i = 0; i < numMeshes; i++)
+            {
+                for (j = 0; j < maxVertsPerMesh; j++)
                 {
-                    int idx = i * maxVertsPerMesh + j;
+                    idx = i * maxVertsPerMesh + j;
 
                     if (idx < verts.Count)
                     {
                         splitVerts.Add(verts[idx]);
                         splitIndices.Add(j);
+						splitUVs.Add (new Vector2 (0f, 1f));
                     }
                 }
 
                 if (splitVerts.Count == 0) continue;
 
+				//Debug.Log ("verts: " + splitVerts.Count);
+				//Debug.Log ("indices: " + splitIndices.Count);
+
                 Mesh mesh = new Mesh();
                 mesh.SetVertices(splitVerts);
                 mesh.SetTriangles(splitIndices, 0);
+				mesh.SetUVs (0, splitUVs);
+
+				//MeshUtility.Optimize (mesh);
+
                 mesh.RecalculateBounds();
                 mesh.RecalculateNormals();
 
                 GameObject go = new GameObject("Mesh");
                 go.transform.parent = transform;
-                go.AddComponent<MeshFilter>();
-                go.AddComponent<MeshRenderer>();
-                go.GetComponent<Renderer>().material = m_material;
-                go.GetComponent<MeshFilter>().mesh = mesh;
+                filter = go.AddComponent<MeshFilter>();
+                renderer = go.AddComponent<MeshRenderer>();
+                renderer.material = m_material;
+                filter.mesh = mesh;
 				go.transform.localPosition = pos; //new Vector3(-width / 2, -height / 2, -depth / 2);
 
                 meshes.Add(go);
+
+				splitVerts.Clear ();
+				splitIndices.Clear ();
+				splitUVs.Clear ();
             }
         }
 

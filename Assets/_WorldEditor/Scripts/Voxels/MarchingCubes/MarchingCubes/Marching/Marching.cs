@@ -43,6 +43,7 @@ namespace VoxelChunks
 
             int x, y, z, i;
             int ix, iy, iz;
+			int WtimesH = width * height;
             for (x = 0; x < width - 1; x++)
             {
                 for (y = 0; y < height - 1; y++)
@@ -56,7 +57,7 @@ namespace VoxelChunks
                             iy = y + VertexOffset[i, 1];
                             iz = z + VertexOffset[i, 2];
 
-                            Cube[i] = voxels[ix + iy * width + iz * width * height];
+							Cube[i] = voxels[ix + iy * width + iz * WtimesH]; //width * height
                         }
 
                         //Perform algorithm

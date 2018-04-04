@@ -100,14 +100,19 @@ namespace VoxelChunks
 
 			_voxelChunkContainer.gameObject.SetActive (_editMode == 0);
 			_voxelChunkMeshesContainer.gameObject.SetActive (_editMode == 1);
-			_light.enabled = (_editMode == 1);
+			_light.enabled = false;
+			aimHelper.gameObject.SetActive(_editMode == 0);
 
 			if (_editMode == 1)
 			{
+				float timer = Time.realtimeSinceStartup;
+
 				float fCenter  = (float)VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f;
 				float[] voxels = convertChunksToVoxels ();
 
 				_ConvertLevelToMesh.create (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero); //new Vector3(fCenter, fCenter, fCenter));
+
+				Debug.LogWarning ("Time run marching cubes: " + (Time.realtimeSinceStartup - timer).ToString ());
 			}
 			else {
 				_ConvertLevelToMesh.resetAll ();
@@ -162,60 +167,52 @@ namespace VoxelChunks
 		private float[] convertChunksToVoxels()
 		{
 			int seed = (int)(Time.time * 10f);
-			INoise perlin = new PerlinNoise(seed, 2.0f);
-			FractalNoise fractal = new FractalNoise(perlin, 3, 1.0f);
+			//INoise perlin = new PerlinNoise(seed, 2.0f);
+			//FractalNoise fractal = new FractalNoise(perlin, 3, 1.0f);
+			Random.InitState (seed);
 
 			int size = VoxelUtils.MAX_CHUNK_UNITS;
 			float[] voxels = new float[size * size * size];
 			int numVoxels = voxels.Length;
-
-			//Random.InitState ((int)(Time.time * 10f));
 
 			VoxelUtils.VoxelChunk vc;
 			float fx, fy, fz;
 			int x, y, z, index;
 			int maxX, maxY, maxZ;
 
-			int i, len = _aVoxelChunks.Count;
+			int i;
+			for (i = 0; i < numVoxels; ++i) {
+				voxels [i] = -1;
+			}
+
+			int size2 = size * size;
+			int ySize;
+			int len = _aVoxelChunks.Count;
 			for (i = 0; i < len; ++i) {
 	
 				vc = _aVoxelChunks [i];
 
-				maxX = (vc.corners.bot_left_front.x + vc.size.x);
-				maxY = (vc.corners.bot_left_front.y + vc.size.y);
-				maxZ = (vc.corners.bot_left_front.z + vc.size.z);
+				maxX = (vc.corners.bot_left_front.x + vc.size.x) - 1;
+				maxY = (vc.corners.bot_left_front.y + vc.size.y) - 1;
+				maxZ = (vc.corners.bot_left_front.z + vc.size.z) - 1;
 
-				//Debug.LogWarning (i + "::vc.size: " + vc.size.ToString ());
-				//Debug.LogWarning ("   ->"+vc.corners.bot_left_front.ToString());
-				//Debug.LogWarning ("   ->"+maxX+", "+maxY+", "+maxZ);
-				float f = -0.3f;
-				for (x = vc.corners.bot_left_front.x; x < maxX; x++) {
-					for (y = vc.corners.bot_left_front.y; y < maxY; y++) {
-						for (z = vc.corners.bot_left_front.z; z < maxZ; z++) {
+				for (x = vc.corners.bot_left_front.x; x <= maxX; x++) {
+					for (y = vc.corners.bot_left_front.y; y <= maxY; y++) {
+						ySize = y * size;
+						for (z = vc.corners.bot_left_front.z; z <= maxZ; z++) {
 
-							index = x + y * size + z * size * size;
+							index = x + ySize + z * size2; //size * size;
 
-							if ((x > vc.corners.bot_left_front.x && x < (maxX - 1))
-							    &&	(y > vc.corners.bot_left_front.y && y < (maxY - 1))
-							    &&	(z > vc.corners.bot_left_front.z && z < (maxZ - 1))) {
-								voxels [index] = 1 - Random.value;
-								//continue;
-							} else {
-								voxels [index] = -1 + Random.value;
+							if ((x > vc.corners.bot_left_front.x && x < maxX)
+							&&	(y > vc.corners.bot_left_front.y && y < maxY)
+							&&	(z > vc.corners.bot_left_front.z && z < maxZ))
+							{
+								voxels [index] = 0;//1 - Random.value;
 							}
-
-							//fx = x / (vc.size.x - 1.0f);
-							//fy = y / (vc.size.y - 1.0f);
-							//fz = z / (vc.size.z - 1.0f);
-
-							//voxels [index] = fractal.Sample3D(fx, fy, fz);
-							//voxels [index] = -1.0f + Random.value * 2.0f;
-
-							/*if (index >= numVoxels) {
-								Debug.LogWarning (i+"::index out of bounds: " + index + " - x, y, z: " + x + ", " + y + ", " + z);
-							} else {
-								voxels [index] = -1.0f + Random.value * 2.0f;
-							}*/
+							else
+							{
+								voxels [index] = 1 - Random.value;//-1 + Random.value;
+							}
 						}
 					}
 				}

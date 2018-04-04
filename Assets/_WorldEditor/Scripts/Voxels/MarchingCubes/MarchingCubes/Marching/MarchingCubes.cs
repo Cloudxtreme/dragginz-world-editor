@@ -49,15 +49,18 @@ namespace VoxelChunks
             }
 
             //Save the triangles that were found. There can be up to five per cube
+			int threeI;
             for (i = 0; i < 5; i++)
             {
-                if (TriangleConnectionTable[flagIndex, 3 * i] < 0) break;
+				threeI = 3 * i;
+
+				if (TriangleConnectionTable[flagIndex, threeI] < 0) break;
 
                 idx = vertList.Count;
 
                 for (j = 0; j < 3; j++)
                 {
-                    vert = TriangleConnectionTable[flagIndex, 3 * i + j];
+					vert = TriangleConnectionTable[flagIndex, threeI + j];
                     indexList.Add(idx + WindingOrder[j]);
                     vertList.Add(EdgeVertex[vert]);
                 }

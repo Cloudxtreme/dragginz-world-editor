@@ -155,9 +155,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_material: {fileID: 2100000, guid: 31d1291bd013b254496fe8d318d4cce8, type: 2}
   mode: 0
-  width: 2
-  height: 16
-  length: 16
+  width: 32
+  height: 32
+  length: 32
   seed: 0
 --- !u!1 &1630665907
 GameObject:
