@@ -12,7 +12,7 @@ using UnityEngine.EventSystems;
 
 namespace VoxelChunks
 {
-	public class VoxelChunkDemo3 : MonoBehaviour
+	public class VoxelChunkDemo4 : MonoBehaviour
 	{
 		public GameObject prefabCube;
 		public GameObject prefabCut;
@@ -28,11 +28,14 @@ namespace VoxelChunks
 
 		public ConvertLevelToMesh _ConvertLevelToMesh;
 
-		public Camera _curCam;
+		public GameObject playerEdit;
+		public GameObject playerPlay;
+
+		//public Camera _curCam;
 		public Light _light;
 
 		//
-		private int _editMode;
+		private int _curStep;
 
 		private int _iCount;
 
@@ -44,19 +47,35 @@ namespace VoxelChunks
 
 		private Vector3 _curDigSize;
 
+		private List<Vector3> _cutHolesPos;
+		private List<Vector3> _cutHolesSize;
+		private int _cutHolesIndex;
+
 		// ---------------------------------------------------------------------------------------------
 		// Init shit
 		// ---------------------------------------------------------------------------------------------
 		void Awake () {
 
-			_editMode = 0;
+			_curStep = 0;
 			_curDigSize = new Vector3 (4, 6, 4);
+
+			_cutHolesPos   = new List<Vector3> ();
+			_cutHolesSize  = new List<Vector3> ();
+			_cutHolesIndex = 0;
+
+			createProceduralLevelData ();
 		}
 
 		void Start () {
 
+			playerEdit.SetActive (true);
+			playerPlay.SetActive (false);
+
+			_light.enabled = true;
+			aimHelper.gameObject.SetActive(false);
+
 			txtError.text = "";
-			txtHelp.text  = "Click anywhere to dig a 0.5m cube - Press 'P' to polygonize level!";
+			txtHelp.text  = "Click to create procedural level";
 
 			_iCount = 0;
 
@@ -66,8 +85,9 @@ namespace VoxelChunks
 			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int(Vector3.zero);
 			VoxelUtils.VoxelChunk vs = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
 			_aVoxelChunks.Add (vs);
+			setVoxelChunkMesh (_aVoxelChunks [0]);
 
-			subtractChunk (new Vector3 (30, 30, 30), new Vector3 (12, 12, 12));
+			txtCount.text = _aVoxelChunks.Count.ToString() + " Voxel Chunk" + (_aVoxelChunks.Count > 1 ? "s" : "");
 
 			aimHelper.localScale = new Vector3(_curDigSize.x * VoxelUtils.CHUNK_SIZE * 1.01f, _curDigSize.y * VoxelUtils.CHUNK_SIZE * 1.01f, _curDigSize.z * VoxelUtils.CHUNK_SIZE * 1.01f);
 		}
@@ -80,21 +100,69 @@ namespace VoxelChunks
 			if (Input.GetMouseButtonDown (0)) {
 
 				if (!EventSystem.current.IsPointerOverGameObject ()) {
-					onMouseClick ();
+
+					if (_curStep == 0) {
+						_curStep = 1;
+					}
+					else if (_curStep == 2) {
+						
+						_curStep = 3;
+					}
 				}
 			}
 			else if (Input.GetKeyDown(KeyCode.P))
 			{
-				toggleEditMode ();
+				//toggleEditMode ();
 			}
 			else {
 
-				doRayCast ();
+				//doRayCast ();
+			}
+
+			if (_curStep == 1) {
+				
+				if (!createProceduralLevel ()) {
+
+					_curStep = 2;
+					txtHelp.text = "Click to polygonize level";
+				}
+			}
+			else if (_curStep == 3) {
+
+				txtHelp.text  = "Running...";
+				txtCount.text = "Hold tight!";
+				_curStep = 4;
+			}
+			else if (_curStep == 4) {
+				
+				_curStep = 5;
+
+				_voxelChunkContainer.gameObject.SetActive (false);
+				_voxelChunkMeshesContainer.gameObject.SetActive (true);
+
+				float timer = Time.realtimeSinceStartup;
+				float[] voxels = convertChunksToVoxels ();
+				_ConvertLevelToMesh.create (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero);
+
+				txtHelp.text  = "Use mouse and arrow keys to move!";
+				txtCount.text = "Processing time: " + (Time.realtimeSinceStartup - timer).ToString ("F2") + "sec.";
+
+				playerEdit.SetActive (false);
+				playerPlay.SetActive (true);
+				playerPlay.transform.position = new Vector3 (34, 33, 1);
 			}
 		}
 
 		// ---------------------------------------------------------------------------------------------
-		private void toggleEditMode()
+		private bool createProceduralLevel()
+		{
+			subtractChunk (_cutHolesPos[_cutHolesIndex], _cutHolesSize[_cutHolesIndex]);
+
+			return (++_cutHolesIndex < _cutHolesPos.Count);
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		/*private void toggleEditMode()
 		{
 			_editMode = (_editMode == 0 ? 1 : 0);
 
@@ -117,10 +185,10 @@ namespace VoxelChunks
 			else {
 				_ConvertLevelToMesh.resetAll ();
 			}
-		}
+		}*/
 
 		// ---------------------------------------------------------------------------------------------
-		private void doRayCast()
+		/*private void doRayCast()
 		{
 			_goHit = null;
 
@@ -144,7 +212,7 @@ namespace VoxelChunks
 					aimHelper.localPosition = aimPos;
 				}
 			}
-		}
+		}*/
 
 		// ---------------------------------------------------------------------------------------------
 		private void onMouseClick()
@@ -566,24 +634,12 @@ namespace VoxelChunks
 			float width  = w * VoxelUtils.CHUNK_SIZE;
 			float height = h * VoxelUtils.CHUNK_SIZE;
 			float depth  = d * VoxelUtils.CHUNK_SIZE;
-			/*
-			cube.transform.localScale = Vector3.one;// new Vector3(width, height, depth);
-
-			Mesh mesh = cube.GetComponent<MeshFilter> ().mesh;
-			VoxelChunkMesh.create (mesh, width, height, depth, w, h, d, false);
-						*/
 
 			Vector3 pos = new Vector3 ((p.x * VoxelUtils.CHUNK_SIZE) + (width / 2f), (p.y * VoxelUtils.CHUNK_SIZE) + (height / 2f), (p.z * VoxelUtils.CHUNK_SIZE) + (depth / 2f));
-			//cube.transform.localPosition = pos;
 
-			//BoxCollider coll = cube.GetComponent<BoxCollider> ();
-			//coll.size = new Vector3 (width, height, depth);
-			//coll.center = Vector3.zero;
-			//Debug.Log (coll.bounds);
 			Bounds b = new Bounds ();
 			b.size = new Vector3 (width, height, depth);
 			b.center = pos;
-			//Debug.Log (b);
 
 			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
 			vs.go      = cube;
@@ -607,7 +663,6 @@ namespace VoxelChunks
 
 			BoxCollider coll = vc.go.GetComponent<BoxCollider> ();
 			coll.size = new Vector3 (vc.size.x * VoxelUtils.CHUNK_SIZE, vc.size.y * VoxelUtils.CHUNK_SIZE, vc.size.z * VoxelUtils.CHUNK_SIZE);
-			//coll.center = Vector3.zero;
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -615,38 +670,118 @@ namespace VoxelChunks
 		// ---------------------------------------------------------------------------------------------
 		private VoxelUtils.VoxelChunk createCutVoxelChunk(VoxelUtils.VoxelVector3Int p, int w, int h, int d) {
 
-			//GameObject cube = Instantiate(prefabCut);
-			//cube.transform.SetParent (_voxelChunkContainer);
-			//cube.name = "cube_cut";
-
 			float width  = w * VoxelUtils.CHUNK_SIZE;
 			float height = h * VoxelUtils.CHUNK_SIZE;
 			float depth  = d * VoxelUtils.CHUNK_SIZE;
-			//cube.transform.localScale = new Vector3(width, height, depth);
 
 			Vector3 pos = new Vector3 ((p.x * VoxelUtils.CHUNK_SIZE) + (width / 2f), (p.y * VoxelUtils.CHUNK_SIZE) + (height / 2f), (p.z * VoxelUtils.CHUNK_SIZE) + (depth / 2f));
-			//cube.transform.localPosition = pos;
 
-			//BoxCollider coll = cube.GetComponent<BoxCollider> ();
 			Bounds b = new Bounds (); //coll.bounds;
 			b.size = new Vector3 (width - VoxelUtils.CHUNK_SIZE, height - VoxelUtils.CHUNK_SIZE, depth - VoxelUtils.CHUNK_SIZE);
 			b.center = pos;
-			//b.size = new Vector3 (b.size.x - VoxelUtils.CHUNK_SIZE, b.size.y - VoxelUtils.CHUNK_SIZE, b.size.z - VoxelUtils.CHUNK_SIZE);
 
 			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
-			//vs.go      = cube;
 			vs.pos     = p;
 			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
 			vs.bounds = b; //coll.bounds;
 			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
 
-			//Debug.Log ("cut chunk corners: "+vs.corners.ToString());
-
 			return vs;
 		}
 
 		// ---------------------------------------------------------------------------------------------
-		private void createDummyGameObject(Vector3 p, int w, int h, int d) {
+		private void createProceduralLevelData ()
+		{
+			Vector3 digSize  = new Vector3 (4, 6, 4);
+			Vector3 startPos = new Vector3 (VoxelUtils.MAX_CHUNK_UNITS - digSize.x - 1, VoxelUtils.MAX_CHUNK_UNITS - digSize.y - 1, 1);
+
+			// go around to the right
+
+			while ((startPos.z+digSize.z) < (VoxelUtils.MAX_CHUNK_UNITS - 1))
+			{
+				_cutHolesSize.Add (digSize);
+				_cutHolesPos.Add (startPos);
+
+				startPos.y -= 1;
+				startPos.z += digSize.z;
+			}
+
+			startPos.x -= digSize.x;
+			startPos.y -= 1;
+			startPos.z -= digSize.z;
+			while (startPos.x > 0)
+			{
+				_cutHolesSize.Add (digSize);
+				_cutHolesPos.Add (startPos);
+
+				startPos.y -= 1;
+				startPos.x -= digSize.x;
+			}
+
+			startPos.x += digSize.x;
+			startPos.y -= 1;
+			startPos.z -= digSize.z;
+			while (startPos.z > 0)
+			{
+				_cutHolesSize.Add (digSize);
+				_cutHolesPos.Add (startPos);
+
+				startPos.y -= 1;
+				startPos.z -= digSize.z;
+			}
+
+			startPos.x += digSize.x;
+			startPos.y -= 1;
+			startPos.z += digSize.z;
+			while (((startPos.x+digSize.x) < (VoxelUtils.MAX_CHUNK_UNITS - 1)) && (startPos.y > 0))
+			{
+				_cutHolesSize.Add (digSize);
+				_cutHolesPos.Add (startPos);
+
+				startPos.y -= 1;
+				startPos.x += digSize.x;
+			}
+
+			// reached ground - create hall
+
+			startPos.x -= digSize.x;
+			startPos.y += 1;
+			startPos.z += digSize.z;
+			_cutHolesSize.Add (digSize);
+			_cutHolesPos.Add (startPos);
+
+			startPos.x = 1;
+			startPos.z += digSize.z;
+			_cutHolesSize.Add (new Vector3(VoxelUtils.MAX_CHUNK_UNITS - 2, 6, 48));
+			_cutHolesPos.Add (startPos);
+
+			// go around to the left
+
+			startPos = new Vector3 (VoxelUtils.MAX_CHUNK_UNITS - digSize.x - 1, VoxelUtils.MAX_CHUNK_UNITS - digSize.y - 1, 1);
+			while (startPos.x > 0)
+			{
+				_cutHolesSize.Add (digSize);
+				_cutHolesPos.Add (startPos);
+
+				startPos.y -= 1;
+				startPos.x -= digSize.x;
+			}
+
+			startPos.x += digSize.x;
+			startPos.y -= 1;
+			startPos.z += digSize.z;
+			while ((startPos.z+digSize.z) < (VoxelUtils.MAX_CHUNK_UNITS - 1))
+			{
+				_cutHolesSize.Add (digSize);
+				_cutHolesPos.Add (startPos);
+
+				startPos.y -= 1;
+				startPos.z += digSize.z;
+			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		/*private void createDummyGameObject(Vector3 p, int w, int h, int d) {
 
 			GameObject cube = Instantiate(prefabCut);
 			cube.transform.SetParent (_voxelChunkContainer);
@@ -659,6 +794,6 @@ namespace VoxelChunks
 
 			Vector3 pos = new Vector3 ((p.x * VoxelUtils.CHUNK_SIZE) + (width / 2f), (p.y * VoxelUtils.CHUNK_SIZE) + (height / 2f), (p.z * VoxelUtils.CHUNK_SIZE) + (depth / 2f));
 			cube.transform.localPosition = pos;
-		}
+		}*/
 	}
 }

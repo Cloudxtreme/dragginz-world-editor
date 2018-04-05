@@ -98,10 +98,12 @@ namespace VoxelChunks
 
 			List<Vector3> splitVerts = new List<Vector3>();
 			List<int> splitIndices = new List<int>();
-			List<Vector2> splitUVs = new List<Vector2> ();
+			//List<Vector2> splitUVs = new List<Vector2> ();
 
 			Renderer renderer;
 			MeshFilter filter;
+			MeshCollider collider;
+
 			int i, j, idx;
             for (i = 0; i < numMeshes; i++)
             {
@@ -113,7 +115,7 @@ namespace VoxelChunks
                     {
                         splitVerts.Add(verts[idx]);
                         splitIndices.Add(j);
-						splitUVs.Add (new Vector2 (0f, 1f));
+						//splitUVs.Add (new Vector2 (0f, 1f));
                     }
                 }
 
@@ -125,10 +127,7 @@ namespace VoxelChunks
                 Mesh mesh = new Mesh();
                 mesh.SetVertices(splitVerts);
                 mesh.SetTriangles(splitIndices, 0);
-				mesh.SetUVs (0, splitUVs);
-
-				//MeshUtility.Optimize (mesh);
-
+				//mesh.SetUVs (0, splitUVs);
                 mesh.RecalculateBounds();
                 mesh.RecalculateNormals();
 
@@ -138,13 +137,15 @@ namespace VoxelChunks
                 renderer = go.AddComponent<MeshRenderer>();
                 renderer.material = m_material;
                 filter.mesh = mesh;
+				collider = go.AddComponent<MeshCollider> ();
+
 				go.transform.localPosition = pos; //new Vector3(-width / 2, -height / 2, -depth / 2);
 
                 meshes.Add(go);
 
 				splitVerts.Clear ();
 				splitIndices.Clear ();
-				splitUVs.Clear ();
+				//splitUVs.Clear ();
             }
         }
 

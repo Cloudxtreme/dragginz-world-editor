@@ -98,6 +98,8 @@
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo2\VoxelChunkDemo2.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo3\FlyCamVoxelsDemo3.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo3\VoxelChunkDemo3.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo4\FlyCamVoxelsDemo4.cs" />
+     <Compile Include="Assets\_WorldEditor\Scripts\Voxels\demo4\VoxelChunkDemo4.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\MarchingCubes\ConvertLevelToMesh.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\MarchingCubes\Example.cs" />
      <Compile Include="Assets\_WorldEditor\Scripts\Voxels\MarchingCubes\MarchingCubes\Marching\IMarching.cs" />
