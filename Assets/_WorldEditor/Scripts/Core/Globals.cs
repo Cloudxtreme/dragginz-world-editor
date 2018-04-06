@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using AssetsShared;
+
 namespace DragginzWorldEditor
 {
 	public static class Globals
@@ -54,30 +56,6 @@ namespace DragginzWorldEditor
 		static public readonly float RAYCAST_DISTANCE_EDIT = 10.24f;
 
 		static public readonly string urlLevelList = "http://obrodhage.rocks/dragginz-world-editor/level-data/";
-
-		/// <summary>
-		/// ...
-		/// </summary>
-		public static Vector3[] getPointsOnSphere(int nPoints)
-		{
-			float fPoints = (float)nPoints;
-
-			Vector3[] points = new Vector3[nPoints];
-
-			float inc = Mathf.PI * (3 - Mathf.Sqrt(5));
-			float off = 2 / fPoints;
-
-			for (int k = 0; k < nPoints; k++)
-			{
-				float y = k * off - 1 + (off / 2);
-				float r = Mathf.Sqrt(1 - y * y);
-				float phi = k * inc;
-
-				points[k] = new Vector3(Mathf.Cos(phi) * r, y, Mathf.Sin(phi) * r);
-			}
-
-			return points;
-		}
 
 		/// <summary>
 		/// ...

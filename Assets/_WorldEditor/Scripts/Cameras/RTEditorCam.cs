@@ -5,6 +5,8 @@
 
 using UnityEngine;
 
+using AssetsShared;
+
 namespace DragginzWorldEditor
 {
 	public class RTEditorCam : MonoSingleton<FlyCam> {

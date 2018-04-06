@@ -3,7 +3,8 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-using DragginzWorldEditor;
+//using DragginzWorldEditor;
+using DragginzVoxelWorldEditor;
 
 namespace RTEditor
 {

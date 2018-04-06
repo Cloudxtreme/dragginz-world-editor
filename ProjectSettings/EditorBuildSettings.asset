@@ -6,19 +6,25 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_WorldEditor/Scenes/voxels_demos.unity
+    path: Assets/__VoxelWorldEditor/Scenes/vwe_main.unity
+    guid: d298edb3d0ae14946a1d8163ec226b49
+  - enabled: 1
+    path: Assets/__VoxelWorldEditor/Scenes/vwe_splash.unity
+    guid: 31585b07f09e92e4592c6ecce9840960
+  - enabled: 0
+    path: Assets/_VoxelChunkDemos/Scenes/voxels_demos.unity
     guid: f515a4ba4699be14996bbeb23e103d4b
-  - enabled: 1
-    path: Assets/_WorldEditor/Scenes/voxels_demo_1.unity
+  - enabled: 0
+    path: Assets/_VoxelChunkDemos/Scenes/voxels_demo_1.unity
     guid: ea8cc77f436e3c746bfd3e563f1309f6
-  - enabled: 1
-    path: Assets/_WorldEditor/Scenes/voxels_demo_2.unity
+  - enabled: 0
+    path: Assets/_VoxelChunkDemos/Scenes/voxels_demo_2.unity
     guid: a7497c10e0a7a954a89e9c68e266484c
-  - enabled: 1
-    path: Assets/_WorldEditor/Scenes/voxels_demo_3.unity
+  - enabled: 0
+    path: Assets/_VoxelChunkDemos/Scenes/voxels_demo_3.unity
     guid: d3da285eac990d24fb7c5259c9e63abb
-  - enabled: 1
-    path: Assets/_WorldEditor/Scenes/voxels_demo_4.unity
+  - enabled: 0
+    path: Assets/_VoxelChunkDemos/Scenes/voxels_demo_4.unity
     guid: b661ef59fa88a644496efd896ad04ca3
   - enabled: 0
     path: Assets/_WorldEditor/Scenes/main.unity

@@ -1,46 +1,24 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_WorldEditor\Scripts\Voxels\demo3\VoxelChunkDemo3.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_WorldEditor\Scripts\SplashScreen\SplashScreenController.cs">
     <Files>
-      <File FileName="Assets\_WorldEditor\Scripts\Voxels\demo3\VoxelChunkDemo3.cs" Line="103" Column="27" />
-      <File FileName="Assets\_WorldEditor\Scripts\Voxels\MarchingCubes\ConvertLevelToMesh.cs" Line="91" Column="21" />
-      <File FileName="Assets\_WorldEditor\Scripts\Voxels\MarchingCubes\MarchingCubes\Marching\Marching.cs" Line="1" Column="1" />
-      <File FileName="Assets\_WorldEditor\Scripts\Voxels\MarchingCubes\MarchingCubes\Marching\MarchingCubes.cs" Line="65" Column="52" />
+      <File FileName="Assets\_WorldEditor\Scripts\Assets\AssetFactory.cs" Line="8" Column="20" />
+      <File FileName="Assets\_WorldEditor\Scripts\Cameras\FlyCam.cs" Line="12" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Cameras\RTEditorCam.cs" Line="9" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelData.cs" Line="15" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelChunk.cs" Line="13" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="14" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelManager.cs" Line="12" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Player\PlayerEditCollision.cs" Line="11" Column="20" />
+      <File FileName="Assets\_WorldEditor\Scripts\Server\NetManager.cs" Line="8" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\UI\DigMainMenu.cs" Line="13" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\UI\MainMenu.cs" Line="16" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Core\Globals.cs" Line="11" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelFile.cs" Line="13" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelProp.cs" Line="13" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\Data\LevelQuadrant.cs" Line="13" Column="1" />
+      <File FileName="Assets\_WorldEditor\Scripts\SplashScreen\SplashScreenController.cs" Line="13" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="dragginz-world-editor" expanded="True">
-            <Node name="Assembly-CSharp" expanded="True">
-              <Node name="_WorldEditor" expanded="True">
-                <Node name="Scripts" expanded="True">
-                  <Node name="Voxels" expanded="True">
-                    <Node name="demo2" expanded="True" />
-                    <Node name="demo3" expanded="True">
-                      <Node name="VoxelChunkDemo3.cs" selected="True" />
-                    </Node>
-                    <Node name="MarchingCubes" expanded="True">
-                      <Node name="MarchingCubes" expanded="True">
-                        <Node name="Marching" expanded="True" />
-                      </Node>
-                      <Node name="ProceduralNoise" expanded="True">
-                        <Node name="Noise" expanded="True" />
-                      </Node>
-                    </Node>
-                    <Node name="utils" expanded="True" />
-                  </Node>
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State name="__root__">
-          <Node name="dragginz-world-editor" expanded="True" selected="True" />
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

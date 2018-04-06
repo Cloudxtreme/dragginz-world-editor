@@ -4,6 +4,8 @@ using UnityEngine.Networking;
 using System;
 using System.Collections;
 
+using AssetsShared;
+
 namespace DragginzWorldEditor
 {
 	public class NetManager : MonoSingleton<NetManager>

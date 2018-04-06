@@ -9,6 +9,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using AssetsShared;
+
 namespace DragginzWorldEditor
 {
 	public class LevelChunk : MonoSingleton<LevelChunk>

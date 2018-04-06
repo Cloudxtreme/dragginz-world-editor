@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 using System;
 
+using AssetsShared;
+
 namespace DragginzWorldEditor
 {
 	/// <summary>

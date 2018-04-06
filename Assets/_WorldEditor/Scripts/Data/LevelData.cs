@@ -11,6 +11,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using UnityEngine;
 
+using AssetsShared;
+
 namespace DragginzWorldEditor
 {
 	public class LevelData : Singleton<LevelData> {

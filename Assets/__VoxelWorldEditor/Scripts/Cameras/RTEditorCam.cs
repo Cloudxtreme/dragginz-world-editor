@@ -1,0 +1,27 @@
+﻿//
+// Author  : Oliver Brodhage
+// Company : Decentralised Team of Developers
+//
+
+using UnityEngine;
+
+using AssetsShared;
+
+namespace DragginzVoxelWorldEditor
+{
+	public class RTEditorCam : MonoSingleton<FlyCam> {
+
+		public bool drawWireframe;
+
+		void Awake() {
+			drawWireframe = false;
+		}
+
+		void OnPreRender() {
+			GL.wireframe = drawWireframe;
+		}
+		void OnPostRender() {
+			GL.wireframe = false;
+		}
+	}
+}

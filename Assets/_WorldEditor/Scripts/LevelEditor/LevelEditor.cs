@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using AssetsShared;
+
 using RTEditor;
 
 namespace DragginzWorldEditor

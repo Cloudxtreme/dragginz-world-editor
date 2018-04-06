@@ -9,6 +9,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using AssetsShared;
+
 using SimpleJSON;
 
 namespace DragginzWorldEditor

@@ -9,6 +9,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
+using AssetsShared;
+
 namespace DragginzWorldEditor
 {
     public class SplashScreenController : MonoBehaviour
