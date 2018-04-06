@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace DragginzVoxelWorldEditor
+namespace VoxelChunks
 {
     public interface IMarching
     {

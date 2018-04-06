@@ -2488,7 +2488,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onButtonModeDigClicked
         m_Mode: 1
         m_Arguments:
@@ -3555,7 +3555,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onButtonModePropsClicked
         m_Mode: 1
         m_Arguments:
@@ -4258,7 +4258,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onButtonModeLookClicked
         m_Mode: 1
         m_Arguments:
@@ -4874,7 +4874,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onButtonModePlayClicked
         m_Mode: 1
         m_Arguments:
@@ -6230,7 +6230,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onButtonUNDOClicked
         m_Mode: 1
         m_Arguments:
@@ -6529,7 +6529,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onButtonModePaintClicked
         m_Mode: 1
         m_Arguments:
@@ -6831,7 +6831,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onButtonModeBuildClicked
         m_Mode: 1
         m_Arguments:

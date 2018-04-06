@@ -54,10 +54,13 @@ namespace DragginzVoxelWorldEditor
 		public Material materialEdge;
         public List<Material> materialsWalls;
 
-		//
+		// private vars
 
 		private Dictionary<int, LevelChunk> _levelChunks;
 		private LevelChunk _curLevelChunk;
+
+		private Dictionary<int, VoxelsLevelChunk> _voxelsLevelChunks;
+		private VoxelsLevelChunk _curVoxelsLevelChunk;
 
 		private Popup _popup;
 
@@ -119,6 +122,10 @@ namespace DragginzVoxelWorldEditor
 			get { return _curLevelChunk; }
 		}
 
+		public VoxelsLevelChunk curVoxelsLevelChunk {
+			get { return _curVoxelsLevelChunk; }
+		}
+
 		#endregion
 
 		#region SystemMethods
@@ -133,8 +140,8 @@ namespace DragginzVoxelWorldEditor
 			_levelChunks = new Dictionary<int, LevelChunk> ();
 			_curLevelChunk = null;
 
-			//gameObject.AddComponent<World> ();
-			//_World = World.Instance;
+			_voxelsLevelChunks = new Dictionary<int, VoxelsLevelChunk> ();
+			_curVoxelsLevelChunk = null;
 
 			_aTextures = new List<Texture> ();
 			_aMaterials = new List<Material> ();
@@ -181,9 +188,11 @@ namespace DragginzVoxelWorldEditor
 
 			PropsManager.Instance.init ();
 
-			_curLevelChunk = LevelManager.Instance.createOfflineLevelChunk ();
-			_curLevelChunk.createOfflineLevel ();
-			_curLevelChunk.activate (true, true);
+			//_curLevelChunk = LevelManager.Instance.createOfflineLevelChunk ();
+			//_curLevelChunk.createOfflineLevel ();
+			//_curLevelChunk.activate (true, true);
+
+			_curVoxelsLevelChunk = LevelManager.Instance.createOfflineLevelChunk ();
 
 			_isInitialised = true;
 
@@ -720,22 +729,22 @@ namespace DragginzVoxelWorldEditor
 		//
 		public void updateDigSettings(Vector3 v3DigSettings)
 		{
-			float fScale = _fRockSize;
+			float fScale = _fRockSize + 0.01f;
 			if (AppController.Instance.appState == AppState.Build)
 			{
 				laserAim.transform.localScale = v3DigSettings * fScale;
 				laserAimCenterCube.SetActive (true);
-				fScale -= 0.01f;
+				//fScale += 0.01f;
 				laserAimCenterCube.transform.localScale = new Vector3(fScale / laserAim.transform.localScale.x, fScale / laserAim.transform.localScale.y, fScale / laserAim.transform.localScale.z);
 			}
 			else if (AppController.Instance.appState == AppState.Paint)
 			{
-				fScale *= 0.5f;
+				//fScale *= 0.5f;
 				laserAim.transform.localScale = new Vector3(v3DigSettings.x, v3DigSettings.y, 1) * fScale;
 				laserAimCenterCube.SetActive (false);
 			}
 			else {
-				fScale *= 0.75f;
+				//fScale *= 0.75f;
 				laserAim.transform.localScale = v3DigSettings * fScale;
 				laserAimCenterCube.SetActive (false);
 			}

@@ -18,6 +18,11 @@ namespace DragginzVoxelWorldEditor
 		[SerializeField]
 		private GameObject prefabLevelContainer;
 
+		//
+
+		[SerializeField]
+		private GameObject prefabVoxelChunk;
+
 		#region SystemMethods
 
 		void Awake()
@@ -40,6 +45,17 @@ namespace DragginzVoxelWorldEditor
 		public GameObject createLevelContainerClone()
 		{
 			return (prefabLevelContainer != null ? Instantiate (prefabLevelContainer) : null);
+		}
+
+		//
+
+		public GameObject createVoxelsLevelContainer()
+		{
+			return new GameObject ();
+		}
+		public GameObject createVoxelChunkClone()
+		{
+			return (prefabVoxelChunk != null ? Instantiate (prefabVoxelChunk) : null);
 		}
 
 		#endregion

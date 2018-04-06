@@ -176,15 +176,20 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		//
-		public LevelChunk createOfflineLevelChunk()
+		public VoxelsLevelChunk createOfflineLevelChunk()
 		{
-			LevelChunk chunk;
+			VoxelsLevelChunk chunk;
 
-			GameObject gameObject = AssetFactory.Instance.createLevelContainerClone ();
-			gameObject.name = "LevelChunk_Offline";
+			//GameObject gameObject = AssetFactory.Instance.createLevelContainerClone ();
+			//gameObject.name = "LevelChunk_Offline";
+			//chunk = gameObject.AddComponent<LevelChunk> ();
+			//chunk.init (Vector3.zero);
 
-			chunk = gameObject.AddComponent<LevelChunk> ();
-			chunk.init (Vector3.zero);
+			GameObject goVoxels = AssetFactory.Instance.createVoxelsLevelContainer ();
+			goVoxels.name = "[VoxelsLevelChunk_Offline]";
+
+			chunk = goVoxels.AddComponent<VoxelsLevelChunk> ();
+			chunk.init (goVoxels);
 
 			return chunk;
 		}

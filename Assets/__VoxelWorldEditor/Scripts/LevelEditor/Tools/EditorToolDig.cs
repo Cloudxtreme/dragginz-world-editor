@@ -48,7 +48,7 @@ namespace DragginzVoxelWorldEditor
 					_rendererAimTool.material = _materialAimTool;
 				}
 
-				changeShaders (Globals.highlightShaderName);
+				//changeShaders (Globals.highlightShaderName);
 
 				if (_mouseIsDown) {
 					digIt (_trfmAimTool.position);
@@ -63,6 +63,9 @@ namespace DragginzVoxelWorldEditor
 
 		private void digIt (Vector3 v3Pos)
 		{
+			_levelEditor.curVoxelsLevelChunk.dig (_hit, MainMenu.Instance.v3DigSettings);
+
+			/*
 			int i, len;
 			int destroyedCubes = 0;
 
@@ -110,6 +113,7 @@ namespace DragginzVoxelWorldEditor
 			}
 			listcubeTransforms.Clear ();
 			listcubeTransforms = null;
+			*/
 		}
 	}
 }

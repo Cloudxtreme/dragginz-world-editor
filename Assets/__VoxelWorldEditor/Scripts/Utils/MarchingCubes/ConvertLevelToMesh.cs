@@ -6,7 +6,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace DragginzVoxelWorldEditor
+namespace VoxelChunks
 {
 	public class ConvertLevelToMesh : MonoBehaviour
     {

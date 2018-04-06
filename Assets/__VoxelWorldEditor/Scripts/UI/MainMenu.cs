@@ -86,11 +86,6 @@ namespace DragginzVoxelWorldEditor
 			get { return _iSelectedMaterial; }
 		}
 
-		/*private int _iSelectedItem = 0;
-		public int iSelectedItem {
-			get { return _iSelectedItem; }
-		}*/
-
         private Popup _popup;
         public Popup popup {
             get { return _popup; }

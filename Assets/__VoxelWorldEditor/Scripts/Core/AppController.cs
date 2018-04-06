@@ -122,15 +122,5 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		#endregion
-
-		#region PrivateMethods
-
-		//
-		/*private void popupCallback(int buttonId) {
-
-			MainMenu.Instance.popup.hide();
-		}*/
-
-		#endregion
     }
 }
