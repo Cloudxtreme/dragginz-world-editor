@@ -70,8 +70,8 @@ namespace DragginzVoxelWorldEditor
 			// center player in level
 			initialPos   = _player.position;
 			initialPos.x = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f);
-			initialPos.y = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f) - 0.75f;
-			initialPos.z = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f) - 0.5f;
+			initialPos.y = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f);
+			initialPos.z = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f) - 1.0f;
 			_player.position = initialPos;
 
 			initialRotation = _player.eulerAngles;

@@ -71,6 +71,8 @@ namespace DragginzVoxelWorldEditor
 		private List<Material> _aMaterials;
 		private Dictionary<string, Material> _aDictMaterials;
 
+		private List<Material> _aToolMaterials;
+
 		private List<undoAction> _undoActions;
 
 		private GameObject _goCurProp;
@@ -114,6 +116,10 @@ namespace DragginzVoxelWorldEditor
 			get { return _aDictMaterials; }
 		}
 
+		public List<Material> aToolMaterials {
+			get { return _aToolMaterials; }
+		}
+
 		public GameObject goCurItem {
 			get { return _goCurProp; }
 		}
@@ -148,9 +154,15 @@ namespace DragginzVoxelWorldEditor
 			_aDictMaterials = new Dictionary<string, Material> ();
 			int i, len = Globals.materials.Length;
 			for (i = 0; i < len; ++i) {
-				_aTextures.Add(Resources.Load<Texture> ("Textures/Cubes/" + Globals.materials [i]));
-				_aMaterials.Add(Resources.Load<Material> ("Materials/Cubes/" + Globals.materials [i]));
+				_aTextures.Add(Resources.Load<Texture> ("Textures/Chunks/" + Globals.materials [i]));
+				_aMaterials.Add(Resources.Load<Material> ("Materials/Chunks/" + Globals.materials [i]));
 				_aDictMaterials.Add(Globals.materials [i], _aMaterials[_aMaterials.Count-1]);
+			}
+
+			_aToolMaterials = new List<Material> ();
+			len = Globals.materialsTools.Length;
+			for (i = 0; i < len; ++i) {
+				_aToolMaterials.Add(Resources.Load<Material> ("Materials/Tools/" + Globals.materialsTools [i]));
 			}
 
 			_undoActions = new List<undoAction> ();
@@ -161,7 +173,7 @@ namespace DragginzVoxelWorldEditor
 			_activeCam = editCam;
 			_nextDistanceUpdate = 0;
 
-			_fRockSize = 0.5f;
+			_fRockSize = VoxelUtils.CHUNK_SIZE;
 			_cubesPerQuadrant = 2;
 			_fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
 
@@ -740,7 +752,7 @@ namespace DragginzVoxelWorldEditor
 			else if (AppController.Instance.appState == AppState.Paint)
 			{
 				//fScale *= 0.5f;
-				laserAim.transform.localScale = new Vector3(v3DigSettings.x, v3DigSettings.y, 1) * fScale;
+				laserAim.transform.localScale = new Vector3(v3DigSettings.x, v3DigSettings.y, 1f) * fScale;
 				laserAimCenterCube.SetActive (false);
 			}
 			else {

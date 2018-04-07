@@ -55,7 +55,7 @@ namespace DragginzVoxelWorldEditor
 			VoxelUtils.VoxelChunk vs = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
 			_aVoxelChunks.Add (vs);
 
-			subtractChunk (new Vector3 (34, 33, 34), new Vector3 (4, 3, 4));
+			subtractChunk (new Vector3 (33, 34, 33), new Vector3 (6, 4, 6));
 		}
 		
 		// ---------------------------------------------------------------------------------------------
@@ -129,6 +129,18 @@ namespace DragginzVoxelWorldEditor
 
 		// ---------------------------------------------------------------------------------------------
 		public void dig(RaycastHit hit, Vector3 digSize)
+		{
+			float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
+
+			float xChunk = (int)((hit.point.x + (hit.normal.x * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			float yChunk = (int)((hit.point.y + (hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			float zChunk = (int)((hit.point.z + (hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+
+			subtractChunk (new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE)), digSize);
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		public void paint(RaycastHit hit, Vector3 digSize, Material material)
 		{
 			float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
 
@@ -543,7 +555,7 @@ namespace DragginzVoxelWorldEditor
 			GameObject cube = AssetFactory.Instance.createVoxelChunkClone();
 			cube.transform.SetParent (_trfmVoxelChunkContainer);
 			_iCount++;
-			cube.name = "cube_" + _iCount.ToString ();
+			cube.name = "voxchunk_" + _iCount.ToString ();
 
 			float width  = w * VoxelUtils.CHUNK_SIZE;
 			float height = h * VoxelUtils.CHUNK_SIZE;

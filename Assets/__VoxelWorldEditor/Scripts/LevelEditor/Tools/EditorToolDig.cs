@@ -44,9 +44,9 @@ namespace DragginzVoxelWorldEditor
 			{
 				setAimTool ();
 
-				if (_rendererAimTool.material != _materialAimTool) {
-					_rendererAimTool.material = _materialAimTool;
-				}
+				//if (_rendererAimTool.material != _materialAimTool) {
+				//	_rendererAimTool.material = _materialAimTool;
+				//}
 
 				//changeShaders (Globals.highlightShaderName);
 

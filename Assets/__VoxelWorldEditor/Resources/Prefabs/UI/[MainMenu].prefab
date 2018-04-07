@@ -2999,7 +2999,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onSliderWidthChange
         m_Mode: 4
         m_Arguments:
@@ -3197,7 +3197,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onSelectMaterial
         m_Mode: 3
         m_Arguments:
@@ -3454,7 +3454,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: toggleMaterial
         m_Mode: 3
         m_Arguments:
@@ -3837,7 +3837,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onSelectMaterial
         m_Mode: 3
         m_Arguments:
@@ -4067,7 +4067,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onSliderHeightChange
         m_Mode: 4
         m_Arguments:
@@ -4206,7 +4206,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onSelectMaterial
         m_Mode: 3
         m_Arguments:
@@ -4409,7 +4409,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onSelectMaterial
         m_Mode: 3
         m_Arguments:
@@ -4714,7 +4714,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onSliderDepthChange
         m_Mode: 4
         m_Arguments:
@@ -5635,7 +5635,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onSelectMaterial
         m_Mode: 3
         m_Arguments:
@@ -5714,7 +5714,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: toggleMaterial
         m_Mode: 3
         m_Arguments:
@@ -6119,7 +6119,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114187980064966228}
         m_MethodName: onSelectMaterial
         m_Mode: 3
         m_Arguments:

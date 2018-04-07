@@ -57,6 +57,9 @@ namespace DragginzVoxelWorldEditor
 
 		private static Vector3 _v3AimPos;
 		private static float _chunkSizeHalved;
+		private static float _xAimScale;
+		private static float _yAimScale;
+		private static float _zAimScale;
 
 		private static bool _initialised = false;
 
@@ -164,7 +167,7 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		public void setCurAimMaterial() {
-			_rendererAimTool.material = _levelEditor.aMaterials [MainMenu.Instance.iSelectedMaterial];
+			_rendererAimTool.material = _levelEditor.aToolMaterials [MainMenu.Instance.iSelectedMaterial];
 		}
 
 		public void setCurAimCenterCubeMaterial() {
@@ -337,37 +340,45 @@ namespace DragginzVoxelWorldEditor
 			_v3AimPos.y = (int)((_hit.point.y + (_hit.normal.y * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 			_v3AimPos.z = (int)((_hit.point.z + (_hit.normal.z * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 
+			_xAimScale  = MainMenu.Instance.v3DigSettings.x * VoxelUtils.CHUNK_SIZE;
+			_yAimScale  = MainMenu.Instance.v3DigSettings.y * VoxelUtils.CHUNK_SIZE;
+			// painting doesn't use depth setting
+			_zAimScale = (AppController.Instance.appState == AppState.Paint ? 0.5f : MainMenu.Instance.v3DigSettings.z * VoxelUtils.CHUNK_SIZE);
+
 			if (_hit.normal.x != 0.0f)
 			{
-				_v3AimPos.y += (MainMenu.Instance.v3DigSettings.y * _chunkSizeHalved);
-				_v3AimPos.z += (MainMenu.Instance.v3DigSettings.z * _chunkSizeHalved);
+				_v3AimPos.y += (_yAimScale * 0.5f);//(_yAimScale * _chunkSizeHalved);
+				_v3AimPos.z += (_zAimScale * 0.5f);//(_zAimScale * _chunkSizeHalved);
 
 				if (_hit.normal.x > 0) {
-					_v3AimPos.x -= -_chunkSizeHalved + ((MainMenu.Instance.v3DigSettings.x - 1) * _chunkSizeHalved);
+					_v3AimPos.x += (VoxelUtils.CHUNK_SIZE - (_xAimScale * 0.5f));
+					//_v3AimPos.x -= -_chunkSizeHalved + ((_xAimScale - 1) * _chunkSizeHalved);
 				} else {
-					_v3AimPos.x += (MainMenu.Instance.v3DigSettings.x * _chunkSizeHalved);
+					_v3AimPos.x += (_xAimScale * 0.5f);//(_xAimScale * _chunkSizeHalved);
 				}
 			}
 			else if (_hit.normal.y != 0.0f)
 			{
-				_v3AimPos.x += (MainMenu.Instance.v3DigSettings.x * _chunkSizeHalved);
-				_v3AimPos.z += (MainMenu.Instance.v3DigSettings.z * _chunkSizeHalved);
+				_v3AimPos.x += (_xAimScale * 0.5f);//(_xAimScale * _chunkSizeHalved);
+				_v3AimPos.z += (_zAimScale * 0.5f);//(_zAimScale * _chunkSizeHalved);
 
 				if (_hit.normal.y > 0) {
-					_v3AimPos.y -= -_chunkSizeHalved + ((MainMenu.Instance.v3DigSettings.y - 1) * _chunkSizeHalved);
+					_v3AimPos.y += (VoxelUtils.CHUNK_SIZE - (_yAimScale * 0.5f));
+					//_v3AimPos.y -= -_chunkSizeHalved + ((_yAimScale - 1) * _chunkSizeHalved);
 				} else {
-					_v3AimPos.y += (MainMenu.Instance.v3DigSettings.y * _chunkSizeHalved);
+					_v3AimPos.y += (_yAimScale * 0.5f);//(_yAimScale * _chunkSizeHalved);
 				}
 			}
 			else if (_hit.normal.z != 0.0f)
 			{
-				_v3AimPos.x += (MainMenu.Instance.v3DigSettings.x * _chunkSizeHalved);
-				_v3AimPos.y += (MainMenu.Instance.v3DigSettings.y * _chunkSizeHalved);
+				_v3AimPos.x += (_xAimScale * 0.5f);//(_xAimScale * _chunkSizeHalved);
+				_v3AimPos.y += (_yAimScale * 0.5f);//(_yAimScale * _chunkSizeHalved);
 
 				if (_hit.normal.z > 0) {
-					_v3AimPos.z -= -_chunkSizeHalved + ((MainMenu.Instance.v3DigSettings.z - 1) * _chunkSizeHalved);
+					_v3AimPos.z += (VoxelUtils.CHUNK_SIZE - (_zAimScale * 0.5f));
+					//_v3AimPos.z -= -_chunkSizeHalved + ((_zAimScale - 1) * _chunkSizeHalved);
 				} else {
-					_v3AimPos.z += (MainMenu.Instance.v3DigSettings.z * _chunkSizeHalved);
+					_v3AimPos.z += (_zAimScale * 0.5f);
 				}
 			}
 
