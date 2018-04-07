@@ -221,10 +221,14 @@ namespace DragginzVoxelWorldEditor
 			}
 		}
 
-		public void setCubeCountText(int count)
-		{
+		public void setCubeCountText(int count) {
 			if (txtCubeCount != null) {
-				txtCubeCount.text = "Cubes: " + String.Format("{0:0,0}", count);//count.ToString();
+				txtCubeCount.text = "Cubes: " + String.Format("{0:0,0}", count);
+			}
+		}
+		public void setCubeCountText(string s) {
+			if (txtCubeCount != null) {
+				txtCubeCount.text = s;
 			}
 		}
 

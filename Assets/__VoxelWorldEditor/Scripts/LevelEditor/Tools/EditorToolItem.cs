@@ -48,7 +48,7 @@ namespace DragginzVoxelWorldEditor
 				_goCurProp.transform.position = _v3Pos;
 
 				if (_mouseIsDown) {
-					placeIt (_v3Pos);
+					//placeIt (_v3Pos);
 					_mouseIsDown = false;
 				}
 

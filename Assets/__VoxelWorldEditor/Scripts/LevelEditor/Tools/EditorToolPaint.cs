@@ -50,20 +50,15 @@ namespace DragginzVoxelWorldEditor
 					setCurAimMaterial();
 				}
 
-				changeShaders (Globals.highlightShaderName);
-				//changeSingleMaterial (_goHit, MainMenu.Instance.iSelectedMaterial);
+				//changeShaders (Globals.highlightShaderName);
 
 				if (_mouseIsDown) {
-					paintIt (_trfmAimTool.position, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
-					//setSingleMaterial (_goHit, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
-					//_goLastMaterialChanged = null;
-					//_tempMaterial = null;
+					//paintIt (_trfmAimTool.position, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
 					_mouseIsDown = false;
 				}
 			}
 			else {
 				resetAim ();
-				//resetMaterial ();
 			}
 		}
 

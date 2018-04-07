@@ -75,7 +75,7 @@ namespace DragginzVoxelWorldEditor
 				_trfmAimCenterCube.position = _goHit.transform.position + (_hit.normal * _levelEditor.fRockSize);
 
 				if (_mouseIsDown) {
-					buildIt (_trfmAimCenterCube.position);
+					//buildIt (_trfmAimCenterCube.position);
 					_mouseIsDown = false;
 				}
 			}

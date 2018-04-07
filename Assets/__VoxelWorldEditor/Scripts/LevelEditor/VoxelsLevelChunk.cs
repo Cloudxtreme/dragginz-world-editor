@@ -228,13 +228,23 @@ namespace DragginzVoxelWorldEditor
 			}
 			else
 			{
+				VoxelUtils.VoxelChunk vc;
 				int i, len = _aVoxelChunks.Count;
+				//int count = 0;
 				for (i = 0; i < len; ++i) {
-					setVoxelChunkMesh (_aVoxelChunks [i]);
+					vc = _aVoxelChunks [i];
+					if (!vc.meshCreated) {
+						setVoxelChunkMesh (vc);
+						vc.meshCreated = true;
+						//count++;
+						_aVoxelChunks [i] = vc;
+					}
 				}
+				//Debug.Log ("num voxels: " + len + " - loops: " + loops + " - meshes created: " + count);
 			}
 
 			Debug.Log ("Time to create chunk(s): " + (Time.realtimeSinceStartup - timer).ToString ());
+			MainMenu.Instance.setCubeCountText ("Voxel Chunks: "+_aVoxelChunks.Count.ToString());
 
 			return success;
 		}
@@ -550,8 +560,9 @@ namespace DragginzVoxelWorldEditor
 			vs.goPos   = pos;
 			vs.pos     = p;
 			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
-			vs.bounds = b;//coll.bounds;
+			vs.bounds  = b;
 			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
+			vs.meshCreated = false;
 
 			return vs;
 		}
@@ -585,11 +596,11 @@ namespace DragginzVoxelWorldEditor
 			b.center = pos;
 
 			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
-			//vs.go      = cube;
 			vs.pos     = p;
 			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
-			vs.bounds = b; //coll.bounds;
+			vs.bounds  = b;
 			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
+			vs.meshCreated = false;
 
 			return vs;
 		}
