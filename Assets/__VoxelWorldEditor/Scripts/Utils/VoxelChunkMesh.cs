@@ -31,12 +31,12 @@ namespace DragginzVoxelWorldEditor
         /// <param name="pivot">position of the model pivot</param>
 		public static void create(Mesh mesh, float width, float height, float depth, int widthSegments, int heightSegments, int depthSegments, bool cubeMap) //, float[] edgeOffsets, bool flipUV)
         {
-            width = Mathf.Clamp(width, 0, 100);
+            width  = Mathf.Clamp(width,  0, 100);
             height = Mathf.Clamp(height, 0, 100);
-            depth = Mathf.Clamp(depth, 0, 100);
+            depth  = Mathf.Clamp(depth,  0, 100);
             heightSegments = Mathf.Clamp(heightSegments, 1, 100);
-            widthSegments = Mathf.Clamp(widthSegments, 1, 100);
-            depthSegments = Mathf.Clamp(depthSegments, 1, 100);
+            widthSegments  = Mathf.Clamp(widthSegments,  1, 100);
+            depthSegments  = Mathf.Clamp(depthSegments,  1, 100);
 
 			//Debug.Log ("createcube mesh - w, h, d, segW, segH, segD: "+width+", "+height+", "+depth+", "+widthSegments+", "+heightSegments+", "+depthSegments);
 
@@ -53,7 +53,7 @@ namespace DragginzVoxelWorldEditor
             numTriangles *= 2;
             numVertices *= 2;
 
-            var pivotOffset = Vector3.zero;
+            Vector3 pivotOffset = Vector3.zero;
             /*switch (pivot)
             {
                 case PivotPosition.Top: pivotOffset = new Vector3(0.0f, -height/2, 0.0f);
@@ -64,13 +64,13 @@ namespace DragginzVoxelWorldEditor
 
             if (numVertices > 60000)
             {
-                UnityEngine.Debug.LogError("Too much vertices!");
-				return;// 0.0f;
+                UnityEngine.Debug.LogError("Too many vertices!");
+				return;
             }
 
-            var vertices = new Vector3[numVertices];
-            var uvs = new Vector2[numVertices];
-            var triangles = new int[numTriangles];
+			Vector3[] vertices = new Vector3[numVertices];
+			Vector2[] uvs = new Vector2[numVertices];
+			int[] triangles = new int[numTriangles];
 
             int vertIndex = 0;
             int triIndex = 0;
@@ -98,14 +98,14 @@ namespace DragginzVoxelWorldEditor
                 d1.x += edgeOffsets[2];
             }*/
 
-			CreatePlane(0, a0, b0, c0, d0, widthSegments, depthSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, width, depth);
-			CreatePlane(1, b1, a1, d1, c1, widthSegments, depthSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, width, depth);
+			CreatePlane(0, a0, b0, c0, d0, widthSegments, depthSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, depth, width);
+			CreatePlane(1, b1, a1, d1, c1, widthSegments, depthSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, depth, width);
 
-			CreatePlane(2, b0, b1, c1, c0, widthSegments, heightSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, width, height);
-			CreatePlane(3, d0, d1, a1, a0, widthSegments, heightSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, width, height);
+			CreatePlane(2, b0, b1, c1, c0, widthSegments, heightSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, height, width);
+			CreatePlane(3, d0, d1, a1, a0, widthSegments, heightSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, height, width);
 
-			CreatePlane(4, a0, a1, b1, b0, depthSegments, heightSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, depth, height);
-			CreatePlane(5, c0, c1, d1, d0, depthSegments, heightSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, depth, height);
+			CreatePlane(4, a0, a1, b1, b0, depthSegments, heightSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, height, depth);
+			CreatePlane(5, c0, c1, d1, d0, depthSegments, heightSegments, cubeMap, ref vertices, ref uvs, ref triangles, ref vertIndex, ref triIndex, height, depth);
 
             /*if (flipUV)
             {
@@ -130,28 +130,37 @@ namespace DragginzVoxelWorldEditor
 			var uvFactorX = 1.0f / segX;
 			var uvFactorY = 1.0f / segY;
 
-			//float fUVX = 0.01388889f;//(float)segX / 72.0f / (float)segX;
-			//float fUVY = 0.01388889f;//(float)segY / 72.0f / (float)segY;
-			//Debug.Log ("w, h, segX, segY, fUVX, fUVY: "+width+", "+height+", "+segX+", "+segY+", "+fUVX+", "+fUVY);
+			float wPercentage = (width / VoxelUtils.CHUNK_SIZE) / (float)VoxelUtils.MAX_CHUNK_UNITS;
+			float fUVX = wPercentage / (float)segX;
+			float hPercentage = (height / VoxelUtils.CHUNK_SIZE) / (float)VoxelUtils.MAX_CHUNK_UNITS;
+			float fUVY = hPercentage / (float)segY;
 
-            var vDown = d - a;
-            var vUp = c - b;
+			//float oneUnit = 1.0f / (float)VoxelUtils.MAX_CHUNK_UNITS;
+			//float fUVX = (width  / VoxelUtils.CHUNK_SIZE) / (float)segX * oneUnit; //0.01388889f;//(float)segX / 72.0f;// / (float)segX; //0.01388889f;//
+			//float fUVY = (height / VoxelUtils.CHUNK_SIZE) / (float)segY * oneUnit; //0.01388889f;//(float)segY / 72.0f;// / (float)segY; //0.01388889f;//
+			//Debug.Log(fUVX+", "+fUVY);
 
-            var vertOffset = vertIndex;
+			Vector3 vDown = d - a;
+			Vector3 vUp = c - b;
 
-            for (var y = 0.0f; y < segY+1; y++)
+            int vertOffset = vertIndex;
+
+			Vector3 pDown, pUp, v;
+			float fX, fY;
+
+			for (fY = 0.0f; fY < segY+1; fY++)
             {
-                for (var x = 0.0f; x < segX+1; x++)
+				for (fX = 0.0f; fX < segX+1; fX++)
                 {
-                    var pDown = a + vDown*y*uvFactorY;
-                    var pUp = b + vUp*y*uvFactorY;
+                    pDown = a + vDown*fY*uvFactorY;
+                    pUp = b + vUp*fY*uvFactorY;
 
-                    var v = pDown + (pUp - pDown)*x*uvFactorX;
+                    v = pDown + (pUp - pDown)*fX*uvFactorX;
 
                     vertices[vertIndex] = v;
-					//var uvFactor = new Vector2 (x * uvFactorX, y * uvFactorY);
-					uvs[vertIndex] = new Vector2 (x * uvFactorX, y * uvFactorY);;//new Vector2 (x * fUVX, y * fUVY);
-                    /*if (cubeMap)
+					uvs[vertIndex] = new Vector2 (fX * fUVX, fY * fUVY); //new Vector2 (x * uvFactorX, y * uvFactorY);//
+
+					/*if (cubeMap)
                     {
                         uvs[vertIndex] = GetCube6UV(id/2, id%2, uvFactor);
                     }
@@ -166,9 +175,10 @@ namespace DragginzVoxelWorldEditor
 
             var hCount2 = segX + 1;
 
-            for (int y = 0; y < segY; y++)
+			int x, y;
+            for (y = 0; y < segY; y++)
             {
-                for (int x = 0; x < segX; x++)
+                for (x = 0; x < segX; x++)
                 {
                     triangles[triIndex + 0] = vertOffset + (y * hCount2) + x;
                     triangles[triIndex + 1] = vertOffset + ((y + 1) * hCount2) + x;

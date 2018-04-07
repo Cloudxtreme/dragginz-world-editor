@@ -55,6 +55,9 @@ namespace DragginzVoxelWorldEditor
 		private static float _uiHeight  = (float)Screen.height * (90.0f / 1080.0f);
 		private static float _maxClickY = (float)Screen.height - _uiHeight;
 
+		private static Vector3 _v3AimPos;
+		private static float _chunkSizeHalved;
+
 		private static bool _initialised = false;
 
 		//
@@ -91,15 +94,15 @@ namespace DragginzVoxelWorldEditor
 				_goLastShaderChange = null;
 				_aGoShaderChanged = new List<GameObject> ();
 
-				//_goLastMaterialChanged = null;
-				//_tempMaterial = null;
-
 				_goHitLast = null;
 				_raycastedObjectHasChanged = false;
 
 				_lastMouseWheelUpdate = 0;
 
 				_mouseIsDown = false;
+
+				_v3AimPos = new Vector3 ();
+				_chunkSizeHalved = VoxelUtils.CHUNK_SIZE * 0.5f;
 			}
 		}
 
@@ -329,18 +332,46 @@ namespace DragginzVoxelWorldEditor
 		protected void setAimTool ()
 		{
 			_trfmAimTool.forward = _hit.normal;
-			//_v3Pos = _hit.point;
-			//_v3Pos -= (_hit.normal * (_trfmAimTool.lossyScale.z * 0.49f));
-			//_trfmAimTool.position = _v3Pos;
 
-			float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
+			_v3AimPos.x = (int)((_hit.point.x + (_hit.normal.x * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			_v3AimPos.y = (int)((_hit.point.y + (_hit.normal.y * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			_v3AimPos.z = (int)((_hit.point.z + (_hit.normal.z * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 
-			float xChunk = (int)((_hit.point.x + (_hit.normal.x * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-			float yChunk = (int)((_hit.point.y + (_hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-			float zChunk = (int)((_hit.point.z + (_hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			if (_hit.normal.x != 0.0f)
+			{
+				_v3AimPos.y += (MainMenu.Instance.v3DigSettings.y * _chunkSizeHalved);
+				_v3AimPos.z += (MainMenu.Instance.v3DigSettings.z * _chunkSizeHalved);
 
-			Vector3 aimPos = new Vector3 (xChunk + vcsHalf, yChunk + vcsHalf, zChunk + vcsHalf);
-			_trfmAimTool.position = aimPos;
+				if (_hit.normal.x > 0) {
+					_v3AimPos.x -= -_chunkSizeHalved + ((MainMenu.Instance.v3DigSettings.x - 1) * _chunkSizeHalved);
+				} else {
+					_v3AimPos.x += (MainMenu.Instance.v3DigSettings.x * _chunkSizeHalved);
+				}
+			}
+			else if (_hit.normal.y != 0.0f)
+			{
+				_v3AimPos.x += (MainMenu.Instance.v3DigSettings.x * _chunkSizeHalved);
+				_v3AimPos.z += (MainMenu.Instance.v3DigSettings.z * _chunkSizeHalved);
+
+				if (_hit.normal.y > 0) {
+					_v3AimPos.y -= -_chunkSizeHalved + ((MainMenu.Instance.v3DigSettings.y - 1) * _chunkSizeHalved);
+				} else {
+					_v3AimPos.y += (MainMenu.Instance.v3DigSettings.y * _chunkSizeHalved);
+				}
+			}
+			else if (_hit.normal.z != 0.0f)
+			{
+				_v3AimPos.x += (MainMenu.Instance.v3DigSettings.x * _chunkSizeHalved);
+				_v3AimPos.y += (MainMenu.Instance.v3DigSettings.y * _chunkSizeHalved);
+
+				if (_hit.normal.z > 0) {
+					_v3AimPos.z -= -_chunkSizeHalved + ((MainMenu.Instance.v3DigSettings.z - 1) * _chunkSizeHalved);
+				} else {
+					_v3AimPos.z += (MainMenu.Instance.v3DigSettings.z * _chunkSizeHalved);
+				}
+			}
+
+			_trfmAimTool.position = _v3AimPos;
 		}
 	}
 }

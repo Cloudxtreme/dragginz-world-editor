@@ -55,7 +55,7 @@ namespace DragginzVoxelWorldEditor
 			VoxelUtils.VoxelChunk vs = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
 			_aVoxelChunks.Add (vs);
 
-			subtractChunk (new Vector3 (30, 30, 30), new Vector3 (12, 12, 12));
+			subtractChunk (new Vector3 (34, 33, 34), new Vector3 (4, 3, 4));
 		}
 		
 		// ---------------------------------------------------------------------------------------------
@@ -563,7 +563,7 @@ namespace DragginzVoxelWorldEditor
 		{
 			vc.go.transform.localPosition = vc.goPos;
 			Mesh mesh = vc.go.GetComponent<MeshFilter> ().mesh;
-			VoxelChunkMesh.create (mesh, vc.size.x * VoxelUtils.CHUNK_SIZE, vc.size.y * VoxelUtils.CHUNK_SIZE, vc.size.z * VoxelUtils.CHUNK_SIZE, vc.size.x, vc.size.x, vc.size.x, false);
+			VoxelChunkMesh.create (mesh, vc.size.x * VoxelUtils.CHUNK_SIZE, vc.size.y * VoxelUtils.CHUNK_SIZE, vc.size.z * VoxelUtils.CHUNK_SIZE, vc.size.x, vc.size.y, vc.size.z, false);
 
 			BoxCollider coll = vc.go.GetComponent<BoxCollider> ();
 			coll.size = new Vector3 (vc.size.x * VoxelUtils.CHUNK_SIZE, vc.size.y * VoxelUtils.CHUNK_SIZE, vc.size.z * VoxelUtils.CHUNK_SIZE);
