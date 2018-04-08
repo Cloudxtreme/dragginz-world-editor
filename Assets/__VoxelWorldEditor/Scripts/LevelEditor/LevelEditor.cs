@@ -156,6 +156,7 @@ namespace DragginzVoxelWorldEditor
 			for (i = 0; i < len; ++i) {
 				_aTextures.Add(Resources.Load<Texture> ("Textures/Chunks/" + Globals.materials [i]));
 				_aMaterials.Add(Resources.Load<Material> ("Materials/Chunks/" + Globals.materials [i]));
+				//Debug.Log (_aMaterials[i].name);
 				_aDictMaterials.Add(Globals.materials [i], _aMaterials[_aMaterials.Count-1]);
 			}
 
@@ -163,6 +164,7 @@ namespace DragginzVoxelWorldEditor
 			len = Globals.materialsTools.Length;
 			for (i = 0; i < len; ++i) {
 				_aToolMaterials.Add(Resources.Load<Material> ("Materials/Tools/" + Globals.materialsTools [i]));
+				//Debug.Log (_aToolMaterials[i].name);
 			}
 
 			_undoActions = new List<undoAction> ();
@@ -752,7 +754,7 @@ namespace DragginzVoxelWorldEditor
 			else if (AppController.Instance.appState == AppState.Paint)
 			{
 				//fScale *= 0.5f;
-				laserAim.transform.localScale = new Vector3(v3DigSettings.x, v3DigSettings.y, 1f) * fScale;
+				laserAim.transform.localScale = new Vector3(v3DigSettings.x, v3DigSettings.y, v3DigSettings.z) * fScale; // z == 1
 				laserAimCenterCube.SetActive (false);
 			}
 			else {

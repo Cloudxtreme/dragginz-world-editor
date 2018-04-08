@@ -47,13 +47,13 @@ namespace DragginzVoxelWorldEditor
 				setAimTool ();
 
 				if (_rendererAimTool.material == _materialAimTool) {
-					//setCurAimMaterial();
+					setCurAimMaterial();
 				}
 
 				//changeShaders (Globals.highlightShaderName);
 
 				if (_mouseIsDown) {
-					paintIt (_trfmAimTool.position, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial]);
+					paintIt (_trfmAimTool.position, MainMenu.Instance.iSelectedMaterial);
 					_mouseIsDown = false;
 				}
 			}
@@ -62,9 +62,9 @@ namespace DragginzVoxelWorldEditor
 			}
 		}
 
-		private void paintIt (Vector3 v3Pos, Material material)
+		private void paintIt (Vector3 v3Pos, int materialIndex)
 		{
-			_levelEditor.curVoxelsLevelChunk.paint (_hit, MainMenu.Instance.v3DigSettings, _materialAimTool);
+			_levelEditor.curVoxelsLevelChunk.paint (_hit, MainMenu.Instance.v3DigSettings, materialIndex);
 
 			/*
 			int i, len;

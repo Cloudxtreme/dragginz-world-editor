@@ -27,11 +27,7 @@ namespace DragginzVoxelWorldEditor
 
 		private List<VoxelUtils.VoxelChunk> _aVoxelChunks;
 
-		//private Ray _ray;
-		//private RaycastHit _hit;
-		//private GameObject _goHit;
-
-		//private Vector3 _curDigSize;
+		private Vector3 _lastChunkPos;
 
 		// ---------------------------------------------------------------------------------------------
 		// Init shit
@@ -39,7 +35,6 @@ namespace DragginzVoxelWorldEditor
 		void Awake () {
 
 			_editMode = 0;
-			//_curDigSize = new Vector3 (4, 6, 4);
 		}
 
 		public void init (GameObject goParent) {
@@ -52,8 +47,8 @@ namespace DragginzVoxelWorldEditor
 
 			// create the full chunk voxel
 			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int(Vector3.zero);
-			VoxelUtils.VoxelChunk vs = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
-			_aVoxelChunks.Add (vs);
+			VoxelUtils.VoxelChunk vc = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
+			_aVoxelChunks.Add (vc);
 
 			subtractChunk (new Vector3 (33, 34, 33), new Vector3 (6, 4, 6));
 		}
@@ -128,7 +123,7 @@ namespace DragginzVoxelWorldEditor
 		}*/
 
 		// ---------------------------------------------------------------------------------------------
-		public void dig(RaycastHit hit, Vector3 digSize)
+		public void dig(RaycastHit hit, Vector3 chunkSize)
 		{
 			float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
 
@@ -136,19 +131,37 @@ namespace DragginzVoxelWorldEditor
 			float yChunk = (int)((hit.point.y + (hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 			float zChunk = (int)((hit.point.z + (hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 
-			subtractChunk (new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE)), digSize);
+			_lastChunkPos = new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE));
+			if (hit.normal.x > 0) {
+				_lastChunkPos.x -= (chunkSize.x - 1);
+			}
+			else if (hit.normal.y > 0) {
+				_lastChunkPos.y -= (chunkSize.y - 1);
+			}
+			else if (hit.normal.z > 0) {
+				_lastChunkPos.z -= (chunkSize.z - 1);
+			}
+
+			subtractChunk (_lastChunkPos, chunkSize);
 		}
 
 		// ---------------------------------------------------------------------------------------------
-		public void paint(RaycastHit hit, Vector3 digSize, Material material)
+		public void paint(RaycastHit hit, Vector3 chunkSize, int materialIndex)
 		{
-			float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
+			//if (AppController.Instance.appState == AppState.Paint) {
+				//chunkSize.z = 1;
+			//}
 
-			float xChunk = (int)((hit.point.x + (hit.normal.x * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-			float yChunk = (int)((hit.point.y + (hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-			float zChunk = (int)((hit.point.z + (hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			dig (hit, chunkSize);
 
-			subtractChunk (new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE)), digSize);
+			VoxelUtils.VoxelChunk vc = createVoxelChunk (VoxelUtils.convertVector3ToVoxelVector3Int (_lastChunkPos), (int)chunkSize.x, (int)chunkSize.y, (int)chunkSize.z);
+			vc.materialIndex = materialIndex;
+
+			_aVoxelChunks.Add (vc);
+			setVoxelChunkMesh (vc);
+
+			//Renderer renderer = vc.go.GetComponent<Renderer> ();
+			//renderer.sharedMaterial = LevelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial];
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -483,21 +496,26 @@ namespace DragginzVoxelWorldEditor
 
 			//Debug.Log ("    ->separateVoxelChunkAlongXAxis "+pointCutX.ToString());
 
-			VoxelUtils.VoxelChunk vs = _aVoxelChunks [index];
-			Destroy (vs.go);
+			VoxelUtils.VoxelChunk vc = _aVoxelChunks [index];
+			int materialIndex = vc.materialIndex;
+			//Debug.Log ("materialIndex: "+materialIndex);
+
+			Destroy (vc.go);
 			_aVoxelChunks.RemoveAt (index);
 
-			int leftX  = vs.corners.bot_left_front.x;
+			int leftX  = vc.corners.bot_left_front.x;
 			int width1 = Mathf.Abs(pointCutX - leftX);
 
 			// create left part
-			VoxelUtils.VoxelChunk vsLeft = createVoxelChunk(vs.pos, width1, vs.size.y, vs.size.z);
+			VoxelUtils.VoxelChunk vsLeft = createVoxelChunk(vc.pos, width1, vc.size.y, vc.size.z);
+			vsLeft.materialIndex = materialIndex;
 			_aVoxelChunks.Add (vsLeft);
 
 			// create right part
-			vs.pos.x += width1;
-			int width2 = vs.size.x - width1;
-			VoxelUtils.VoxelChunk vsRight = createVoxelChunk(vs.pos, width2, vs.size.y, vs.size.z);
+			vc.pos.x += width1;
+			int width2 = vc.size.x - width1;
+			VoxelUtils.VoxelChunk vsRight = createVoxelChunk(vc.pos, width2, vc.size.y, vc.size.z);
+			vsRight.materialIndex = materialIndex;
 			_aVoxelChunks.Add (vsRight);
 		}
 			
@@ -506,21 +524,26 @@ namespace DragginzVoxelWorldEditor
 
 			//Debug.Log ("    ->separateVoxelChunkAlongYAxis "+pointCutY.ToString());
 
-			VoxelUtils.VoxelChunk vs = _aVoxelChunks [index];
-			Destroy (vs.go);
+			VoxelUtils.VoxelChunk vc = _aVoxelChunks [index];
+			int materialIndex = vc.materialIndex;
+			//Debug.Log ("materialIndex: "+materialIndex);
+
+			Destroy (vc.go);
 			_aVoxelChunks.RemoveAt (index);
 
-			int botY    = vs.corners.bot_left_front.y;
+			int botY    = vc.corners.bot_left_front.y;
 			int height1 = Mathf.Abs(pointCutY - botY);
 
 			// create bottom part
-			VoxelUtils.VoxelChunk vsBottom = createVoxelChunk(vs.pos, vs.size.x, height1, vs.size.z);
+			VoxelUtils.VoxelChunk vsBottom = createVoxelChunk(vc.pos, vc.size.x, height1, vc.size.z);
+			vsBottom.materialIndex = materialIndex;
 			_aVoxelChunks.Add (vsBottom);
 
 			// create top part
-			vs.pos.y += height1;
-			int height2 = vs.size.y - height1;
-			VoxelUtils.VoxelChunk vsTop = createVoxelChunk(vs.pos, vs.size.x, height2, vs.size.z);
+			vc.pos.y += height1;
+			int height2 = vc.size.y - height1;
+			VoxelUtils.VoxelChunk vsTop = createVoxelChunk(vc.pos, vc.size.x, height2, vc.size.z);
+			vsTop.materialIndex = materialIndex;
 			_aVoxelChunks.Add (vsTop);
 		}
 
@@ -529,21 +552,26 @@ namespace DragginzVoxelWorldEditor
 
 			//Debug.Log ("    ->separateVoxelChunkAlongZAxis "+pointCutZ.ToString());
 
-			VoxelUtils.VoxelChunk vs = _aVoxelChunks [index];
-			Destroy (vs.go);
+			VoxelUtils.VoxelChunk vc = _aVoxelChunks [index];
+			int materialIndex = vc.materialIndex;
+			//Debug.Log ("materialIndex: "+materialIndex);
+
+			Destroy (vc.go);
 			_aVoxelChunks.RemoveAt (index);
 
-			int frontZ = vs.corners.bot_left_front.z;
+			int frontZ = vc.corners.bot_left_front.z;
 			int depth1 = Mathf.Abs(pointCutZ - frontZ);
 
 			// create front part
-			VoxelUtils.VoxelChunk vsFront = createVoxelChunk(vs.pos, vs.size.x, vs.size.y, depth1);
+			VoxelUtils.VoxelChunk vsFront = createVoxelChunk(vc.pos, vc.size.x, vc.size.y, depth1);
+			vsFront.materialIndex = materialIndex;
 			_aVoxelChunks.Add (vsFront);
 
 			// create back part
-			vs.pos.z += depth1;
-			int depth2 = vs.size.z - depth1;
-			VoxelUtils.VoxelChunk vsBack = createVoxelChunk(vs.pos, vs.size.x, vs.size.y, depth2);
+			vc.pos.z += depth1;
+			int depth2 = vc.size.z - depth1;
+			VoxelUtils.VoxelChunk vsBack = createVoxelChunk(vc.pos, vc.size.x, vc.size.y, depth2);
+			vsBack.materialIndex = materialIndex;
 			_aVoxelChunks.Add (vsBack);
 		}
 
@@ -567,16 +595,17 @@ namespace DragginzVoxelWorldEditor
 			b.size = new Vector3 (width, height, depth);
 			b.center = pos;
 
-			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
-			vs.go      = cube;
-			vs.goPos   = pos;
-			vs.pos     = p;
-			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
-			vs.bounds  = b;
-			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
-			vs.meshCreated = false;
+			VoxelUtils.VoxelChunk vc = new VoxelUtils.VoxelChunk ();
+			vc.go      = cube;
+			vc.goPos   = pos;
+			vc.pos     = p;
+			vc.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
+			vc.bounds  = b;
+			vc.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
+			vc.materialIndex = 0;
+			vc.meshCreated = false;
 
-			return vs;
+			return vc;
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -590,6 +619,9 @@ namespace DragginzVoxelWorldEditor
 
 			BoxCollider coll = vc.go.GetComponent<BoxCollider> ();
 			coll.size = new Vector3 (vc.size.x * VoxelUtils.CHUNK_SIZE, vc.size.y * VoxelUtils.CHUNK_SIZE, vc.size.z * VoxelUtils.CHUNK_SIZE);
+
+			Renderer renderer = vc.go.GetComponent<Renderer> ();
+			renderer.sharedMaterial = LevelEditor.Instance.aMaterials[vc.materialIndex];
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -607,14 +639,15 @@ namespace DragginzVoxelWorldEditor
 			b.size = new Vector3 (width - VoxelUtils.CHUNK_SIZE, height - VoxelUtils.CHUNK_SIZE, depth - VoxelUtils.CHUNK_SIZE);
 			b.center = pos;
 
-			VoxelUtils.VoxelChunk vs = new VoxelUtils.VoxelChunk ();
-			vs.pos     = p;
-			vs.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
-			vs.bounds  = b;
-			vs.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
-			vs.meshCreated = false;
+			VoxelUtils.VoxelChunk vc = new VoxelUtils.VoxelChunk ();
+			vc.pos     = p;
+			vc.size    = new VoxelUtils.VoxelVector3Int(w, h, d);
+			vc.bounds  = b;
+			vc.corners = VoxelUtils.createVoxelCorners (p, w, h, d);
+			vc.materialIndex = 0;
+			vc.meshCreated = false;
 
-			return vs;
+			return vc;
 		}
 	}
 }

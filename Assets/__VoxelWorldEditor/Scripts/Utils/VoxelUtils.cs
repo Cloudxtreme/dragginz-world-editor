@@ -82,6 +82,7 @@ namespace DragginzVoxelWorldEditor
 			public VoxelVector3Int size;
 			public Bounds          bounds;
 			public VoxelCorners    corners;
+			public int             materialIndex;
 			public bool    		   meshCreated;
 
 			public bool Identical(VoxelChunk vsOther)

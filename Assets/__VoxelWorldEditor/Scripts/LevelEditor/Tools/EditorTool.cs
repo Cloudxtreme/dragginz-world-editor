@@ -167,7 +167,7 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		public void setCurAimMaterial() {
-			_rendererAimTool.material = _levelEditor.aToolMaterials [MainMenu.Instance.iSelectedMaterial];
+			_rendererAimTool.sharedMaterial = _levelEditor.aToolMaterials [MainMenu.Instance.iSelectedMaterial];
 		}
 
 		public void setCurAimCenterCubeMaterial() {
@@ -334,16 +334,17 @@ namespace DragginzVoxelWorldEditor
 		//
 		protected void setAimTool ()
 		{
-			_trfmAimTool.forward = _hit.normal;
+			//_trfmAimTool.forward = _hit.normal;
 
 			_v3AimPos.x = (int)((_hit.point.x + (_hit.normal.x * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 			_v3AimPos.y = (int)((_hit.point.y + (_hit.normal.y * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 			_v3AimPos.z = (int)((_hit.point.z + (_hit.normal.z * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 
-			_xAimScale  = MainMenu.Instance.v3DigSettings.x * VoxelUtils.CHUNK_SIZE;
-			_yAimScale  = MainMenu.Instance.v3DigSettings.y * VoxelUtils.CHUNK_SIZE;
+			_xAimScale = MainMenu.Instance.v3DigSettings.x * VoxelUtils.CHUNK_SIZE;
+			_yAimScale = MainMenu.Instance.v3DigSettings.y * VoxelUtils.CHUNK_SIZE;
+			_zAimScale = MainMenu.Instance.v3DigSettings.z * VoxelUtils.CHUNK_SIZE;
 			// painting doesn't use depth setting
-			_zAimScale = (AppController.Instance.appState == AppState.Paint ? 0.5f : MainMenu.Instance.v3DigSettings.z * VoxelUtils.CHUNK_SIZE);
+			//_zAimScale = (AppController.Instance.appState == AppState.Paint ? 0.5f : MainMenu.Instance.v3DigSettings.z * VoxelUtils.CHUNK_SIZE);
 
 			if (_hit.normal.x != 0.0f)
 			{
