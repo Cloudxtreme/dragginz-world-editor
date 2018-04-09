@@ -32,6 +32,12 @@ namespace DragginzVoxelWorldEditor
 
 		private Dictionary<GameObject, worldProp> _worldProps;
 
+		private Vector3 _chunkPos;
+		private Bounds _chunkBounds;
+
+		private Vector3 _startPos;
+		private Vector3 _startRotation;
+
 		#region Getters
 
 		public Transform trfmVoxels {
@@ -40,6 +46,18 @@ namespace DragginzVoxelWorldEditor
 
 		public Transform trfmProps {
 			get { return _trfmProps; }
+		}
+
+		public Vector3 chunkPos {
+			get { return _chunkPos; }
+		}
+
+		public Bounds chunkBounds {
+			get { return _chunkBounds; }
+		}
+
+		public List<VoxelUtils.VoxelChunk> aVoxelChunks {
+			get { return _aVoxelChunks; }
 		}
 
 		public Dictionary<GameObject, worldProp> worldProps {
@@ -51,9 +69,11 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		// Init shit
 		// ---------------------------------------------------------------------------------------------
-		public void init (GameObject goParent) {
-
+		public void init (GameObject goParent)
+		{
 			_trfmVoxelChunkContainer = goParent.transform;
+
+			_chunkPos = _trfmVoxelChunkContainer.position;
 
 			_trfmVoxels = _trfmVoxelChunkContainer.Find ("voxelsContainer");
 			_trfmProps = _trfmVoxelChunkContainer.Find ("propsContainer");
@@ -63,7 +83,14 @@ namespace DragginzVoxelWorldEditor
 
 			_worldProps = new Dictionary<GameObject, worldProp> ();
 
+			newLevel ();
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		public void newLevel()
+		{
 			reset ();
+			createDefaultLevel ();
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -72,7 +99,7 @@ namespace DragginzVoxelWorldEditor
 			VoxelUtils.VoxelChunk vc;
 			worldProp wp;
 
-			int i, len = _aVoxelChunks.Count;
+			/*int i, len = _aVoxelChunks.Count;
 			for (i = 0; i < len; ++i) {
 				vc = _aVoxelChunks [i];
 				if (vc.go != null) {
@@ -80,7 +107,7 @@ namespace DragginzVoxelWorldEditor
 					vc.go = null;
 					_aVoxelChunks [i] = vc;
 				}
-			}
+			}*/
 			// just in case :)
 			foreach (Transform child in _trfmVoxels) {
 				Destroy (child.gameObject);
@@ -88,25 +115,47 @@ namespace DragginzVoxelWorldEditor
 			_aVoxelChunks.Clear ();
 			_iVoxelCount = 0;
 
-			foreach (KeyValuePair<GameObject, worldProp> pair in _worldProps) {
+			/*foreach (KeyValuePair<GameObject, worldProp> pair in _worldProps) {
 				wp = _worldProps[pair.Key];
 				if (wp.go != null) {
 					Destroy (wp.go);
 					wp.go = null;
 					_worldProps[pair.Key] = wp;
 				}
-			}
+			}*/
 			// just in case :)
 			foreach (Transform child in _trfmProps) {
 				Destroy (child.gameObject);
 			}
 			_worldProps.Clear ();
+		}
 
+		//
+		public void setStartPos(Vector3 pos, Vector3 rot)
+		{
+			_startPos = pos;
+			_startRotation = rot;
+		}
+
+		public Vector3 getStartPos()
+		{
+			return _chunkPos + _startPos;
+		}
+
+		public Vector3 getStartRotation()
+		{
+			return _startRotation;
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void createDefaultLevel()
+		{
 			// create the full chunk voxel
 			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int(Vector3.zero);
-			vc = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
+			VoxelUtils.VoxelChunk vc = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
 			_aVoxelChunks.Add (vc);
 
+			// create room in center of level
 			subtractChunk (new Vector3 (32, 34, 32), new Vector3 (8, 4, 8));
 		}
 
@@ -609,7 +658,9 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		// create single voxel
 		// ---------------------------------------------------------------------------------------------
-		private VoxelUtils.VoxelChunk createVoxelChunk(VoxelUtils.VoxelVector3Int p, int w, int h, int d) {
+		public VoxelUtils.VoxelChunk createVoxelChunk(VoxelUtils.VoxelVector3Int p, int w, int h, int d) {
+
+			//Debug.Log ("createVoxelChunk " + p.ToString () + ", " + w + ", " + h + ", " + d);
 
 			GameObject cube = AssetFactory.Instance.createVoxelChunkClone();
 			cube.transform.SetParent (_trfmVoxels);
@@ -642,7 +693,7 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		// 
 		// ---------------------------------------------------------------------------------------------
-		private void setVoxelChunkMesh(VoxelUtils.VoxelChunk vc)
+		public void setVoxelChunkMesh(VoxelUtils.VoxelChunk vc)
 		{
 			vc.go.transform.localPosition = vc.goPos;
 			Mesh mesh = vc.go.GetComponent<MeshFilter> ().mesh;

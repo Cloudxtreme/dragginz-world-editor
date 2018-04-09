@@ -59,9 +59,8 @@
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Core\Globals.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Data\LevelData.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Data\LevelFile.cs" />
-     <Compile Include="Assets\__VoxelWorldEditor\Scripts\Data\LevelObject.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Data\LevelProp.cs" />
-     <Compile Include="Assets\__VoxelWorldEditor\Scripts\Data\LevelQuadrant.cs" />
+     <Compile Include="Assets\__VoxelWorldEditor\Scripts\Data\LevelVoxelChunk.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\LevelEditor\LevelChunk.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\LevelEditor\LevelEditor.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\LevelEditor\LevelManager.cs" />

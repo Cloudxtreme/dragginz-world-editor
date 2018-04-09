@@ -13,9 +13,9 @@ namespace DragginzVoxelWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v04.09.0a";
+		static public readonly string version = "Level Editor v04.09.1a";
 
-		static public readonly int levelSaveFormatVersion = 1;
+		static public readonly int levelSaveFormatVersion = 100;
 
 		//
 

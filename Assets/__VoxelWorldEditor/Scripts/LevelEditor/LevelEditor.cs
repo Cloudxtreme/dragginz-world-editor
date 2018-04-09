@@ -351,7 +351,7 @@ namespace DragginzVoxelWorldEditor
 
 			//_curLevelChunk.reset ();
 			//_curLevelChunk.createOfflineLevel ();
-			_curVoxelsLevelChunk.reset();
+			_curVoxelsLevelChunk.newLevel();
 
 			//Vector3 savedPos = new Vector3 (18.35f, 18.90f, 17.25f);
 			//Vector3 savedRot = Vector2.zero;

@@ -31,7 +31,7 @@ namespace DragginzVoxelWorldEditor
 		public string levelName { get; set; }
 
 		[SerializeField]
-		public List<LevelQuadrant> levelQuadrants { get; set; }
+		public List<LevelVoxelChunk> levelVoxelChunks { get; set; }
 
 		[SerializeField]
 		public List<LevelProp> levelProps { get; set; }
@@ -48,7 +48,7 @@ namespace DragginzVoxelWorldEditor
 		public void parseJson(string json)
 		{
 			int i, len;
-			LevelQuadrant levelQuadrant;
+			LevelVoxelChunk levelVoxelChunk;
 			LevelProp levelProp;
 
 			//Debug.Log (json);
@@ -82,15 +82,15 @@ namespace DragginzVoxelWorldEditor
 				levelName = data ["n"];
 			}
 
-			levelQuadrants = new List<LevelQuadrant> ();
-			if (data ["quads"] != null) {
-				JSONArray quads = (JSONArray) data ["quads"];
-				if (quads != null) {
-					len = quads.Count;
+			levelVoxelChunks = new List<LevelVoxelChunk> ();
+			if (data ["chunks"] != null) {
+				JSONArray chunks = (JSONArray) data ["chunks"];
+				if (chunks != null) {
+					len = chunks.Count;
 					for (i = 0; i < len; ++i) {
-						levelQuadrant = new LevelQuadrant ();
-						levelQuadrant.parseJson (quads [i]);
-						levelQuadrants.Add (levelQuadrant);
+						levelVoxelChunk = new LevelVoxelChunk ();
+						levelVoxelChunk.parseJson (chunks [i]);
+						levelVoxelChunks.Add (levelVoxelChunk);
 					}
 				}
 			}
@@ -155,11 +155,11 @@ namespace DragginzVoxelWorldEditor
 			s += ",\"pos\":" + levelPos.getJsonString();
 			s += ",\"n\":" + "\"" + levelName + "\"";
 
-			s += ",\"quads\":[";
-			len = levelQuadrants.Count;
+			s += ",\"chunks\":[";
+			len = levelVoxelChunks.Count;
 			for (i = 0; i < len; ++i) {
 				s += (i > 0 ? "," : "");
-				s += levelQuadrants [i].getJsonString ();
+				s += levelVoxelChunks [i].getJsonString ();
 			}
 			s += "]";
 

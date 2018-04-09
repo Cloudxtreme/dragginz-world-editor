@@ -9,24 +9,20 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using AssetsShared;
+
 using SimpleJSON;
 
 namespace DragginzVoxelWorldEditor
 {
 	[Serializable]
-	public class LevelObject {
-
-		//[SerializeField]
-		//public string name { get; set; }
-
-		//[SerializeField]
-		//public DataTypeVector3 position  { get; set; }
-
-		//[SerializeField]
-		//public string material { get; set; }
+	public class LevelVoxelChunk {
 
 		[SerializeField]
-		public int isActive { get; set; }
+		public DataTypeVector3 position  { get; set; }
+
+		[SerializeField]
+		public DataTypeVector3 size  { get; set; }
 
 		[SerializeField]
 		public int materialId { get; set; }
@@ -36,12 +32,7 @@ namespace DragginzVoxelWorldEditor
 		//
 		public void parseJson(JSONNode data)
 		{
-			/*name = "";
-			if (data ["n"] != null) {
-				name = data ["n"];
-			}*/
-
-			/*position = new DataTypeVector3 ();
+			position = new DataTypeVector3 ();
 			position.x = 0;
 			position.y = 0;
 			position.z = 0;
@@ -55,22 +46,28 @@ namespace DragginzVoxelWorldEditor
 				if (data ["p"] ["z"] != null) {
 					position.z = (float)data ["p"] ["z"];
 				}
-			}*/
+			}
 
-			isActive = 1;
-			if (data ["a"] != null) {
-				isActive = Int32.Parse (data ["a"]);
+			size = new DataTypeVector3 ();
+			size.x = 0;
+			size.y = 0;
+			size.z = 0;
+			if (data ["s"] != null) {
+				if (data ["s"] ["x"] != null) {
+					size.x = (float)data ["s"] ["x"];
+				}
+				if (data ["s"] ["y"] != null) {
+					size.y = (float)data ["s"] ["y"];
+				}
+				if (data ["s"] ["z"] != null) {
+					size.z = (float)data ["s"] ["z"];
+				}
 			}
 
 			materialId = 0;
 			if (data ["m"] != null) {
 				materialId = Int32.Parse (data ["m"]);
 			}
-
-			/*material = "";
-			if (data ["m"] != null) {
-				material = data ["m"];
-			}*/
 		}
 
 		//
@@ -80,25 +77,25 @@ namespace DragginzVoxelWorldEditor
 		{
 			string s = "{";
 
-			//s += "\"n\":" + "\"" + name + "\"";
-
-			/*string p = position.getJsonString();
+			string p = position.getJsonString();
 			if (p != "{}") {
 				s += "\"p\":" +p;
-			}*/
-
-			if (isActive == 0) {
-				s += "\"a\":" + isActive.ToString ();
-			} else {
-				if (materialId != 0) {
-					/*if (s.Length > 1) {
-						s += ",";
-					}*/
-					s += "\"m\":" + materialId.ToString ();
-				}
 			}
 
-			//s += ",\"m\":" + "\"" + material + "\"";
+			string sz = size.getJsonString();
+			if (sz != "{}") {
+				if (s.Length > 1) {
+					s += ",";
+				}
+				s += "\"s\":" +sz;
+			}
+
+			if (materialId != 0) {
+				if (s.Length > 1) {
+					s += ",";
+				}
+				s += "\"m\":" + materialId.ToString ();
+			}
 
 			s += "}";
 

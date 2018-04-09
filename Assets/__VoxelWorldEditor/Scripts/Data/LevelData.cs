@@ -40,21 +40,21 @@ namespace DragginzVoxelWorldEditor
 		//
 		public void loadLevelDataFromFile(string fileName)
 		{
-			LevelEditor.Instance.curLevelChunk.reset ();
+			LevelEditor.Instance.curVoxelsLevelChunk.reset ();
 
 			string json = File.ReadAllText(fileName);
 
 			LevelFile levelFile = null;
-			try {
+			//try {
 				levelFile = createDataFromJson(json);
 				if (levelFile != null) {
 					createLevel (levelFile);
 				}
-			}
-			catch (System.Exception e) {
-				Debug.LogWarning (e.Message);
-				AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat.Replace("%1",""));
-			}
+			//}
+			//catch (System.Exception e) {
+			//	Debug.LogWarning (e.Message);
+			//	AppController.Instance.showPopup (PopupMode.Notification, "Warning", Globals.warningInvalidFileFormat.Replace("%1",""));
+			//}
 		}
 
 		//
@@ -82,8 +82,7 @@ namespace DragginzVoxelWorldEditor
 
 			LevelEditor levelEditor = LevelEditor.Instance;
 			PropsManager propsManager = PropsManager.Instance;
-			//World world = World.Instance;
-			LevelChunk levelChunk = levelEditor.curLevelChunk;
+			VoxelsLevelChunk levelChunk = levelEditor.curVoxelsLevelChunk;
 
 			levelEditor.resetAll ();
 
@@ -101,65 +100,29 @@ namespace DragginzVoxelWorldEditor
 			int quadLen = levelEditor.cubesPerQuadrant;
 			float fRockSize = levelEditor.fRockSize;
 
-			int i, len = levelFile.levelQuadrants.Count;
+			int i, len = levelFile.levelVoxelChunks.Count;
+			Debug.Log ("levelFile.levelVoxelChunks.Count: " + levelFile.levelVoxelChunks.Count);
 			for (i = 0; i < len; ++i)
 			{
-				pos.x = (int)levelFile.levelQuadrants[i].position.x;
-				pos.y = (int)levelFile.levelQuadrants[i].position.y;
-				pos.z = (int)levelFile.levelQuadrants[i].position.z;
-			
-				string quadrantId = (int)pos.x + "_" + (int)pos.y + "_" + (int)pos.z;
-				goQuadrant = levelChunk.createQuadrant (pos, quadrantId);
-				if (goQuadrant == null) {
-					continue;
-				}
+				pos.x = (int)levelFile.levelVoxelChunks[i].position.x;
+				pos.y = (int)levelFile.levelVoxelChunks[i].position.y;
+				pos.z = (int)levelFile.levelVoxelChunks[i].position.z;
 
-				trfmContainer = goQuadrant.transform.Find (Globals.cubesContainerName);
-				if (trfmContainer == null) {
-					continue;
-				}
-				container = trfmContainer.gameObject;
+				VoxelUtils.VoxelChunk vc = levelEditor.curVoxelsLevelChunk.createVoxelChunk (
+					VoxelUtils.convertVector3ToVoxelVector3Int(pos),
+					(int)levelFile.levelVoxelChunks[i].size.x,
+					(int)levelFile.levelVoxelChunks[i].size.y,
+					(int)levelFile.levelVoxelChunks[i].size.z
+				);
 
-				Transform trfmCube;
-				GameObject cube;
-				//Vector3 pos2 = Vector3.zero;
-				string materialName;
-				Material material;
+				vc.materialIndex = levelFile.levelVoxelChunks [i].materialId;
 
-				bool isEdge = false;
-				int j, len2 = levelFile.levelQuadrants [i].levelObjects.Count;
-				for (j = 0; j < len2; ++j)
-				{
-					trfmCube = trfmContainer.Find (j.ToString());
-					if (trfmCube == null) {
-						continue;
-					}
-					cube = trfmCube.gameObject;
+				levelEditor.curVoxelsLevelChunk.aVoxelChunks.Add(vc);
 
-					if (levelFile.levelQuadrants [i].levelObjects [j].isActive == 0)
-					{
-						cube.SetActive (false);
-						levelChunk.numCubes--;
-					}
-					else
-					{
-						/*if (levelFile.levelQuadrants [i].isEdge == 1) {
-							material = levelEditor.materialEdge;
-							isEdge = true;
-						} else {*/
-							materialName = Globals.materials[levelFile.levelQuadrants [i].levelObjects [j].materialId];
-							material = levelEditor.aDictMaterials [materialName];
-							isEdge = false;
-						//}
-
-						levelChunk.setCube (cube, material, isEdge);
-					}
-				}
+				levelEditor.curVoxelsLevelChunk.setVoxelChunkMesh(vc);
 			}
 
-			Debug.Log ("Level id "+levelFile.levelId.ToString()+" - quadrants: "+len.ToString());
-			Debug.Log ("Level id "+levelFile.levelId.ToString()+" - cubes: "+levelChunk.numCubes.ToString());
-			MainMenu.Instance.setCubeCountText (levelChunk.numCubes);
+			MainMenu.Instance.setCubeCountText ("Voxel Chunks: "+levelEditor.curVoxelsLevelChunk.aVoxelChunks.Count.ToString());
 
 			if (levelFile.levelProps != null) {
 				
@@ -207,34 +170,12 @@ namespace DragginzVoxelWorldEditor
 
 			string json = levelFile.getJsonString();
 
-			//BinaryFormatter bf = new BinaryFormatter();
-
-			//FileStream file = File.Open(filename, FileMode.OpenOrCreate);
-
 			File.WriteAllText (filename, json);
-
-			//StreamWriter writer = new StreamWriter (file, System.Text.Encoding.ASCII);
-			//writer.Write (json);
-			//writer.Flush ();
-
-			//bf.Serialize(file, levelFile);
-
-			//file.Flush ();
-			//file.Close();
-			//file.Dispose();
-
-			//writer.Close ();
-			//writer.Dispose ();
 		}
 
 		//
-		private LevelFile createLevelData(string levelName) {
-
-			Transform parent = LevelEditor.Instance.curLevelChunk.trfmCubes;
-			if (parent == null) {
-				return null;
-			}
-
+		private LevelFile createLevelData(string levelName)
+		{
 			LevelFile levelFile = new LevelFile ();
 			levelFile.fileFormatVersion = Globals.levelSaveFormatVersion;
 
@@ -256,84 +197,37 @@ namespace DragginzVoxelWorldEditor
 			levelFile.playerEuler.y = FlyCam.Instance.player.eulerAngles.y;
 			levelFile.playerEuler.z = FlyCam.Instance.player.eulerAngles.z;
 
-			levelFile.levelQuadrants = new List<LevelQuadrant> ();
+			levelFile.levelVoxelChunks = new List<LevelVoxelChunk> ();
 
-			foreach (Transform child in parent) {
+			VoxelsLevelChunk vlc = LevelEditor.Instance.curVoxelsLevelChunk;
+			VoxelUtils.VoxelChunk vc;
 
-				if (!child.gameObject.activeSelf) {
-					continue;
-				}
+			int i, len = vlc.aVoxelChunks.Count;
+			for (i = 0; i < len; ++i) {
 
-				LevelQuadrant quadrant = new LevelQuadrant ();
+				vc = vlc.aVoxelChunks [i];
+				LevelVoxelChunk voxelChunk = new LevelVoxelChunk ();
 
-				quadrant.position   = new DataTypeVector3 ();
-				quadrant.position.x = child.localPosition.x;
-				quadrant.position.y = child.localPosition.y;
-				quadrant.position.z = child.localPosition.z;
+				voxelChunk.position   = new DataTypeVector3 ();
+				voxelChunk.position.x = vc.pos.x;
+				voxelChunk.position.y = vc.pos.y;
+				voxelChunk.position.z = vc.pos.z;
 
-				int qX = (int)quadrant.position.x;
-				int qY = (int)quadrant.position.y;
-				int qZ = (int)quadrant.position.z;
+				voxelChunk.size   = new DataTypeVector3 ();
+				voxelChunk.size.x = vc.size.x;
+				voxelChunk.size.y = vc.size.y;
+				voxelChunk.size.z = vc.size.z;
 
-				// sanity check!
-				bool isEdgeQuadrant = ((qX <= -1 || qY <= -1 || qZ <= -1) || (qX >= Globals.LEVEL_WIDTH || qY >= Globals.LEVEL_HEIGHT || qZ >= Globals.LEVEL_DEPTH));
-				if (isEdgeQuadrant) {
-					continue;
-				}
+				voxelChunk.materialId = vc.materialIndex;
 
-				//quadrant.isEdge = (isEdgeQuadrant ? 1 : 0);
-
-				quadrant.levelObjects = new List<LevelObject> ();
-
-				Transform container = child.Find ("container");
-				if (container != null)
-				{
-					string materialName;
-
-					foreach (Transform cube in container) {
-
-						//if (!cube.gameObject.activeSelf) {
-						//	continue;
-						//}
-
-						LevelObject cubeObject = new LevelObject ();
-
-						cubeObject.isActive = (cube.gameObject.activeSelf ? 1 : 0);
-						cubeObject.materialId = 0;
-
-						//cubeObject.name = cube.name;
-						//Debug.Log ("    ->cube "+cubeObject.name);
-
-						/*cubeObject.position   = new DataTypeVector3 ();
-						cubeObject.position.x = cube.localPosition.x;
-						cubeObject.position.y = cube.localPosition.y;
-						cubeObject.position.z = cube.localPosition.z;*/
-
-						if (cubeObject.isActive == 1)
-						{
-							if (isEdgeQuadrant) {
-								cubeObject.materialId = -1;
-							} else {
-								MeshRenderer renderer = cube.GetComponent<MeshRenderer> ();
-								if (renderer != null) {
-									materialName = renderer.material.name.Replace (" (Instance)", "");
-									cubeObject.materialId = Array.IndexOf (Globals.materials, materialName);
-								}
-							}
-						}
-
-						quadrant.levelObjects.Add (cubeObject);
-					}
-				}
-
-				levelFile.levelQuadrants.Add (quadrant);
+				levelFile.levelVoxelChunks.Add (voxelChunk);
 			}
 
 			// PROPS
 
 			List<LevelProp> levelProps = new List<LevelProp> ();
 
-			Dictionary<GameObject, worldProp> worldProps = LevelEditor.Instance.curLevelChunk.worldProps;
+			Dictionary<GameObject, worldProp> worldProps = LevelEditor.Instance.curVoxelsLevelChunk.worldProps;
 			foreach (KeyValuePair<GameObject, worldProp> p in worldProps) {
 
 				worldProp prop = p.Value;
@@ -349,7 +243,6 @@ namespace DragginzVoxelWorldEditor
 
 				LevelProp levelProp = new LevelProp ();
 				levelProp.id   = propId;
-				//levelProp.name = prop.name;
 
 				levelProp.position   = new DataTypeVector3 ();
 				levelProp.position.x = prop.go.transform.position.x;
@@ -366,43 +259,6 @@ namespace DragginzVoxelWorldEditor
 			}
 
 			levelFile.levelProps = levelProps;
-
-			/*parent = LevelEditor.Instance.goProps;
-			if (parent != null) {
-
-				List<LevelProp> levelProps = new List<LevelProp> ();
-
-				foreach (Transform prop in parent.transform) {
-
-					if (!prop.gameObject.activeSelf) {
-						continue;
-					}
-
-					int propId = -1;//Globals.getItemIndexFromName (item.name);
-					if (propId == -1) {
-						continue;
-					}
-
-					LevelProp levelProp = new LevelProp ();
-					levelProp.id   = propId;
-					levelProp.name = prop.name;
-
-					levelProp.position   = new DataTypeVector3 ();
-					levelProp.position.x = prop.position.x;
-					levelProp.position.y = prop.position.y;
-					levelProp.position.z = prop.position.z;
-
-					levelProp.rotation = new DataTypeQuaternion ();
-					levelProp.rotation.w = prop.rotation.w;
-					levelProp.rotation.x = prop.rotation.x;
-					levelProp.rotation.y = prop.rotation.y;
-					levelProp.rotation.z = prop.rotation.z;
-
-					levelProps.Add (levelProp);
-				}
-
-				levelFile.levelProps = levelProps;
-			}*/
 
 			return levelFile;
 		}
