@@ -46,46 +46,21 @@ namespace DragginzVoxelWorldEditor
 			{
 				setAimTool ();
 
-				if (_rendererAimTool.material == _materialAimTool) {
+				if (_rendererAimTool.sharedMaterial == _materialAimTool) {
 					setCurAimMaterial();
 				}
 
 				//changeShaders (Globals.highlightShaderName);
 
-				if (_mouseIsDown) {
-					paintIt (_trfmAimTool.position, MainMenu.Instance.iSelectedMaterial);
+				if (_mouseIsDown)
+				{
+					_levelEditor.curVoxelsLevelChunk.paint (_hit, MainMenu.Instance.v3DigSettings, MainMenu.Instance.iSelectedMaterial);
 					_mouseIsDown = false;
 				}
 			}
 			else {
 				resetAim ();
 			}
-		}
-
-		private void paintIt (Vector3 v3Pos, int materialIndex)
-		{
-			_levelEditor.curVoxelsLevelChunk.paint (_hit, MainMenu.Instance.v3DigSettings, materialIndex);
-
-			/*
-			int i, len;
-
-			_levelEditor.resetUndoActions ();
-
-			List<GameObject> listCollidingObjects = _levelEditor.getOverlappingObjects(v3Pos, _rendererAimTool.bounds.extents);
-			len = listCollidingObjects.Count;
-			Renderer renderer;
-			for (i = 0; i < len; ++i) {
-				_levelEditor.addUndoAction (AppState.Paint, listCollidingObjects [i]);
-				renderer = listCollidingObjects [i].GetComponent<Renderer> ();
-				if (renderer != null) {
-					renderer.sharedMaterial = material;
-				}
-			}
-			listCollidingObjects.Clear ();
-			listCollidingObjects = null;
-
-			MainMenu.Instance.setUndoButton (true);
-			*/
 		}
 	}
 }

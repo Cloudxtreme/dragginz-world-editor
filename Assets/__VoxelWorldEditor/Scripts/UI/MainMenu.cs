@@ -124,6 +124,7 @@ namespace DragginzVoxelWorldEditor
                     _trfmDropDownFile = trfmMenu.GetComponent<Dropdown>();
                     if (_trfmDropDownFile) {
                         _iDropDownFileOptions = _trfmDropDownFile.options.Count;
+						//Debug.Log ("_iDropDownFileOptions: "+_iDropDownFileOptions);
                     }
                 }
             }
@@ -138,6 +139,7 @@ namespace DragginzVoxelWorldEditor
 					_trfmDropDownLevel = trfmMenu.GetComponent<Dropdown>();
 					if (_trfmDropDownLevel) {
 						_iDropDownLevelOptions = _trfmDropDownLevel.options.Count;
+						//Debug.Log ("_iDropDownLevelOptions: "+_iDropDownLevelOptions);
 					}
 				}
 			}
@@ -576,9 +578,9 @@ namespace DragginzVoxelWorldEditor
 		//
 		public void setDigSliders(AppState mode)
 		{
-			if (sliderDigDepth != null) {
-				sliderDigDepth.transform.parent.gameObject.SetActive (mode != AppState.Paint);
-			}
+			//if (sliderDigDepth != null) {
+			//	sliderDigDepth.transform.parent.gameObject.SetActive (mode != AppState.Paint);
+			//}
 		}
 
 		//

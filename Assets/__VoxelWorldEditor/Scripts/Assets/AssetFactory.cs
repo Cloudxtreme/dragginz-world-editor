@@ -12,14 +12,7 @@ namespace DragginzVoxelWorldEditor
 	public class AssetFactory : MonoSingleton<AssetFactory>
 	{
 		[SerializeField]
-		private GameObject prefabQuadrant;
-		[SerializeField]
-		private GameObject prefabLevelChunk;
-		[SerializeField]
-		private GameObject prefabLevelContainer;
-
-		//
-
+		private GameObject prefabVoxelLevelContainer;
 		[SerializeField]
 		private GameObject prefabVoxelChunk;
 
@@ -34,25 +27,11 @@ namespace DragginzVoxelWorldEditor
 
         #region PublicMethods
 
-		public GameObject createQuadrantClone()
-		{
-			return (prefabQuadrant != null ? Instantiate (prefabQuadrant) : null);
-		}
-		public GameObject createLevelChunkClone()
-		{
-			return (prefabLevelChunk != null ? Instantiate (prefabLevelChunk) : null);
-		}
-		public GameObject createLevelContainerClone()
-		{
-			return (prefabLevelContainer != null ? Instantiate (prefabLevelContainer) : null);
-		}
-
-		//
-
 		public GameObject createVoxelsLevelContainer()
 		{
-			return new GameObject ();
+			return (prefabVoxelLevelContainer != null ? Instantiate (prefabVoxelLevelContainer) : null);
 		}
+
 		public GameObject createVoxelChunkClone()
 		{
 			return (prefabVoxelChunk != null ? Instantiate (prefabVoxelChunk) : null);

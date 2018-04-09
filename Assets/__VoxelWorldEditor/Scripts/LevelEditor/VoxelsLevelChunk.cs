@@ -16,114 +16,102 @@ namespace DragginzVoxelWorldEditor
 {
 	public class VoxelsLevelChunk : MonoSingleton<VoxelsLevelChunk>
 	{
-		public ConvertLevelToMesh _ConvertLevelToMesh;
-
 		private Transform _trfmVoxelChunkContainer;
 
-		//
-		private int _editMode;
+		private Transform _trfmPlaceholder;
+		private Transform _trfmVoxels;
+		private Transform _trfmProps;
 
-		private int _iCount;
+		private ConvertLevelToMesh _ConvertLevelToMesh;
+
+		private int _iVoxelCount;
 
 		private List<VoxelUtils.VoxelChunk> _aVoxelChunks;
 
 		private Vector3 _lastChunkPos;
 
+		private Dictionary<GameObject, worldProp> _worldProps;
+
+		#region Getters
+
+		public Transform trfmVoxels {
+			get { return _trfmVoxels; }
+		}
+
+		public Transform trfmProps {
+			get { return _trfmProps; }
+		}
+
+		public Dictionary<GameObject, worldProp> worldProps {
+			get { return _worldProps; }
+		}
+
+		#endregion
+
 		// ---------------------------------------------------------------------------------------------
 		// Init shit
 		// ---------------------------------------------------------------------------------------------
-		void Awake () {
-
-			_editMode = 0;
-		}
-
 		public void init (GameObject goParent) {
 
 			_trfmVoxelChunkContainer = goParent.transform;
 
-			_iCount = 0;
+			_trfmVoxels = _trfmVoxelChunkContainer.Find ("voxelsContainer");
+			_trfmProps = _trfmVoxelChunkContainer.Find ("propsContainer");
+			_trfmPlaceholder = _trfmVoxelChunkContainer.Find ("placeHolderContainer");
 
 			_aVoxelChunks = new List<VoxelUtils.VoxelChunk> ();
 
+			_worldProps = new Dictionary<GameObject, worldProp> ();
+
+			reset ();
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		public void reset()
+		{
+			VoxelUtils.VoxelChunk vc;
+			worldProp wp;
+
+			int i, len = _aVoxelChunks.Count;
+			for (i = 0; i < len; ++i) {
+				vc = _aVoxelChunks [i];
+				if (vc.go != null) {
+					Destroy (vc.go);
+					vc.go = null;
+					_aVoxelChunks [i] = vc;
+				}
+			}
+			// just in case :)
+			foreach (Transform child in _trfmVoxels) {
+				Destroy (child.gameObject);
+			}
+			_aVoxelChunks.Clear ();
+			_iVoxelCount = 0;
+
+			foreach (KeyValuePair<GameObject, worldProp> pair in _worldProps) {
+				wp = _worldProps[pair.Key];
+				if (wp.go != null) {
+					Destroy (wp.go);
+					wp.go = null;
+					_worldProps[pair.Key] = wp;
+				}
+			}
+			// just in case :)
+			foreach (Transform child in _trfmProps) {
+				Destroy (child.gameObject);
+			}
+			_worldProps.Clear ();
+
 			// create the full chunk voxel
 			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int(Vector3.zero);
-			VoxelUtils.VoxelChunk vc = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
+			vc = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
 			_aVoxelChunks.Add (vc);
 
-			subtractChunk (new Vector3 (33, 34, 33), new Vector3 (6, 4, 6));
+			subtractChunk (new Vector3 (32, 34, 32), new Vector3 (8, 4, 8));
 		}
-		
-		// ---------------------------------------------------------------------------------------------
-		// Update shit
-		// ---------------------------------------------------------------------------------------------
-		/*void Update () {
-
-			if (Input.GetMouseButtonDown (0)) {
-
-				if (!EventSystem.current.IsPointerOverGameObject ()) {
-					onMouseClick ();
-				}
-			}
-			else if (Input.GetKeyDown(KeyCode.P))
-			{
-				toggleEditMode ();
-			}
-			else {
-
-				doRayCast ();
-			}
-		}*/
 
 		// ---------------------------------------------------------------------------------------------
-		/*private void toggleEditMode()
-		{
-			_editMode = (_editMode == 0 ? 1 : 0);
-
-			if (_editMode == 1)
-			{
-				float timer = Time.realtimeSinceStartup;
-
-				//float fCenter  = (float)VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f;
-				float[] voxels = convertChunksToVoxels ();
-
-				_ConvertLevelToMesh.create (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero); //new Vector3(fCenter, fCenter, fCenter));
-
-				Debug.LogWarning ("Time run marching cubes: " + (Time.realtimeSinceStartup - timer).ToString ());
-			}
-			else {
-				_ConvertLevelToMesh.resetAll ();
-			}
-		}*/
-
-		// ---------------------------------------------------------------------------------------------
-		/*private void doRayCast()
-		{
-			_goHit = null;
-
-			_ray = _curCam.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (_ray, out _hit, 10))
-			{
-				if (_hit.collider.gameObject.tag == "DigAndDestroy")
-				{
-					_goHit = _hit.collider.gameObject;
-
-					float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
-
-					float xChunk = (int)((_hit.point.x + (_hit.normal.x * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-					float yChunk = (int)((_hit.point.y + (_hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-					float zChunk = (int)((_hit.point.z + (_hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-
-					aimHelper.forward = _hit.normal;
-
-					Vector3 aimPos = new Vector3 (xChunk + vcsHalf, yChunk + vcsHalf, zChunk + vcsHalf);
-					//aimPos += (_curDigSize * 0.5f);
-					aimHelper.localPosition = aimPos;
-				}
-			}
-		}*/
-
-		// ---------------------------------------------------------------------------------------------
-		public void dig(RaycastHit hit, Vector3 chunkSize)
+		public Vector3 getHitChunkPos(RaycastHit hit)
 		{
 			float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
 
@@ -131,7 +119,19 @@ namespace DragginzVoxelWorldEditor
 			float yChunk = (int)((hit.point.y + (hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 			float zChunk = (int)((hit.point.z + (hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 
-			_lastChunkPos = new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE));
+			return new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE));
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		public void dig(RaycastHit hit, Vector3 chunkSize)
+		{
+			//float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
+			//float xChunk = (int)((hit.point.x + (hit.normal.x * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			//float yChunk = (int)((hit.point.y + (hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			//float zChunk = (int)((hit.point.z + (hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+
+			_lastChunkPos = getHitChunkPos (hit); //new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE));
+
 			if (hit.normal.x > 0) {
 				_lastChunkPos.x -= (chunkSize.x - 1);
 			}
@@ -159,17 +159,48 @@ namespace DragginzVoxelWorldEditor
 
 			_aVoxelChunks.Add (vc);
 			setVoxelChunkMesh (vc);
-
-			//Renderer renderer = vc.go.GetComponent<Renderer> ();
-			//renderer.sharedMaterial = LevelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial];
 		}
 
 		// ---------------------------------------------------------------------------------------------
-		private float[] convertChunksToVoxels()
+		public void build(RaycastHit hit, Vector3 chunkSize, int materialIndex)
+		{
+			_lastChunkPos = getHitChunkPos (hit);
+
+			if (hit.normal.x != 0) {
+				if (hit.normal.x > 0) {
+					_lastChunkPos.x += 1;
+				} else {
+					_lastChunkPos.x -= chunkSize.x;
+				}
+			}
+			else if (hit.normal.y != 0) {
+				if (hit.normal.y > 0) {
+					_lastChunkPos.y += 1;
+				} else {
+					_lastChunkPos.y -= chunkSize.y;
+				}
+			}
+			else if (hit.normal.z != 0) {
+				if (hit.normal.z > 0) {
+					_lastChunkPos.z += 1;
+				} else {
+					_lastChunkPos.z -= chunkSize.z;
+				}
+			}
+					
+			subtractChunk (_lastChunkPos, chunkSize);
+
+			VoxelUtils.VoxelChunk vc = createVoxelChunk (VoxelUtils.convertVector3ToVoxelVector3Int (_lastChunkPos), (int)chunkSize.x, (int)chunkSize.y, (int)chunkSize.z);
+			vc.materialIndex = materialIndex;
+
+			_aVoxelChunks.Add (vc);
+			setVoxelChunkMesh (vc);
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		public float[] convertChunksToVoxels()
 		{
 			int seed = (int)(Time.time * 10f);
-			//INoise perlin = new PerlinNoise(seed, 2.0f);
-			//FractalNoise fractal = new FractalNoise(perlin, 3, 1.0f);
 			Random.InitState (seed);
 
 			int size = VoxelUtils.MAX_CHUNK_UNITS;
@@ -201,13 +232,13 @@ namespace DragginzVoxelWorldEditor
 						ySize = y * size;
 						for (z = vc.corners.bot_left_front.z; z <= maxZ; z++) {
 
-							index = x + ySize + z * size2; //size * size;
+							index = x + ySize + z * size2;
 
 							if ((x > vc.corners.bot_left_front.x && x < maxX)
 							&&	(y > vc.corners.bot_left_front.y && y < maxY)
 							&&	(z > vc.corners.bot_left_front.z && z < maxZ))
 							{
-								voxels [index] = 0;//1 - Random.value;
+								voxels [index] = 0;
 							}
 							else
 							{
@@ -268,7 +299,7 @@ namespace DragginzVoxelWorldEditor
 				//Debug.Log ("num voxels: " + len + " - loops: " + loops + " - meshes created: " + count);
 			}
 
-			Debug.Log ("Time to create chunk(s): " + (Time.realtimeSinceStartup - timer).ToString ());
+			//Debug.Log ("Time to create chunk(s): " + (Time.realtimeSinceStartup - timer).ToString ());
 			MainMenu.Instance.setCubeCountText ("Voxel Chunks: "+_aVoxelChunks.Count.ToString());
 
 			return success;
@@ -581,9 +612,9 @@ namespace DragginzVoxelWorldEditor
 		private VoxelUtils.VoxelChunk createVoxelChunk(VoxelUtils.VoxelVector3Int p, int w, int h, int d) {
 
 			GameObject cube = AssetFactory.Instance.createVoxelChunkClone();
-			cube.transform.SetParent (_trfmVoxelChunkContainer);
-			_iCount++;
-			cube.name = "voxchunk_" + _iCount.ToString ();
+			cube.transform.SetParent (_trfmVoxels);
+			_iVoxelCount++;
+			cube.name = "voxchunk_" + _iVoxelCount.ToString ();
 
 			float width  = w * VoxelUtils.CHUNK_SIZE;
 			float height = h * VoxelUtils.CHUNK_SIZE;
@@ -649,5 +680,37 @@ namespace DragginzVoxelWorldEditor
 
 			return vc;
 		}
+
+		#region Props
+
+		// ---------------------------------------------------------------------------------------------
+		// 
+		// ---------------------------------------------------------------------------------------------
+		public void addWorldProp(int id, GameObject go)
+		{
+			_worldProps.Add (go, new worldProp (id, go.name, go));
+		}
+
+		//
+		public void removeWorldProp(GameObject go)
+		{
+			if (_worldProps.ContainsKey (go)) {
+				_worldProps.Remove (go);
+			}
+		}
+
+		public propDef getPropDefForGameObject(GameObject go)
+		{
+			propDef p = new propDef();
+			p.id = -1;
+
+			if (_worldProps.ContainsKey (go)) {
+				p = PropsManager.Instance.getPropDefForId(_worldProps [go].id);
+			}
+
+			return p;
+		}
+
+		#endregion
 	}
 }

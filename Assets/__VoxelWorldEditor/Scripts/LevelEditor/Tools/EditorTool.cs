@@ -161,18 +161,20 @@ namespace DragginzVoxelWorldEditor
 			changeShaders ();
 			_trfmAimTool.position = new Vector3(9999,9999,9999);
 			_trfmAimTool.forward = Vector3.forward;
-			_rendererAimTool.material = _materialAimTool;
-			_rendererAimCenterCube.material = _materialAimTool;
+			_rendererAimTool.sharedMaterial = _materialAimTool;
+			_rendererAimCenterCube.sharedMaterial = _materialAimTool;
 			_goHitLast = null;
 		}
 
-		public void setCurAimMaterial() {
+		public void setCurAimMaterial()
+		{
 			_rendererAimTool.sharedMaterial = _levelEditor.aToolMaterials [MainMenu.Instance.iSelectedMaterial];
 		}
 
-		public void setCurAimCenterCubeMaterial() {
-			_rendererAimTool.material = _materialAimTool;
-			_rendererAimCenterCube.sharedMaterial = _levelEditor.aMaterials [MainMenu.Instance.iSelectedMaterial];
+		public void setCurAimCenterCubeMaterial()
+		{
+			_rendererAimTool.sharedMaterial       = _levelEditor.aToolMaterials [MainMenu.Instance.iSelectedMaterial]; //_materialAimTool;
+			_rendererAimCenterCube.sharedMaterial = _levelEditor.aToolMaterials [MainMenu.Instance.iSelectedMaterial];
 		}
 
 		public void resetMaterial()
@@ -336,9 +338,10 @@ namespace DragginzVoxelWorldEditor
 		{
 			//_trfmAimTool.forward = _hit.normal;
 
-			_v3AimPos.x = (int)((_hit.point.x + (_hit.normal.x * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-			_v3AimPos.y = (int)((_hit.point.y + (_hit.normal.y * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-			_v3AimPos.z = (int)((_hit.point.z + (_hit.normal.z * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			_v3AimPos = _levelEditor.curVoxelsLevelChunk.getHitChunkPos (_hit) *  VoxelUtils.CHUNK_SIZE;
+			//_v3AimPos.x = (int)((_hit.point.x + (_hit.normal.x * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			//_v3AimPos.y = (int)((_hit.point.y + (_hit.normal.y * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
+			//_v3AimPos.z = (int)((_hit.point.z + (_hit.normal.z * -1 * _chunkSizeHalved)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
 
 			_xAimScale = MainMenu.Instance.v3DigSettings.x * VoxelUtils.CHUNK_SIZE;
 			_yAimScale = MainMenu.Instance.v3DigSettings.y * VoxelUtils.CHUNK_SIZE;
@@ -384,6 +387,74 @@ namespace DragginzVoxelWorldEditor
 			}
 
 			_trfmAimTool.position = _v3AimPos;
+		}
+
+		//
+		protected void setBuildAimTool()
+		{
+			// get chunk position
+			_v3AimPos = _levelEditor.curVoxelsLevelChunk.getHitChunkPos (_hit) *  VoxelUtils.CHUNK_SIZE;
+
+			//_v3AimPos += (_hit.normal * VoxelUtils.CHUNK_SIZE * 0.5f);
+
+			_xAimScale = MainMenu.Instance.v3DigSettings.x * VoxelUtils.CHUNK_SIZE;
+			_yAimScale = MainMenu.Instance.v3DigSettings.y * VoxelUtils.CHUNK_SIZE;
+			_zAimScale = MainMenu.Instance.v3DigSettings.z * VoxelUtils.CHUNK_SIZE;
+
+			if (_hit.normal.x != 0.0f)
+			{
+				_v3AimPos.y += (_yAimScale * 0.5f);
+				_v3AimPos.z += (_zAimScale * 0.5f);
+
+				if (_hit.normal.x > 0) {
+					_v3AimPos.x += (VoxelUtils.CHUNK_SIZE + (_xAimScale * 0.5f));
+				} else {
+					_v3AimPos.x -= (_xAimScale * 0.5f);
+				}
+			}
+			else if (_hit.normal.y != 0.0f)
+			{
+				_v3AimPos.x += (_xAimScale * 0.5f);
+				_v3AimPos.z += (_zAimScale * 0.5f);
+
+				if (_hit.normal.y > 0) {
+					_v3AimPos.y += (VoxelUtils.CHUNK_SIZE + (_yAimScale * 0.5f));
+				} else {
+					_v3AimPos.y -= (_yAimScale * 0.5f);
+				}
+			}
+			else if (_hit.normal.z != 0.0f)
+			{
+				_v3AimPos.x += (_xAimScale * 0.5f);
+				_v3AimPos.y += (_yAimScale * 0.5f);
+
+				if (_hit.normal.z > 0) {
+					_v3AimPos.z += (VoxelUtils.CHUNK_SIZE + (_zAimScale * 0.5f));
+				} else {
+					_v3AimPos.z -= (_zAimScale * 0.5f);
+				}
+			}
+
+			//_trfmAimTool.forward  = _hit.normal;
+
+			/*Vector3 _v3BuildSize = MainMenu.Instance.v3DigSettings;
+			float _fOffset = 0;
+
+			if ((int)_v3BuildSize.x > 1) {
+				_fOffset = 0.5f * ((_v3BuildSize.x - 1) * VoxelUtils.CHUNK_SIZE);
+				_v3AimPos -= _fOffset * _trfmAimTool.right;
+			}
+			if ((int)_v3BuildSize.y > 1) {
+				_fOffset = 0.5f * ((_v3BuildSize.y - 1) * VoxelUtils.CHUNK_SIZE);
+				_v3AimPos += _fOffset * _trfmAimTool.up;
+			}
+			if ((int)_v3BuildSize.z > 1) {
+				_fOffset = 0.5f * ((_v3BuildSize.z - 1) * VoxelUtils.CHUNK_SIZE);
+				_v3AimPos += _fOffset * _trfmAimTool.forward;
+			}*/
+
+			_trfmAimTool.position = Vector3.zero;
+			_trfmAimCenterCube.position = _v3AimPos;
 		}
 	}
 }

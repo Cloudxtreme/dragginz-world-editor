@@ -15,7 +15,7 @@ namespace DragginzVoxelWorldEditor
 
 		//private Vector3 _v3AimSize;
 
-		private Vector3 _v3BuildSize = Vector3.zero;
+		//private Vector3 _v3BuildSize = Vector3.zero;
 		private float _fOffset;
 
 		public EditorToolBuild() : base(Globals.EDITOR_TOOL_BUILD)
@@ -48,34 +48,17 @@ namespace DragginzVoxelWorldEditor
 
 			if (_goHit != null)
 			{
+				setBuildAimTool ();
+
 				if (_rendererAimCenterCube.sharedMaterial == _materialAimTool) {
 					setCurAimCenterCubeMaterial();
 				}
 
-				_v3BuildSize = MainMenu.Instance.v3DigSettings;
+				//_v3BuildSize = MainMenu.Instance.v3DigSettings;
 
-				_v3Pos = _goHit.transform.position + (_hit.normal * _levelEditor.fRockSize);
-				_trfmAimTool.forward  = _hit.normal;
-
-				if ((int)_v3BuildSize.x > 1) {
-					_fOffset = 0.5f * ((_v3BuildSize.x - 1) * _levelEditor.fRockSize);
-					_v3Pos -= _fOffset * _trfmAimTool.right;
-				}
-				if ((int)_v3BuildSize.y > 1) {
-					_fOffset = 0.5f * ((_v3BuildSize.y - 1) * _levelEditor.fRockSize);
-					_v3Pos += _fOffset * _trfmAimTool.up;
-				}
-				if ((int)_v3BuildSize.z > 1) {
-					_fOffset = 0.5f * ((_v3BuildSize.z - 1) * _levelEditor.fRockSize);
-					_v3Pos += _fOffset * _trfmAimTool.forward;
-				}
-
-				_trfmAimTool.position = _v3Pos;
-
-				_trfmAimCenterCube.position = _goHit.transform.position + (_hit.normal * _levelEditor.fRockSize);
-
-				if (_mouseIsDown) {
-					//buildIt (_trfmAimCenterCube.position);
+				if (_mouseIsDown)
+				{
+					_levelEditor.curVoxelsLevelChunk.build (_hit, MainMenu.Instance.v3DigSettings, MainMenu.Instance.iSelectedMaterial);
 					_mouseIsDown = false;
 				}
 			}
@@ -84,34 +67,7 @@ namespace DragginzVoxelWorldEditor
 			}
 		}
 
-		private void buildIt(Vector3 v3Pos)
-		{
-			Vector3 v3BlockPos = v3Pos;
-			float fAdd = 0;
-
-			_levelEditor.resetUndoActions ();
-
-			for (int x = 0; x < (int)_v3BuildSize.x; x++) {
-				for (int y = 0; y < (int)_v3BuildSize.y; y++) {
-					for (int z = 0; z < (int)_v3BuildSize.z; z++) {
-
-						v3BlockPos = v3Pos;
-
-						fAdd = (x * _levelEditor.fRockSize);
-						v3BlockPos -=  (fAdd * _trfmAimTool.right);
-
-						fAdd = (y * _levelEditor.fRockSize);
-						v3BlockPos +=  (fAdd * _trfmAimTool.up);
-
-						fAdd = (z * _levelEditor.fRockSize);
-						v3BlockPos +=  (fAdd * _trfmAimTool.forward);
-
-						buildBlock (v3BlockPos);
-					}
-				}
-			}
-		}
-
+		/*
 		private void buildBlock(Vector3 v3Pos)
 		{
 			int x = (int)(v3Pos.x < 0 ? Math.Round (v3Pos.x, MidpointRounding.AwayFromZero) : v3Pos.x);
@@ -125,7 +81,6 @@ namespace DragginzVoxelWorldEditor
 			string sQuadrantName = Globals.containerGameObjectPrepend + quadrantId;
 			Transform trfmQuadrant = _levelEditor.curLevelChunk.trfmCubes.Find (sQuadrantName);
 
-			//Debug.Log ("quadrant: "+trfmQuadrant+" - "+trfmQuadrant.name);
 			if (trfmQuadrant == null) {
 				Debug.LogError ("quadrant " + sQuadrantName + " not found!");
 				return;
@@ -151,14 +106,8 @@ namespace DragginzVoxelWorldEditor
 				_levelEditor.addUndoAction (AppState.Build, trfmChild.gameObject);
 				trfmChild.gameObject.SetActive (true);
 				setSingleMaterial (trfmChild.gameObject, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial], false);
-				//Debug.LogWarning ("child "+id.ToString ()+" exists!");
 			}
-			/*else {
-				GameObject goNew = World.Instance.createRock (v3LocalBlockPos, container.gameObject, id.ToString ());
-				setSingleMaterial (goNew, _levelEditor.aMaterials[MainMenu.Instance.iSelectedMaterial], false);
-				_levelEditor.resetUndoActions ();
-				_levelEditor.addUndoAction (AppState.Build, goNew);
-			}*/
 		}
+		*/
 	}
 }

@@ -56,6 +56,9 @@ namespace DragginzVoxelWorldEditor
 
 		// private vars
 
+		private GameObject _goLevelContainer;
+		private GameObject _goLevelMeshContainer;
+
 		private Dictionary<int, LevelChunk> _levelChunks;
 		private LevelChunk _curLevelChunk;
 
@@ -91,6 +94,14 @@ namespace DragginzVoxelWorldEditor
 		private bool _isInitialised;
 
 		#region Getters
+
+		public GameObject goLevelContainer {
+			get { return _goLevelContainer; }
+		}
+
+		public GameObject goLevelMeshContainer {
+			get { return _goLevelMeshContainer; }
+		}
 
 		public float fRockSize {
 			get { return _fRockSize; }
@@ -178,6 +189,12 @@ namespace DragginzVoxelWorldEditor
 			_fRockSize = VoxelUtils.CHUNK_SIZE;
 			_cubesPerQuadrant = 2;
 			_fQuadrantSize = (float)_cubesPerQuadrant * _fRockSize;
+
+			_goLevelContainer = new GameObject ();
+			_goLevelContainer.name = "[LevelChunks]";
+
+			_goLevelMeshContainer = new GameObject ();
+			_goLevelMeshContainer.name = "[LevelChunkMeshes]";
 
 			// Instantiate app controller singleton
 			if (GameObject.Find (Globals.appContainerName) == null) {
@@ -332,12 +349,13 @@ namespace DragginzVoxelWorldEditor
 
 			LevelData.Instance.lastLevelName = Globals.defaultLevelName;
 
-			_curLevelChunk.reset ();
-			_curLevelChunk.createOfflineLevel ();
+			//_curLevelChunk.reset ();
+			//_curLevelChunk.createOfflineLevel ();
+			_curVoxelsLevelChunk.reset();
 
-			Vector3 savedPos = new Vector3 (18.35f, 18.90f, 17.25f);
-			Vector3 savedRot = Vector2.zero;
-			FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
+			//Vector3 savedPos = new Vector3 (18.35f, 18.90f, 17.25f);
+			//Vector3 savedRot = Vector2.zero;
+			//FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
 			resetCamToStartPos ();
 
 			setMode (AppState.Select, true);
@@ -493,9 +511,22 @@ namespace DragginzVoxelWorldEditor
 				_activeCam = playCam;
 			}
 
+			_goLevelContainer.SetActive (mode != AppState.Play);
+			_goLevelMeshContainer.SetActive (!_goLevelContainer.activeSelf);
+
 			if (mode == AppState.Play)
 			{
 				resetCamToStartPos (false); // don't go back to starting pos
+
+				float timer = Time.realtimeSinceStartup;
+				float[] voxels = _curVoxelsLevelChunk.convertChunksToVoxels ();
+				ConvertLevelToMesh converter = _goLevelMeshContainer.GetComponent<ConvertLevelToMesh> ();
+				if (converter == null) {
+					converter = _goLevelMeshContainer.AddComponent<ConvertLevelToMesh> ();
+				}
+				converter.create (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero);
+				Debug.LogWarning ("Time run marching cubes: " + (Time.realtimeSinceStartup - timer).ToString ());
+
 			}
 			else if (mode == AppState.Select)
 			{
@@ -743,22 +774,21 @@ namespace DragginzVoxelWorldEditor
 		//
 		public void updateDigSettings(Vector3 v3DigSettings)
 		{
-			float fScale = _fRockSize + 0.01f;
+			float fScale = _fRockSize;
 			if (AppController.Instance.appState == AppState.Build)
 			{
 				laserAim.transform.localScale = v3DigSettings * fScale;
 				laserAimCenterCube.SetActive (true);
-				//fScale += 0.01f;
-				laserAimCenterCube.transform.localScale = new Vector3(fScale / laserAim.transform.localScale.x, fScale / laserAim.transform.localScale.y, fScale / laserAim.transform.localScale.z);
+				//laserAimCenterCube.transform.localScale = new Vector3(fScale / laserAim.transform.localScale.x, fScale / laserAim.transform.localScale.y, fScale / laserAim.transform.localScale.z);
 			}
 			else if (AppController.Instance.appState == AppState.Paint)
 			{
-				//fScale *= 0.5f;
+				fScale += 0.01f;
 				laserAim.transform.localScale = new Vector3(v3DigSettings.x, v3DigSettings.y, v3DigSettings.z) * fScale; // z == 1
 				laserAimCenterCube.SetActive (false);
 			}
 			else {
-				//fScale *= 0.75f;
+				fScale += 0.01f;
 				laserAim.transform.localScale = v3DigSettings * fScale;
 				laserAimCenterCube.SetActive (false);
 			}

@@ -37,8 +37,6 @@ namespace DragginzVoxelWorldEditor
 	//
 	public class LevelManager : Singleton<LevelManager>
 	{
-		//private Dictionary<int, Dictionary<int, Dictionary<int, LevelStruct>>> _levelMapByPos;
-		//private Dictionary<int, LevelStruct> _levelMapById;
 		private LevelStruct[] _levelByIndex;
 
 		private int _numLevels;
@@ -59,9 +57,6 @@ namespace DragginzVoxelWorldEditor
 
 		public void init(string json)
 		{
-			//_levelMapByPos = new Dictionary<int, Dictionary<int, Dictionary<int, LevelStruct>>> ();
-			//_levelMapById = new Dictionary<int, LevelStruct> ();
-
 			_numLevels = 0;
 
 			if (LevelEditor.Instance.levelListJson == null) {
@@ -185,11 +180,11 @@ namespace DragginzVoxelWorldEditor
 			//chunk = gameObject.AddComponent<LevelChunk> ();
 			//chunk.init (Vector3.zero);
 
-			GameObject goVoxels = AssetFactory.Instance.createVoxelsLevelContainer ();
-			goVoxels.name = "[VoxelsLevelChunk_Offline]";
-
-			chunk = goVoxels.AddComponent<VoxelsLevelChunk> ();
-			chunk.init (goVoxels);
+			GameObject goChunk = AssetFactory.Instance.createVoxelsLevelContainer ();
+			goChunk.name = "[Offline_Chunk]";
+			goChunk.transform.SetParent (LevelEditor.Instance.goLevelContainer.transform);
+			chunk = goChunk.AddComponent<VoxelsLevelChunk> ();
+			chunk.init (goChunk);
 
 			return chunk;
 		}
@@ -204,7 +199,7 @@ namespace DragginzVoxelWorldEditor
 
 				LevelStruct level = _levelByIndex [i];
 
-				GameObject gameObject = AssetFactory.Instance.createLevelContainerClone ();
+				GameObject gameObject = AssetFactory.Instance.createVoxelsLevelContainer ();
 				gameObject.name = "LevelChunk_" + level.id.ToString ();
 
 				Vector3 chunkPos = new Vector3 (level.x * Globals.LEVEL_WIDTH, -level.y * Globals.LEVEL_HEIGHT, level.z * Globals.LEVEL_DEPTH);

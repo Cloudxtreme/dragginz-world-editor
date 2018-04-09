@@ -10,7 +10,7 @@ namespace DragginzVoxelWorldEditor
 {
 	public class ConvertLevelToMesh : MonoBehaviour
     {
-        public Material m_material;
+        //public Material m_material;
 
 		public VoxelUtils.MARCHING_MODE mode = VoxelUtils.MARCHING_MODE.CUBES;
 
@@ -104,7 +104,7 @@ namespace DragginzVoxelWorldEditor
                 go.transform.parent = transform;
                 filter = go.AddComponent<MeshFilter>();
                 renderer = go.AddComponent<MeshRenderer>();
-                renderer.material = m_material;
+				renderer.material = LevelEditor.Instance.aMaterials [0];// m_material;
                 filter.mesh = mesh;
 				go.AddComponent<MeshCollider> (); //collider = 
 

@@ -493,11 +493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd8f97e163d1c72419feb698301fec9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabQuadrant: {fileID: 1089392622912026, guid: 15550d4ee5fdb104ebca318a31b3acdd,
-    type: 2}
-  prefabLevelChunk: {fileID: 1311120504870144, guid: fb0cb16b976ec644f84ba94258c80ae5,
-    type: 2}
-  prefabLevelContainer: {fileID: 1969069715875344, guid: 05e77ddc71ce15442886c1fde8ffc2ed,
+  prefabVoxelLevelContainer: {fileID: 1969069715875344, guid: 05e77ddc71ce15442886c1fde8ffc2ed,
     type: 2}
   prefabVoxelChunk: {fileID: 1025387082872192, guid: 28203727874b1274babb01fbe542a9c6,
     type: 2}

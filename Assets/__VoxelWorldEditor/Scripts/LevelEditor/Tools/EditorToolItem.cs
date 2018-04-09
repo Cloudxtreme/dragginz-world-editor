@@ -48,7 +48,7 @@ namespace DragginzVoxelWorldEditor
 				_goCurProp.transform.position = _v3Pos;
 
 				if (_mouseIsDown) {
-					//placeIt (_v3Pos);
+					placeIt (_v3Pos);
 					_mouseIsDown = false;
 				}
 
@@ -60,17 +60,17 @@ namespace DragginzVoxelWorldEditor
 
 		public void placeIt(Vector3 v3Pos)
 		{
-			string sName = _goCurProp.name + "_" + _levelEditor.curLevelChunk.trfmProps.childCount;
+			string sName = _goCurProp.name + "_" + _levelEditor.curVoxelsLevelChunk.trfmProps.childCount;
 
 			propDef prop = PropsManager.Instance.getSelectedPropDef ();
 
-			GameObject goNew = PropsManager.Instance.createProp (prop, v3Pos, sName, _levelEditor.curLevelChunk.trfmProps, prop.useCollider, prop.useGravity);
+			GameObject goNew = PropsManager.Instance.createProp (prop, v3Pos, sName, _levelEditor.curVoxelsLevelChunk.trfmProps, prop.useCollider, prop.useGravity);
 			goNew.transform.forward = _goCurProp.transform.forward;
 
-			_levelEditor.curLevelChunk.addWorldProp (prop.id, goNew);
+			_levelEditor.curVoxelsLevelChunk.addWorldProp (prop.id, goNew);
 
 			_levelEditor.resetUndoActions ();
-			_levelEditor.addUndoAction (AppState.Props, goNew);
+			//_levelEditor.addUndoAction (AppState.Props, goNew);
 		}
 	}
 }

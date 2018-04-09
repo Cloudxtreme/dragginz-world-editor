@@ -105,7 +105,7 @@ namespace DragginzVoxelWorldEditor
 		{
 			_levelId = level.id;
 
-			GameObject levelChunk = _assetFactory.createLevelChunkClone ();
+			GameObject levelChunk = _assetFactory.createVoxelChunkClone ();
 			levelChunk.transform.parent = _trfmPlaceholder;
 			levelChunk.transform.localScale = new Vector3 (Globals.LEVEL_WIDTH, Globals.LEVEL_HEIGHT, Globals.LEVEL_DEPTH);
 			levelChunk.transform.localPosition = new Vector3 (Globals.LEVEL_WIDTH / 2, Globals.LEVEL_HEIGHT / 2, Globals.LEVEL_DEPTH / 2);
@@ -287,7 +287,7 @@ namespace DragginzVoxelWorldEditor
 				return null;
 			}
 
-			GameObject quadrant = _assetFactory.createQuadrantClone ();
+			GameObject quadrant = new GameObject (); // _assetFactory.createQuadrantClone ();
 			quadrant.name = Globals.containerGameObjectPrepend + quadrantId;
 			quadrant.transform.SetParent(_trfmCubes);
 			quadrant.transform.localPosition = v3CubePos;
