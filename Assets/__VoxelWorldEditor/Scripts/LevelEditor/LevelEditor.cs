@@ -511,6 +511,10 @@ namespace DragginzVoxelWorldEditor
 				_activeCam = playCam;
 			}
 
+			if (_goLevelMeshContainer.activeSelf) {
+				_curVoxelsLevelChunk.trfmProps.SetParent(_curVoxelsLevelChunk.trfmVoxels.parent);
+			}
+
 			_goLevelContainer.SetActive (mode != AppState.Play);
 			_goLevelMeshContainer.SetActive (!_goLevelContainer.activeSelf);
 
@@ -518,15 +522,7 @@ namespace DragginzVoxelWorldEditor
 			{
 				resetCamToStartPos (false); // don't go back to starting pos
 
-				float timer = Time.realtimeSinceStartup;
-				float[] voxels = _curVoxelsLevelChunk.convertChunksToVoxels ();
-				ConvertLevelToMesh converter = _goLevelMeshContainer.GetComponent<ConvertLevelToMesh> ();
-				if (converter == null) {
-					converter = _goLevelMeshContainer.AddComponent<ConvertLevelToMesh> ();
-				}
-				converter.create (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero);
-				Debug.LogWarning ("Time run marching cubes: " + (Time.realtimeSinceStartup - timer).ToString ());
-
+				createLevelMeshes ();
 			}
 			else if (mode == AppState.Select)
 			{
@@ -582,6 +578,32 @@ namespace DragginzVoxelWorldEditor
 			if (_curEditorTool != null) {
 				_curEditorTool.activate ();
 			}
+		}
+
+		//
+		private void createLevelMeshes()
+		{
+			string goName = "[Offline_Chunk_Meshes]";
+			GameObject goMesh;
+
+			Transform trfmMesh = _goLevelMeshContainer.transform.Find (goName);
+			if (trfmMesh == null) {
+				goMesh = AssetFactory.Instance.createVoxelsLevelContainer ();
+				goMesh.name = goName;
+				trfmMesh = goMesh.transform;
+				trfmMesh.SetParent (_goLevelMeshContainer.transform);
+				goMesh.AddComponent<ConvertLevelToMesh> ();
+			} else {
+				goMesh = trfmMesh.gameObject;
+			}
+
+			float timer = Time.realtimeSinceStartup;
+			float[] voxels = _curVoxelsLevelChunk.convertChunksToVoxels ();
+			ConvertLevelToMesh converter = goMesh.GetComponent<ConvertLevelToMesh> ();
+			converter.create (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero);
+			Debug.LogWarning ("Time run marching cubes: " + (Time.realtimeSinceStartup - timer).ToString ());
+
+			_curVoxelsLevelChunk.trfmProps.SetParent(trfmMesh.Find("propsContainer"));
 		}
 
 		//
