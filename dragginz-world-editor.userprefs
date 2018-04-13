@@ -1,14 +1,10 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\__VoxelWorldEditor\Scripts\LevelEditor\VoxelsLevelChunk.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_GridEditorDemos\Scripts\demo1\GridEditorDemo1.cs">
     <Files>
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="354" Column="36" />
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\UI\MainMenu.cs" Line="423" Column="26" />
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\Data\LevelData.cs" Line="119" Column="5" />
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\Data\LevelFile.cs" Line="92" Column="32" />
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\Data\LevelVoxelChunk.cs" Line="63" Column="10" />
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\VoxelsLevelChunk.cs" Line="125" Column="7" />
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\LevelChunk.cs" Line="87" Column="25" />
+      <File FileName="Assets\_GridEditorDemos\Scripts\GridEditorDemosController.cs" Line="31" Column="23" />
+      <File FileName="Assets\_GridEditorDemos\Scripts\demo1\GridEditorDemo1.cs" Line="80" Column="34" />
+      <File FileName="Assets\_WorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="789" Column="47" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
