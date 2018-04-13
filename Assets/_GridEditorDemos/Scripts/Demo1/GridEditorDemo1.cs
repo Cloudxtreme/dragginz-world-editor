@@ -457,12 +457,16 @@ namespace GridEditor
 
 			_VoxelChunkManager.subtractChunk (new Vector3 ((int)(v3Pos.x * 4), (int)(v3Pos.y * 4), (int)(v3Pos.z * 4)), new Vector3 (4, 4, 4));
 
+			int[] aDirs = new int[]{0,1,2,2,3,3,4,5};
+			int lenDirs = aDirs.Length;
+
+			bool lastMoveWasY = false;
 			GridCube gc;
 			while (numCells < maxCells) {
 
 				// change direction?
 				v3Dir = Vector3.zero;
-				dir = Random.Range(0, 6);
+				dir = aDirs[Random.Range(0, lenDirs)];
 
 				if (dir == 0) {
 					v3Dir.x = -1;
@@ -483,7 +487,21 @@ namespace GridEditor
 					v3Dir.z = 1;
 				}
 
-				len = Random.Range(1, (int)(_numCubesPerAxis / 2));
+				// avoid more than 1 cell in the y dir
+				if (lastMoveWasY) {
+					if (v3Dir.y != 0) {
+						continue;
+					} else {
+						lastMoveWasY = false;
+					}
+				}
+
+				if (v3Dir.y != 0) {
+					len = Random.Range (1, 3);
+					lastMoveWasY = true;
+				} else {
+					len = Random.Range (1, (int)(_numCubesPerAxis / 2));
+				}
 
 				bool moved;
 				int i, newPos;
