@@ -72,6 +72,7 @@
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\LevelEditor\Tools\EditorToolLook.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\LevelEditor\Tools\EditorToolPaint.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\LevelEditor\Tools\EditorToolProp.cs" />
+     <Compile Include="Assets\__VoxelWorldEditor\Scripts\LevelEditor\Tools\GridEditor.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\LevelEditor\VoxelsLevelChunk.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Server\NetManager.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\SplashScreen\Spinner.cs" />

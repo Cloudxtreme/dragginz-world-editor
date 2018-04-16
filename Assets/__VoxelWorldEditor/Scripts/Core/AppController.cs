@@ -81,7 +81,7 @@ namespace DragginzVoxelWorldEditor
 
 			if (_appState == AppState.Splash) {
 				//
-			} else {
+			} else if (_appState != AppState.Null) {
 				LevelEditor.Instance.customUpdateCheckControls (time, timeDelta);
 			}
         }

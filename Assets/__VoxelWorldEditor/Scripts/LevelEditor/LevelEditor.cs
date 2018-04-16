@@ -54,6 +54,8 @@ namespace DragginzVoxelWorldEditor
 		public Material materialEdge;
         public List<Material> materialsWalls;
 
+		public GridEditor _GridEditorExperimental;
+
 		// private vars
 
 		private GameObject _goLevelContainer;
@@ -196,6 +198,8 @@ namespace DragginzVoxelWorldEditor
 			_goLevelMeshContainer = new GameObject ();
 			_goLevelMeshContainer.name = "[LevelChunkMeshes]";
 
+			_GridEditorExperimental.activate (false);
+
 			// Instantiate app controller singleton
 			if (GameObject.Find (Globals.appContainerName) == null) {
 				GameObject goAppController = new GameObject (Globals.appContainerName);
@@ -306,6 +310,24 @@ namespace DragginzVoxelWorldEditor
 			resetCamToStartPos ();
 
 			checkLevelChunkDistances ();
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		//
+		// ---------------------------------------------------------------------------------------------
+		public void activateExperimentalGridEditor(bool state)
+		{
+			if (state) {
+				setMode (AppState.Null);
+			} else {
+				setMode (AppState.Select);
+			}
+
+			goPlayerEdit.SetActive (!state);
+
+			_curVoxelsLevelChunk.gameObject.SetActive (!state);
+
+			_GridEditorExperimental.activate (state);
 		}
 
         #endregion

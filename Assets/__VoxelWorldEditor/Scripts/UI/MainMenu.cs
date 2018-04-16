@@ -28,6 +28,7 @@ namespace DragginzVoxelWorldEditor
 		public Transform panelTools;
         public Transform panelFileMenu;
 		public Transform panelLevelMenu;
+		public Transform panelExperimentalMenu;
         public Transform blocker;
         public Transform panelPopup;
 
@@ -69,6 +70,10 @@ namespace DragginzVoxelWorldEditor
 		private Text _txtPanelLevel = null;
 		private int _iDropDownLevelOptions = 0;
 		private int _iSelectedLevel = -1;
+
+		private Dropdown _trfmDropDownExperimental = null;
+		//private Text _txtPanelExperimental = null;
+		private int _iDropDownExperimentalOptions = 0;
 
         private int _iSelectedTool = -1;
 
@@ -140,6 +145,21 @@ namespace DragginzVoxelWorldEditor
 					if (_trfmDropDownLevel) {
 						_iDropDownLevelOptions = _trfmDropDownLevel.options.Count;
 						//Debug.Log ("_iDropDownLevelOptions: "+_iDropDownLevelOptions);
+					}
+				}
+			}
+
+			if (panelExperimentalMenu != null) {
+				/*trfmText = panelExperimentalMenu.Find("Text");
+				if (trfmText != null) {
+					_txtPanelExperimental = trfmText.GetComponent<Text> ();
+				}*/
+				trfmMenu = panelExperimentalMenu.Find("DropdownFile");
+				if (trfmMenu) {
+					_trfmDropDownExperimental = trfmMenu.GetComponent<Dropdown>();
+					if (_trfmDropDownExperimental) {
+						_iDropDownExperimentalOptions = _trfmDropDownExperimental.options.Count;
+						Debug.Log ("_iDropDownExperimentalOptions: "+_iDropDownExperimentalOptions);
 					}
 				}
 			}
@@ -270,6 +290,7 @@ namespace DragginzVoxelWorldEditor
 			panelTools.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 			panelFileMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 			panelLevelMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
+			panelExperimentalMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 
 			_txtPanelFile.color = (AppController.Instance.editorIsInOfflineMode ? Color.black : Color.gray);
 			_trfmDropDownFile.interactable = AppController.Instance.editorIsInOfflineMode;
@@ -350,7 +371,9 @@ namespace DragginzVoxelWorldEditor
             }
         }
 
-		//
+		// ---------------------------------------------------------------------------------------------
+		// New Level
+		// ---------------------------------------------------------------------------------------------
 		private void showNewLevelDialog()
 		{
 			EditorObjectSelection.Instance.ClearSelection(false);
@@ -371,7 +394,9 @@ namespace DragginzVoxelWorldEditor
 			}
 		}
 
-		//
+		// ---------------------------------------------------------------------------------------------
+		// Load File
+		// ---------------------------------------------------------------------------------------------
         private void showLoadFileDialog() {
 
 			EditorObjectSelection.Instance.ClearSelection(false);
@@ -399,7 +424,9 @@ namespace DragginzVoxelWorldEditor
 			});
 		}
 
-		//
+		// ---------------------------------------------------------------------------------------------
+		// Save Level
+		// ---------------------------------------------------------------------------------------------
         private void showSaveFileDialog() {
 
 			EditorObjectSelection.Instance.ClearSelection(false);
@@ -430,8 +457,10 @@ namespace DragginzVoxelWorldEditor
 			}
 		}
 
-		//
-		private void showLoadLevelDialog(int value, string name) {
+		// ---------------------------------------------------------------------------------------------
+		// Load Level
+		// ---------------------------------------------------------------------------------------------
+		/*private void showLoadLevelDialog(int value, string name) {
 
 			_iSelectedLevel = value;
 
@@ -455,9 +484,31 @@ namespace DragginzVoxelWorldEditor
 				LevelManager.Instance.loadLevelByIndex(_iSelectedLevel);
 				_iSelectedLevel = -1;
 			}
+		}*/
+
+		// ---------------------------------------------------------------------------------------------
+		// Experimental
+		// ---------------------------------------------------------------------------------------------
+		private void showLaunchGridEditorDialog()
+		{
+			EditorObjectSelection.Instance.ClearSelection(false);
+
+			_popup.showPopup(PopupMode.Confirmation, "Experimental Grid Editor", "Are you sure?\nAll unsaved changes will be lost!", showLaunchGridEditorDialogContinue);
 		}
 
+		private void showLaunchGridEditorDialogContinue(int buttonId)
+		{
+			_popup.hide ();
+
+			if (buttonId == 1)
+			{
+				LevelEditor.Instance.activateExperimentalGridEditor (true);
+			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
 		//
+		// ---------------------------------------------------------------------------------------------
 		public void toggleMaterial(int toggle)
 		{
 			//Debug.Log ("_iSelectedMaterial before: " + _iSelectedMaterial);
@@ -759,6 +810,13 @@ namespace DragginzVoxelWorldEditor
 			}
 		}
 
+		public void onPointerDownExperimental(BaseEventData data) {
+			if (_trfmDropDownExperimental) {
+				resetDropDown(_trfmDropDownExperimental);
+				LevelEditor.Instance.setMode (AppState.Select);
+			}
+		}
+
 		//
         public void onDropDownFileValueChanged(int value) {
             if (_trfmDropDownFile && value < _iDropDownFileOptions) {
@@ -777,6 +835,12 @@ namespace DragginzVoxelWorldEditor
 				_iSelectedLevel = value;
 				LevelEditor.Instance.teleportToLevelWithIndex(_iSelectedLevel);
 				//showLoadLevelDialog (value, _trfmDropDownLevel.options [value].text);
+			}
+		}
+
+		public void onDropDownExperimentalValueChanged(int value) {
+			if (_trfmDropDownExperimental && value < _iDropDownExperimentalOptions) {
+				showLaunchGridEditorDialog ();
 			}
 		}
     }

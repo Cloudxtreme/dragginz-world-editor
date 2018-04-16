@@ -18,7 +18,7 @@ namespace DragginzVoxelWorldEditor
 	{
 		private Transform _trfmVoxelChunkContainer;
 
-		//private Transform _trfmPlaceholder;
+		private Transform _trfmPlaceholder;
 		private Transform _trfmVoxels;
 		private Transform _trfmProps;
 
@@ -39,6 +39,8 @@ namespace DragginzVoxelWorldEditor
 		private Vector3 _startPos;
 		private Vector3 _startRotation;
 
+		private bool _isExperimentalChunk;
+
 		#region Getters
 
 		public Transform trfmVoxels {
@@ -47,6 +49,10 @@ namespace DragginzVoxelWorldEditor
 
 		public Transform trfmProps {
 			get { return _trfmProps; }
+		}
+
+		public Transform trfmPlaceholder {
+			get { return _trfmPlaceholder; }
 		}
 
 		public Vector3 chunkPos {
@@ -70,15 +76,17 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		// Init shit
 		// ---------------------------------------------------------------------------------------------
-		public void init (GameObject goParent)
+		public void init (GameObject goParent, bool isExperimental = false)
 		{
+			_isExperimentalChunk = isExperimental;
+
 			_trfmVoxelChunkContainer = goParent.transform;
 
 			_chunkPos = _trfmVoxelChunkContainer.position;
 
 			_trfmVoxels = _trfmVoxelChunkContainer.Find ("voxelsContainer");
 			_trfmProps = _trfmVoxelChunkContainer.Find ("propsContainer");
-			//_trfmPlaceholder = _trfmVoxelChunkContainer.Find ("placeHolderContainer");
+			_trfmPlaceholder = _trfmVoxelChunkContainer.Find ("placeholderContainer");
 
 			_aVoxelChunks = new List<VoxelUtils.VoxelChunk> ();
 			_aVoxelChunksUndo = new List<VoxelUtils.VoxelChunk> ();
@@ -288,13 +296,15 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		// cut a hole!
 		// ---------------------------------------------------------------------------------------------
-		private bool subtractChunk(Vector3 v3Pos, Vector3 v3Size)
+		public bool subtractChunk(Vector3 v3Pos, Vector3 v3Size)
 		{
 			bool success = true;
 
 			float timer = Time.realtimeSinceStartup;
 
-			LevelEditor.Instance.resetUndoActions ();
+			if (!_isExperimentalChunk) {
+				LevelEditor.Instance.resetUndoActions ();
+			}
 
 			// new simple undo
 			saveCurrentVoxelChunks ();
@@ -741,7 +751,9 @@ namespace DragginzVoxelWorldEditor
 			coll.size = new Vector3 (vc.size.x * VoxelUtils.CHUNK_SIZE, vc.size.y * VoxelUtils.CHUNK_SIZE, vc.size.z * VoxelUtils.CHUNK_SIZE);
 
 			Renderer renderer = vc.go.GetComponent<Renderer> ();
-			renderer.sharedMaterial = LevelEditor.Instance.aMaterials[vc.materialIndex];
+			if (!_isExperimentalChunk) {
+				renderer.sharedMaterial = LevelEditor.Instance.aMaterials [vc.materialIndex];
+			}
 		}
 
 		// ---------------------------------------------------------------------------------------------
