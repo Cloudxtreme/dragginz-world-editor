@@ -313,15 +313,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 40
-    m_Alignment: 4
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Load and save levels
-
-    on your hard drive'
+  m_Text: 
 --- !u!114 &114115941791228432
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -338,6 +336,8 @@ MonoBehaviour:
   Update: {fileID: 114281528522295630}
   ButtonOnline: {fileID: 114543422358437952}
   ButtonOffline: {fileID: 114680570702468152}
+  TextButtonOnline: {fileID: 114884669791629086}
+  TextButtonOffline: {fileID: 114091976117929902}
   Spinner: {fileID: 1341882648207042}
 --- !u!114 &114177386021029526
 MonoBehaviour:
@@ -541,7 +541,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5735294, g: 0.105428204, b: 0.105428204, a: 1}
+  m_Color: {r: 0.12456747, g: 0.4705882, b: 0.27013478, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -727,7 +727,9 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'DRAGGINZ
 
-    WORLD EDITOR'
+    WORLD EDITOR
+
+    PROTOTYPE'
 --- !u!114 &114724848997184336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -752,7 +754,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15295199, g: 0.50735295, b: 0.21405561, a: 1}
+  m_Color: {r: 0.8161765, g: 0.40208694, b: 0.40208694, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -793,15 +795,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 40
-    m_Alignment: 4
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Load multiple level chunks
-
-    from dummy server'
+  m_Text: 
 --- !u!114 &114983511283354188
 MonoBehaviour:
   m_ObjectHideFlags: 1

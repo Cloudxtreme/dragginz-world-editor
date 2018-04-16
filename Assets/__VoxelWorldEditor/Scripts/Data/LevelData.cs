@@ -92,9 +92,9 @@ namespace DragginzVoxelWorldEditor
 			FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
 			FlyCam.Instance.reset ();
 
-			GameObject goQuadrant;
-			Transform trfmContainer;
-			GameObject container;
+			//GameObject goQuadrant;
+			//Transform trfmContainer;
+			//GameObject container;
 			Vector3 pos = Vector3.zero;
 
 			int quadLen = levelEditor.cubesPerQuadrant;

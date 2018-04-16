@@ -56,7 +56,7 @@ namespace DragginzVoxelWorldEditor
 		private static float _maxClickY = (float)Screen.height - _uiHeight;
 
 		private static Vector3 _v3AimPos;
-		private static float _chunkSizeHalved;
+		//private static float _chunkSizeHalved;
 		private static float _xAimScale;
 		private static float _yAimScale;
 		private static float _zAimScale;
@@ -105,7 +105,7 @@ namespace DragginzVoxelWorldEditor
 				_mouseIsDown = false;
 
 				_v3AimPos = new Vector3 ();
-				_chunkSizeHalved = VoxelUtils.CHUNK_SIZE * 0.5f;
+				//_chunkSizeHalved = VoxelUtils.CHUNK_SIZE * 0.5f;
 			}
 		}
 

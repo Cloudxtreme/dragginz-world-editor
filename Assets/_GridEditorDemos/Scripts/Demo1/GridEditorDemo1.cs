@@ -217,7 +217,7 @@ namespace GridEditor
 		{
 			//Debug.Log ("movePos " + x + ", " + y + ", " + z);
 
-			bool moved = false;
+			//bool moved = false;
 			int newPos;
 
 			if (x != 0)
@@ -225,7 +225,7 @@ namespace GridEditor
 				newPos = (int)_v3CurPos.x + x;
 				if (newPos > 0 && newPos < (_numCubesPerAxis - 1)) {
 					_v3CurPos.x = newPos;
-					moved = true;
+					//moved = true;
 				}
 			}
 			else if (y != 0)
@@ -233,7 +233,7 @@ namespace GridEditor
 				newPos = (int)_v3CurPos.y + y;
 				if (newPos > 0 && newPos < (_numCubesPerAxis - 1)) {
 					_v3CurPos.y = newPos;
-					moved = true;
+					//moved = true;
 				}
 			}
 			else if (z != 0)
@@ -241,7 +241,7 @@ namespace GridEditor
 				newPos = (int)_v3CurPos.z + z;
 				if (newPos > 0 && newPos < (_numCubesPerAxis - 1)) {
 					_v3CurPos.z = newPos;
-					moved = true;
+					//moved = true;
 				}
 			}
 
@@ -422,7 +422,7 @@ namespace GridEditor
 		{
 			GridCube gc;
 			int x, y, z;
-			int endCorner = _numCubesPerAxis - 1;
+			//int endCorner = _numCubesPerAxis - 1;
 
 			for (x = 0; x < _numCubesPerAxis; ++x) {
 				for (y = 0; y < _numCubesPerAxis; ++y) {

@@ -18,7 +18,7 @@ namespace DragginzVoxelWorldEditor
 	{
 		private Transform _trfmVoxelChunkContainer;
 
-		private Transform _trfmPlaceholder;
+		//private Transform _trfmPlaceholder;
 		private Transform _trfmVoxels;
 		private Transform _trfmProps;
 
@@ -27,13 +27,14 @@ namespace DragginzVoxelWorldEditor
 		private int _iVoxelCount;
 
 		private List<VoxelUtils.VoxelChunk> _aVoxelChunks;
+		private List<VoxelUtils.VoxelChunk> _aVoxelChunksUndo;
 
 		private Vector3 _lastChunkPos;
 
 		private Dictionary<GameObject, worldProp> _worldProps;
 
 		private Vector3 _chunkPos;
-		private Bounds _chunkBounds;
+		//private Bounds _chunkBounds;
 
 		private Vector3 _startPos;
 		private Vector3 _startRotation;
@@ -52,9 +53,9 @@ namespace DragginzVoxelWorldEditor
 			get { return _chunkPos; }
 		}
 
-		public Bounds chunkBounds {
+		/*public Bounds chunkBounds {
 			get { return _chunkBounds; }
-		}
+		}*/
 
 		public List<VoxelUtils.VoxelChunk> aVoxelChunks {
 			get { return _aVoxelChunks; }
@@ -77,9 +78,10 @@ namespace DragginzVoxelWorldEditor
 
 			_trfmVoxels = _trfmVoxelChunkContainer.Find ("voxelsContainer");
 			_trfmProps = _trfmVoxelChunkContainer.Find ("propsContainer");
-			_trfmPlaceholder = _trfmVoxelChunkContainer.Find ("placeHolderContainer");
+			//_trfmPlaceholder = _trfmVoxelChunkContainer.Find ("placeHolderContainer");
 
 			_aVoxelChunks = new List<VoxelUtils.VoxelChunk> ();
+			_aVoxelChunksUndo = new List<VoxelUtils.VoxelChunk> ();
 
 			_worldProps = new Dictionary<GameObject, worldProp> ();
 
@@ -96,34 +98,15 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public void reset()
 		{
-			VoxelUtils.VoxelChunk vc;
-			worldProp wp;
+			//VoxelUtils.VoxelChunk vc;
+			//worldProp wp;
 
-			/*int i, len = _aVoxelChunks.Count;
-			for (i = 0; i < len; ++i) {
-				vc = _aVoxelChunks [i];
-				if (vc.go != null) {
-					Destroy (vc.go);
-					vc.go = null;
-					_aVoxelChunks [i] = vc;
-				}
-			}*/
-			// just in case :)
 			foreach (Transform child in _trfmVoxels) {
 				Destroy (child.gameObject);
 			}
 			_aVoxelChunks.Clear ();
 			_iVoxelCount = 0;
 
-			/*foreach (KeyValuePair<GameObject, worldProp> pair in _worldProps) {
-				wp = _worldProps[pair.Key];
-				if (wp.go != null) {
-					Destroy (wp.go);
-					wp.go = null;
-					_worldProps[pair.Key] = wp;
-				}
-			}*/
-			// just in case :)
 			foreach (Transform child in _trfmProps) {
 				Destroy (child.gameObject);
 			}
@@ -174,12 +157,7 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public void dig(RaycastHit hit, Vector3 chunkSize)
 		{
-			//float vcsHalf = VoxelUtils.CHUNK_SIZE * 0.5f;
-			//float xChunk = (int)((hit.point.x + (hit.normal.x * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-			//float yChunk = (int)((hit.point.y + (hit.normal.y * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-			//float zChunk = (int)((hit.point.z + (hit.normal.z * -1 * vcsHalf)) / VoxelUtils.CHUNK_SIZE) * VoxelUtils.CHUNK_SIZE;
-
-			_lastChunkPos = getHitChunkPos (hit); //new Vector3 ((int)(xChunk / VoxelUtils.CHUNK_SIZE), (int)(yChunk / VoxelUtils.CHUNK_SIZE), (int)(zChunk / VoxelUtils.CHUNK_SIZE));
+			_lastChunkPos = getHitChunkPos (hit);
 
 			if (hit.normal.x > 0) {
 				_lastChunkPos.x -= (chunkSize.x - 1);
@@ -316,6 +294,12 @@ namespace DragginzVoxelWorldEditor
 
 			float timer = Time.realtimeSinceStartup;
 
+			LevelEditor.Instance.resetUndoActions ();
+
+			// new simple undo
+			saveCurrentVoxelChunks ();
+			MainMenu.Instance.setUndoButton (true);
+
 			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int (v3Pos);
 			VoxelUtils.VoxelChunk vsCut = createCutVoxelChunk(pos, (int)v3Size.x, (int)v3Size.y, (int)v3Size.z);
 
@@ -352,6 +336,60 @@ namespace DragginzVoxelWorldEditor
 			MainMenu.Instance.setCubeCountText ("Voxel Chunks: "+_aVoxelChunks.Count.ToString());
 
 			return success;
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void saveCurrentVoxelChunks ()
+		{
+			_aVoxelChunksUndo.Clear ();
+
+			int i, len = _aVoxelChunks.Count;
+			for (i = 0; i < len; ++i) {
+				_aVoxelChunksUndo.Add (_aVoxelChunks [i]);
+			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		public void resetUndo()
+		{
+			_aVoxelChunksUndo.Clear ();
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		public void undo()
+		{
+			int len = _aVoxelChunksUndo.Count;
+			if (len <= 0) {
+				return;
+			}
+
+			VoxelUtils.VoxelChunk vc;
+
+			foreach (Transform child in _trfmVoxels) {
+				Destroy (child.gameObject);
+			}
+			_aVoxelChunks.Clear ();
+
+			_iVoxelCount = 0;
+
+			int i = _aVoxelChunksUndo.Count;
+			for (i = 0; i < len; ++i) {
+				vc = createVoxelChunk(_aVoxelChunksUndo[i].pos, _aVoxelChunksUndo[i].size.x, _aVoxelChunksUndo[i].size.y, _aVoxelChunksUndo[i].size.z);
+				_aVoxelChunks.Add (vc);
+			}
+			_aVoxelChunksUndo.Clear ();
+
+			len = _aVoxelChunks.Count;
+			for (i = 0; i < len; ++i) {
+				vc = _aVoxelChunks [i];
+				if (!vc.meshCreated) {
+					setVoxelChunkMesh (vc);
+					vc.meshCreated = true;
+					_aVoxelChunks [i] = vc;
+				}
+			}
+
+			MainMenu.Instance.setCubeCountText ("Voxel Chunks: "+_aVoxelChunks.Count.ToString());
 		}
 
 		// ---------------------------------------------------------------------------------------------

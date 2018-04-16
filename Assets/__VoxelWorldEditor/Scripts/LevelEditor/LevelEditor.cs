@@ -224,6 +224,7 @@ namespace DragginzVoxelWorldEditor
 			//_curLevelChunk.activate (true, true);
 
 			_curVoxelsLevelChunk = LevelManager.Instance.createOfflineLevelChunk ();
+			_voxelsLevelChunks.Add (0, _curVoxelsLevelChunk); // to avoid warning!
 
 			_isInitialised = true;
 
@@ -267,7 +268,7 @@ namespace DragginzVoxelWorldEditor
 			_aEditorTools.Add(new EditorToolDig());
 			_aEditorTools.Add(new EditorToolPaint());
 			_aEditorTools.Add(new EditorToolBuild());
-			_aEditorTools.Add(new EditorToolItem());
+			_aEditorTools.Add(new EditorToolProp());
 
 			_curEditorTool = null;
 
@@ -624,7 +625,7 @@ namespace DragginzVoxelWorldEditor
 
 			// items
 			undo.items = new List<undoItem> ();
-			foreach (Transform child in _curLevelChunk.trfmProps) {
+			foreach (Transform child in _curVoxelsLevelChunk.trfmProps) {
 				undoItem item = new undoItem ();
 				item.go = child.gameObject;
 				item.position = child.position;
@@ -640,6 +641,10 @@ namespace DragginzVoxelWorldEditor
 		//
 		public void resetUndoActions()
 		{
+			if (_curVoxelsLevelChunk != null) {
+				_curVoxelsLevelChunk.resetUndo ();
+			}
+
 			undoAction undo;
 			undoItem item;
 
@@ -671,31 +676,27 @@ namespace DragginzVoxelWorldEditor
 		{
 			EditorObjectSelection.Instance.ClearSelection(false);
 
-			int effectedCubes = 0;
+			_curVoxelsLevelChunk.undo ();
 
-			Shader shader = Shader.Find (Globals.defaultShaderName);
-			Renderer renderer;
+			//int effectedCubes = 0;
+			//Shader shader = Shader.Find (Globals.defaultShaderName);
+			//Renderer renderer;
 
 			undoAction undo;
 			undoItem item;
 
 			int i, len = _undoActions.Count;
-			//Debug.Log ("undoLastActions " + len);
 			for (i = 0; i < len; ++i)
 			{
 				undo = _undoActions [i];
 
 				// DIG
+				/*
 				if (undo.action == AppState.Dig) {
 					if (undo.go != null) {
 						undo.go.SetActive (true);
 						effectedCubes++;
 					}
-					/*if (undo.parent != null) {
-						_World.createRock (undo.position, undo.parent.gameObject, undo.name, undo.material);
-						undo.material.shader = shader;
-						effectedCubes++;
-					}*/
 				}
 				// BUILD
 				else if (undo.action == AppState.Build) {
@@ -715,10 +716,11 @@ namespace DragginzVoxelWorldEditor
 						}
 					}
 				}
-				// ITEM
-				else if (undo.action == AppState.Props) {
+				// PROP
+				else*/
+				if (undo.action == AppState.Props) {
 					if (undo.go != null) {
-						_curLevelChunk.removeWorldProp (undo.go);
+						_curVoxelsLevelChunk.removeWorldProp (undo.go);
 						Destroy (undo.go);
 					}
 				}
@@ -745,10 +747,12 @@ namespace DragginzVoxelWorldEditor
 			_undoActions.Clear ();
 			MainMenu.Instance.setUndoButton (false);
 
+			/*
 			if (effectedCubes != 0) {
 				_curLevelChunk.numCubes += effectedCubes;
 				MainMenu.Instance.setCubeCountText (_curLevelChunk.numCubes);
 			}
+			*/
 		}
 
 		//

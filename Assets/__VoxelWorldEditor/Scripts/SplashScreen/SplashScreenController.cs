@@ -26,21 +26,38 @@ namespace DragginzVoxelWorldEditor
         private Button ButtonOnline;
 		[SerializeField]
 		private Button ButtonOffline;
+
+		[SerializeField]
+		private Text TextButtonOnline;
+		[SerializeField]
+		private Text TextButtonOffline;
         
 		[SerializeField]
         private GameObject Spinner;
 
+		private bool _onlineModeAvailable;
 		private int _iCurLevelChunk;
 
 		//
-		void Awake() {
+		void Awake()
+		{
+			_onlineModeAvailable = false;
 
 			FileInfo.text = Globals.version;
 
 			resetScreen ();
-			ButtonOnline.gameObject.SetActive(false); // true
+			ButtonOnline.gameObject.SetActive(true);
+			ButtonOnline.interactable = _onlineModeAvailable;
 			ButtonOffline.gameObject.SetActive(true);
 
+			TextButtonOnline.text  = _onlineModeAvailable ? "Load multiple level chunks\nfrom dummy server" : "Currently unavailable!";
+
+			#if UNITY_WEBGL
+				TextButtonOffline.text = "Loading and saving levels\nnot available in Web version";
+			#else
+				TextButtonOffline.text = "Load and save levels\non your hard drive";
+			#endif
+		
 			_iCurLevelChunk = 0;
 		}
 
