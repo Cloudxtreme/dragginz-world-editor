@@ -266,6 +266,13 @@ namespace DragginzVoxelWorldEditor
 
 			//goPlayer.transform.position = new Vector3(0, 0.6f, -0.75f);
 			//goPlayerCameraRig.transform.position = goPlayer.transform.position;
+			Vector3 savedPos = Vector3.zero;
+			Vector3 savedRot = Vector2.zero;
+			savedPos.x = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f);
+			savedPos.y = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f);
+			savedPos.z = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f) - 1.0f;
+			FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
+			resetCamToStartPos ();
 
 			_aEditorTools = new List<EditorTool> (Globals.NUM_EDITOR_TOOLS);
 			_aEditorTools.Add(new EditorToolLook());
@@ -315,17 +322,25 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		//
 		// ---------------------------------------------------------------------------------------------
-		public void activateExperimentalGridEditor(bool state)
+		public void activateExperimentalGridEditor(bool state, bool useExperimentalVoxelsData = false)
 		{
 			if (state) {
 				setMode (AppState.Null);
 			} else {
 				setMode (AppState.Select);
+				if (useExperimentalVoxelsData) {
+					FlyCam.Instance.setNewInitialPosition (_GridEditorExperimental.getTranslatedPlayerPos(), Vector3.zero);
+					resetCamToStartPos ();
+				}
 			}
 
 			goPlayerEdit.SetActive (!state);
 
 			_curVoxelsLevelChunk.gameObject.SetActive (!state);
+
+			if (!state && useExperimentalVoxelsData) {
+				_curVoxelsLevelChunk.setVoxelsData (_GridEditorExperimental.getVoxelsData ());
+			}
 
 			_GridEditorExperimental.activate (state);
 		}
@@ -376,9 +391,12 @@ namespace DragginzVoxelWorldEditor
 			//_curLevelChunk.createOfflineLevel ();
 			_curVoxelsLevelChunk.newLevel();
 
-			//Vector3 savedPos = new Vector3 (18.35f, 18.90f, 17.25f);
-			//Vector3 savedRot = Vector2.zero;
-			//FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
+			Vector3 savedPos = Vector3.zero;
+			Vector3 savedRot = Vector2.zero;
+			savedPos.x = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f);
+			savedPos.y = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f);
+			savedPos.z = (VoxelUtils.MAX_CHUNK_UNITS * VoxelUtils.CHUNK_SIZE * .5f) - 1.0f;
+			FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
 			resetCamToStartPos ();
 
 			setMode (AppState.Select, true);

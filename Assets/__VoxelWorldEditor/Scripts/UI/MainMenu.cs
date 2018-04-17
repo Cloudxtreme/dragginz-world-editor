@@ -159,7 +159,7 @@ namespace DragginzVoxelWorldEditor
 					_trfmDropDownExperimental = trfmMenu.GetComponent<Dropdown>();
 					if (_trfmDropDownExperimental) {
 						_iDropDownExperimentalOptions = _trfmDropDownExperimental.options.Count;
-						Debug.Log ("_iDropDownExperimentalOptions: "+_iDropDownExperimentalOptions);
+						//Debug.Log ("_iDropDownExperimentalOptions: "+_iDropDownExperimentalOptions);
 					}
 				}
 			}

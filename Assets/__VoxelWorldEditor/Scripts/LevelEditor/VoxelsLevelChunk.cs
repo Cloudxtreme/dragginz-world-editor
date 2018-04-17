@@ -80,6 +80,8 @@ namespace DragginzVoxelWorldEditor
 		{
 			_isExperimentalChunk = isExperimental;
 
+			//Debug.Log ("VoxelsLevelChunk.init - _isExperimentalChunk: "+_isExperimentalChunk);
+
 			_trfmVoxelChunkContainer = goParent.transform;
 
 			_chunkPos = _trfmVoxelChunkContainer.position;
@@ -106,9 +108,6 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public void reset()
 		{
-			//VoxelUtils.VoxelChunk vc;
-			//worldProp wp;
-
 			foreach (Transform child in _trfmVoxels) {
 				Destroy (child.gameObject);
 			}
@@ -139,6 +138,22 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		// ---------------------------------------------------------------------------------------------
+		public void setVoxelsData(List<VoxelUtils.VoxelChunk> aVoxelsData)
+		{
+			reset ();
+
+			VoxelUtils.VoxelChunk vc;
+			int i, len = aVoxelsData.Count;
+			for (i = 0; i < len; ++i)
+			{
+				vc = createVoxelChunk(aVoxelsData[i].pos, aVoxelsData[i].size.x, aVoxelsData[i].size.y, aVoxelsData[i].size.z);
+				vc.meshCreated = true;
+				_aVoxelChunks.Add (vc);
+				setVoxelChunkMesh (vc);
+			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
 		private void createDefaultLevel()
 		{
 			// create the full chunk voxel
@@ -146,8 +161,12 @@ namespace DragginzVoxelWorldEditor
 			VoxelUtils.VoxelChunk vc = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
 			_aVoxelChunks.Add (vc);
 
-			// create room in center of level
-			subtractChunk (new Vector3 (32, 34, 32), new Vector3 (8, 4, 8));
+			if (_isExperimentalChunk) {
+				setVoxelChunkMesh (vc);
+			} else {
+				// create room in center of level
+				subtractChunk (new Vector3 (32, 34, 32), new Vector3 (8, 4, 8));
+			}
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -304,11 +323,10 @@ namespace DragginzVoxelWorldEditor
 
 			if (!_isExperimentalChunk) {
 				LevelEditor.Instance.resetUndoActions ();
+				// new simple undo
+				saveCurrentVoxelChunks ();
+				MainMenu.Instance.setUndoButton (true);
 			}
-
-			// new simple undo
-			saveCurrentVoxelChunks ();
-			MainMenu.Instance.setUndoButton (true);
 
 			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int (v3Pos);
 			VoxelUtils.VoxelChunk vsCut = createCutVoxelChunk(pos, (int)v3Size.x, (int)v3Size.y, (int)v3Size.z);
@@ -339,11 +357,19 @@ namespace DragginzVoxelWorldEditor
 						_aVoxelChunks [i] = vc;
 					}
 				}
-				//Debug.Log ("num voxels: " + len + " - loops: " + loops + " - meshes created: " + count);
+
+				//if (_isExperimentalChunk) {
+				//	Debug.Log ("num voxels: " + len + " - loops: " + loops + " - meshes created: " + count);
+				//}
 			}
 
-			//Debug.Log ("Time to create chunk(s): " + (Time.realtimeSinceStartup - timer).ToString ());
-			MainMenu.Instance.setCubeCountText ("Voxel Chunks: "+_aVoxelChunks.Count.ToString());
+			//if (_isExperimentalChunk) {
+			//	Debug.Log ("Time to create chunk(s): " + (Time.realtimeSinceStartup - timer).ToString ());
+			//}
+
+			if (!_isExperimentalChunk) {
+				MainMenu.Instance.setCubeCountText ("Voxel Chunks: " + _aVoxelChunks.Count.ToString ());
+			}
 
 			return success;
 		}
@@ -399,7 +425,9 @@ namespace DragginzVoxelWorldEditor
 				}
 			}
 
-			MainMenu.Instance.setCubeCountText ("Voxel Chunks: "+_aVoxelChunks.Count.ToString());
+			if (!_isExperimentalChunk) {
+				MainMenu.Instance.setCubeCountText ("Voxel Chunks: " + _aVoxelChunks.Count.ToString ());
+			}
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -708,12 +736,18 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public VoxelUtils.VoxelChunk createVoxelChunk(VoxelUtils.VoxelVector3Int p, int w, int h, int d) {
 
-			//Debug.Log ("createVoxelChunk " + p.ToString () + ", " + w + ", " + h + ", " + d);
+			//if (_isExperimentalChunk) {
+			//	Debug.Log ("createVoxelChunk " + p.ToString () + ", " + w + ", " + h + ", " + d);
+			//}
 
 			GameObject cube = AssetFactory.Instance.createVoxelChunkClone();
 			cube.transform.SetParent (_trfmVoxels);
 			_iVoxelCount++;
 			cube.name = "voxchunk_" + _iVoxelCount.ToString ();
+
+			//if (_isExperimentalChunk) {
+			//	Debug.Log ("cube: " + cube.name + ", " + _trfmVoxels.name);
+			//}
 
 			float width  = w * VoxelUtils.CHUNK_SIZE;
 			float height = h * VoxelUtils.CHUNK_SIZE;
@@ -759,7 +793,11 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		// 
 		// ---------------------------------------------------------------------------------------------
-		private VoxelUtils.VoxelChunk createCutVoxelChunk(VoxelUtils.VoxelVector3Int p, int w, int h, int d) {
+		private VoxelUtils.VoxelChunk createCutVoxelChunk(VoxelUtils.VoxelVector3Int p, int w, int h, int d)
+		{
+			//if (_isExperimentalChunk) {
+				//Debug.Log ("createCutVoxelChunk " + p.ToString () + ", " + w + ", " + h + ", " + d);
+			//}
 
 			float width  = w * VoxelUtils.CHUNK_SIZE;
 			float height = h * VoxelUtils.CHUNK_SIZE;

@@ -32,9 +32,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/_WorldEditor/Scenes/splash.unity
     guid: ae25f44c59f92e94b8d0c82e14ce3d78
-  - enabled: 1
+  - enabled: 0
     path: Assets/_GridEditorDemos/Scenes/grid_editor_demos.unity
     guid: 40f87817532a7ea44abe98e231bb13bd
-  - enabled: 1
+  - enabled: 0
     path: Assets/_GridEditorDemos/Scenes/grid_editor_demo_1.unity
     guid: d2f7bcb329ce39f42be2750ee41dce0c

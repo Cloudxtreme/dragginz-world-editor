@@ -1,36 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_GridEditorDemos\Scripts\demo1\GridEditorDemo1.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\__VoxelWorldEditor\Scripts\LevelEditor\LevelEditor.cs">
     <Files>
-      <File FileName="Assets\_GridEditorDemos\Scripts\GridEditorDemosController.cs" Line="29" Column="38" />
-      <File FileName="Assets\_GridEditorDemos\Scripts\demo1\GridEditorDemo1.cs" Line="469" Column="42" />
-      <File FileName="Assets\_GridEditorDemos\Scripts\Demo1\VoxelChunkManager.cs" Line="49" Column="4" />
+      <File FileName="Assets\__VoxelWorldEditor\Scripts\Core\Globals.cs" Line="16" Column="65" />
+      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="331" Column="39" />
+      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\Tools\GridEditor.cs" Line="86" Column="27" />
+      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\VoxelsLevelChunk.cs" Line="146" Column="70" />
+      <File FileName="Assets\__VoxelWorldEditor\Scripts\UI\MainMenu.cs" Line="727" Column="9" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="dragginz-world-editor" expanded="True">
-            <Node name="Assembly-CSharp" expanded="True">
-              <Node name="_GridEditorDemos" expanded="True">
-                <Node name="Scripts" expanded="True">
-                  <Node name="Demo1" expanded="True">
-                    <Node name="GridEditorDemo1.cs" selected="True" />
-                  </Node>
-                </Node>
-              </Node>
-            </Node>
-            <Node name="Assembly-CSharp-Editor" expanded="True" />
-            <Node name="Assembly-CSharp-Editor-firstpass" expanded="True" />
-            <Node name="Assembly-CSharp-firstpass" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State name="__root__">
-          <Node name="dragginz-world-editor" expanded="True" selected="True" />
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

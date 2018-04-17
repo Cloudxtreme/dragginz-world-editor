@@ -526,6 +526,11 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 75932458}
+    - target: {fileID: 114774097564586886, guid: 8aad51db8d9dcf14ca135ecc9f95283b,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 75932458}
     - target: {fileID: 114780595972900236, guid: 8aad51db8d9dcf14ca135ecc9f95283b,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -546,7 +551,7 @@ Prefab:
   m_IsPrefabParent: 0
 --- !u!114 &448528296 stripped
 MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114008006774431722, guid: 8aad51db8d9dcf14ca135ecc9f95283b,
+  m_PrefabParentObject: {fileID: 114774097564586886, guid: 8aad51db8d9dcf14ca135ecc9f95283b,
     type: 2}
   m_PrefabInternal: {fileID: 448528295}
   m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
