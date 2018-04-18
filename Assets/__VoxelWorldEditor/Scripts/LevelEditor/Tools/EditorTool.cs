@@ -435,26 +435,54 @@ namespace DragginzVoxelWorldEditor
 				}
 			}
 
-			//_trfmAimTool.forward  = _hit.normal;
-
-			/*Vector3 _v3BuildSize = MainMenu.Instance.v3DigSettings;
-			float _fOffset = 0;
-
-			if ((int)_v3BuildSize.x > 1) {
-				_fOffset = 0.5f * ((_v3BuildSize.x - 1) * VoxelUtils.CHUNK_SIZE);
-				_v3AimPos -= _fOffset * _trfmAimTool.right;
-			}
-			if ((int)_v3BuildSize.y > 1) {
-				_fOffset = 0.5f * ((_v3BuildSize.y - 1) * VoxelUtils.CHUNK_SIZE);
-				_v3AimPos += _fOffset * _trfmAimTool.up;
-			}
-			if ((int)_v3BuildSize.z > 1) {
-				_fOffset = 0.5f * ((_v3BuildSize.z - 1) * VoxelUtils.CHUNK_SIZE);
-				_v3AimPos += _fOffset * _trfmAimTool.forward;
-			}*/
-
 			_trfmAimTool.position = Vector3.zero;
 			_trfmAimCenterCube.position = _v3AimPos;
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		// EXPERIMENTAL
+		// ---------------------------------------------------------------------------------------------
+		protected void setRailgunAim ()
+		{
+			_trfmAimTool.forward = _hit.normal;
+
+			_v3AimPos = _levelEditor.curVoxelsLevelChunk.getHitChunkPos (_hit) *  VoxelUtils.CHUNK_SIZE;
+
+			_xAimScale = MainMenu.Instance.v3DigSettings.x * VoxelUtils.CHUNK_SIZE;
+			_yAimScale = MainMenu.Instance.v3DigSettings.y * VoxelUtils.CHUNK_SIZE;
+			_zAimScale = MainMenu.Instance.v3DigSettings.z * VoxelUtils.CHUNK_SIZE;
+
+			if (_hit.normal.x != 0.0f)
+			{
+				_v3AimPos.y += (_yAimScale * 0.5f);
+				_v3AimPos.z -= VoxelUtils.CHUNK_SIZE;
+
+				if (_hit.normal.x > 0) {
+					_v3AimPos.x += VoxelUtils.CHUNK_SIZE;
+				}
+			}
+			else if (_hit.normal.y != 0.0f)
+			{
+				_v3AimPos.x -= VoxelUtils.CHUNK_SIZE;
+				_v3AimPos.z -= VoxelUtils.CHUNK_SIZE;
+
+				if (_hit.normal.y > 0) {
+					_v3AimPos.y += VoxelUtils.CHUNK_SIZE;
+				}
+			}
+			else if (_hit.normal.z != 0.0f)
+			{
+				_v3AimPos.x += (_xAimScale * 0.5f);
+				_v3AimPos.y += (_yAimScale * 0.5f);
+
+				if (_hit.normal.z > 0) {
+					_v3AimPos.z += (VoxelUtils.CHUNK_SIZE - (_zAimScale * 0.5f));
+				} else {
+					_v3AimPos.z += (_zAimScale * 0.5f);
+				}
+			}
+
+			_trfmAimTool.position = _v3AimPos;
 		}
 	}
 }

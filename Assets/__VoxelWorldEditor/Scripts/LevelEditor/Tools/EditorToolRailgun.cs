@@ -17,13 +17,13 @@ namespace DragginzVoxelWorldEditor
 
 		public EditorToolRailgun() : base((int)Globals.TOOL.RAILGUN)
 		{
-			_v3AimSize = new Vector3 (4, 4, 1);
+			_v3AimSize = new Vector3 (4, 4, 0.05f);
 		}
 
 		//
 		public override void deactivate()
 		{
-			//
+			MainMenu.Instance.resetDigSettings (Vector3.one);
 		}
 
 		//
@@ -43,14 +43,14 @@ namespace DragginzVoxelWorldEditor
 
 			if (_goHit != null)
 			{
-				setAimTool ();
+				setRailgunAim ();
 
 				if (_rendererAimTool.material != matRailgunCross) {
 					_rendererAimTool.material = matRailgunCross;
 				}
 
 				if (_mouseIsDown) {
-					digIt (_trfmAimTool.position);
+					railIt (_trfmAimTool.position);
 					resetAim ();
 					_mouseIsDown = false;
 				}
@@ -60,7 +60,7 @@ namespace DragginzVoxelWorldEditor
 			}
 		}
 
-		private void digIt (Vector3 v3Pos)
+		private void railIt (Vector3 v3Pos)
 		{
 			_levelEditor.curVoxelsLevelChunk.railgunDig (_hit, new Vector3(_v3AimSize.x, _v3AimSize.y, 8));
 		}

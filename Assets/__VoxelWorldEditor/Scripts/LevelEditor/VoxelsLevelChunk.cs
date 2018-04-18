@@ -206,17 +206,30 @@ namespace DragginzVoxelWorldEditor
 
 			if (hit.normal.x > 0) {
 				_lastChunkPos.x -= (chunkSize.x - 1);
-			}
-			else if (hit.normal.y > 0) {
+			} else if (hit.normal.y > 0) {
 				_lastChunkPos.y -= (chunkSize.y - 1);
-			}
-			else if (hit.normal.z > 0) {
+			} else if (hit.normal.z > 0) {
 				_lastChunkPos.z -= (chunkSize.z - 1);
 			}
 
-			subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
-			subtractChunk (new Vector3(_lastChunkPos.x + 1, _lastChunkPos.y,     _lastChunkPos.z), new Vector3(2, 4, 8));
-			subtractChunk (new Vector3(_lastChunkPos.x + 3, _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
+			if (hit.normal.x != 0)
+			{
+				subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y + 1, _lastChunkPos.z - 3), new Vector3(8, 2, 1));
+				subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y,     _lastChunkPos.z - 2), new Vector3(8, 4, 2));
+				subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y + 1, _lastChunkPos.z),     new Vector3(8, 2, 1));
+			}
+			else if (hit.normal.y != 0)
+			{
+				subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y, _lastChunkPos.z - 2), new Vector3(1, 8, 2));
+				subtractChunk (new Vector3(_lastChunkPos.x - 2, _lastChunkPos.y, _lastChunkPos.z - 3), new Vector3(2, 8, 4));
+				subtractChunk (new Vector3(_lastChunkPos.x - 3, _lastChunkPos.y, _lastChunkPos.z - 2), new Vector3(1, 8, 2));
+			}
+			else if (hit.normal.z != 0)
+			{
+				subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
+				subtractChunk (new Vector3(_lastChunkPos.x + 1, _lastChunkPos.y,     _lastChunkPos.z), new Vector3(2, 4, 8));
+				subtractChunk (new Vector3(_lastChunkPos.x + 3, _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
+			}
 		}
 
 		// ---------------------------------------------------------------------------------------------
