@@ -543,6 +543,7 @@ namespace DragginzVoxelWorldEditor
 			MainMenu.Instance.showTransformBox (false);
 			MainMenu.Instance.showDigButtons (false);
 			MainMenu.Instance.showMaterialBox (false);
+			MainMenu.Instance.showRailgunBox (false);
 			MainMenu.Instance.showItemsBox (false);
 
 			laserAim.SetActive (false);
@@ -577,6 +578,7 @@ namespace DragginzVoxelWorldEditor
 
 			if (mode == AppState.ExperimentalRailgun)
 			{
+				MainMenu.Instance.showRailgunBox (true);
 				laserAim.SetActive (true);
 				_curEditorTool = _aEditorTools [(int)Globals.TOOL.RAILGUN];
 			}
@@ -889,6 +891,15 @@ namespace DragginzVoxelWorldEditor
 			//else if (AppController.Instance.appState == AppState.Build) {
 			//	_curEditorTool.setSingleMaterial (laserAim, _aMaterials [MainMenu.Instance.iSelectedMaterial], false);
 			//}
+		}
+
+		//
+		public void newRailgunSelected(int iSelected)
+		{
+			Debug.Log ("newRailgunSelected "+iSelected);
+			if (AppController.Instance.appState == AppState.ExperimentalRailgun) {
+				//_curEditorTool.setSelected(iSelected);
+			}
 		}
 
 		//

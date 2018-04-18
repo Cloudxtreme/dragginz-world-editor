@@ -24,6 +24,7 @@ namespace DragginzVoxelWorldEditor
 		public GameObject goMaterialSelection;
 		public GameObject goItemsSelection;
 		public GameObject goDigSettings;
+		public UISelectionBox selectionBoxRailgun;
 
 		public Transform panelTools;
         public Transform panelFileMenu;
@@ -42,7 +43,7 @@ namespace DragginzVoxelWorldEditor
 		public Button btnUNDO;
 
 		public Image imgMaterialHilight;
-		public RawImage imgSelectedMaterial;
+		//public RawImage imgSelectedMaterial;
 		public RawImage imgSelectedItem;
 
 		public Slider sliderDigWidth;
@@ -197,19 +198,14 @@ namespace DragginzVoxelWorldEditor
             }
 		}
 
-        /*void Start() {
-			onSelectTransformTool(0);
-			onSelectMaterial (0);
-			onSelectItem (0);
-			setLevelNameText ("New Level");
-        }*/
-
 		#endregion
 
 		#region PublicMethods
 
 		public void init()
 		{
+			selectionBoxRailgun.init (changeRailgunSelection);
+
 			onSelectTransformTool(0);
 			onSelectMaterial (0);
 			onSelectItem (0);
@@ -317,6 +313,12 @@ namespace DragginzVoxelWorldEditor
 		public void showMaterialBox(bool state) {
 			if (goMaterialSelection != null) {
 				goMaterialSelection.SetActive (state);
+			}
+		}
+
+		public void showRailgunBox(bool state) {
+			if (selectionBoxRailgun != null) {
+				selectionBoxRailgun.show (state);
 			}
 		}
 
@@ -590,26 +592,14 @@ namespace DragginzVoxelWorldEditor
 
 				_iSelectedMaterial = materialIndex;
 
-				if (goMaterialSelection != null && imgSelectedMaterial != null) {
-
-					Transform child = goMaterialSelection.transform.Find ("Material-" + (materialIndex + 1).ToString ());
-					if (child != null) {
-						imgSelectedMaterial.texture = child.GetComponent<RawImage> ().texture;
-					}
-				}
-
 				LevelEditor.Instance.newMaterialSelected (_iSelectedMaterial);
-
-				/*List<GameObject> allSelectedObjects = new List<GameObject> (EditorObjectSelection.Instance.SelectedGameObjects);
-				foreach (GameObject selectedObject in allSelectedObjects) {
-
-					MeshRenderer renderer = selectedObject.GetComponent<MeshRenderer> ();
-					if (renderer != null) {
-						renderer.material = Resources.Load<Material> ("Materials/" + Globals.materials [materialIndex]);
-						//Debug.Log ("new material: *" + renderer.material.name.Replace(" (Instance)","") + "*");
-					}
-				}*/
 			}
+		}
+
+		//
+		private void changeRailgunSelection()
+		{
+			LevelEditor.Instance.newRailgunSelected (selectionBoxRailgun.iSelected);
 		}
 
 		/*public void toggleItem(float toggle)

@@ -80,6 +80,7 @@
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\SplashScreen\SplashScreenController.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\UI\MainMenu.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\UI\Popup.cs" />
+     <Compile Include="Assets\__VoxelWorldEditor\Scripts\UI\UISelectionBox.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Utils\MarchingCubes\ConvertLevelToMesh.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Utils\MarchingCubes\MarchingCubes\Marching\IMarching.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Utils\MarchingCubes\MarchingCubes\Marching\Marching.cs" />
