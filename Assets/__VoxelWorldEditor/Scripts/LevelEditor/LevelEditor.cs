@@ -274,12 +274,13 @@ namespace DragginzVoxelWorldEditor
 			FlyCam.Instance.setNewInitialPosition (savedPos, savedRot);
 			resetCamToStartPos ();
 
-			_aEditorTools = new List<EditorTool> (Globals.NUM_EDITOR_TOOLS);
+			_aEditorTools = new List<EditorTool> ((int)Globals.TOOL.NUM_TOOLS);
 			_aEditorTools.Add(new EditorToolLook());
 			_aEditorTools.Add(new EditorToolDig());
 			_aEditorTools.Add(new EditorToolPaint());
 			_aEditorTools.Add(new EditorToolBuild());
 			_aEditorTools.Add(new EditorToolProp());
+			_aEditorTools.Add(new EditorToolRailgun());
 
 			_curEditorTool = null;
 
@@ -343,6 +344,21 @@ namespace DragginzVoxelWorldEditor
 			}
 
 			_GridEditorExperimental.activate (state);
+		}
+
+		//
+		public void activateRailgun(bool state)
+		{
+			if (state) {
+				setMode (AppState.ExperimentalRailgun);
+			} else {
+				setMode (AppState.Select);
+			}
+
+			// set mode to dig
+			// set railguncross material for aim tool
+			// scale aim tool to 4,4,1 - similar to paint
+			// on mouseClick -> create 4x4x8 tunnel ins hape of cross
 		}
 
         #endregion
@@ -559,16 +575,20 @@ namespace DragginzVoxelWorldEditor
 			_goLevelContainer.SetActive (mode != AppState.Play);
 			_goLevelMeshContainer.SetActive (!_goLevelContainer.activeSelf);
 
-			if (mode == AppState.Play)
+			if (mode == AppState.ExperimentalRailgun)
+			{
+				laserAim.SetActive (true);
+				_curEditorTool = _aEditorTools [(int)Globals.TOOL.RAILGUN];
+			}
+			else if (mode == AppState.Play)
 			{
 				resetCamToStartPos (false); // don't go back to starting pos
-
 				createLevelMeshes ();
 			}
 			else if (mode == AppState.Select)
 			{
 				MainMenu.Instance.showTransformBox (true);
-				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_LOOK];
+				_curEditorTool = _aEditorTools [(int)Globals.TOOL.SELECT];
 				itemCam.enabled = true;
 				itemCam.transform.position = editCam.transform.position;
 				_activeCam = itemCam;
@@ -578,14 +598,14 @@ namespace DragginzVoxelWorldEditor
 			{
 				MainMenu.Instance.showDigButtons (true);
 				laserAim.SetActive (true);
-				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_DIG];
+				_curEditorTool = _aEditorTools [(int)Globals.TOOL.DIG];
 			}
 			else if (mode == AppState.Paint)
 			{
 				MainMenu.Instance.showMaterialBox (true);
 				MainMenu.Instance.showDigButtons (true);
 				laserAim.SetActive (true);
-				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_PAINT];
+				_curEditorTool = _aEditorTools [(int)Globals.TOOL.PAINT];
 				_curEditorTool.setCurAimMaterial ();
 			}
 			else if (mode == AppState.Build)
@@ -593,14 +613,14 @@ namespace DragginzVoxelWorldEditor
 				MainMenu.Instance.showMaterialBox (true);
 				MainMenu.Instance.showDigButtons (true);
 				laserAim.SetActive (true);
-				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_BUILD];
+				_curEditorTool = _aEditorTools [(int)Globals.TOOL.BUILD];
 				//_curEditorTool.setSingleMaterial (laserAim, _aMaterials[MainMenu.Instance.iSelectedMaterial], false);
 				_curEditorTool.setCurAimMaterial ();
 			}
 			else if (mode == AppState.Props)
 			{
 				//MainMenu.Instance.showItemsBox (true);
-				_curEditorTool = _aEditorTools [Globals.EDITOR_TOOL_ITEMS];
+				_curEditorTool = _aEditorTools [(int)Globals.TOOL.PROPS];
 				laserAim.SetActive (true);
 				propAim.SetActive (true);
 				if (_goCurProp == null) {

@@ -14,7 +14,7 @@ namespace DragginzVoxelWorldEditor
 
 		//private Vector3 _v3AimSize;
 
-		public EditorToolPaint() : base(Globals.EDITOR_TOOL_PAINT)
+		public EditorToolPaint() : base((int)Globals.TOOL.PAINT)
 		{
 			//_v3AimSize = new Vector3 (1, 1, 1);
 		}

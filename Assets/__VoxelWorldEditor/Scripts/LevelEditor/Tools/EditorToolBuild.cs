@@ -18,7 +18,7 @@ namespace DragginzVoxelWorldEditor
 		//private Vector3 _v3BuildSize = Vector3.zero;
 		private float _fOffset;
 
-		public EditorToolBuild() : base(Globals.EDITOR_TOOL_BUILD)
+		public EditorToolBuild() : base((int)Globals.TOOL.BUILD)
 		{
 			//_v3AimSize = new Vector3 (1, 1, 1);
 		}

@@ -21,7 +21,8 @@ namespace DragginzVoxelWorldEditor
 		Paint,
 		Build,
 		Props,
-		Play
+		Play,
+		ExperimentalRailgun
 	};
 
 	//

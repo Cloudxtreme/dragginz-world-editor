@@ -13,7 +13,7 @@ namespace DragginzVoxelWorldEditor
 {
 	public class EditorToolProp : EditorTool {
 
-		public EditorToolProp() : base(Globals.EDITOR_TOOL_ITEMS)
+		public EditorToolProp() : base((int)Globals.TOOL.PROPS)
 		{
 			//
 		}

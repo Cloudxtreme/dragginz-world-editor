@@ -4571,6 +4571,8 @@ MonoBehaviour:
     m_Options:
     - m_Text: Grid Editor
       m_Image: {fileID: 0}
+    - m_Text: Railgun
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:

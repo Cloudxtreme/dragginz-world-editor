@@ -200,6 +200,26 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		// ---------------------------------------------------------------------------------------------
+		public void railgunDig(RaycastHit hit, Vector3 chunkSize)
+		{
+			_lastChunkPos = getHitChunkPos (hit);
+
+			if (hit.normal.x > 0) {
+				_lastChunkPos.x -= (chunkSize.x - 1);
+			}
+			else if (hit.normal.y > 0) {
+				_lastChunkPos.y -= (chunkSize.y - 1);
+			}
+			else if (hit.normal.z > 0) {
+				_lastChunkPos.z -= (chunkSize.z - 1);
+			}
+
+			subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
+			subtractChunk (new Vector3(_lastChunkPos.x + 1, _lastChunkPos.y,     _lastChunkPos.z), new Vector3(2, 4, 8));
+			subtractChunk (new Vector3(_lastChunkPos.x + 3, _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
+		}
+
+		// ---------------------------------------------------------------------------------------------
 		public void paint(RaycastHit hit, Vector3 chunkSize, int materialIndex)
 		{
 			//if (AppController.Instance.appState == AppState.Paint) {

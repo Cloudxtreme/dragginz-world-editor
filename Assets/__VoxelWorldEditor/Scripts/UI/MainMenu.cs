@@ -401,12 +401,28 @@ namespace DragginzVoxelWorldEditor
 
 			EditorObjectSelection.Instance.ClearSelection(false);
 
+			#if UNITY_WEBGL
+				AppController.Instance.showPopup(
+				PopupMode.Notification,
+				"Sorry!",
+				"Loading level files is not available in the web version of the editor!",
+				webGLPopupCallbackLoad
+				);
+				return;
+			#endif
+
 			if (_popup) {
 				_popup.showPopup (PopupMode.Confirmation, "Load Level", "Are you sure?\nAll unsaved changes will be lost!", showLoadFileBrowser);
 			} else {
 				showLoadFileBrowser (1);
 			}
         }
+
+		//
+		private void webGLPopupCallbackLoad(int buttonId) {
+
+			AppController.Instance.hidePopup ();
+		}
 
 		//
 		private void showLoadFileBrowser(int buttonId) {
@@ -431,9 +447,26 @@ namespace DragginzVoxelWorldEditor
 
 			EditorObjectSelection.Instance.ClearSelection(false);
 
+			#if UNITY_WEBGL
+				AppController.Instance.showPopup(
+				PopupMode.Notification,
+				"Sorry!",
+				"Saving level files is not available in the web version of the editor!",
+				webGLPopupCallbackSave
+				);
+				return;
+			#endif
+
 			_popup.showPopup(PopupMode.Input, "Save Level", "Level Name: (50 chars max)", "Enter Level Name...", showSaveFileDialogContinue);
         }
 
+		//
+		private void webGLPopupCallbackSave(int buttonId) {
+
+			AppController.Instance.hidePopup ();
+		}
+
+		//
 		private void showSaveFileDialogContinue(int buttonId) {
 
 			if (buttonId == 1)
@@ -840,7 +873,11 @@ namespace DragginzVoxelWorldEditor
 
 		public void onDropDownExperimentalValueChanged(int value) {
 			if (_trfmDropDownExperimental && value < _iDropDownExperimentalOptions) {
-				showLaunchGridEditorDialog ();
+				if (value == 0) {
+					showLaunchGridEditorDialog ();
+				} else if (value == 1) {
+					LevelEditor.Instance.activateRailgun (true);
+				}				
 			}
 		}
     }

@@ -11,7 +11,7 @@ namespace DragginzVoxelWorldEditor
 {
 	public class EditorToolLook : EditorTool {
 
-		public EditorToolLook() : base(Globals.EDITOR_TOOL_LOOK)
+		public EditorToolLook() : base((int)Globals.TOOL.SELECT)
 		{
 			//
 		}
