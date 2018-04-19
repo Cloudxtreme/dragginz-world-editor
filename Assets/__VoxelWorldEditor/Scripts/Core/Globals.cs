@@ -36,13 +36,6 @@ namespace DragginzVoxelWorldEditor
 			RAILGUN,
 			NUM_TOOLS
 		};
-		/*static public readonly int EDITOR_TOOL_LOOK    = 0;
-		static public readonly int EDITOR_TOOL_DIG     = 1;
-		static public readonly int EDITOR_TOOL_PAINT   = 2;
-		static public readonly int EDITOR_TOOL_BUILD   = 3;
-		static public readonly int EDITOR_TOOL_ITEMS   = 4;
-		static public readonly int EDITOR_TOOL_RAILGUN = 5;
-		static public readonly int NUM_EDITOR_TOOLS    = 6;*/
 
 		public const string defaultShaderName   = "Mobile/Diffuse"; // "Standard"
 		public const string highlightShaderName = "Legacy Shaders/Reflective/Diffuse";
@@ -67,6 +60,30 @@ namespace DragginzVoxelWorldEditor
 		static public readonly float RAYCAST_DISTANCE_EDIT = 10.24f;
 
 		static public readonly string urlLevelList = "http://obrodhage.rocks/dragginz-world-editor/level-data/";
+
+		// Experimental
+		static public readonly string[] materialsRailgun = {"vwe_railgun_cross", "vwe_railgun_steps"};
+		public struct RailgunShape
+		{
+			public List<Vector3> posX;
+			public List<Vector3> posY;
+			public List<Vector3> posZ;
+
+			public List<Vector3> sizeX;
+			public List<Vector3> sizeY;
+			public List<Vector3> sizeZ;
+
+			public void init()
+			{
+				posX = new List<Vector3> ();
+				posY = new List<Vector3> ();
+				posZ = new List<Vector3> ();
+
+				sizeX = new List<Vector3> ();
+				sizeY = new List<Vector3> ();
+				sizeZ = new List<Vector3> ();
+			}
+		};
 
 		/// <summary>
 		/// ...

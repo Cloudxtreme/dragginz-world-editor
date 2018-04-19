@@ -24,6 +24,7 @@ namespace DragginzVoxelWorldEditor
 		public GameObject goMaterialSelection;
 		public GameObject goItemsSelection;
 		public GameObject goDigSettings;
+
 		public UISelectionBox selectionBoxRailgun;
 
 		public Transform panelTools;
@@ -97,6 +98,9 @@ namespace DragginzVoxelWorldEditor
             get { return _popup; }
         }
 
+		public int iSelectedRailgunMaterialIndex {
+			get { return selectionBoxRailgun.iSelected; }
+		}
 
 		#region SystemMethods
 
@@ -204,7 +208,7 @@ namespace DragginzVoxelWorldEditor
 
 		public void init()
 		{
-			selectionBoxRailgun.init (changeRailgunSelection);
+			selectionBoxRailgun.init (changeRailgunSelection, Globals.materialsRailgun, "Railgun/");
 
 			onSelectTransformTool(0);
 			onSelectMaterial (0);

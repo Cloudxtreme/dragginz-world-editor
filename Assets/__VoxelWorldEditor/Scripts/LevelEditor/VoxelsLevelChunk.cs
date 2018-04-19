@@ -39,7 +39,9 @@ namespace DragginzVoxelWorldEditor
 		private Vector3 _startPos;
 		private Vector3 _startRotation;
 
+		// Experimental
 		private bool _isExperimentalChunk;
+		private List<Globals.RailgunShape> _aRailgunShapes;
 
 		#region Getters
 
@@ -78,10 +80,6 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public void init (GameObject goParent, bool isExperimental = false)
 		{
-			_isExperimentalChunk = isExperimental;
-
-			//Debug.Log ("VoxelsLevelChunk.init - _isExperimentalChunk: "+_isExperimentalChunk);
-
 			_trfmVoxelChunkContainer = goParent.transform;
 
 			_chunkPos = _trfmVoxelChunkContainer.position;
@@ -94,6 +92,79 @@ namespace DragginzVoxelWorldEditor
 			_aVoxelChunksUndo = new List<VoxelUtils.VoxelChunk> ();
 
 			_worldProps = new Dictionary<GameObject, worldProp> ();
+
+
+			// Experimental
+
+			_isExperimentalChunk = isExperimental;
+			_aRailgunShapes = new List<Globals.RailgunShape> ();
+
+			//
+			// cross
+			//
+			Globals.RailgunShape shape = new Globals.RailgunShape ();
+			shape.init ();
+
+			shape.posX.Add (new Vector3 (0, 1, -3));
+			shape.sizeX.Add (new Vector3 (8, 2, 1));
+			shape.posX.Add (new Vector3 (0, 0, -2));
+			shape.sizeX.Add (new Vector3 (8, 4, 2));
+			shape.posX.Add (new Vector3 (0, 1, 0));
+			shape.sizeX.Add (new Vector3 (8, 2, 1));
+
+			shape.posY.Add (new Vector3 (0, 0, -2));
+			shape.sizeY.Add (new Vector3 (1, 8, 2));
+			shape.posY.Add (new Vector3 (-2, 0, -3));
+			shape.sizeY.Add (new Vector3 (2, 8, 4));
+			shape.posY.Add (new Vector3 (-3, 0, -2));
+			shape.sizeY.Add (new Vector3 (1, 8, 2));
+
+			shape.posZ.Add (new Vector3 (0, 1, 0));
+			shape.sizeZ.Add (new Vector3 (1, 2, 8));
+			shape.posZ.Add (new Vector3 (1, 0, 0));
+			shape.sizeZ.Add (new Vector3 (2, 4, 8));
+			shape.posZ.Add (new Vector3 (3, 1, 0));
+			shape.sizeZ.Add (new Vector3 (1, 2, 8));
+
+			_aRailgunShapes.Add(shape);
+
+			//
+			// steps
+			//
+			shape = new Globals.RailgunShape ();
+			shape.init ();
+
+			shape.posX.Add (new Vector3 (0, 0, 0));
+			shape.sizeX.Add (new Vector3 (4, 4, 1));
+			shape.posX.Add (new Vector3 (0, 1, 1));
+			shape.sizeX.Add (new Vector3 (4, 4, 1));
+			shape.posX.Add (new Vector3 (0, 2, 2));
+			shape.sizeX.Add (new Vector3 (4, 4, 1));
+			shape.posX.Add (new Vector3 (0, 3, 3));
+			shape.sizeX.Add (new Vector3 (4, 4, 1));
+
+			shape.posY.Add (new Vector3 (0, 0, 0));
+			shape.sizeY.Add (new Vector3 (4, 4, 1));
+			shape.posY.Add (new Vector3 (0, 1, 1));
+			shape.sizeY.Add (new Vector3 (4, 4, 1));
+			shape.posY.Add (new Vector3 (0, 2, 2));
+			shape.sizeY.Add (new Vector3 (4, 4, 1));
+			shape.posY.Add (new Vector3 (0, 3, 3));
+			shape.sizeY.Add (new Vector3 (4, 4, 1));
+
+			shape.posZ.Add (new Vector3 (0, 0, 0));
+			shape.sizeZ.Add (new Vector3 (4, 4, 1));
+			shape.posZ.Add (new Vector3 (0, 1, 1));
+			shape.sizeZ.Add (new Vector3 (4, 4, 1));
+			shape.posZ.Add (new Vector3 (0, 2, 2));
+			shape.sizeZ.Add (new Vector3 (4, 4, 1));
+			shape.posZ.Add (new Vector3 (0, 3, 3));
+			shape.sizeZ.Add (new Vector3 (4, 4, 1));
+
+			_aRailgunShapes.Add(shape);
+
+			// Experimental
+
 
 			newLevel ();
 		}
@@ -202,6 +273,10 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public void railgunDig(RaycastHit hit, Vector3 chunkSize)
 		{
+			LevelEditor.Instance.resetUndoActions ();
+			saveCurrentVoxelChunks ();
+			MainMenu.Instance.setUndoButton (true);
+
 			_lastChunkPos = getHitChunkPos (hit);
 
 			if (hit.normal.x > 0) {
@@ -212,23 +287,38 @@ namespace DragginzVoxelWorldEditor
 				_lastChunkPos.z -= (chunkSize.z - 1);
 			}
 
+			Globals.RailgunShape shape = _aRailgunShapes [MainMenu.Instance.iSelectedRailgunMaterialIndex];
+			int i, len = shape.posX.Count;
+
 			if (hit.normal.x != 0)
 			{
-				subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y + 1, _lastChunkPos.z - 3), new Vector3(8, 2, 1));
-				subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y,     _lastChunkPos.z - 2), new Vector3(8, 4, 2));
-				subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y + 1, _lastChunkPos.z),     new Vector3(8, 2, 1));
+				for (i = 0; i < len; ++i) {
+					subtractChunk (new Vector3 (_lastChunkPos.x + shape.posX [i].x, _lastChunkPos.y + shape.posX [i].y, _lastChunkPos.z + shape.posX [i].z), shape.sizeX [i], false);
+				}
+
+				//subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y + 1, _lastChunkPos.z - 3), new Vector3(8, 2, 1));
+				//subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y,     _lastChunkPos.z - 2), new Vector3(8, 4, 2));
+				//subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y + 1, _lastChunkPos.z),     new Vector3(8, 2, 1));
 			}
 			else if (hit.normal.y != 0)
 			{
-				subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y, _lastChunkPos.z - 2), new Vector3(1, 8, 2));
-				subtractChunk (new Vector3(_lastChunkPos.x - 2, _lastChunkPos.y, _lastChunkPos.z - 3), new Vector3(2, 8, 4));
-				subtractChunk (new Vector3(_lastChunkPos.x - 3, _lastChunkPos.y, _lastChunkPos.z - 2), new Vector3(1, 8, 2));
+				for (i = 0; i < len; ++i) {
+					subtractChunk (new Vector3 (_lastChunkPos.x + shape.posY [i].x, _lastChunkPos.y + shape.posY [i].y, _lastChunkPos.z + shape.posY [i].z), shape.sizeY [i], false);
+				}
+
+				//subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y, _lastChunkPos.z - 2), new Vector3(1, 8, 2));
+				//subtractChunk (new Vector3(_lastChunkPos.x - 2, _lastChunkPos.y, _lastChunkPos.z - 3), new Vector3(2, 8, 4));
+				//subtractChunk (new Vector3(_lastChunkPos.x - 3, _lastChunkPos.y, _lastChunkPos.z - 2), new Vector3(1, 8, 2));
 			}
 			else if (hit.normal.z != 0)
 			{
-				subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
-				subtractChunk (new Vector3(_lastChunkPos.x + 1, _lastChunkPos.y,     _lastChunkPos.z), new Vector3(2, 4, 8));
-				subtractChunk (new Vector3(_lastChunkPos.x + 3, _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
+				for (i = 0; i < len; ++i) {
+					subtractChunk (new Vector3 (_lastChunkPos.x + shape.posZ [i].x, _lastChunkPos.y + shape.posZ [i].y, _lastChunkPos.z + shape.posZ [i].z), shape.sizeZ [i], false);
+				}
+
+				//subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
+				//subtractChunk (new Vector3(_lastChunkPos.x + 1, _lastChunkPos.y,     _lastChunkPos.z), new Vector3(2, 4, 8));
+				//subtractChunk (new Vector3(_lastChunkPos.x + 3, _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
 			}
 		}
 
@@ -348,15 +438,15 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		// cut a hole!
 		// ---------------------------------------------------------------------------------------------
-		public bool subtractChunk(Vector3 v3Pos, Vector3 v3Size)
+		public bool subtractChunk(Vector3 v3Pos, Vector3 v3Size, bool allowUndo = true)
 		{
 			bool success = true;
 
 			float timer = Time.realtimeSinceStartup;
 
-			if (!_isExperimentalChunk) {
+			if (allowUndo && !_isExperimentalChunk)
+			{
 				LevelEditor.Instance.resetUndoActions ();
-				// new simple undo
 				saveCurrentVoxelChunks ();
 				MainMenu.Instance.setUndoButton (true);
 			}

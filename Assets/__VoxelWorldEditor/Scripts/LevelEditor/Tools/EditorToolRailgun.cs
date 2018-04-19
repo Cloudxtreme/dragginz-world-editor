@@ -13,7 +13,6 @@ namespace DragginzVoxelWorldEditor
 	public class EditorToolRailgun : EditorTool {
 
 		private Vector3 _v3AimSize;
-		private Material matRailgunCross = Resources.Load<Material>("Materials/Tools/vwe_railgun_cross");
 
 		public EditorToolRailgun() : base((int)Globals.TOOL.RAILGUN)
 		{
@@ -45,8 +44,8 @@ namespace DragginzVoxelWorldEditor
 			{
 				setRailgunAim ();
 
-				if (_rendererAimTool.material != matRailgunCross) {
-					_rendererAimTool.material = matRailgunCross;
+				if (_rendererAimTool.material != _matRailgunCross && _matRailgunCross != null) {
+					_rendererAimTool.material = _matRailgunCross;
 				}
 
 				if (_mouseIsDown) {

@@ -354,11 +354,6 @@ namespace DragginzVoxelWorldEditor
 			} else {
 				setMode (AppState.Select);
 			}
-
-			// set mode to dig
-			// set railguncross material for aim tool
-			// scale aim tool to 4,4,1 - similar to paint
-			// on mouseClick -> create 4x4x8 tunnel ins hape of cross
 		}
 
         #endregion
@@ -581,6 +576,7 @@ namespace DragginzVoxelWorldEditor
 				MainMenu.Instance.showRailgunBox (true);
 				laserAim.SetActive (true);
 				_curEditorTool = _aEditorTools [(int)Globals.TOOL.RAILGUN];
+				newRailgunSelected (MainMenu.Instance.iSelectedRailgunMaterialIndex);
 			}
 			else if (mode == AppState.Play)
 			{
@@ -896,9 +892,8 @@ namespace DragginzVoxelWorldEditor
 		//
 		public void newRailgunSelected(int iSelected)
 		{
-			Debug.Log ("newRailgunSelected "+iSelected);
 			if (AppController.Instance.appState == AppState.ExperimentalRailgun) {
-				//_curEditorTool.setSelected(iSelected);
+				_curEditorTool.setSelectedRailgunMaterial(iSelected);
 			}
 		}
 

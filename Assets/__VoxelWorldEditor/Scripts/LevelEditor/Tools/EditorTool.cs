@@ -25,6 +25,7 @@ namespace DragginzVoxelWorldEditor
 		protected static Renderer _rendererAimTool;
 		protected static Renderer _rendererAimCenterCube;
 		protected static Material _materialAimTool;
+		protected static Material _matRailgunCross;
 
 		protected static Ray _ray;
 		protected static RaycastHit _hit;
@@ -182,6 +183,11 @@ namespace DragginzVoxelWorldEditor
 			//setSingleMaterial (_goLastMaterialChanged, _tempMaterial);
 			//_goLastMaterialChanged = null;
 			//_tempMaterial = null;
+		}
+
+		public void setSelectedRailgunMaterial(int selected)
+		{
+			_matRailgunCross = Resources.Load<Material>("Materials/Railgun/" + Globals.materialsRailgun[selected]);
 		}
 
 		public void resetProp()
