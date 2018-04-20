@@ -73,6 +73,11 @@ namespace DragginzVoxelWorldEditor
 			get { return _worldProps; }
 		}
 
+		// Experimental
+		public List<Globals.RailgunShape> aRailgunShapes {
+			get { return _aRailgunShapes; }
+		}
+
 		#endregion
 
 		// ---------------------------------------------------------------------------------------------
@@ -104,6 +109,9 @@ namespace DragginzVoxelWorldEditor
 			//
 			Globals.RailgunShape shape = new Globals.RailgunShape ();
 			shape.init ();
+			shape.width  = 4;
+			shape.height = 4;
+			shape.depth  = 8;
 
 			shape.posX.Add (new Vector3 (0, 1, -3));
 			shape.sizeX.Add (new Vector3 (8, 2, 1));
@@ -133,15 +141,18 @@ namespace DragginzVoxelWorldEditor
 			//
 			shape = new Globals.RailgunShape ();
 			shape.init ();
+			shape.width  = 4;
+			shape.height = 4;
+			shape.depth  = 4;
 
-			shape.posX.Add (new Vector3 (0, 0, 0));
-			shape.sizeX.Add (new Vector3 (4, 4, 1));
-			shape.posX.Add (new Vector3 (0, 1, 1));
-			shape.sizeX.Add (new Vector3 (4, 4, 1));
-			shape.posX.Add (new Vector3 (0, 2, 2));
-			shape.sizeX.Add (new Vector3 (4, 4, 1));
-			shape.posX.Add (new Vector3 (0, 3, 3));
-			shape.sizeX.Add (new Vector3 (4, 4, 1));
+			shape.posX.Add (new Vector3 (-3, 3, -3));
+			shape.sizeX.Add (new Vector3 (1, 4, 4));
+			shape.posX.Add (new Vector3 (-2, 2, -3));
+			shape.sizeX.Add (new Vector3 (1, 3, 4));
+			shape.posX.Add (new Vector3 (-1, 1, -3));
+			shape.sizeX.Add (new Vector3 (1, 2, 4));
+			shape.posX.Add (new Vector3 (0, 0, -3));
+			shape.sizeX.Add (new Vector3 (1, 1, 4));
 
 			shape.posY.Add (new Vector3 (0, 0, 0));
 			shape.sizeY.Add (new Vector3 (4, 4, 1));
@@ -155,11 +166,11 @@ namespace DragginzVoxelWorldEditor
 			shape.posZ.Add (new Vector3 (0, 0, 0));
 			shape.sizeZ.Add (new Vector3 (4, 4, 1));
 			shape.posZ.Add (new Vector3 (0, 1, 1));
-			shape.sizeZ.Add (new Vector3 (4, 4, 1));
+			shape.sizeZ.Add (new Vector3 (4, 3, 1));
 			shape.posZ.Add (new Vector3 (0, 2, 2));
-			shape.sizeZ.Add (new Vector3 (4, 4, 1));
+			shape.sizeZ.Add (new Vector3 (4, 2, 1));
 			shape.posZ.Add (new Vector3 (0, 3, 3));
-			shape.sizeZ.Add (new Vector3 (4, 4, 1));
+			shape.sizeZ.Add (new Vector3 (4, 1, 1));
 
 			_aRailgunShapes.Add(shape);
 
@@ -279,46 +290,60 @@ namespace DragginzVoxelWorldEditor
 
 			_lastChunkPos = getHitChunkPos (hit);
 
-			if (hit.normal.x > 0) {
-				_lastChunkPos.x -= (chunkSize.x - 1);
-			} else if (hit.normal.y > 0) {
-				_lastChunkPos.y -= (chunkSize.y - 1);
-			} else if (hit.normal.z > 0) {
-				_lastChunkPos.z -= (chunkSize.z - 1);
-			}
-
 			Globals.RailgunShape shape = _aRailgunShapes [MainMenu.Instance.iSelectedRailgunMaterialIndex];
-			int i, len = shape.posX.Count;
+
+			/*if (hit.normal.x > 0) {
+				_lastChunkPos.x -= (shape.depth - 1);
+			} else if (hit.normal.y > 0) {
+				_lastChunkPos.y -= (shape.depth - 1);
+			} else if (hit.normal.z > 0) {
+				_lastChunkPos.z -= (shape.depth - 1);
+			}*/
+
+			int i, len = shape.posZ.Count;
+			Vector3 pos, size;
 
 			if (hit.normal.x != 0)
 			{
-				for (i = 0; i < len; ++i) {
-					subtractChunk (new Vector3 (_lastChunkPos.x + shape.posX [i].x, _lastChunkPos.y + shape.posX [i].y, _lastChunkPos.z + shape.posX [i].z), shape.sizeX [i], false);
-				}
+				if (hit.normal.x < 0) {
+					Debug.Log ("right");
+					for (i = 0; i < len; ++i) {
+						pos  = new Vector3 (_lastChunkPos.z + shape.posZ [i].z, _lastChunkPos.y + shape.posZ [i].y, _lastChunkPos.x - shape.sizeZ [i].x + shape.posZ [i].x);
+						size = new Vector3 (shape.sizeZ [i].z, shape.sizeZ [i].y, shape.sizeZ [i].x);
+						subtractChunk (pos, size, false);
+					}
+				} else {
+					
+					// NEXT !!!
 
-				//subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y + 1, _lastChunkPos.z - 3), new Vector3(8, 2, 1));
-				//subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y,     _lastChunkPos.z - 2), new Vector3(8, 4, 2));
-				//subtractChunk (new Vector3(_lastChunkPos.x, _lastChunkPos.y + 1, _lastChunkPos.z),     new Vector3(8, 2, 1));
+					for (i = 0; i < len; ++i) {
+						Debug.Log ("left");
+						pos  = new Vector3 (_lastChunkPos.z - shape.posZ [i].z, _lastChunkPos.y + shape.posZ [i].y, _lastChunkPos.x - shape.sizeZ [i].x - shape.posZ [i].x);
+						size = new Vector3 (shape.sizeZ [i].z, shape.sizeZ [i].y, shape.sizeZ [i].x);
+						subtractChunk (pos, size, false);
+					}
+				}
 			}
 			else if (hit.normal.y != 0)
 			{
-				for (i = 0; i < len; ++i) {
-					subtractChunk (new Vector3 (_lastChunkPos.x + shape.posY [i].x, _lastChunkPos.y + shape.posY [i].y, _lastChunkPos.z + shape.posY [i].z), shape.sizeY [i], false);
-				}
-
-				//subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y, _lastChunkPos.z - 2), new Vector3(1, 8, 2));
-				//subtractChunk (new Vector3(_lastChunkPos.x - 2, _lastChunkPos.y, _lastChunkPos.z - 3), new Vector3(2, 8, 4));
-				//subtractChunk (new Vector3(_lastChunkPos.x - 3, _lastChunkPos.y, _lastChunkPos.z - 2), new Vector3(1, 8, 2));
+				//
 			}
 			else if (hit.normal.z != 0)
 			{
-				for (i = 0; i < len; ++i) {
-					subtractChunk (new Vector3 (_lastChunkPos.x + shape.posZ [i].x, _lastChunkPos.y + shape.posZ [i].y, _lastChunkPos.z + shape.posZ [i].z), shape.sizeZ [i], false);
+				// this is the default direction - everything going +
+				if (hit.normal.z < 0) {
+					for (i = 0; i < len; ++i) {
+						pos  = new Vector3 (_lastChunkPos.x + shape.posZ [i].x, _lastChunkPos.y + shape.posZ [i].y, _lastChunkPos.z + shape.posZ [i].z);
+						size = shape.sizeZ [i];
+						subtractChunk (pos, size, false);
+					}
+				} else {
+					for (i = 0; i < len; ++i) {
+						pos  = new Vector3 (_lastChunkPos.x - (shape.sizeZ [i].x - 1) + shape.posZ [i].x, _lastChunkPos.y + shape.posZ [i].y, _lastChunkPos.z - shape.posZ [i].z);
+						size = shape.sizeZ [i];
+						subtractChunk (pos, size, false);
+					}
 				}
-
-				//subtractChunk (new Vector3(_lastChunkPos.x,     _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
-				//subtractChunk (new Vector3(_lastChunkPos.x + 1, _lastChunkPos.y,     _lastChunkPos.z), new Vector3(2, 4, 8));
-				//subtractChunk (new Vector3(_lastChunkPos.x + 3, _lastChunkPos.y + 1, _lastChunkPos.z), new Vector3(1, 2, 8));
 			}
 		}
 

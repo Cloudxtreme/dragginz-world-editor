@@ -25,7 +25,10 @@ namespace DragginzVoxelWorldEditor
 		protected static Renderer _rendererAimTool;
 		protected static Renderer _rendererAimCenterCube;
 		protected static Material _materialAimTool;
-		protected static Material _matRailgunCross;
+
+		// Experimental
+		protected static Material _matRailgunShape;
+		protected static int _iSelectedRailgunShape;
 
 		protected static Ray _ray;
 		protected static RaycastHit _hit;
@@ -93,6 +96,10 @@ namespace DragginzVoxelWorldEditor
 				_rendererAimTool = _trfmAimTool.GetComponent<Renderer> ();
 				_rendererAimCenterCube = _trfmAimCenterCube.GetComponent<Renderer> ();
 				_materialAimTool = _rendererAimTool.material;
+
+				// Experimental
+				_matRailgunShape = _rendererAimTool.material;
+				_iSelectedRailgunShape = 0;
 
 				_aUsedShaders = new Dictionary<string, Shader> ();
 				_goLastShaderChange = null;
@@ -187,7 +194,8 @@ namespace DragginzVoxelWorldEditor
 
 		public void setSelectedRailgunMaterial(int selected)
 		{
-			_matRailgunCross = Resources.Load<Material>("Materials/Railgun/" + Globals.materialsRailgun[selected]);
+			_matRailgunShape = Resources.Load<Material>("Materials/Railgun/" + Globals.materialsRailgun[selected]);
+			_iSelectedRailgunShape = selected;
 		}
 
 		public void resetProp()
@@ -461,29 +469,35 @@ namespace DragginzVoxelWorldEditor
 			if (_hit.normal.x != 0.0f)
 			{
 				_v3AimPos.y += (_yAimScale * 0.5f);
-				_v3AimPos.z -= VoxelUtils.CHUNK_SIZE;
 
 				if (_hit.normal.x > 0) {
-					_v3AimPos.x += VoxelUtils.CHUNK_SIZE;
+					_v3AimPos.z += (_xAimScale * 0.5f);
+					_v3AimPos.x += (VoxelUtils.CHUNK_SIZE - (_zAimScale * 0.5f));
+				} else {
+					_v3AimPos.z -= ((_xAimScale * 0.5f) - VoxelUtils.CHUNK_SIZE);
+					_v3AimPos.x += (_zAimScale * 0.5f);
 				}
 			}
 			else if (_hit.normal.y != 0.0f)
 			{
-				_v3AimPos.x -= VoxelUtils.CHUNK_SIZE;
-				_v3AimPos.z -= VoxelUtils.CHUNK_SIZE;
+				_v3AimPos.x += ((_xAimScale * 0.5f));
+				_v3AimPos.z -= ((_zAimScale * 0.5f) - (VoxelUtils.CHUNK_SIZE + (VoxelUtils.CHUNK_SIZE * 0.5f)));
 
 				if (_hit.normal.y > 0) {
-					_v3AimPos.y += VoxelUtils.CHUNK_SIZE;
+					_v3AimPos.y += (VoxelUtils.CHUNK_SIZE - (_zAimScale * 0.5f));
+				} else {
+					_v3AimPos.y += (_zAimScale * 0.5f);
 				}
 			}
 			else if (_hit.normal.z != 0.0f)
 			{
-				_v3AimPos.x += (_xAimScale * 0.5f);
 				_v3AimPos.y += (_yAimScale * 0.5f);
 
 				if (_hit.normal.z > 0) {
+					_v3AimPos.x -= ((_xAimScale * 0.5f) - VoxelUtils.CHUNK_SIZE);
 					_v3AimPos.z += (VoxelUtils.CHUNK_SIZE - (_zAimScale * 0.5f));
 				} else {
+					_v3AimPos.x += (_xAimScale * 0.5f);
 					_v3AimPos.z += (_zAimScale * 0.5f);
 				}
 			}

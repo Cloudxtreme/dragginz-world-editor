@@ -65,6 +65,10 @@ namespace DragginzVoxelWorldEditor
 		static public readonly string[] materialsRailgun = {"vwe_railgun_cross", "vwe_railgun_steps"};
 		public struct RailgunShape
 		{
+			public int width;
+			public int height;
+			public int depth;
+
 			public List<Vector3> posX;
 			public List<Vector3> posY;
 			public List<Vector3> posZ;

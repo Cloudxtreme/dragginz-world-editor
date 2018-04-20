@@ -894,6 +894,7 @@ namespace DragginzVoxelWorldEditor
 		{
 			if (AppController.Instance.appState == AppState.ExperimentalRailgun) {
 				_curEditorTool.setSelectedRailgunMaterial(iSelected);
+				_curEditorTool.activate (); // force reset of aim tool scale
 			}
 		}
 
