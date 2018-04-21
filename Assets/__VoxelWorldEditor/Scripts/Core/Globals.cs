@@ -13,7 +13,7 @@ namespace DragginzVoxelWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Level Editor v04.18.1a";
+		static public readonly string version = "Level Editor v04.21.0a";
 
 		static public readonly int levelSaveFormatVersion = 100;
 
@@ -62,30 +62,24 @@ namespace DragginzVoxelWorldEditor
 		static public readonly string urlLevelList = "http://obrodhage.rocks/dragginz-world-editor/level-data/";
 
 		// Experimental
-		static public readonly string[] materialsRailgun = {"vwe_railgun_cross", "vwe_railgun_steps"};
+		static public readonly string[] materialsRailgun = {"vwe_railgun_cross", "vwe_railgun_steps", "vwe_railgun_steps"};
 		public struct RailgunShape
 		{
 			public int width;
 			public int height;
 			public int depth;
 
-			public List<Vector3> posX;
-			public List<Vector3> posY;
-			public List<Vector3> posZ;
+			public List<Vector3> pos;
+			public List<Vector3> size;
 
-			public List<Vector3> sizeX;
-			public List<Vector3> sizeY;
-			public List<Vector3> sizeZ;
-
-			public void init()
+			public RailgunShape(int w, int h, int d, List<Vector3> p, List<Vector3> s)
 			{
-				posX = new List<Vector3> ();
-				posY = new List<Vector3> ();
-				posZ = new List<Vector3> ();
+				this.width  = w;
+				this.height = h;
+				this.depth  = d;
 
-				sizeX = new List<Vector3> ();
-				sizeY = new List<Vector3> ();
-				sizeZ = new List<Vector3> ();
+				this.pos  = p;
+				this.size = s;
 			}
 		};
 

@@ -67,7 +67,7 @@ namespace DragginzVoxelWorldEditor
 
 		private void railIt (Vector3 v3Pos)
 		{
-			_levelEditor.curVoxelsLevelChunk.railgunDig (_hit, new Vector3(_v3AimSize.x, _v3AimSize.y, 8));
+			_levelEditor.curVoxelsLevelChunk.railgunDig (_hit);
 		}
 	}
 }

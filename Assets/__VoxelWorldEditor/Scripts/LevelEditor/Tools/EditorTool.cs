@@ -481,7 +481,7 @@ namespace DragginzVoxelWorldEditor
 			else if (_hit.normal.y != 0.0f)
 			{
 				_v3AimPos.x += ((_xAimScale * 0.5f));
-				_v3AimPos.z -= ((_zAimScale * 0.5f) - (VoxelUtils.CHUNK_SIZE + (VoxelUtils.CHUNK_SIZE * 0.5f)));
+				_v3AimPos.z += ((_zAimScale * 0.5f));// - VoxelUtils.CHUNK_SIZE);
 
 				if (_hit.normal.y > 0) {
 					_v3AimPos.y += (VoxelUtils.CHUNK_SIZE - (_zAimScale * 0.5f));
