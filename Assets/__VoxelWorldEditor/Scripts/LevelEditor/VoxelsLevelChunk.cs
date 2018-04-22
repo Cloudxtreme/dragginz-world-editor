@@ -133,17 +133,24 @@ namespace DragginzVoxelWorldEditor
 			_aRailgunShapes.Add(shape);
 
 			//
-			// test
+			// corner right
 			//
-			shape = new Globals.RailgunShape (4, 4, 4, new List<Vector3>(), new List<Vector3>());
+			shape = new Globals.RailgunShape (6, 4, 6, new List<Vector3>(), new List<Vector3>());
 			shape.pos.Add (new Vector3 (0, 0, 0));
-			shape.size.Add (new Vector3 (1, 1, 1));
-			shape.pos.Add (new Vector3 (1, 1, 0));
-			shape.size.Add (new Vector3 (1, 1, 2));
-			shape.pos.Add (new Vector3 (2, 2, 0));
-			shape.size.Add (new Vector3 (1, 1, 3));
-			shape.pos.Add (new Vector3 (3, 3, 0));
-			shape.size.Add (new Vector3 (1, 1, 4));
+			shape.size.Add (new Vector3 (3, 4, 6));
+			shape.pos.Add (new Vector3 (0, 0, 3));
+			shape.size.Add (new Vector3 (6, 4, 3));
+
+			_aRailgunShapes.Add(shape);
+
+			//
+			// corner left
+			//
+			shape = new Globals.RailgunShape (6, 4, 6, new List<Vector3>(), new List<Vector3>());
+			shape.pos.Add (new Vector3 (3, 0, 0));
+			shape.size.Add (new Vector3 (3, 4, 6));
+			shape.pos.Add (new Vector3 (0, 0, 3));
+			shape.size.Add (new Vector3 (6, 4, 3));
 
 			_aRailgunShapes.Add(shape);
 
@@ -273,14 +280,14 @@ namespace DragginzVoxelWorldEditor
 				if (hit.normal.x < 0) {
 					//Debug.Log ("right");
 					for (i = 0; i < len; ++i) {
-						pos = new Vector3 (_lastChunkPos.x + shape.pos [i].z, _lastChunkPos.y + shape.pos [i].y, _lastChunkPos.z - shape.pos [i].x); //- (shape.size [i].x - 1)
+						pos = new Vector3 (_lastChunkPos.x + shape.pos [i].z, _lastChunkPos.y + shape.pos [i].y, _lastChunkPos.z - (shape.size [i].x - 1) - shape.pos [i].x);
 						size = new Vector3 (shape.size [i].z, shape.size [i].y, shape.size [i].x);
 						subtractChunk (pos, size, false);
 					}
 				} else {
 					//Debug.Log ("left");
 					for (i = 0; i < len; ++i) {
-						pos  = new Vector3 (_lastChunkPos.x - (shape.size [i].z - 1) + shape.pos [i].z, _lastChunkPos.y + shape.pos [i].y, _lastChunkPos.z + shape.pos [i].x);
+						pos  = new Vector3 (_lastChunkPos.x - (shape.size [i].z - 1) - shape.pos [i].z, _lastChunkPos.y + shape.pos [i].y, _lastChunkPos.z + shape.pos [i].x);
 						size = new Vector3 (shape.size [i].z, shape.size [i].y, shape.size [i].x);
 						subtractChunk (pos, size, false);
 					}
@@ -291,7 +298,7 @@ namespace DragginzVoxelWorldEditor
 				if (hit.normal.y < 0) {
 					//Debug.Log ("ceiling");
 					for (i = 0; i < len; ++i) {
-						pos  = new Vector3 (_lastChunkPos.x - shape.pos [i].x, _lastChunkPos.y + shape.pos [i].z, _lastChunkPos.z + shape.pos [i].y);
+						pos  = new Vector3 (_lastChunkPos.x + shape.pos [i].x, _lastChunkPos.y + shape.pos [i].z, _lastChunkPos.z + shape.pos [i].y);
 						size = new Vector3 (shape.size [i].x, shape.size [i].z, shape.size [i].y);
 						subtractChunk (pos, size, false);
 					}

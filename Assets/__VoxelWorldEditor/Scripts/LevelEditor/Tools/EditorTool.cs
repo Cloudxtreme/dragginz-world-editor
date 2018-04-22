@@ -462,9 +462,11 @@ namespace DragginzVoxelWorldEditor
 
 			_v3AimPos = _levelEditor.curVoxelsLevelChunk.getHitChunkPos (_hit) *  VoxelUtils.CHUNK_SIZE;
 
-			_xAimScale = MainMenu.Instance.v3DigSettings.x * VoxelUtils.CHUNK_SIZE;
-			_yAimScale = MainMenu.Instance.v3DigSettings.y * VoxelUtils.CHUNK_SIZE;
-			_zAimScale = MainMenu.Instance.v3DigSettings.z * VoxelUtils.CHUNK_SIZE;
+			Globals.RailgunShape shape = _levelEditor.curVoxelsLevelChunk.aRailgunShapes [MainMenu.Instance.iSelectedRailgunMaterialIndex];
+
+			_xAimScale = shape.width * VoxelUtils.CHUNK_SIZE;
+			_yAimScale = shape.height * VoxelUtils.CHUNK_SIZE;
+			_zAimScale = shape.depth * VoxelUtils.CHUNK_SIZE;
 
 			if (_hit.normal.x != 0.0f)
 			{
@@ -481,7 +483,7 @@ namespace DragginzVoxelWorldEditor
 			else if (_hit.normal.y != 0.0f)
 			{
 				_v3AimPos.x += ((_xAimScale * 0.5f));
-				_v3AimPos.z += ((_zAimScale * 0.5f));// - VoxelUtils.CHUNK_SIZE);
+				_v3AimPos.z += ((_yAimScale * 0.5f));// - VoxelUtils.CHUNK_SIZE);
 
 				if (_hit.normal.y > 0) {
 					_v3AimPos.y += (VoxelUtils.CHUNK_SIZE - (_zAimScale * 0.5f));
