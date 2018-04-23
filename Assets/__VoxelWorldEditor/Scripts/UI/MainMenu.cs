@@ -172,15 +172,15 @@ namespace DragginzVoxelWorldEditor
 
 			if (sliderDigWidth != null) {
 				sliderDigWidth.value = sliderDigWidth.minValue = 1;
-				sliderDigWidth.maxValue = 5;
+				sliderDigWidth.maxValue = 2 / VoxelUtils.CHUNK_SIZE;
 			}
 			if (sliderDigHeight != null) {
 				sliderDigHeight.value = sliderDigHeight.minValue = 1;
-				sliderDigHeight.maxValue = 5;
+				sliderDigHeight.maxValue = 2 / VoxelUtils.CHUNK_SIZE;
 			}
 			if (sliderDigDepth != null) {
 				sliderDigDepth.value = sliderDigDepth.minValue = 1;
-				sliderDigDepth.maxValue = 5;
+				sliderDigDepth.maxValue = 2 / VoxelUtils.CHUNK_SIZE;
 			}
 
 			_lastMouseWheelUpdate = 0;

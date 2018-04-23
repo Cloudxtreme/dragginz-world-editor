@@ -6,7 +6,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace DragginzVoxelWorldEditor
+namespace VoxelChunks
 {
 	public class ConvertLevelToMesh : MonoBehaviour
     {
@@ -104,7 +104,7 @@ namespace DragginzVoxelWorldEditor
                 go.transform.parent = transform;
                 filter = go.AddComponent<MeshFilter>();
                 renderer = go.AddComponent<MeshRenderer>();
-				renderer.material = LevelEditor.Instance.aMaterials [0];// m_material;
+				//renderer.material = m_material;
                 filter.mesh = mesh;
 				go.AddComponent<MeshCollider> (); //collider = 
 

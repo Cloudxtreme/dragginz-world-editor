@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace VoxelChunks
+namespace DragginzVoxelWorldEditor
 {
     public class MarchingCubes : Marching
     {
@@ -42,9 +42,9 @@ namespace VoxelChunks
                 {
                     offset = GetOffset(cube[EdgeConnection[i, 0]], cube[EdgeConnection[i, 1]]);
 
-					EdgeVertex[i].x = 0.5f * (x + (VertexOffset[EdgeConnection[i, 0], 0] + offset * EdgeDirection[i, 0]));
-					EdgeVertex[i].y = 0.5f * (y + (VertexOffset[EdgeConnection[i, 0], 1] + offset * EdgeDirection[i, 1]));
-					EdgeVertex[i].z = 0.5f * (z + (VertexOffset[EdgeConnection[i, 0], 2] + offset * EdgeDirection[i, 2]));
+					EdgeVertex[i].x = VoxelUtils.CHUNK_SIZE * (x + (VertexOffset[EdgeConnection[i, 0], 0] + offset * EdgeDirection[i, 0]));
+					EdgeVertex[i].y = VoxelUtils.CHUNK_SIZE * (y + (VertexOffset[EdgeConnection[i, 0], 1] + offset * EdgeDirection[i, 1]));
+					EdgeVertex[i].z = VoxelUtils.CHUNK_SIZE * (z + (VertexOffset[EdgeConnection[i, 0], 2] + offset * EdgeDirection[i, 2]));
                 }
             }
 

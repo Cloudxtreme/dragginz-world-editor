@@ -62,9 +62,9 @@ namespace DragginzVoxelWorldEditor
                     break;
             }*/
 
-            if (numVertices > 60000)
+            if (numVertices > 65000)
             {
-                UnityEngine.Debug.LogError("Too many vertices!");
+				UnityEngine.Debug.LogError("Too many vertices: "+numVertices);
 				return;
             }
 

@@ -107,53 +107,55 @@ namespace DragginzVoxelWorldEditor
 
 			_aRailgunShapes = new List<Globals.RailgunShape> ();
 
+			int multiply = (int)(0.5f / VoxelUtils.CHUNK_SIZE);
+
 			//
 			// cross
 			//
-			Globals.RailgunShape shape = new Globals.RailgunShape (4, 4, 8, new List<Vector3>(), new List<Vector3>());
-			shape.pos.Add (new Vector3 (0, 1, 0));
-			shape.size.Add (new Vector3 (1, 2, 8));
-			shape.pos.Add (new Vector3 (1, 0, 0));
-			shape.size.Add (new Vector3 (2, 4, 8));
-			shape.pos.Add (new Vector3 (3, 1, 0));
-			shape.size.Add (new Vector3 (1, 2, 8));
+			Globals.RailgunShape shape = new Globals.RailgunShape (4 * multiply, 4 * multiply, 8 * multiply, new List<Vector3>(), new List<Vector3>());
+			shape.pos.Add (new Vector3 (0, 1, 0) * multiply);
+			shape.size.Add (new Vector3 (1, 2, 8) * multiply);
+			shape.pos.Add (new Vector3 (1, 0, 0) * multiply);
+			shape.size.Add (new Vector3 (2, 4, 8) * multiply);
+			shape.pos.Add (new Vector3 (3, 1, 0) * multiply);
+			shape.size.Add (new Vector3 (1, 2, 8) * multiply);
 
 			_aRailgunShapes.Add(shape);
 
 			//
 			// steps
 			//
-			shape = new Globals.RailgunShape (4, 4, 4, new List<Vector3>(), new List<Vector3>());
-			shape.pos.Add (new Vector3 (0, 0, 0));
-			shape.size.Add (new Vector3 (4, 4, 1));
-			shape.pos.Add (new Vector3 (0, 1, 1));
-			shape.size.Add (new Vector3 (4, 3, 1));
-			shape.pos.Add (new Vector3 (0, 2, 2));
-			shape.size.Add (new Vector3 (4, 2, 1));
-			shape.pos.Add (new Vector3 (0, 3, 3));
-			shape.size.Add (new Vector3 (4, 1, 1));
+			shape = new Globals.RailgunShape (4 * multiply, 4 * multiply, 4 * multiply, new List<Vector3>(), new List<Vector3>());
+			shape.pos.Add (new Vector3 (0, 0, 0) * multiply);
+			shape.size.Add (new Vector3 (4, 4, 1) * multiply);
+			shape.pos.Add (new Vector3 (0, 1, 1) * multiply);
+			shape.size.Add (new Vector3 (4, 3, 1) * multiply);
+			shape.pos.Add (new Vector3 (0, 2, 2) * multiply);
+			shape.size.Add (new Vector3 (4, 2, 1) * multiply);
+			shape.pos.Add (new Vector3 (0, 3, 3) * multiply);
+			shape.size.Add (new Vector3 (4, 1, 1) * multiply);
 
 			_aRailgunShapes.Add(shape);
 
 			//
 			// corner right
 			//
-			shape = new Globals.RailgunShape (6, 4, 6, new List<Vector3>(), new List<Vector3>());
-			shape.pos.Add (new Vector3 (0, 0, 0));
-			shape.size.Add (new Vector3 (3, 4, 6));
-			shape.pos.Add (new Vector3 (0, 0, 3));
-			shape.size.Add (new Vector3 (6, 4, 3));
+			shape = new Globals.RailgunShape (6 * multiply, 4 * multiply, 6 * multiply, new List<Vector3>(), new List<Vector3>());
+			shape.pos.Add (new Vector3 (0, 0, 0) * multiply);
+			shape.size.Add (new Vector3 (3, 4, 6) * multiply);
+			shape.pos.Add (new Vector3 (0, 0, 3) * multiply);
+			shape.size.Add (new Vector3 (6, 4, 3) * multiply);
 
 			_aRailgunShapes.Add(shape);
 
 			//
 			// corner left
 			//
-			shape = new Globals.RailgunShape (6, 4, 6, new List<Vector3>(), new List<Vector3>());
-			shape.pos.Add (new Vector3 (3, 0, 0));
-			shape.size.Add (new Vector3 (3, 4, 6));
-			shape.pos.Add (new Vector3 (0, 0, 3));
-			shape.size.Add (new Vector3 (6, 4, 3));
+			shape = new Globals.RailgunShape (6 * multiply, 4 * multiply, 6 * multiply, new List<Vector3>(), new List<Vector3>());
+			shape.pos.Add (new Vector3 (3, 0, 0) * multiply);
+			shape.size.Add (new Vector3 (3, 4, 6) * multiply);
+			shape.pos.Add (new Vector3 (0, 0, 3) * multiply);
+			shape.size.Add (new Vector3 (6, 4, 3) * multiply);
 
 			_aRailgunShapes.Add(shape);
 
@@ -223,16 +225,56 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		private void createDefaultLevel()
 		{
-			// create the full chunk voxel
 			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int(Vector3.zero);
-			VoxelUtils.VoxelChunk vc = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
-			_aVoxelChunks.Add (vc);
+			VoxelUtils.VoxelChunk vc;
 
-			if (_isExperimentalChunk) {
+			if (_isExperimentalChunk)
+			{
+				// create the full chunk voxel
+				vc  = createVoxelChunk(pos, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS);
+				_aVoxelChunks.Add (vc);
 				setVoxelChunkMesh (vc);
-			} else {
+			}
+			else
+			{
+				int half = VoxelUtils.MAX_CHUNK_UNITS / 2;
+
+				vc = createVoxelChunk(pos, half, half, half);
+				_aVoxelChunks.Add (vc);
+
+				pos.z += half;
+				vc = createVoxelChunk(pos, half, half, half);
+				_aVoxelChunks.Add (vc);
+
+				pos.x += half;
+				vc = createVoxelChunk(pos, half, half, half);
+				_aVoxelChunks.Add (vc);
+
+				pos.z = 0;
+				vc = createVoxelChunk(pos, half, half, half);
+				_aVoxelChunks.Add (vc);
+
+				pos.x = 0;
+				pos.y += half;
+
+				vc = createVoxelChunk(pos, half, half, half);
+				_aVoxelChunks.Add (vc);
+
+				pos.z += half;
+				vc = createVoxelChunk(pos, half, half, half);
+				_aVoxelChunks.Add (vc);
+
+				pos.x += half;
+				vc = createVoxelChunk(pos, half, half, half);
+				_aVoxelChunks.Add (vc);
+
+				pos.z = 0;
+				vc = createVoxelChunk(pos, half, half, half);
+				_aVoxelChunks.Add (vc);
+
 				// create room in center of level
-				subtractChunk (new Vector3 (32, 34, 32), new Vector3 (8, 4, 8));
+				//subtractChunk (new Vector3 (32, 34, 32), new Vector3 (8, 4, 8));
+				subtractChunk (new Vector3 (64, 68, 64), new Vector3 (16, 8, 16));
 			}
 		}
 

@@ -20,8 +20,8 @@ namespace DragginzVoxelWorldEditor
 		static public readonly uint RIGHT_BOT_FRONT = 6;
 		static public readonly uint RIGHT_BOT_BACK  = 7;
 
-		static public readonly int   MAX_CHUNK_UNITS = 72;
-		static public readonly float CHUNK_SIZE = 0.5f;
+		static public readonly int   MAX_CHUNK_UNITS = 144;
+		static public readonly float CHUNK_SIZE = 0.25f;
 
 		public enum MARCHING_MODE { CUBES, TETRAHEDRON };
 
