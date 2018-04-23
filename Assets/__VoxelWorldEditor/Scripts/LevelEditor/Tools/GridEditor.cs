@@ -39,7 +39,7 @@ namespace DragginzVoxelWorldEditor
 		public Material matTransparent;
 
 		private int gridDimension = 36;
-		private float cubeScale = 2.0f;
+		private float cubeScale   = 2f;
 
 		//
 

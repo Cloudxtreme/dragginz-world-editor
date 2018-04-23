@@ -31,6 +31,7 @@ namespace DragginzVoxelWorldEditor
         public Transform panelFileMenu;
 		public Transform panelLevelMenu;
 		public Transform panelExperimentalMenu;
+		public Transform panelLevelMap;
         public Transform blocker;
         public Transform panelPopup;
 
@@ -291,6 +292,7 @@ namespace DragginzVoxelWorldEditor
 			panelFileMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 			panelLevelMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 			panelExperimentalMenu.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
+			panelLevelMap.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
 
 			_txtPanelFile.color = (AppController.Instance.editorIsInOfflineMode ? Color.black : Color.gray);
 			_trfmDropDownFile.interactable = AppController.Instance.editorIsInOfflineMode;

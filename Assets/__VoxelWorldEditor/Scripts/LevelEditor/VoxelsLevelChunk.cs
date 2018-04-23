@@ -42,6 +42,7 @@ namespace DragginzVoxelWorldEditor
 		// Experimental
 		private bool _isExperimentalChunk;
 		private List<Globals.RailgunShape> _aRailgunShapes;
+		private LevelMap _levelMap;
 
 		#region Getters
 
@@ -102,6 +103,8 @@ namespace DragginzVoxelWorldEditor
 			// Experimental
 
 			_isExperimentalChunk = isExperimental;
+			_levelMap = LevelMap.Instance;
+
 			_aRailgunShapes = new List<Globals.RailgunShape> ();
 
 			//
@@ -170,6 +173,8 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public void reset()
 		{
+			_levelMap.reset ();
+
 			foreach (Transform child in _trfmVoxels) {
 				Destroy (child.gameObject);
 			}
@@ -463,6 +468,8 @@ namespace DragginzVoxelWorldEditor
 
 			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int (v3Pos);
 			VoxelUtils.VoxelChunk vsCut = createCutVoxelChunk(pos, (int)v3Size.x, (int)v3Size.y, (int)v3Size.z);
+
+			_levelMap.addCube (pos, new Vector3 ((int)v3Size.x, (int)v3Size.y, (int)v3Size.z));
 
 			// does the new voxel intersect with any existing voxels?
 			bool splittage = splitVoxels (vsCut);

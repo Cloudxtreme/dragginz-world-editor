@@ -1,14 +1,14 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\__VoxelWorldEditor\Scripts\LevelEditor\VoxelsLevelChunk.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\__VoxelWorldEditor\Scripts\LevelEditor\LevelEditor.cs">
     <Files>
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\Core\Globals.cs" Line="16" Column="63" />
+      <File FileName="Assets\__VoxelWorldEditor\Scripts\Core\Globals.cs" Line="1" Column="1" />
       <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\LevelEditor.cs" Line="1" Column="1" />
       <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\Tools\GridEditor.cs" Line="1" Column="1" />
       <File FileName="Assets\__VoxelWorldEditor\Scripts\UI\MainMenu.cs" Line="1" Column="1" />
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\VoxelsLevelChunk.cs" Line="153" Column="34" />
+      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\VoxelsLevelChunk.cs" Line="1" Column="1" />
       <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\Tools\EditorToolRailgun.cs" Line="1" Column="1" />
-      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\Tools\EditorTool.cs" Line="486" Column="24" />
+      <File FileName="Assets\__VoxelWorldEditor\Scripts\LevelEditor\Tools\EditorTool.cs" Line="1" Column="1" />
       <File FileName="Assets\__VoxelWorldEditor\Scripts\UI\UISelectionBox.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
