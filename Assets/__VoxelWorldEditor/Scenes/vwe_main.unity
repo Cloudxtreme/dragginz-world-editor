@@ -335,7 +335,7 @@ MonoBehaviour:
   propAim: {fileID: 1300222925}
   materialEdge: {fileID: 2100000, guid: 275e6cacae73cdf4f809cc7d5b0a7d02, type: 2}
   materialsWalls:
-  - {fileID: 2100000, guid: ead5794ecc9a7aa4b88bd582fb5a074f, type: 2}
+  - {fileID: 2100000, guid: 0fb21c4ada98b784d91cbf082690c2fd, type: 2}
   - {fileID: 2100000, guid: b849a9d6b4301e34fa19a994565f07a8, type: 2}
   _GridEditorExperimental: {fileID: 75932458}
 --- !u!1 &376538517
@@ -775,7 +775,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 710396287}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -100, y: -100, z: -100}
+  m_LocalPosition: {x: -200, y: -200, z: -200}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1930465546}
@@ -877,7 +877,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 788402746}
   m_LocalRotation: {x: 0.3387374, y: -0.3476317, z: 0.16104296, w: 0.8593453}
-  m_LocalPosition: {x: 25.5, y: 27.2, z: 10.3}
+  m_LocalPosition: {x: 38.32, y: 47.45, z: -6.69}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 710396289}
@@ -1436,13 +1436,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1760896438}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: -0.258819, z: 0, w: 0.9659259}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 75932457}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -30, z: 0}
 --- !u!1001 &1772700433
 Prefab:
   m_ObjectHideFlags: 0

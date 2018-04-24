@@ -29,13 +29,16 @@ namespace DragginzVoxelWorldEditor
 	public enum PopupMode {
 		Notification,
 		Confirmation,
-		Input
+		Input,
+		Overlay
 	};
 
 	//
     public class AppController : MonoSingletonBase<AppController>
     {
 		private bool _editorIsInOfflineMode;
+
+		private LevelEditor _levelEditor;
 
         private AppState _appState;
 
@@ -63,6 +66,8 @@ namespace DragginzVoxelWorldEditor
 
 			_editorIsInOfflineMode = true;
 
+			_levelEditor = LevelEditor.Instance;
+
 			_appState = AppState.Null;
         }
 
@@ -82,8 +87,11 @@ namespace DragginzVoxelWorldEditor
 
 			if (_appState == AppState.Splash) {
 				//
-			} else if (_appState != AppState.Null) {
-				LevelEditor.Instance.customUpdateCheckControls (time, timeDelta);
+			} else if (_appState == AppState.Play) {
+				_levelEditor.customPlayUpdateCheckControls (time, timeDelta);
+			}
+			else if (_appState != AppState.Null) {
+				_levelEditor.customUpdateCheckControls (time, timeDelta);
 			}
         }
 
@@ -92,8 +100,11 @@ namespace DragginzVoxelWorldEditor
 		{
 			if (_appState == AppState.Splash) {
 				//
-			} else {
-				LevelEditor.Instance.customUpdate (time, timeDelta);
+			} else if (_appState == AppState.Play) {
+				_levelEditor.customPlayUpdate (time, timeDelta);
+			}
+			else {
+				_levelEditor.customUpdate (time, timeDelta);
 			}
 		}
 

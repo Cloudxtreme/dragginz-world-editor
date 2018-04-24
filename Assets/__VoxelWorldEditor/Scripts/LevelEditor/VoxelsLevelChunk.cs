@@ -115,8 +115,12 @@ namespace DragginzVoxelWorldEditor
 			Globals.RailgunShape shape = new Globals.RailgunShape (4 * multiply, 4 * multiply, 8 * multiply, new List<Vector3>(), new List<Vector3>());
 			shape.pos.Add (new Vector3 (0, 1, 0) * multiply);
 			shape.size.Add (new Vector3 (1, 2, 8) * multiply);
+			shape.pos.Add (new Vector3 (0.5f, 0.5f, 0) * multiply);
+			shape.size.Add (new Vector3 (1, 3, 8) * multiply);
 			shape.pos.Add (new Vector3 (1, 0, 0) * multiply);
 			shape.size.Add (new Vector3 (2, 4, 8) * multiply);
+			shape.pos.Add (new Vector3 (2.5f, 0.5f, 0) * multiply);
+			shape.size.Add (new Vector3 (1, 3, 8) * multiply);
 			shape.pos.Add (new Vector3 (3, 1, 0) * multiply);
 			shape.size.Add (new Vector3 (1, 2, 8) * multiply);
 
@@ -173,9 +177,11 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		// ---------------------------------------------------------------------------------------------
-		public void reset()
+		public void reset(bool resetMap = true)
 		{
-			_levelMap.reset ();
+			if (resetMap) {
+				_levelMap.reset ();
+			}
 
 			foreach (Transform child in _trfmVoxels) {
 				Destroy (child.gameObject);
@@ -209,7 +215,7 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public void setVoxelsData(List<VoxelUtils.VoxelChunk> aVoxelsData)
 		{
-			reset ();
+			reset (false);
 
 			VoxelUtils.VoxelChunk vc;
 			int i, len = aVoxelsData.Count;
@@ -511,7 +517,9 @@ namespace DragginzVoxelWorldEditor
 			VoxelUtils.VoxelVector3Int pos = VoxelUtils.convertVector3ToVoxelVector3Int (v3Pos);
 			VoxelUtils.VoxelChunk vsCut = createCutVoxelChunk(pos, (int)v3Size.x, (int)v3Size.y, (int)v3Size.z);
 
-			_levelMap.addCube (pos, new Vector3 ((int)v3Size.x, (int)v3Size.y, (int)v3Size.z));
+			//if (!_isExperimentalChunk) {
+				_levelMap.addCube (pos, new Vector3 ((int)v3Size.x, (int)v3Size.y, (int)v3Size.z));
+			//}
 
 			// does the new voxel intersect with any existing voxels?
 			bool splittage = splitVoxels (vsCut);

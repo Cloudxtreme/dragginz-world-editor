@@ -3,8 +3,10 @@
 // Company : Decentralised Team of Developers
 //
 
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+
+using UnityEngine;
 
 namespace DragginzVoxelWorldEditor
 {
@@ -14,10 +16,19 @@ namespace DragginzVoxelWorldEditor
 
 		public VoxelUtils.MARCHING_MODE mode = VoxelUtils.MARCHING_MODE.CUBES;
 
-        public int seed = 0;
+        private int seed = 0;
+		private int width, height, depth;
+		private float[] voxels;
+		private Vector3 pos;
 
-        List<GameObject> meshes = new List<GameObject>();
+		private Marching marching;
 
+		private List<Vector3> verts;
+		private List<int> indices;
+
+        private List<GameObject> meshes = new List<GameObject>();
+
+		//
 		public void resetAll()
 		{
 			int i, len = meshes.Count;
@@ -28,40 +39,51 @@ namespace DragginzVoxelWorldEditor
 			meshes.Clear();
 		}
 
-		public void create(int width, int height, int depth, float[] voxels, Vector3 pos)
-        {
+		//
+		public void setData(int w, int h, int d, float[] v, Vector3 p)
+		{
 			resetAll ();
 
 			seed = (int)(Time.time * 10f);
 
-			//Debug.Log ("seed: " + seed);
-			//Debug.Log ("w, h, d: " + width + ", " + height + ", " + depth);
-			//Debug.Log ("voxels: " + voxels.Length + " - pos: " + pos);
+			width = w;
+			height = h;
+			depth = d;
+			voxels = v;
+			pos = p;
 
-            // Set the mode used to create the mesh.
-            // Cubes is faster and creates less verts, tetrahedrons is slower and creates more verts but better represents the mesh surface.
-            Marching marching = null;
+			// Set the mode used to create the mesh.
+			// Cubes is faster and creates less verts, tetrahedrons is slower and creates more verts but better represents the mesh surface.
+			marching = null;
 			if (mode == VoxelUtils.MARCHING_MODE.TETRAHEDRON) {
 				marching = new MarchingTertrahedron ();
 			} else {
 				marching = new MarchingCubes ();
 			}
 
-            // Surface is the value that represents the surface of mesh
-            // For example the perlin noise has a range of -1 to 1 so the mid point is where we want the surface to cut through.
-            // The target value does not have to be the mid point it can be any value with in the range.
-            marching.Surface = 0.0f;
+			// Surface is the value that represents the surface of mesh
+			// For example the perlin noise has a range of -1 to 1 so the mid point is where we want the surface to cut through.
+			// The target value does not have to be the mid point it can be any value with in the range.
+			marching.Surface = 0.0f;
 
-            List<Vector3> verts = new List<Vector3>();
-            List<int> indices = new List<int>();
+			verts = new List<Vector3>();
+			indices = new List<int>();
+		}
 
-            // The mesh produced is not optimal. There is one vert for each index.
-            // Would need to weld vertices for better quality mesh.
-			marching.Generate(voxels, width, height, depth, verts, indices);
+		//
+		public void march()
+		{
+			// The mesh produced is not optimal. There is one vert for each index.
+			// Would need to weld vertices for better quality mesh.
+			float timer = Time.realtimeSinceStartup;
+			marching.Generate (voxels, width, height, depth, verts, indices);
+			Debug.LogWarning ("Time to run marching cubes: " + (Time.realtimeSinceStartup - timer).ToString ());
+		}
 
+		public void split()
+		{
             // A mesh in unity can only be made up of 65000 verts.
             // Need to split the verts between multiple meshes.
-
             int maxVertsPerMesh = 30000; //must be divisible by 3, ie 3 verts == 1 triangle
             int numMeshes = verts.Count / maxVertsPerMesh + 1;
 
@@ -73,6 +95,7 @@ namespace DragginzVoxelWorldEditor
 			MeshFilter filter;
 			//MeshCollider collider;
 
+			float timer = Time.realtimeSinceStartup;
 			int i, j, idx;
             for (i = 0; i < numMeshes; i++)
             {
@@ -116,6 +139,7 @@ namespace DragginzVoxelWorldEditor
 				splitIndices.Clear ();
 				//splitUVs.Clear ();
             }
+			Debug.LogWarning ("Time to split mesh data: " + (Time.realtimeSinceStartup - timer).ToString ());
         }
     }
 }

@@ -17,6 +17,7 @@ namespace DragginzVoxelWorldEditor
         public GameObject blocker;
         public Text txtHeader;
         public Text txtMessage;
+		public Text txtOverlayMessage;
 
 		public Text txtInputCaption;
 		public Text txtInputPlaceHolder;
@@ -50,11 +51,20 @@ namespace DragginzVoxelWorldEditor
 
 			//EditorGizmoSystem.Instance.TurnOffGizmos ();
 
-            if (txtHeader) {
+			txtHeader.text         = "";
+			txtMessage.text        ="";
+			txtOverlayMessage.text = "";
+
+			if (header != null) {
                 txtHeader.text = header;
             }
-            if (txtMessage) {
-                txtMessage.text = message;
+
+			if (message != null) {
+				if (mode == PopupMode.Overlay) {
+					setOverlayText (message);
+				} else {
+					txtMessage.text = message;
+				}
             }
 
 			txtInputCaption.text = "";
@@ -63,6 +73,7 @@ namespace DragginzVoxelWorldEditor
             showButton(btnOkay, false);
             showButton(btnYes, false);
             showButton(btnNo, false);
+
             if (mode == PopupMode.Confirmation) {
                 showButton(btnYes, true);
                 showButton(btnNo, true);
@@ -74,6 +85,9 @@ namespace DragginzVoxelWorldEditor
             else if (mode == PopupMode.Notification) {
                 showButton(btnOkay, true);
             }
+			else if (mode == PopupMode.Overlay) {
+				//
+			}
 
             _callback = callback;
             if (blocker) {
@@ -113,6 +127,12 @@ namespace DragginzVoxelWorldEditor
 		public bool isVisible()
 		{
 			return (gameObject.activeSelf);
+		}
+
+		//
+		public void setOverlayText (string message)
+		{
+			txtOverlayMessage.text = message;
 		}
 
         //

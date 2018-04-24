@@ -1,4 +1,5 @@
-﻿//
+﻿
+//
 // Author  : Oliver Brodhage
 // Company : Decentralised Team of Developers
 //
@@ -66,13 +67,8 @@ namespace DragginzVoxelWorldEditor
 		private bool _gridIsOn;
 		private bool _randomGridHasBeenCreated;
 
-		#region Getters
-
-		/*public Vector3 v3CurPos {
-			get { return _v3CurPos; }
-		}*/
-
-		#endregion
+		private bool _threadRunning;
+		private bool _threadComplete;
 
 		// ---------------------------------------------------------------------------------------------
 		// Init shit
@@ -84,21 +80,21 @@ namespace DragginzVoxelWorldEditor
 			voxelsLevelChunk.init (voxelChunkContainer, true); // true = _isExperimentalChunk
 			voxelChunkContainer.SetActive (false);
 
+			_threadRunning = false;
+			_threadComplete = true;
+
 			gameObject.SetActive (false);
 		}
 
 		// ---------------------------------------------------------------------------------------------
 		public void activate(bool state)
 		{
-			resetAll ();
-
-			//camMain.gameObject.SetActive (!state);
-
 			if (!state) {
 				gameObject.SetActive (false);
 				return;
 			}
 
+			resetAll ();
 			gameObject.SetActive (true);
 
 			txtHelp.text  = "Set player starting position with keys a, d, w, s, q, e";
@@ -117,6 +113,7 @@ namespace DragginzVoxelWorldEditor
 			_goPlayer.name = "Player";
 			_goPlayer.transform.SetParent (gridContainer.transform);
 			_goPlayer.transform.localScale = new Vector3 (cubeScale, cubeScale, cubeScale) * 1.01f;
+			_goPlayer.transform.localRotation = Quaternion.identity;
 
 			movePos (0, 0, 0); // force player positioning
 
@@ -159,6 +156,17 @@ namespace DragginzVoxelWorldEditor
 		// Update shit
 		// ---------------------------------------------------------------------------------------------
 		void Update () {
+
+			if (_threadRunning)
+			{
+				if (_threadComplete){
+					_threadRunning = false;
+					//setAllCubes ();
+					AppController.Instance.hidePopup ();
+				}
+
+				return;
+			}
 
 			if (Input.GetMouseButtonDown (0))
 			{
@@ -208,7 +216,7 @@ namespace DragginzVoxelWorldEditor
 		{
 			voxelsLevelChunk.trfmVoxels.gameObject.SetActive (true);
 
-			butToggleGrid.gameObject.SetActive (true);
+			butToggleGrid.gameObject.SetActive (false); // true
 			butCreateRandom.gameObject.SetActive (true);
 
 			butResetGrid.gameObject.SetActive (_randomGridHasBeenCreated);
@@ -268,9 +276,7 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		private void createCubeGrid()
 		{
-			// center gridCubes container
-			float half = (float)gridDimension * 0.5f;
-			//gridContainer.transform.position = new Vector3 (-half, -half, -half);
+			//float half = (float)gridDimension * 0.5f;
 
 			// create grid of cubes
 			int endCorner = _numCubesPerAxis - 1;
@@ -280,11 +286,6 @@ namespace DragginzVoxelWorldEditor
 					for (z = 0; z < _numCubesPerAxis; ++z) {
 
 						GridCube gc = new GridCube ();
-						gc.go = Instantiate (prefabCube);
-						gc.go.name = "x" + x.ToString () + "-" + "y" + y.ToString () + "-" + "z" + z.ToString ();
-						gc.go.transform.SetParent (gridContainer.transform);
-						gc.go.transform.localScale    = new Vector3 (cubeScale, cubeScale, cubeScale);
-						gc.go.transform.localPosition = new Vector3 (-half + x * cubeScale, -half + y * cubeScale, -half + z * cubeScale);
 
 						gc.x = x;
 						gc.y = y;
@@ -314,12 +315,37 @@ namespace DragginzVoxelWorldEditor
 							}
 						}
 
+						if (gc.isCorner) {
+							createCubeGameObject (x, y, z);
+						}
+
 						_aGridCubes [x, y, z] = gc;
 
 						setMaterial (gc);
 					}
 				}
 			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void createCubeGameObject(int x, int y, int z)
+		{
+			if (_aGridCubes [x, y, z].go != null) {
+				return;
+			}
+
+			float half = (float)gridDimension * 0.5f;
+
+			GridCube gc = _aGridCubes [x, y, z];
+
+			gc.go = Instantiate (prefabCube);
+			gc.go.name = "x" + x.ToString () + "-" + "y" + y.ToString () + "-" + "z" + z.ToString ();
+			gc.go.transform.SetParent (gridContainer.transform);
+			gc.go.transform.localScale    = new Vector3 (cubeScale, cubeScale, cubeScale);
+			gc.go.transform.localPosition = new Vector3 (-half + x * cubeScale, -half + y * cubeScale, -half + z * cubeScale);
+			gc.go.transform.localRotation = Quaternion.identity;
+
+			_aGridCubes [x, y, z] = gc;
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -415,6 +441,8 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		// ---------------------------------------------------------------------------------------------
+		//
+		// ---------------------------------------------------------------------------------------------
 		private void createRandomLevel()
 		{
 			resetGrid ();
@@ -423,6 +451,15 @@ namespace DragginzVoxelWorldEditor
 
 			Random.InitState ((int)(Time.time * 10f));
 
+			_threadRunning = true;
+			_threadComplete = false;
+
+			StartCoroutine ("workerCreateRandomLevel");
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		IEnumerator workerCreateRandomLevel()
+		{
 			int minCells = _numCubesPerAxis * 4;
 			int maxCells = Random.Range(minCells, (minCells * 8));
 			int numCells = 0;
@@ -432,13 +469,17 @@ namespace DragginzVoxelWorldEditor
 			Vector3 v3Pos = _v3CurPos;
 			Vector3 v3Dir = Vector3.zero;
 
-			voxelsLevelChunk.subtractChunk (new Vector3 ((int)(v3Pos.x * 4), (int)(v3Pos.y * 4), (int)(v3Pos.z * 4)), new Vector3 (4, 4, 4));
+			float multiply = cubeScale / VoxelUtils.CHUNK_SIZE;
 
-			int[] aDirs = new int[]{0,1,2,2,3,3,4,5};
+			voxelsLevelChunk.subtractChunk (new Vector3 ((int)(v3Pos.x * multiply), (int)(v3Pos.y * multiply), (int)(v3Pos.z * multiply)), new Vector3 (multiply, multiply, multiply));
+
+			int[] aDirs = new int[]{0,1,2,3,2,3,2,3,4,5};
 			int lenDirs = aDirs.Length;
 
 			bool lastMoveWasY = false;
 			GridCube gc;
+
+			int threadLoopCounter = 0;
 			while (numCells < maxCells) {
 
 				// change direction?
@@ -474,10 +515,10 @@ namespace DragginzVoxelWorldEditor
 				}
 
 				if (v3Dir.y != 0) {
-					len = Random.Range (1, 3);
+					len = Random.Range (1, 2);
 					lastMoveWasY = true;
 				} else {
-					len = Random.Range (1, (int)(_numCubesPerAxis / 2));
+					len = Random.Range (4, (int)(_numCubesPerAxis / 2));
 				}
 
 				bool moved;
@@ -512,6 +553,8 @@ namespace DragginzVoxelWorldEditor
 
 					if (moved) {
 
+						createCubeGameObject ((int)v3Pos.x, (int)v3Pos.y, (int)v3Pos.z);
+
 						gc = _aGridCubes [(int)v3Pos.x, (int)v3Pos.y, (int)v3Pos.z];
 						if (!gc.isSet && gc.go != null) {
 							
@@ -522,13 +565,42 @@ namespace DragginzVoxelWorldEditor
 
 							numCells++;
 
-							voxelsLevelChunk.subtractChunk (new Vector3 ((int)(v3Pos.x * 4), (int)(v3Pos.y * 4), (int)(v3Pos.z * 4)), new Vector3 (4, 4, 4));
+							voxelsLevelChunk.subtractChunk (new Vector3 ((int)(v3Pos.x * multiply), (int)(v3Pos.y * multiply), (int)(v3Pos.z * multiply)), new Vector3 (multiply, multiply, multiply));
+
+							MainMenu.Instance.popup.setOverlayText ("Creating random level\n"+((float)numCells / (float)maxCells * 100).ToString("F0")+"%");
+
+							if (++threadLoopCounter > 4) {
+								threadLoopCounter = 0;
+								yield return new WaitForEndOfFrame ();
+							}
+						}
+					}
+				}
+			}
+
+			_threadComplete = true;
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void setAllCubes()
+		{
+			int x, y, z;
+
+			for (x = 0; x < _numCubesPerAxis; ++x) {
+				for (y = 0; y < _numCubesPerAxis; ++y) {
+					for (z = 0; z < _numCubesPerAxis; ++z) {
+
+						if (_aGridCubes [x, y, z].isSet) {
+							createCubeGameObject (x, y, z);
+							setMaterial (_aGridCubes [x, y, z]);
 						}
 					}
 				}
 			}
 		}
 
+		// ---------------------------------------------------------------------------------------------
+		//
 		// ---------------------------------------------------------------------------------------------
 		private void resetGrid()
 		{
@@ -543,17 +615,23 @@ namespace DragginzVoxelWorldEditor
 					for (z = 0; z < _numCubesPerAxis; ++z) {
 
 						gc = _aGridCubes [x, y, z];
+
 						if (x == (int)_v3StartPos.x && y == (int)_v3StartPos.y && z == (int)_v3StartPos.z) {
 							gc.isSet = true;
 						} else {
 							gc.isSet = false;
 						}
-						_aGridCubes [x, y, z] = gc;
 
 						if (gc.go != null) {
-							setMaterial (gc);
-							gc.go.SetActive (gc.isCorner || gc.isSet || _gridIsOn);
+							if (!gc.isCorner) {
+								Destroy (gc.go);
+								gc.go = null;
+							}
+							//setMaterial (gc);
+							//gc.go.SetActive (gc.isCorner || gc.isSet || _gridIsOn);
 						}
+
+						_aGridCubes [x, y, z] = gc;
 					}
 				}
 			}
@@ -572,6 +650,8 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public void onCreateRandomClick()
 		{
+			AppController.Instance.showPopup (PopupMode.Overlay, null, "Creating random level");
+
 			//float timer = Time.realtimeSinceStartup;
 			createRandomLevel ();
 			//Debug.Log ("Time to create random level: " + (Time.realtimeSinceStartup - timer).ToString ("F2"));

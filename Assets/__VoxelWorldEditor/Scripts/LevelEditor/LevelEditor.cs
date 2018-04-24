@@ -94,6 +94,8 @@ namespace DragginzVoxelWorldEditor
         private int _numCubes;
 
 		private bool _isInitialised;
+		private bool _createLevelMeshesRunning;
+		private bool _createLevelMeshesComplete;
 
 		#region Getters
 
@@ -153,6 +155,9 @@ namespace DragginzVoxelWorldEditor
 		{
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
+
+			_createLevelMeshesRunning = false;
+			_createLevelMeshesComplete = true;
 
 			_isInitialised = false;
 
@@ -473,6 +478,16 @@ namespace DragginzVoxelWorldEditor
 			}
 		}
 
+		//
+		public void customPlayUpdateCheckControls(float time, float timeDelta)
+		{
+			if (Input.GetKeyDown (KeyCode.Escape)) {
+				if (AppController.Instance.appState != AppState.Select) {
+					setMode (AppState.Select);
+				}
+			}
+		}
+
 		// LateUpdate call
 		public void customUpdate(float time, float timeDelta)
 		{
@@ -483,6 +498,23 @@ namespace DragginzVoxelWorldEditor
 			if (time > _nextDistanceUpdate) {
 				_nextDistanceUpdate = time + 1.0f;
 				checkLevelChunkDistances ();
+			}
+		}
+
+		public void customPlayUpdate(float time, float timeDelta)
+		{
+			if (!_createLevelMeshesRunning && !_createLevelMeshesComplete) {
+
+				_createLevelMeshesRunning = true;
+
+				StartCoroutine ("createLevelMeshes");
+			}
+
+			if (_createLevelMeshesRunning && _createLevelMeshesComplete) {
+
+				AppController.Instance.hidePopup ();
+
+				_createLevelMeshesRunning = false;
 			}
 		}
 
@@ -581,7 +613,11 @@ namespace DragginzVoxelWorldEditor
 			else if (mode == AppState.Play)
 			{
 				resetCamToStartPos (false); // don't go back to starting pos
-				createLevelMeshes ();
+
+				_createLevelMeshesRunning = false;
+				_createLevelMeshesComplete = false;
+
+				AppController.Instance.showPopup (PopupMode.Overlay, null, "Creating level meshes\n0%");
 			}
 			else if (mode == AppState.Select)
 			{
@@ -640,7 +676,7 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		//
-		private void createLevelMeshes()
+		IEnumerator createLevelMeshes()
 		{
 			string goName = "[Offline_Chunk_Meshes]";
 			GameObject goMesh;
@@ -656,13 +692,35 @@ namespace DragginzVoxelWorldEditor
 				goMesh = trfmMesh.gameObject;
 			}
 
-			float timer = Time.realtimeSinceStartup;
+			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n1%");
+			yield return new WaitForEndOfFrame ();
+
 			float[] voxels = _curVoxelsLevelChunk.convertChunksToVoxels ();
+			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n5%");
+			yield return new WaitForEndOfFrame ();
+
 			ConvertLevelToMesh converter = goMesh.GetComponent<ConvertLevelToMesh> ();
-			converter.create (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero);
-			Debug.LogWarning ("Time run marching cubes: " + (Time.realtimeSinceStartup - timer).ToString ());
+			converter.setData (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero);
+			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n10%");
+			yield return new WaitForEndOfFrame ();
+
+			converter.march ();
+			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n40%");
+			yield return new WaitForEndOfFrame ();
+
+			converter.split ();
+			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n80%");
+			yield return new WaitForEndOfFrame ();
 
 			_curVoxelsLevelChunk.trfmProps.SetParent(trfmMesh.Find("propsContainer"));
+
+			levelMeshCreationComplete ();
+		}
+
+		//
+		public void levelMeshCreationComplete()
+		{
+			_createLevelMeshesComplete = true;
 		}
 
 		//
