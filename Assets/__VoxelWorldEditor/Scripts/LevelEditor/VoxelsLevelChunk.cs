@@ -448,10 +448,10 @@ namespace DragginzVoxelWorldEditor
 			int numVoxels = voxels.Length;
 
 			VoxelUtils.VoxelChunk vc;
-			int x, y, z, index;
+			int i, x, y, z, index;
 			int maxX, maxY, maxZ;
 
-			int i;
+			// be default all cells are outside
 			for (i = 0; i < numVoxels; ++i) {
 				voxels [i] = -1;
 			}
@@ -459,6 +459,53 @@ namespace DragginzVoxelWorldEditor
 			int size2 = size * size;
 			int ySize;
 			int len = _aVoxelChunks.Count;
+
+			// mark all voxel chunks
+			for (i = 0; i < len; ++i) {
+
+				vc = _aVoxelChunks [i];
+
+				maxX = (vc.corners.bot_left_front.x + vc.size.x) - 1;
+				maxY = (vc.corners.bot_left_front.y + vc.size.y) - 1;
+				maxZ = (vc.corners.bot_left_front.z + vc.size.z) - 1;
+
+				for (x = vc.corners.bot_left_front.x; x <= maxX; ++x) {
+					for (y = vc.corners.bot_left_front.y; y <= maxY; ++y) {
+						ySize = y * size;
+						for (z = vc.corners.bot_left_front.z; z <= maxZ; ++z) {
+
+							index = x + ySize + z * size2;
+							voxels [index] = 0;
+						}
+					}
+				}
+			}
+
+			// set walls around outside areas
+			for (x = 0; x < size; ++x) {
+				for (y = 0; y < size; ++y) {
+					ySize = y * size;
+					for (z = 0; z < size; ++z) {
+
+						index = x + ySize + z * size2;
+
+						// checked if any neighbors of this cells contain a voxel chunk
+						if (voxels [index] == -1) {
+
+							setNeighbourWalls (voxels, size, x, y, z);
+						}
+					}
+				}
+			}
+
+			// unset inside areas
+			for (i = 0; i < numVoxels; ++i) {
+				if (voxels [i] == 0) {
+					//voxels [i] = -1;
+				}
+			}
+
+			/*
 			for (i = 0; i < len; ++i) {
 	
 				vc = _aVoxelChunks [i];
@@ -467,10 +514,10 @@ namespace DragginzVoxelWorldEditor
 				maxY = (vc.corners.bot_left_front.y + vc.size.y) - 1;
 				maxZ = (vc.corners.bot_left_front.z + vc.size.z) - 1;
 
-				for (x = vc.corners.bot_left_front.x; x <= maxX; x++) {
-					for (y = vc.corners.bot_left_front.y; y <= maxY; y++) {
+				for (x = vc.corners.bot_left_front.x; x <= maxX; ++x) {
+					for (y = vc.corners.bot_left_front.y; y <= maxY; ++y) {
 						ySize = y * size;
-						for (z = vc.corners.bot_left_front.z; z <= maxZ; z++) {
+						for (z = vc.corners.bot_left_front.z; z <= maxZ; ++z) {
 
 							index = x + ySize + z * size2;
 
@@ -482,20 +529,63 @@ namespace DragginzVoxelWorldEditor
 							}
 							else
 							{
-								voxels [index] = 1 - Random.value;//-1 + Random.value;
+								voxels [index] = 1 - Random.value;
 							}
 						}
 					}
 				}
 			}
-
-			/*for (i = 0; i < numVoxels; ++i) {
-				if (voxels [i] == 0) {
-					voxels [i] = -1.0f + Random.value * 2.0f;
-				}
-			}*/
+			*/
 
 			return voxels;
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void setNeighbourWalls(float[] voxels, int size, int x, int y, int z)
+		{
+			int index;
+
+			if (x > 0) {
+				index = (x-1) + y * size + z * size * size;
+				if (voxels[index] == 0) {
+					voxels [index] = 1 - Random.value;
+				}
+			}
+
+			if (x < (size - 1)) {
+				index = (x+1) + y * size + z * size * size;
+				if (voxels[index] == 0) {
+					voxels [index] = 1 - Random.value;
+				}
+			}
+
+			if (y > 0) {
+				index = x + (y-1) * size + z * size * size;
+				if (voxels[index] == 0) {
+					voxels [index] = 1 - Random.value;
+				}
+			}
+
+			if (y < (size - 1)) {
+				index = x + (y+1) * size + z * size * size;
+				if (voxels[index] == 0) {
+					voxels [index] = 1 - Random.value;
+				}
+			}
+
+			if (z > 0) {
+				index = x + y * size + (z-1) * size * size;
+				if (voxels[index] == 0) {
+					voxels [index] = 1 - Random.value;
+				}
+			}
+
+			if (z < (size - 1)) {
+				index = x + y * size + (z+1) * size * size;
+				if (voxels[index] == 0) {
+					voxels [index] = 1 - Random.value;
+				}
+			}
 		}
 
 		// ---------------------------------------------------------------------------------------------

@@ -515,6 +515,15 @@ namespace DragginzVoxelWorldEditor
 				AppController.Instance.hidePopup ();
 
 				_createLevelMeshesRunning = false;
+
+				activateCorrectPlayer ();
+				resetCamToStartPos (false); // don't go back to starting pos
+
+				GameObject sphere = GameObject.Find ("TestSphere");
+				if (sphere) {
+					sphere.transform.SetParent (_goLevelMeshContainer.transform);
+					sphere.transform.position = goPlayer.transform.position;
+				}
 			}
 		}
 
@@ -589,11 +598,8 @@ namespace DragginzVoxelWorldEditor
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
 
-			if (goPlayer != null && goPlayerEdit != null) {
-				goPlayer.SetActive ((mode == AppState.Play));
-				//goPlayerCameraRig.SetActive ((mode == AppState.Play));
-				goPlayerEdit.SetActive (!goPlayer.activeSelf);
-				_activeCam = playCam;
+			if (mode != AppState.Play) {
+				activateCorrectPlayer ();
 			}
 
 			if (_goLevelMeshContainer.activeSelf) {
@@ -612,7 +618,7 @@ namespace DragginzVoxelWorldEditor
 			}
 			else if (mode == AppState.Play)
 			{
-				resetCamToStartPos (false); // don't go back to starting pos
+				//resetCamToStartPos (false); // don't go back to starting pos
 
 				_createLevelMeshesRunning = false;
 				_createLevelMeshesComplete = false;
@@ -676,6 +682,16 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		//
+		private void activateCorrectPlayer()
+		{
+			if (goPlayer != null && goPlayerEdit != null) {
+				goPlayer.SetActive ((AppController.Instance.appState == AppState.Play));
+				goPlayerEdit.SetActive (!goPlayer.activeSelf);
+				_activeCam = playCam;
+			}
+		}
+
+		//
 		IEnumerator createLevelMeshes()
 		{
 			string goName = "[Offline_Chunk_Meshes]";
@@ -714,12 +730,6 @@ namespace DragginzVoxelWorldEditor
 
 			_curVoxelsLevelChunk.trfmProps.SetParent(trfmMesh.Find("propsContainer"));
 
-			levelMeshCreationComplete ();
-		}
-
-		//
-		public void levelMeshCreationComplete()
-		{
 			_createLevelMeshesComplete = true;
 		}
 

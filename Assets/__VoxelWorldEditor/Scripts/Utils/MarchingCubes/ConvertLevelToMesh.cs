@@ -82,10 +82,13 @@ namespace DragginzVoxelWorldEditor
 
 		public void split()
 		{
+			int numVerts = verts.Count;
+
             // A mesh in unity can only be made up of 65000 verts.
             // Need to split the verts between multiple meshes.
             int maxVertsPerMesh = 30000; //must be divisible by 3, ie 3 verts == 1 triangle
-            int numMeshes = verts.Count / maxVertsPerMesh + 1;
+			int numMeshes = numVerts / maxVertsPerMesh + 1;
+			Debug.Log ("numVerts: "+numVerts);
 
 			List<Vector3> splitVerts = new List<Vector3>();
 			List<int> splitIndices = new List<int>();
@@ -103,7 +106,7 @@ namespace DragginzVoxelWorldEditor
                 {
                     idx = i * maxVertsPerMesh + j;
 
-                    if (idx < verts.Count)
+					if (idx < numVerts)
                     {
                         splitVerts.Add(verts[idx]);
                         splitIndices.Add(j);

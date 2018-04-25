@@ -26,7 +26,7 @@ namespace DragginzVoxelWorldEditor
             float offset = 0.0f;
 
             //Find which vertices are inside of the surface and which are outside
-            for (i = 0; i < 8; i++) if (cube[i] <= Surface) flagIndex |= 1 << i;
+            for (i = 0; i < 8; ++i) if (cube[i] <= Surface) flagIndex |= 1 << i;
 
             //Find which edges are intersected by the surface
             int edgeFlags = CubeEdgeFlags[flagIndex];
@@ -35,7 +35,7 @@ namespace DragginzVoxelWorldEditor
             if (edgeFlags == 0) return;
 
             //Find the point of intersection of the surface with each edge
-            for (i = 0; i < 12; i++)
+            for (i = 0; i < 12; ++i)
             {
                 //if there is an intersection on this edge
                 if ((edgeFlags & (1 << i)) != 0)
@@ -50,7 +50,7 @@ namespace DragginzVoxelWorldEditor
 
             //Save the triangles that were found. There can be up to five per cube
 			int threeI;
-            for (i = 0; i < 5; i++)
+            for (i = 0; i < 5; ++i)
             {
 				threeI = 3 * i;
 
@@ -58,7 +58,7 @@ namespace DragginzVoxelWorldEditor
 
                 idx = vertList.Count;
 
-                for (j = 0; j < 3; j++)
+                for (j = 0; j < 3; ++j)
                 {
 					vert = TriangleConnectionTable[flagIndex, threeI + j];
                     indexList.Add(idx + WindingOrder[j]);

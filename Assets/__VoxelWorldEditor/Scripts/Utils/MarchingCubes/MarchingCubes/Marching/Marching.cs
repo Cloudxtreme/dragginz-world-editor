@@ -41,17 +41,20 @@ namespace DragginzVoxelWorldEditor
                 WindingOrder[2] = 0;
             }
 
-            int x, y, z, i;
-            int ix, iy, iz;
+            int x, y, z, i, ix, iy, iz;
 			int WtimesH = width * height;
-            for (x = 0; x < width - 1; x++)
+			int maxW    = width  - 1;
+			int maxH    = height - 1;
+			int maxD    = depth  - 1;
+
+			for (x = 0; x < maxW; ++x)
             {
-                for (y = 0; y < height - 1; y++)
+				for (y = 0; y < maxH; ++y)
                 {
-                    for (z = 0; z < depth - 1; z++)
+					for (z = 0; z < maxD; ++z)
                     {
                         //Get the values in the 8 neighbours which make up a cube
-                        for (i = 0; i < 8; i++)
+                        for (i = 0; i < 8; ++i)
                         {
                             ix = x + VertexOffset[i, 0];
                             iy = y + VertexOffset[i, 1];
@@ -65,7 +68,6 @@ namespace DragginzVoxelWorldEditor
                     }
                 }
             }
-
         }
 
          /// <summary>
