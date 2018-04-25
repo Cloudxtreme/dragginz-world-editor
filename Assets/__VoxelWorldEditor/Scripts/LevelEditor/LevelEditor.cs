@@ -41,6 +41,8 @@ namespace DragginzVoxelWorldEditor
 		public Camera playCam;
 		public RTEditorCam itemCamScript;
 
+		public GameObject goLights;
+
 		public GameObject goPlayer;
 		//public GameObject goPlayerCameraRig;
 		public GameObject goPlayerEdit;
@@ -482,9 +484,13 @@ namespace DragginzVoxelWorldEditor
 		public void customPlayUpdateCheckControls(float time, float timeDelta)
 		{
 			if (Input.GetKeyDown (KeyCode.Escape)) {
-				if (AppController.Instance.appState != AppState.Select) {
-					setMode (AppState.Select);
-				}
+				setMode (AppState.Select);
+			}
+			else if (Input.GetKeyDown (KeyCode.P)) {
+				setMode (AppState.Select);
+			}
+			else if (Input.GetKeyDown(KeyCode.H)) {
+				resetCamToStartPos ();
 			}
 		}
 
@@ -564,6 +570,9 @@ namespace DragginzVoxelWorldEditor
 			}
 
 			AppController.Instance.setAppState (mode);
+
+			goLights.SetActive (mode != AppState.Play);
+
 			MainMenu.Instance.setModeButtons (mode);
 			MainMenu.Instance.setMenuPanels (mode);
 
@@ -708,25 +717,23 @@ namespace DragginzVoxelWorldEditor
 				goMesh = trfmMesh.gameObject;
 			}
 
-			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n1%");
+			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n4%");
 			yield return new WaitForEndOfFrame ();
 
 			float[] voxels = _curVoxelsLevelChunk.convertChunksToVoxels ();
-			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n5%");
-			yield return new WaitForEndOfFrame ();
 
 			ConvertLevelToMesh converter = goMesh.GetComponent<ConvertLevelToMesh> ();
 			converter.setData (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero);
-			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n10%");
+
+			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n24%");
 			yield return new WaitForEndOfFrame ();
 
 			converter.march ();
-			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n40%");
+
+			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n64%");
 			yield return new WaitForEndOfFrame ();
 
 			converter.split ();
-			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n80%");
-			yield return new WaitForEndOfFrame ();
 
 			_curVoxelsLevelChunk.trfmProps.SetParent(trfmMesh.Find("propsContainer"));
 

@@ -16,7 +16,8 @@ namespace DragginzVoxelWorldEditor
 
 		public VoxelUtils.MARCHING_MODE mode = VoxelUtils.MARCHING_MODE.CUBES;
 
-        private int seed = 0;
+        //private int seed = 0;
+
 		private int width, height, depth;
 		private float[] voxels;
 		private Vector3 pos;
@@ -44,7 +45,7 @@ namespace DragginzVoxelWorldEditor
 		{
 			resetAll ();
 
-			seed = (int)(Time.time * 10f);
+			//seed = (int)(Time.time * 10f);
 
 			width = w;
 			height = h;

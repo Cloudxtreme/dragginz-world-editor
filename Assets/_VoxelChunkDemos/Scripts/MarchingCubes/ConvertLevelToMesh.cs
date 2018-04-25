@@ -69,7 +69,7 @@ namespace VoxelChunks
 			List<int> splitIndices = new List<int>();
 			//List<Vector2> splitUVs = new List<Vector2> ();
 
-			Renderer renderer;
+			//Renderer renderer;
 			MeshFilter filter;
 			//MeshCollider collider;
 
@@ -103,7 +103,7 @@ namespace VoxelChunks
                 GameObject go = new GameObject("Mesh");
                 go.transform.parent = transform;
                 filter = go.AddComponent<MeshFilter>();
-                renderer = go.AddComponent<MeshRenderer>();
+                //renderer = go.AddComponent<MeshRenderer>();
 				//renderer.material = m_material;
                 filter.mesh = mesh;
 				go.AddComponent<MeshCollider> (); //collider = 

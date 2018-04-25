@@ -19,7 +19,7 @@ namespace DragginzVoxelWorldEditor
 		public Transform container;
 		public GameObject prefabCube;
 
-		private int _numCubesPerAxis;
+		//private int _numCubesPerAxis;
 
 		private List<GameObject> _aCubes;
 
@@ -28,7 +28,7 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		void Awake ()
 		{
-			_numCubesPerAxis = Mathf.CeilToInt((float)VoxelUtils.MAX_CHUNK_UNITS / VoxelUtils.CHUNK_SIZE);
+			//_numCubesPerAxis = Mathf.CeilToInt((float)VoxelUtils.MAX_CHUNK_UNITS / VoxelUtils.CHUNK_SIZE);
 		}
 
 		#region PrivateMethods

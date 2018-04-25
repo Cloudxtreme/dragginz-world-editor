@@ -569,7 +569,7 @@ namespace DragginzVoxelWorldEditor
 
 							MainMenu.Instance.popup.setOverlayText ("Creating random level\n"+((float)numCells / (float)maxCells * 100).ToString("F0")+"%");
 
-							if (++threadLoopCounter > 4) {
+							if (++threadLoopCounter >= 10) {
 								threadLoopCounter = 0;
 								yield return new WaitForEndOfFrame ();
 							}

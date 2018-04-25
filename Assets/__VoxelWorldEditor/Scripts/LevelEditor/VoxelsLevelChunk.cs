@@ -501,7 +501,7 @@ namespace DragginzVoxelWorldEditor
 			// unset inside areas
 			for (i = 0; i < numVoxels; ++i) {
 				if (voxels [i] == 0) {
-					//voxels [i] = -1;
+					voxels [i] = 2;//-1
 				}
 			}
 
