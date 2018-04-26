@@ -534,7 +534,7 @@ namespace DragginzVoxelWorldEditor
 		{
 			EditorObjectSelection.Instance.ClearSelection(false);
 
-			_popup.showPopup(PopupMode.Confirmation, "Experimental Grid Editor", "Are you sure?\nAll unsaved changes will be lost!", showLaunchGridEditorDialogContinue);
+			_popup.showPopup(PopupMode.Confirmation, "Experimental Grid Editor", "Are you sure?\nAll unsaved changes could be lost!", showLaunchGridEditorDialogContinue);
 		}
 
 		private void showLaunchGridEditorDialogContinue(int buttonId)

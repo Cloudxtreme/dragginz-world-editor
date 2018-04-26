@@ -718,7 +718,7 @@ namespace DragginzVoxelWorldEditor
 			}
 
 			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n4%");
-			yield return new WaitForEndOfFrame ();
+			yield return new WaitForFixedUpdate ();
 
 			float[] voxels = _curVoxelsLevelChunk.convertChunksToVoxels ();
 
@@ -726,12 +726,12 @@ namespace DragginzVoxelWorldEditor
 			converter.setData (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero);
 
 			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n24%");
-			yield return new WaitForEndOfFrame ();
+			yield return new WaitForFixedUpdate ();
 
 			converter.march ();
 
 			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n64%");
-			yield return new WaitForEndOfFrame ();
+			yield return new WaitForFixedUpdate ();
 
 			converter.split ();
 

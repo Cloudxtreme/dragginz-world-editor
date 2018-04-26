@@ -25,11 +25,13 @@ namespace DragginzVoxelWorldEditor
 		public Text txtCount;
 		public Text txtError;
 
-		public Button butToggleGrid;
+		public Button butResetRotation;
 		public Button butCreateRandom;
-
 		public Button butResetGrid;
-		public Button butBackToGrid;
+		public Button butSetPath;
+		public Button butErasePath;
+		public Button butExit;
+		public Button butSaveAndExit;
 
 		public GameObject gridContainer;
 		public VoxelsLevelChunk voxelsLevelChunk;
@@ -38,6 +40,7 @@ namespace DragginzVoxelWorldEditor
 		public Material matStart;
 		public Material matOpaque;
 		public Material matTransparent;
+		public Material matPath;
 
 		private int gridDimension = 36;
 		private float cubeScale   =  2f;
@@ -53,19 +56,24 @@ namespace DragginzVoxelWorldEditor
 			public int z;
 			public bool isSet;
 			public bool isCorner;
+			public bool isPath;
+			public Vector3Int prevCell;
 		};
 
 		private int _numCubesPerAxis;
 
 		private GridCube[,,] _aGridCubes;
 
+		private List<Vector3Int> _aPath;
+
 		private Vector3 _v3StartPos;
 		private Vector3 _v3CurPos;
 
-		private Vector3 _v3MouseDown;
+		//private Vector3 _v3MouseDown;
 
-		private bool _gridIsOn;
+		//private bool _gridIsOn;
 		private bool _randomGridHasBeenCreated;
+		private bool _gridHasBeenUpdated;
 
 		private bool _threadRunning;
 		private bool _threadComplete;
@@ -79,6 +87,8 @@ namespace DragginzVoxelWorldEditor
 
 			voxelsLevelChunk.init (voxelChunkContainer, true); // true = _isExperimentalChunk
 			voxelChunkContainer.SetActive (false);
+
+			_aPath = new List<Vector3Int> ();
 
 			_threadRunning = false;
 			_threadComplete = true;
@@ -94,20 +104,21 @@ namespace DragginzVoxelWorldEditor
 				return;
 			}
 
+			_v3CurPos   = new Vector3 (_numCubesPerAxis / 2, _numCubesPerAxis / 2, _numCubesPerAxis / 2);
+			_v3StartPos = new Vector3 (_v3CurPos.x, _v3CurPos.y, _v3CurPos.z);
+
 			resetAll ();
 			gameObject.SetActive (true);
 
-			txtHelp.text  = "Set player starting position with keys a, d, w, s, q, e";
-			txtCount.text = "Use left mouse button to rotate grid";
+			txtHelp.text  = "left mouse = rotate grid   -   A, D, W, S, Q and E = create tunnel path";
+			txtCount.text = "";
 			txtError.text = "";
 
-			_v3CurPos   = new Vector3 (_numCubesPerAxis - 2, _numCubesPerAxis - 2, 1);
-			_v3StartPos = new Vector3 (-1, -1, -1);
+			//_v3MouseDown = Vector3.zero;
 
-			_v3MouseDown = Vector3.zero;
-
-			_gridIsOn = true;
+			//_gridIsOn = true;
 			_randomGridHasBeenCreated = false;
+			_gridHasBeenUpdated = false;
 
 			_goPlayer = Instantiate (prefabPlayer);
 			_goPlayer.name = "Player";
@@ -115,7 +126,8 @@ namespace DragginzVoxelWorldEditor
 			_goPlayer.transform.localScale = new Vector3 (cubeScale, cubeScale, cubeScale) * 1.01f;
 			_goPlayer.transform.localRotation = Quaternion.identity;
 
-			movePos (0, 0, 0); // force player positioning
+			setPlayerPos ();
+			setPathElement ((int)_v3CurPos.x, (int)_v3CurPos.y, (int)_v3CurPos.z);
 
 			createCubeGrid ();
 
@@ -127,9 +139,9 @@ namespace DragginzVoxelWorldEditor
 		{
 			Vector3 pos = Vector3.zero;
 
-			pos.x = _v3CurPos.x * cubeScale + (cubeScale * 0.5f);
-			pos.y = _v3CurPos.y * cubeScale + (cubeScale * 0.5f);
-			pos.z = _v3CurPos.z * cubeScale + (cubeScale * 0.5f);
+			pos.x = _v3StartPos.x * cubeScale + (cubeScale * 0.5f);
+			pos.y = _v3StartPos.y * cubeScale + (cubeScale * 0.5f);
+			pos.z = _v3StartPos.z * cubeScale + (cubeScale * 0.5f);
 
 			return pos;
 		}
@@ -143,9 +155,13 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		private void resetAll()
 		{
+			float multiply = cubeScale / VoxelUtils.CHUNK_SIZE;
 			voxelsLevelChunk.newLevel ();
+			voxelsLevelChunk.subtractChunk (new Vector3 ((int)(_v3StartPos.x * multiply), (int)(_v3StartPos.y * multiply), (int)(_v3StartPos.z * multiply)), new Vector3 (multiply, multiply, multiply));
 
 			_aGridCubes = new GridCube[_numCubesPerAxis, _numCubesPerAxis, _numCubesPerAxis];
+
+			_aPath.Clear ();
 
 			foreach (Transform child in gridContainer.transform) {
 				Destroy (child.gameObject);
@@ -161,30 +177,38 @@ namespace DragginzVoxelWorldEditor
 			{
 				if (_threadComplete){
 					_threadRunning = false;
-					//setAllCubes ();
 					AppController.Instance.hidePopup ();
+					setContainersAndUI ();
 				}
 
 				return;
 			}
 
-			if (Input.GetMouseButtonDown (0))
+			/*if (Input.GetMouseButtonDown (0))
 			{
 				if (!EventSystem.current.IsPointerOverGameObject ()) {
 					_v3MouseDown = Input.mousePosition;
 				}
-			}
+			}*/
 
 			if (Input.GetMouseButton (0)) {
 
 				if (!EventSystem.current.IsPointerOverGameObject ())
 				{
+					float rotX = Input.GetAxis("Mouse X") * 50f * Mathf.Deg2Rad;
+					float rotY = Input.GetAxis("Mouse Y") * 50f * Mathf.Deg2Rad;
+
+					gridContainer.transform.Rotate(Vector3.up, -rotX);
+					gridContainer.transform.Rotate(Vector3.right, rotY);
+
+					/*float xRot = _v3MouseDown.y - Input.mousePosition.y;
 					float yRot = _v3MouseDown.x - Input.mousePosition.x;
 					Vector3 newRot = gridContainer.transform.eulerAngles;
 					newRot.y += yRot * (360f / (float)Screen.width);
+					newRot.x += xRot * (360f / (float)Screen.height);
 					gridContainer.transform.eulerAngles = newRot;
 
-					_v3MouseDown.x = Input.mousePosition.x;
+					_v3MouseDown.x = Input.mousePosition.x;*/
 				}
 			}
 
@@ -216,20 +240,32 @@ namespace DragginzVoxelWorldEditor
 		{
 			voxelsLevelChunk.trfmVoxels.gameObject.SetActive (true);
 
-			butToggleGrid.gameObject.SetActive (false); // true
-			butCreateRandom.gameObject.SetActive (true);
-
-			butResetGrid.gameObject.SetActive (_randomGridHasBeenCreated);
-
-			butBackToGrid.gameObject.SetActive (true);
+			if (_threadRunning) {
+				butResetRotation.gameObject.SetActive (false);
+				butCreateRandom.gameObject.SetActive (false);
+				butResetGrid.gameObject.SetActive (false);
+				butSetPath.gameObject.SetActive (false);
+				butErasePath.gameObject.SetActive (false);
+				butExit.gameObject.SetActive (false);
+				butSaveAndExit.gameObject.SetActive (false);
+			} else {
+				butResetRotation.gameObject.SetActive (true);
+				butCreateRandom.gameObject.SetActive (true);
+				butResetGrid.gameObject.SetActive (_randomGridHasBeenCreated || _gridHasBeenUpdated || _aPath.Count > 0);
+				butSetPath.gameObject.SetActive (_aPath.Count > 0);
+				butErasePath.gameObject.SetActive (_aPath.Count > 0);
+				butExit.gameObject.SetActive (true);
+				butSaveAndExit.gameObject.SetActive (true);
+			}
 		}
 
 		// ---------------------------------------------------------------------------------------------
 		private void movePos (int x, int y, int z)
 		{
-			//Debug.Log ("movePos " + x + ", " + y + ", " + z);
+			Vector3Int v3LastPos = new Vector3Int ((int)_v3CurPos.x, (int)_v3CurPos.y, (int)_v3CurPos.z);
+			GridCube gcLast = _aGridCubes [v3LastPos.x, v3LastPos.y, v3LastPos.z];
 
-			//bool moved = false;
+			bool moved = false;
 			int newPos;
 
 			if (x != 0)
@@ -237,7 +273,7 @@ namespace DragginzVoxelWorldEditor
 				newPos = (int)_v3CurPos.x + x;
 				if (newPos > 0 && newPos < (_numCubesPerAxis - 1)) {
 					_v3CurPos.x = newPos;
-					//moved = true;
+					moved = true;
 				}
 			}
 			else if (y != 0)
@@ -245,7 +281,7 @@ namespace DragginzVoxelWorldEditor
 				newPos = (int)_v3CurPos.y + y;
 				if (newPos > 0 && newPos < (_numCubesPerAxis - 1)) {
 					_v3CurPos.y = newPos;
-					//moved = true;
+					moved = true;
 				}
 			}
 			else if (z != 0)
@@ -253,24 +289,88 @@ namespace DragginzVoxelWorldEditor
 				newPos = (int)_v3CurPos.z + z;
 				if (newPos > 0 && newPos < (_numCubesPerAxis - 1)) {
 					_v3CurPos.z = newPos;
-					//moved = true;
+					moved = true;
 				}
 			}
 
+			if (moved)
+			{
+				setPlayerPos ();
+
+				// did we turn around?
+				Vector3Int v3NewPos = new Vector3Int ((int)_v3CurPos.x, (int)_v3CurPos.y, (int)_v3CurPos.z);
+				GridCube gcNew = _aGridCubes [v3NewPos.x, v3NewPos.y, v3NewPos.z];
+
+				if (gcLast.prevCell.x == v3NewPos.x && gcLast.prevCell.y == v3NewPos.y && gcLast.prevCell.z == v3NewPos.z)
+				{
+					gcLast.prevCell = new Vector3Int (-1, -1, -1);
+					_aGridCubes [v3LastPos.x, v3LastPos.y, v3LastPos.z] = gcLast;
+
+					//Debug.Log ("remove");
+					removePathElement (v3LastPos.x, v3LastPos.y, v3LastPos.z);
+				}
+				else if (gcNew.prevCell.x == -1 && gcNew.prevCell.y == -1 && gcNew.prevCell.z == -1)
+				{
+					if (_v3StartPos.x != _v3CurPos.x || _v3StartPos.y != _v3CurPos.y || _v3StartPos.z != _v3CurPos.z)
+					{
+						gcNew.prevCell = v3LastPos;
+						_aGridCubes [v3NewPos.x, v3NewPos.y, v3NewPos.z] = gcNew;
+
+						//Debug.Log ("add");
+						setPathElement (v3NewPos.x, v3NewPos.y, v3NewPos.z);
+					}
+				}
+
+				setContainersAndUI ();
+			}
+		}
+
+		//
+		private void setPlayerPos()
+		{
 			float half = (float)gridDimension * 0.5f;
 			_goPlayer.transform.localPosition = new Vector3 (-half + _v3CurPos.x * cubeScale, -half + _v3CurPos.y * cubeScale, -half + _v3CurPos.z * cubeScale);
+		}
 
-			/*if (moved)
-			{
-				GridCube gc = _aGridCubes [(int)_v3CurPos.x, (int)_v3CurPos.y, (int)_v3CurPos.z];
-				bool lastSet = gc.isSet;
-				gc.isSet = (Input.GetKey (KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl));
+		// ---------------------------------------------------------------------------------------------
+		private void removePathElement(int x, int y, int z)
+		{
+			int i, len = _aPath.Count;
+			for (i = 0; i < len; ++i) {
 
-				if (gc.isSet != lastSet) {
-					_aGridCubes [(int)_v3CurPos.x, (int)_v3CurPos.y, (int)_v3CurPos.z] = gc;
-					setMaterial (gc);
+				// remove element if it already exists
+				if (_aPath [i].x == x && _aPath [i].y == y && _aPath [i].z == z) {
+
+					_aPath.RemoveAt (i);
+
+					GridCube gc = _aGridCubes [x, y, z];
+					gc.isPath = false;
+					if (gc.go != null) {
+						Destroy (gc.go);
+						gc.go = null;
+					}
+					_aGridCubes [x, y, z] = gc;
+
+					len--;
+					break;
 				}
-			}*/
+			}
+		}
+
+		//
+		private void setPathElement(int x, int y, int z)
+		{
+			if (x == (int)_v3StartPos.x && y == (int)_v3StartPos.y && z == (int)_v3StartPos.z) {
+				return;
+			}
+
+			_aPath.Add (new Vector3Int (x, y, z));
+
+			GridCube gc = _aGridCubes [x, y, z];
+			gc.isPath = true;
+			_aGridCubes [x, y, z] = gc;
+			createCubeGameObject (x, y, z);
+			setMaterial (_aGridCubes [x, y, z]);
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -291,12 +391,15 @@ namespace DragginzVoxelWorldEditor
 						gc.y = y;
 						gc.z = z;
 
-						if (x == (int)_v3StartPos.x && y == (int)_v3StartPos.y && z == (int)_v3StartPos.z) {
+						gc.prevCell = new Vector3Int (-1, -1, -1);
+
+						if (x == (int)_v3CurPos.x && y == (int)_v3CurPos.y && z == (int)_v3CurPos.z) {
 							gc.isSet = true;
 						} else {
 							gc.isSet = false;
 						}
 
+						gc.isPath = false;
 						gc.isCorner = false;
 
 						if (x == 0 || x == endCorner)
@@ -315,13 +418,12 @@ namespace DragginzVoxelWorldEditor
 							}
 						}
 
-						if (gc.isCorner) {
-							createCubeGameObject (x, y, z);
-						}
-
 						_aGridCubes [x, y, z] = gc;
 
-						setMaterial (gc);
+						if (gc.isCorner || gc.isSet) {
+							createCubeGameObject (x, y, z);
+							setMaterial (_aGridCubes [x, y, z]);
+						}
 					}
 				}
 			}
@@ -354,12 +456,7 @@ namespace DragginzVoxelWorldEditor
 			if (gc.go != null) {
 				Renderer r = gc.go.GetComponent<Renderer> ();
 				if (r != null) {
-					r.sharedMaterial = (gc.isSet ? matOpaque : matTransparent);
-					/*if (gc.x == (int)_v3StartPos.x && gc.y == (int)_v3StartPos.y && gc.z == (int)_v3StartPos.z) {
-						r.sharedMaterial = matStart;
-					} else {
-						r.sharedMaterial = (gc.isSet ? matOpaque : matTransparent);
-					}*/
+					r.sharedMaterial = (gc.isSet ? matOpaque : (gc.isPath ? matPath : matTransparent));
 				}
 			}
 		}
@@ -367,7 +464,7 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public float[] convertChunksToVoxels(int numChunks, int newSize)
 		{
-			Debug.Log ("numChunks: " + numChunks + ", newSize: " + newSize);
+			//Debug.Log ("numChunks: " + numChunks + ", newSize: " + newSize);
 
 			float[] voxels = new float[newSize * newSize * newSize];
 			int i, numVoxels = voxels.Length;
@@ -421,7 +518,7 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		// misc methods
 		// ---------------------------------------------------------------------------------------------
-		private void toggleGrid()
+		/*private void toggleGrid()
 		{
 			GridCube gc;
 			int x, y, z;
@@ -435,6 +532,84 @@ namespace DragginzVoxelWorldEditor
 						if (gc.go != null) {
 							gc.go.SetActive (gc.isCorner || gc.isSet || _gridIsOn);
 						}
+					}
+				}
+			}
+		}*/
+
+		// ---------------------------------------------------------------------------------------------
+		//
+		// ---------------------------------------------------------------------------------------------
+		private void setCurrentPath ()
+		{
+			_gridHasBeenUpdated = true;
+
+			float multiply = cubeScale / VoxelUtils.CHUNK_SIZE;
+
+			GridCube gc;
+			int i, len = _aPath.Count;
+			for (i = 0; i < len; ++i) {
+
+				gc = _aGridCubes [_aPath [i].x, _aPath [i].y, _aPath [i].z];
+				gc.isPath = false;
+
+				if (!gc.isSet)
+				{
+					voxelsLevelChunk.subtractChunk (new Vector3 (_aPath [i].x * multiply, _aPath [i].y * multiply, _aPath [i].z * multiply), new Vector3 (multiply, multiply, multiply));
+
+					gc.isSet = true;
+					setMaterial (gc);
+				}
+
+				_aGridCubes [_aPath [i].x, _aPath [i].y, _aPath [i].z] = gc;
+			}
+
+			_aPath.Clear ();
+
+			resetAllPrevPathData ();
+
+			_v3CurPos = _v3StartPos;
+			setPlayerPos ();
+		}
+
+		//
+		private void eraseCurrentPath()
+		{
+			GridCube gc;
+			int i, len = _aPath.Count;
+			for (i = 0; i < len; ++i) {
+
+				gc = _aGridCubes [_aPath [i].x, _aPath [i].y, _aPath [i].z];
+				gc.isPath = false;
+
+				if (gc.go != null)
+				{
+					Destroy (gc.go);
+					gc.go = null;
+				}
+
+				_aGridCubes [_aPath [i].x, _aPath [i].y, _aPath [i].z] = gc;
+			}
+
+			_aPath.Clear ();
+
+			resetAllPrevPathData ();
+
+			_v3CurPos = _v3StartPos;
+			setPlayerPos ();
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void resetAllPrevPathData()
+		{
+			GridCube gc;
+			int x, y, z;
+			for (x = 0; x < _numCubesPerAxis; ++x) {
+				for (y = 0; y < _numCubesPerAxis; ++y) {
+					for (z = 0; z < _numCubesPerAxis; ++z) {
+						gc = _aGridCubes [x, y, z];
+						gc.prevCell = new Vector3Int (-1, -1, -1);
+						_aGridCubes [x, y, z] = gc;
 					}
 				}
 			}
@@ -454,18 +629,23 @@ namespace DragginzVoxelWorldEditor
 			_threadRunning = true;
 			_threadComplete = false;
 
+			setContainersAndUI ();
+
 			StartCoroutine ("workerCreateRandomLevel");
 		}
 
 		// ---------------------------------------------------------------------------------------------
 		IEnumerator workerCreateRandomLevel()
 		{
+			yield return new WaitForEndOfFrame ();
+
 			int minCells = _numCubesPerAxis * 4;
 			int maxCells = Random.Range(minCells, (minCells * 8));
 			int numCells = 0;
 			int len = 0, dir = -1;
 
-			_v3StartPos   = _v3CurPos;
+			_v3StartPos = new Vector3 (_v3CurPos.x, _v3CurPos.y, _v3CurPos.z);
+
 			Vector3 v3Pos = _v3CurPos;
 			Vector3 v3Dir = Vector3.zero;
 
@@ -582,7 +762,7 @@ namespace DragginzVoxelWorldEditor
 		}
 
 		// ---------------------------------------------------------------------------------------------
-		private void setAllCubes()
+		/*private void setAllCubes()
 		{
 			int x, y, z;
 
@@ -597,7 +777,7 @@ namespace DragginzVoxelWorldEditor
 					}
 				}
 			}
-		}
+		}*/
 
 		// ---------------------------------------------------------------------------------------------
 		//
@@ -605,8 +785,13 @@ namespace DragginzVoxelWorldEditor
 		private void resetGrid()
 		{
 			_randomGridHasBeenCreated = false;
+			_gridHasBeenUpdated = false;
 
-			_v3StartPos = _v3CurPos;
+			_v3StartPos = new Vector3 (_v3CurPos.x, _v3CurPos.y, _v3CurPos.z);
+
+			float multiply = cubeScale / VoxelUtils.CHUNK_SIZE;
+			voxelsLevelChunk.newLevel ();
+			voxelsLevelChunk.subtractChunk (new Vector3 ((int)(_v3StartPos.x * multiply), (int)(_v3StartPos.y * multiply), (int)(_v3StartPos.z * multiply)), new Vector3 (multiply, multiply, multiply));
 
 			GridCube gc;
 			int x, y, z;
@@ -616,35 +801,43 @@ namespace DragginzVoxelWorldEditor
 
 						gc = _aGridCubes [x, y, z];
 
-						if (x == (int)_v3StartPos.x && y == (int)_v3StartPos.y && z == (int)_v3StartPos.z) {
+						gc.prevCell = new Vector3Int (-1, -1, -1);
+
+						if (x == (int)_v3CurPos.x && y == (int)_v3CurPos.y && z == (int)_v3CurPos.z) {
 							gc.isSet = true;
 						} else {
 							gc.isSet = false;
 						}
 
+						gc.isPath = false;
+
 						if (gc.go != null) {
-							if (!gc.isCorner) {
+							if (!gc.isCorner && !gc.isSet) {
 								Destroy (gc.go);
 								gc.go = null;
 							}
-							//setMaterial (gc);
-							//gc.go.SetActive (gc.isCorner || gc.isSet || _gridIsOn);
 						}
 
 						_aGridCubes [x, y, z] = gc;
 					}
 				}
 			}
+
+			_aPath.Clear();
+
+			setPlayerPos ();
+			setPathElement ((int)_v3CurPos.x, (int)_v3CurPos.y, (int)_v3CurPos.z);
 		}
 
 		// ---------------------------------------------------------------------------------------------
 		// handlers
 		// ---------------------------------------------------------------------------------------------
-		public void onToggleGridClick()
+		public void onResetRotationClick()
 		{
-			_gridIsOn = !_gridIsOn;
+			gridContainer.transform.rotation = Quaternion.identity;
 
-			toggleGrid ();
+			//_gridIsOn = !_gridIsOn;
+			//toggleGrid ();
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -652,18 +845,24 @@ namespace DragginzVoxelWorldEditor
 		{
 			AppController.Instance.showPopup (PopupMode.Overlay, null, "Creating random level");
 
-			//float timer = Time.realtimeSinceStartup;
 			createRandomLevel ();
-			//Debug.Log ("Time to create random level: " + (Time.realtimeSinceStartup - timer).ToString ("F2"));
-
-			setContainersAndUI ();
 		}
 
 		// ---------------------------------------------------------------------------------------------
 		public void onResetGridClick()
 		{
-			resetGrid ();
-			setContainersAndUI ();
+			AppController.Instance.showPopup(PopupMode.Confirmation, "Reset Grid", "Are you sure?", onResetGridConfirmed);
+		}
+
+		private void onResetGridConfirmed(int buttonId)
+		{
+			AppController.Instance.hidePopup ();
+
+			if (buttonId == 1)
+			{
+				resetGrid ();
+				setContainersAndUI ();
+			}
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -676,6 +875,20 @@ namespace DragginzVoxelWorldEditor
 		public void onExitAndSaveClick()
 		{
 			LevelEditor.Instance.activateExperimentalGridEditor (false, true);
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		public void onSetPathClick()
+		{
+			setCurrentPath ();
+			setContainersAndUI ();
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		public void onErasePathClick()
+		{
+			eraseCurrentPath ();
+			setContainersAndUI ();
 		}
 	}
 }
