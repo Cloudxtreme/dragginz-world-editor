@@ -874,7 +874,21 @@ namespace DragginzVoxelWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		public void onExitAndSaveClick()
 		{
-			LevelEditor.Instance.activateExperimentalGridEditor (false, true);
+			if (_aPath.Count > 0) {
+				AppController.Instance.showPopup (PopupMode.Confirmation, "Exit and Save", "You have an unset path.\nAre you sure you want to exit?", onSaveAndExitConfirmed);
+			} else {
+				LevelEditor.Instance.activateExperimentalGridEditor (false, true);
+			}
+		}
+
+		private void onSaveAndExitConfirmed(int buttonId)
+		{
+			AppController.Instance.hidePopup ();
+
+			if (buttonId == 1)
+			{
+				LevelEditor.Instance.activateExperimentalGridEditor (false, true);
+			}
 		}
 
 		// ---------------------------------------------------------------------------------------------

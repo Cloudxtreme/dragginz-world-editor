@@ -726,12 +726,12 @@ namespace DragginzVoxelWorldEditor
 			converter.setData (VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, VoxelUtils.MAX_CHUNK_UNITS, voxels, Vector3.zero);
 
 			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n24%");
-			yield return new WaitForFixedUpdate ();
+			yield return new WaitForEndOfFrame ();
 
 			converter.march ();
 
 			MainMenu.Instance.popup.setOverlayText ("Creating level meshes\n64%");
-			yield return new WaitForFixedUpdate ();
+			yield return new WaitForEndOfFrame ();
 
 			converter.split ();
 
