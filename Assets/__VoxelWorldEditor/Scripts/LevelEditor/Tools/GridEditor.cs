@@ -660,7 +660,10 @@ namespace DragginzVoxelWorldEditor
 			GridCube gc;
 
 			int threadLoopCounter = 0;
-			while (numCells < maxCells) {
+			int breakLoop = 0;
+			while (numCells < maxCells && breakLoop < 10000) {
+
+				breakLoop++;
 
 				// change direction?
 				v3Dir = Vector3.zero;
@@ -694,6 +697,10 @@ namespace DragginzVoxelWorldEditor
 					}
 				}
 
+				if (neighbourIsSet(v3Pos, v3Dir)) {
+					continue;
+				}
+
 				if (v3Dir.y != 0) {
 					len = Random.Range (1, 2);
 					lastMoveWasY = true;
@@ -712,6 +719,8 @@ namespace DragginzVoxelWorldEditor
 						if (newPos > 0 && newPos < (_numCubesPerAxis - 1)) {
 							v3Pos.x = newPos;
 							moved = true;
+						} else {
+							break;
 						}
 					}
 					else if (v3Dir.y != 0)
@@ -720,6 +729,8 @@ namespace DragginzVoxelWorldEditor
 						if (newPos > 0 && newPos < (_numCubesPerAxis - 1)) {
 							v3Pos.y = newPos;
 							moved = true;
+						} else {
+							break;
 						}
 					}
 					else if (v3Dir.z != 0)
@@ -728,6 +739,8 @@ namespace DragginzVoxelWorldEditor
 						if (newPos > 0 && newPos < (_numCubesPerAxis - 1)) {
 							v3Pos.z = newPos;
 							moved = true;
+						} else {
+							break;
 						}
 					}
 
@@ -758,7 +771,49 @@ namespace DragginzVoxelWorldEditor
 				}
 			}
 
+			if (breakLoop >= 10000) {
+				Debug.LogError ("infinite loop bitch!");
+			}
+
 			_threadComplete = true;
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private bool neighbourIsSet(Vector3 v3Pos, Vector3 v3Dir)
+		{
+			bool isSet = false;
+
+			Vector3 newPos = v3Pos + v3Dir;
+			List<GridCube> neighbours = new List<GridCube> ();
+
+			if (newPos.x > 0 && v3Dir.x != 1) {
+				neighbours.Add (_aGridCubes [(int)newPos.x - 1, (int)newPos.y, (int)newPos.z]);
+			}
+			else if (newPos.x < (_numCubesPerAxis - 1) && v3Dir.x != -1) {
+				neighbours.Add (_aGridCubes [(int)newPos.x + 1, (int)newPos.y, (int)newPos.z]);
+			}
+			else if (newPos.y > 0 && v3Dir.y != 1) {
+				neighbours.Add (_aGridCubes [(int)newPos.x, (int)newPos.y - 1, (int)newPos.z]);
+			}
+			else if (newPos.y < (_numCubesPerAxis - 1) && v3Dir.y != -1) {
+				neighbours.Add (_aGridCubes [(int)newPos.x, (int)newPos.y + 1, (int)newPos.z]);
+			}
+			else if (newPos.z > 0 && v3Dir.z != 1) {
+				neighbours.Add (_aGridCubes [(int)newPos.x, (int)newPos.y, (int)newPos.z - 1]);
+			}
+			else if (newPos.z < (_numCubesPerAxis - 1) && v3Dir.z != -1) {
+				neighbours.Add (_aGridCubes [(int)newPos.x, (int)newPos.y, (int)newPos.z + 1]);
+			}
+
+			int i, len = neighbours.Count;
+			for (i = 0; i < len; ++i) {
+				if (neighbours [i].isSet) {
+					isSet = true;
+					break;
+				}
+			}
+
+			return isSet;
 		}
 
 		// ---------------------------------------------------------------------------------------------

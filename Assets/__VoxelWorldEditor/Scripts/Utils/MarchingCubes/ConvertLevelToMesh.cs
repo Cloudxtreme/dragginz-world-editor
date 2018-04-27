@@ -130,7 +130,7 @@ namespace DragginzVoxelWorldEditor
                 go.transform.parent = transform;
                 filter = go.AddComponent<MeshFilter>();
                 renderer = go.AddComponent<MeshRenderer>();
-				renderer.material = LevelEditor.Instance.aToolMaterials [0];
+				renderer.material = LevelEditor.Instance.meshVolcano; //aToolMaterials [0];
                 filter.mesh = mesh;
 				go.AddComponent<MeshCollider> (); //collider = 
 

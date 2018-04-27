@@ -20,7 +20,7 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.33823532, g: 0.33823532, b: 0.33823532, a: 1}
+  m_AmbientSkyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
@@ -347,6 +347,7 @@ MonoBehaviour:
   laserAimCenterCube: {fileID: 764806981}
   laserAimMaterial: {fileID: 2100000, guid: 76d860de1b028ce489862670f2448990, type: 2}
   propAim: {fileID: 1300222925}
+  meshVolcano: {fileID: 2100000, guid: 7dd5d974e30ff0e4789716a230349abd, type: 2}
   materialEdge: {fileID: 2100000, guid: 275e6cacae73cdf4f809cc7d5b0a7d02, type: 2}
   materialsWalls:
   - {fileID: 2100000, guid: 0fb21c4ada98b784d91cbf082690c2fd, type: 2}

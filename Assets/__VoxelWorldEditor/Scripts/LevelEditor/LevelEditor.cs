@@ -53,6 +53,7 @@ namespace DragginzVoxelWorldEditor
 
 		public GameObject propAim;
 
+		public Material meshVolcano;
 		public Material materialEdge;
         public List<Material> materialsWalls;
 
@@ -571,7 +572,7 @@ namespace DragginzVoxelWorldEditor
 
 			AppController.Instance.setAppState (mode);
 
-			goLights.SetActive (mode != AppState.Play);
+			//goLights.SetActive (mode != AppState.Play);
 
 			MainMenu.Instance.setModeButtons (mode);
 			MainMenu.Instance.setMenuPanels (mode);
