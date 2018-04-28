@@ -655,6 +655,7 @@ namespace DragginzVoxelWorldEditor
 
 			int[] aDirs = new int[]{0,1,2,3,2,3,2,3,4,5};
 			int lenDirs = aDirs.Length;
+			int lastDir = -1;
 
 			bool lastMoveWasY = false;
 			GridCube gc;
@@ -670,21 +671,39 @@ namespace DragginzVoxelWorldEditor
 				dir = aDirs[Random.Range(0, lenDirs)];
 
 				if (dir == 0) {
+					if (lastDir == 1) {
+						continue;
+					}
 					v3Dir.x = -1;
 				}
 				else if (dir == 1) {
+					if (lastDir == 0) {
+						continue;
+					}
 					v3Dir.x = 1;
 				}
 				else if (dir == 2) {
+					if (lastDir == 3) {
+						continue;
+					}
 					v3Dir.y = -1;
 				}
 				else if (dir == 3) {
+					if (lastDir == 2) {
+						continue;
+					}
 					v3Dir.y = 1;
 				}
 				else if (dir == 4) {
+					if (lastDir == 5) {
+						continue;
+					}
 					v3Dir.z = -1;
 				}
 				else {
+					if (lastDir == 4) {
+						continue;
+					}
 					v3Dir.z = 1;
 				}
 
