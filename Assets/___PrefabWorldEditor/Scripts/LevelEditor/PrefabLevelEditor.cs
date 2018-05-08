@@ -22,18 +22,35 @@ namespace PrefabWorldEditor
 
         public Transform trfmWalls;
 
+		public Material matElementMarker;
+
 		//
 
-		const int CAVE_FLOOR = 0;
-		const int CAVE_WALL = 1;
-		const int CAVE_PATH_A = 2;
-		const int CAVE_PATH_B = 3;
-		const int CAVE_PATH_C1 = 4;
-		const int CAVE_PATH_C2 = 5;
+		private enum PartType {
+			Floor,
+			WallZ,
+			WallX,
+			Tunnel
+		};
+
+		private enum PartList {
+			Floor_1,
+			Floor_2,
+			Wall_Z,
+			Wall_X,
+			Path_1,
+			Path_2,
+			Path_3,
+			Path_4,
+			End_Of_List
+		};
 
         private struct Part
         {
-            public int id;
+			public PartList id;
+			public PartType type;
+			public bool canRotate;
+
             public GameObject prefab;
 
             public float w;
@@ -44,21 +61,28 @@ namespace PrefabWorldEditor
         private struct LevelElement
         {
             public GameObject go;
-            public int partId;
+			public PartList part;
         }
+
+		private Transform _trfmMarkerX;
+		private Transform _trfmMarkerY;
+		private Transform _trfmMarkerZ;
+		private Transform _trfmMarkerX2;
+		private Transform _trfmMarkerY2;
+		private Transform _trfmMarkerZ2;
 
         private Transform _container;
 
-        private Dictionary<int, Part> _parts;
-        private LevelElement[,,] _levelElements;
+		private Dictionary<PartList, Part> _parts;
+		private Dictionary<GameObject, LevelElement> _levelElements;
 
-        //private int _curEditPartId;
 		private Part _curEditPart;
         private GameObject _goEditPart;
         private Vector3 _v3EditPartPos;
 		private int _curRotation;
 
 		private LevelElement _selectedElement;
+		private List<Material> _aSelectedElementMaterials;
 
         private float _rayDistance;
         private Ray _ray;
@@ -73,30 +97,32 @@ namespace PrefabWorldEditor
         // ------------------------------------------------------------------------
         void Start()
         {
-            _parts = new Dictionary<int, Part>();
+			_parts = new Dictionary<PartList, Part>();
 
-			createPart(CAVE_FLOOR, "MDC/CATA_BlockC1", 6f, .75f, 6f);
-			createPart(CAVE_WALL, "MDC/CATA_GenericWall", 3f, 3f, .5f);
-			createPart(CAVE_PATH_A, "MDC/CATA_CavePathA", 5f, 4f, 12f);
-			createPart(CAVE_PATH_B, "MDC/CATA_CavePathB", 5f, 6f, 12f);
-			createPart(CAVE_PATH_C1, "MDC/CATA_CavePathC1", 12f, 3f, 3f);
-			createPart(CAVE_PATH_C2, "MDC/CATA_CavePathC2", 8f, 8f, 8f);
+			createPart(PartList.Floor_1, PartType.Floor,  "MDC/Floor_1",  6f, .75f, 6f, false);
+			createPart(PartList.Floor_2, PartType.Floor,  "MDC/Floor_2",  6f, .25f, 6f, false);
+			createPart(PartList.Wall_Z,  PartType.WallZ,  "MDC/Wall_Z",   3f, 3f, .5f, false);
+			createPart(PartList.Wall_X,  PartType.WallX,  "MDC/Wall_X",   0.5f, 3f, 3f, false);
+			createPart(PartList.Path_1,  PartType.Tunnel, "MDC/Path_1",   5f, 4f, 12f, true);
+			createPart(PartList.Path_2,  PartType.Tunnel, "MDC/Path_2",   5f, 6f, 12f, true);
+			createPart(PartList.Path_3,  PartType.Tunnel, "MDC/Path_3",  12f, 3f, 3f, true);
+			createPart(PartList.Path_4,  PartType.Tunnel, "MDC/Path_4",   8f, 8f, 8f, true);
 
             _container = new GameObject("[Container]").transform;
 
             setWalls();
 
-            createDefaultLevel();
+			_levelElements = new Dictionary<GameObject, LevelElement>();
 
-			//_curEditPartId = CAVE_PATH_A;
-			_curEditPart = _parts [CAVE_FLOOR];
+			_curEditPart   = _parts [PartList.Floor_1];
             _v3EditPartPos = Vector3.zero;
-			_goEditPart = createPartAt(_curEditPart.id, -1, -1, -1);
-			_curRotation = 0;
+			_goEditPart    = createPartAt(_curEditPart.id, -10, -10, -10);
+			setMarkerScale (_curEditPart);
+			_curRotation   = 0;
             disableMeshCollider();
 
 			_selectedElement = new LevelElement();
-			_selectedElement.partId = -1;
+			_aSelectedElementMaterials = new List<Material> ();
 
 			_playerMode = 0;
         }
@@ -116,6 +142,11 @@ namespace PrefabWorldEditor
 
 			if (Input.GetKeyDown (KeyCode.X)) {
 				_goEditPart.SetActive (!_goEditPart.activeSelf);
+				setMarkerActive (_goEditPart.activeSelf);
+				if (_goEditPart.activeSelf) {
+					resetMaterials (_selectedElement.go);
+					setMarkerScale (_curEditPart);
+				}
 			}
 
 			_rayDistance = 5f;
@@ -133,7 +164,11 @@ namespace PrefabWorldEditor
 					}
 				}
 				if (_selectedElement.go != null) {
-					positionSelectedElement ();
+					if (Input.GetKeyDown (KeyCode.Delete)) {
+						deleteSelectedElement ();
+					} else {
+						positionSelectedElement ();
+					}
 				}
 			} else {
 				positionEditPart ();				
@@ -147,6 +182,12 @@ namespace PrefabWorldEditor
 
 			playerEdit.gameObject.SetActive (_playerMode == 0);
 			playerPlay.gameObject.SetActive (!playerEdit.gameObject.activeSelf);
+
+			_goEditPart.SetActive (_playerMode == 0);
+
+			setMarkerActive (_goEditPart.activeSelf);
+
+			resetMaterials (_selectedElement.go);
 		}
 
 		//
@@ -162,11 +203,11 @@ namespace PrefabWorldEditor
 			}
 
             _v3EditPartPos.y = Mathf.RoundToInt(_v3EditPartPos.y / gridSize) * gridSize;
-			if (_v3EditPartPos.y < 0) {
-				_v3EditPartPos.y = 0;
+			if (_v3EditPartPos.y - _curEditPart.h / 2 < 0) {
+				_v3EditPartPos.y = _curEditPart.h / 2;
 			}
-			else if (_v3EditPartPos.y + _curEditPart.h > levelSize.y) {
-				_v3EditPartPos.y = levelSize.y - _curEditPart.h;
+			else if (_v3EditPartPos.y + _curEditPart.h / 2 > levelSize.y) {
+				_v3EditPartPos.y = levelSize.y - _curEditPart.h / 2;
 			}
 
             _v3EditPartPos.z = Mathf.RoundToInt(_v3EditPartPos.z / gridSize) * gridSize;
@@ -178,7 +219,7 @@ namespace PrefabWorldEditor
 			}
             _goEditPart.transform.position = _v3EditPartPos;
 
-			// add wall collision check
+			setMarkerPosition (_goEditPart.transform);
 
             if (Input.GetAxis("Mouse ScrollWheel") != 0) {
                 if (_timer > _lastMouseWheelUpdate) {
@@ -187,11 +228,13 @@ namespace PrefabWorldEditor
                         toggleEditPart();
                     }
                     else {
-						_curRotation = (_curRotation < 3 ? _curRotation + 1 : 0);
-						if (_curRotation == 0) {
-							_goEditPart.transform.rotation = Quaternion.identity;
-						} else {
-							_goEditPart.transform.Rotate (Vector3.up * 90f);
+						if (_curEditPart.canRotate) {
+							_curRotation = (_curRotation < 3 ? _curRotation + 1 : 0);
+							if (_curRotation == 0) {
+								_goEditPart.transform.rotation = Quaternion.identity;
+							} else {
+								_goEditPart.transform.Rotate (Vector3.up * 90f);
+							}
 						}
                     }
                 }
@@ -199,11 +242,14 @@ namespace PrefabWorldEditor
 
 			if (Input.GetMouseButtonDown (0))
 			{
-				if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.id == CAVE_FLOOR) {
+				if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.type == PartType.Floor) {
 					fillY (_goEditPart.transform.position);
 				}
-				else if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.id == CAVE_WALL) {
+				else if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.type == PartType.WallZ) {
 					fillZ (_goEditPart.transform.position);
+				}
+				else if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.type == PartType.WallX) {
+					fillX (_goEditPart.transform.position);
 				}
 				else {
 					placePart (_goEditPart.transform.position);
@@ -214,23 +260,19 @@ namespace PrefabWorldEditor
 		//
 		private void selectElement(Transform trfmHit)
 		{
-			_selectedElement = new LevelElement();
-			_selectedElement.partId = -1;
+			// reset last selected element material
+			resetMaterials (_selectedElement.go);
 
-			int lenX = (int)((float)levelSize.x / gridSize);
-			int lenY = (int)((float)levelSize.y / gridSize);
-			int lenZ = (int)((float)levelSize.z / gridSize);
-			int x, y, z;
-			for (x = 0; x < lenX; ++x) {
-				for (y = 0; y < lenY; ++y) {
-					for (z = 0; z < lenZ; ++z) {
-						if (_levelElements [x, y, z].go != null && _levelElements [x, y, z].go.transform == trfmHit) {
-							_selectedElement = _levelElements [x, y, z];
-							break;	
-						}
-					}
-				}
+			if (_levelElements.ContainsKey (trfmHit.gameObject)) {
+				_selectedElement = _levelElements [trfmHit.gameObject];
+				getMaterials (_selectedElement.go, matElementMarker);
+				Part part = _parts [_selectedElement.part];
+				setMarkerScale (part);
+			} else {
+				_selectedElement = new LevelElement();
 			}
+
+			setMarkerActive (_selectedElement.go != null);
 		}
 
 		//
@@ -258,20 +300,47 @@ namespace PrefabWorldEditor
 			}
 
 			_selectedElement.go.transform.position = _v3EditPartPos;
+
+			setMarkerPosition (_selectedElement.go.transform);
+		}
+
+		//
+		private void deleteSelectedElement()
+		{
+			if (_selectedElement.go != null) {
+				if (_levelElements.ContainsKey (_selectedElement.go)) {
+					_levelElements.Remove (_selectedElement.go);
+				}
+				Destroy (_selectedElement.go);
+				_selectedElement.go = null;
+			}
+
+			_selectedElement = new LevelElement ();
+
+			setMarkerActive (_goEditPart.activeSelf);
 		}
 
         //
-        private void toggleEditPart() {
+        private void toggleEditPart()
+		{
+			float direction = Input.GetAxis ("Mouse ScrollWheel");
 
-			int id = _curEditPart.id;
-			if (++id > CAVE_PATH_C2) {
-				id = CAVE_FLOOR;
-            }
-			_curEditPart = _parts [id];
+			int id = (int)_curEditPart.id;
+			if (direction > 0) {
+				if (++id >= (int)PartList.End_Of_List) {
+					id = (int)PartList.Floor_1;
+				}
+			} else {
+				if (--id < 0) {
+					id = (int)PartList.End_Of_List - 1;
+				}
+			}
+			_curEditPart = _parts [(PartList)id];
 
             Destroy(_goEditPart);
             _goEditPart = null;
-			_goEditPart = createPartAt(_curEditPart.id, -1, -1, -1);
+			_goEditPart = createPartAt(_curEditPart.id, -10, -10, -10);
+			setMarkerScale (_curEditPart);
 			_curRotation = 0;
             disableMeshCollider();
         }
@@ -289,12 +358,6 @@ namespace PrefabWorldEditor
 						child.gameObject.GetComponent<Collider> ().enabled = false;
 					}
 				}
-				/*if (go.transform.Find ("part")) {
-					GameObject go2 = go.transform.Find ("part").gameObject;
-					if (go2.GetComponent<MeshCollider> ()) {
-						go2.GetComponent<MeshCollider> ().enabled = false;
-					}
-				}*/
             }
         }
 
@@ -304,20 +367,30 @@ namespace PrefabWorldEditor
             int x = (int)(pos.x / gridSize);
             int y = (int)(pos.y / gridSize);
             int z = (int)(pos.z / gridSize);
-			Debug.Log (x+", "+y+", "+z);
+			//Debug.Log (x+", "+y+", "+z);
 
-            LevelElement element = _levelElements[x, y, z];
-
-            if (element.go != null) {
-                Destroy(element.go);
-                element.go = null;
-            }
-			element.partId = _curEditPart.id;
+			LevelElement element = new LevelElement ();
+			element.part = _curEditPart.id;
 			element.go = createPartAt(_curEditPart.id, x, y, z);
             element.go.transform.rotation = _goEditPart.transform.rotation;
 
-            _levelElements[x, y, z] = element;
+			_levelElements.Add(element.go, element);
         }
+
+		//
+		private void fillX(Vector3 pos)
+		{
+			int lenZ = (int)((float)levelSize.z / _curEditPart.d);
+			int lenY = (int)((float)levelSize.y / _curEditPart.h);
+			int z, y;
+			for (z = 0; z < lenZ; ++z) {
+				for (y = 0; y < lenY; ++y) {
+					pos.z = _curEditPart.d / 2 + (z * _curEditPart.d);
+					pos.y = (y * _curEditPart.h);
+					placePart (pos);
+				}
+			}
+		}
 
 		//
 		private void fillY(Vector3 pos)
@@ -350,12 +423,14 @@ namespace PrefabWorldEditor
 		}
 
         //
-        private void createPart(int id, string prefab, float w, float h, float d)
+		private void createPart(PartList id, PartType type, string prefab, float w, float h, float d, bool canRotate)
         {
             Part p = new Part();
 
-            p.id = id;
-            p.prefab = Resources.Load<GameObject>("Prefabs/" + prefab);
+            p.id   = id;
+			p.type = type;
+			p.canRotate = canRotate;
+            p.prefab    = Resources.Load<GameObject>("Prefabs/" + prefab);
             p.w = w;
             p.h = h;
             p.d = d;
@@ -364,7 +439,7 @@ namespace PrefabWorldEditor
         }
 
         //
-        private GameObject createPartAt(int partId, float x, float y, float z) {
+		private GameObject createPartAt(PartList partId, float x, float y, float z) {
             GameObject go = null;
 
             if (!_parts.ContainsKey(partId)) {
@@ -384,6 +459,13 @@ namespace PrefabWorldEditor
         // ------------------------------------------------------------------------
         private void setWalls() {
 
+			_trfmMarkerX  = trfmWalls.Find ("marker_x");
+			_trfmMarkerY  = trfmWalls.Find ("marker_y");
+			_trfmMarkerZ  = trfmWalls.Find ("marker_z");
+			_trfmMarkerX2 = trfmWalls.Find ("marker_x2");
+			_trfmMarkerY2 = trfmWalls.Find ("marker_y2");
+			_trfmMarkerZ2 = trfmWalls.Find ("marker_z2");
+
             float w = (float)levelSize.x;
             float h = (float)levelSize.y;
             float d = (float)levelSize.z;
@@ -391,12 +473,12 @@ namespace PrefabWorldEditor
             Vector2 matScale = new Vector2(w, h);
             Vector3 goScale = new Vector3(w, h, d);
 
-            setWall("wall_f", goScale, new Vector3(w / 2f + 1, h / 2f + 1, d + 1), matScale);
-            setWall("wall_b", goScale, new Vector3(w / 2f + 1, h / 2f + 1, 0 + 1), matScale);
-            setWall("wall_l", goScale, new Vector3(0 + 1, h / 2f + 1, d / 2f + 1), matScale);
-            setWall("wall_r", goScale, new Vector3(w + 1, h / 2f + 1, d / 2f + 1), matScale);
-            setWall("wall_u", goScale, new Vector3(w / 2f + 1, h + 1, d / 2f + 1), matScale);
-            setWall("wall_d", goScale, new Vector3(w / 2f + 1, 0 + 1, d / 2f + 1), matScale);
+            setWall("wall_f", goScale, new Vector3(w / 2f, h / 2f, d), matScale);
+            setWall("wall_b", goScale, new Vector3(w / 2f, h / 2f, 0), matScale);
+            setWall("wall_l", goScale, new Vector3(0, h / 2f, d / 2f), matScale);
+            setWall("wall_r", goScale, new Vector3(w, h / 2f, d / 2f), matScale);
+            setWall("wall_u", goScale, new Vector3(w / 2f, h, d / 2f), matScale);
+            setWall("wall_d", goScale, new Vector3(w / 2f, 0, d / 2f), matScale);
 
             /*goScale = new Vector3(w + 0.2f, h + 0.2f, d + 0.2f);
             matScale = new Vector2(w / 2, h / 2);
@@ -425,116 +507,81 @@ namespace PrefabWorldEditor
             }
         }
 
-        // ------------------------------------------------------------------------
-        //
-        // ------------------------------------------------------------------------
-        private void createDefaultLevel()
-        {
-            int lenX = (int)((float)levelSize.x / gridSize);
-            int lenY = (int)((float)levelSize.y / gridSize);
-            int lenZ = (int)((float)levelSize.z / gridSize);
-            _levelElements = new LevelElement[lenX, lenY, lenZ];
+		// ------------------------------------------------------------------------
+		// Material stuff
+		// ------------------------------------------------------------------------
+		private void getMaterials(GameObject go, Material setMaterial = null)
+		{
+			_aSelectedElementMaterials.Clear ();
 
-            int x, y, z;
-            for (x = 0; x < lenX; ++x) {
-                for (y = 0; y < lenY; ++y) {
-                    for (z = 0; z < lenZ; ++z) {
+			if (go != null) {
 
-                        LevelElement element = new LevelElement();
-                        element.go = null;
-                        element.partId = -1;
+				foreach (Transform child in go.transform) { 
+				
+					Renderer r = child.GetComponent<Renderer> ();
+					if (r != null) {
+						_aSelectedElementMaterials.Add (r.material);
+						if (setMaterial != null) {
+							r.material = setMaterial;
+						}
+					}
+				}
+			}
+		}
 
-                        /*
-                        // corners
-                        if (x == 0 && y == 0 && z == (len - 1)) {
-                            element.go = createPartAt(PART_CORNER_BFL, x, y, z);
-                        }
-                        else if (x == (len - 1) && y == 0 && z == (len - 1)) {
-                            element.go = createPartAt(PART_CORNER_BFR, x, y, z);
-                        }
-                        else if (x == 0 && y == 0 && z == 0) {
-                            element.go = createPartAt(PART_CORNER_BBL, x, y, z);
-                        }
-                        else if (x == (len - 1) && y == 0 && z == 0) {
-                            element.go = createPartAt(PART_CORNER_BBR, x, y, z);
-                        }
-                        else if (x == 0 && y == (len - 1) && z == (len - 1)) {
-                            element.go = createPartAt(PART_CORNER_TFL, x, y, z);
-                        }
-                        else if (x == (len - 1) && y == (len - 1) && z == (len - 1)) {
-                            element.go = createPartAt(PART_CORNER_TFR, x, y, z);
-                        }
-                        else if (x == 0 && y == (len - 1) && z == 0) {
-                            element.go = createPartAt(PART_CORNER_TBL, x, y, z);
-                        }
-                        else if (x == (len - 1) && y == (len - 1) && z == 0) {
-                            element.go = createPartAt(PART_CORNER_TBR, x, y, z);
-                        }
-                        // edges
-                        else if (x == 0 && y == 0 && z > 0 && z < (len - 1)) {
-                            element.go = createPartAt(PART_EDGE_BL, x, y, z);
-                        }
-                        else if (x == (len - 1) && y == 0 && z > 0 && z < (len - 1)) {
-                            element.go = createPartAt(PART_EDGE_BR, x, y, z);
-                        }
-                        else if (x > 0 && x < (len - 1) && y == 0 && z == (len - 1)) {
-                            element.go = createPartAt(PART_EDGE_BF, x, y, z);
-                        }
-                        else if (x > 0 && x < (len - 1) && y == 0 && z == 0) {
-                            element.go = createPartAt(PART_EDGE_BB, x, y, z);
-                        }
-                        else if (x == 0 && y == (len - 1) && z > 0 && z < (len - 1)) {
-                            element.go = createPartAt(PART_EDGE_TL, x, y, z);
-                        }
-                        else if (x == (len - 1) && y == (len - 1) && z > 0 && z < (len - 1)) {
-                            element.go = createPartAt(PART_EDGE_TR, x, y, z);
-                        }
-                        else if (x > 0 && x < (len - 1) && y == (len - 1) && z == (len - 1)) {
-                            element.go = createPartAt(PART_EDGE_TF, x, y, z);
-                        }
-                        else if (x > 0 && x < (len - 1) && y == (len - 1) && z == 0) {
-                            element.go = createPartAt(PART_EDGE_TB, x, y, z);
-                        }
-                        // side edges
-                        else if (x == 0 && y > 0 && y < (len - 1) && z == (len - 1)) {
-                            element.go = createPartAt(PART_EDGE_LB, x, y, z);
-                        }
-                        else if (x == (len - 1) && y > 0 && y < (len - 1) && z == (len - 1)) {
-                            element.go = createPartAt(PART_EDGE_RB, x, y, z);
-                        }
-                        else if (x == 0 && y > 0 && y < (len - 1) && z == 0) {
-                            element.go = createPartAt(PART_EDGE_LF, x, y, z);
-                        }
-                        else if (x == (len - 1) && y > 0 && y < (len - 1) && z == 0) {
-                            element.go = createPartAt(PART_EDGE_RF, x, y, z);
-                        }
-                        */
-                        // sides
-                        /*else if (x > 0 && x < (len - 1) && y > 0 && y < (len - 1) && z == (len - 1)) {
-                            element.go = createPartAt(PART_SIDE_B, x, y, z);
-                        }
-                        else if (x > 0 && x < (len - 1) && y > 0 && y < (len - 1) && z == 0) {
-                            element.go = createPartAt(PART_SIDE_F, x, y, z);
-                        }
-                        else if (x == 0 && y > 0 && y < (len - 1) && z > 0 && z < (len - 1)) {
-                            element.go = createPartAt(PART_SIDE_L, x, y, z);
-                        }
-                        else if (x == (len - 1) && y > 0 && y < (len - 1) && z > 0 && z < (len - 1)) {
-                            element.go = createPartAt(PART_SIDE_R, x, y, z);
-                        }
-                        else if (x > 0 && x < (len - 1) && y == 0 && z > 0 && z < (len - 1)) {
-                            element.go = createPartAt(PART_SIDE_BOT, x, y, z);
-                        }
-                        else if (x > 0 && x < (len - 1) && y == (len - 1) && z > 0 && z < (len - 1)) {
-                            element.go = createPartAt(PART_SIDE_TOP, x, y, z);
-                        }*/
+		private void resetMaterials(GameObject go)
+		{
+			if (go != null) {
 
-                        _levelElements[x, y, z] = element;
-                    }
-                }
-            }
+				int index = 0;
+				int len = _aSelectedElementMaterials.Count;
+				foreach (Transform child in go.transform) { 
 
-            Debug.Log("num objects: " + _container.childCount);
-        }
-    }
+					Renderer r = child.GetComponent<Renderer> ();
+					if (r != null && index < len) {
+						r.material = _aSelectedElementMaterials[index];
+						index++;
+					}
+				}
+			}
+
+			_aSelectedElementMaterials.Clear ();
+		}
+
+		// ------------------------------------------------------------------------
+		// Marker stuff
+		// ------------------------------------------------------------------------
+		private void setMarkerActive(bool state)
+		{
+			_trfmMarkerX.gameObject.SetActive (state);
+			_trfmMarkerY.gameObject.SetActive (state);
+			_trfmMarkerZ.gameObject.SetActive (state);
+
+			_trfmMarkerX2.gameObject.SetActive (state);
+			_trfmMarkerY2.gameObject.SetActive (state);
+			_trfmMarkerZ2.gameObject.SetActive (state);
+		}
+
+		private void setMarkerScale(Part part)
+		{
+			_trfmMarkerX.localScale = new Vector3 (part.d, part.h, 1);
+			_trfmMarkerY.localScale = new Vector3 (part.w, part.d, 1);
+			_trfmMarkerZ.localScale = new Vector3 (part.w, part.h, 1);
+
+			_trfmMarkerX2.localScale = new Vector3 (part.d, part.h, 1);
+			_trfmMarkerY2.localScale = new Vector3 (part.w, part.d, 1);
+			_trfmMarkerZ2.localScale = new Vector3 (part.w, part.h, 1);
+		}
+
+		private void setMarkerPosition(Transform trfm)
+		{
+			_trfmMarkerX.position = new Vector3 (0.01f, trfm.position.y, trfm.position.z);
+			_trfmMarkerY.position = new Vector3 (trfm.position.x, 0.01f, trfm.position.z);
+			_trfmMarkerZ.position = new Vector3 (trfm.position.x, trfm.position.y, 0.01f);
+
+			_trfmMarkerX2.position = new Vector3 (levelSize.x - 0.01f, trfm.position.y, trfm.position.z);
+			_trfmMarkerY2.position = new Vector3 (trfm.position.x, levelSize.y - 0.01f, trfm.position.z);
+			_trfmMarkerZ2.position = new Vector3 (trfm.position.x, trfm.position.y, levelSize.z - 0.01f);
+		} 
+	}
 }

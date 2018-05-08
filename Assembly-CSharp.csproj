@@ -330,6 +330,7 @@
      <None Include="Assets\Runtime Transform Gizmos\Readme\Version History.txt" />
      <None Include="Assets\Runtime Transform Gizmos\Resources\Shaders\Gizmo Solid Component.shader" />
      <None Include="Assets\Runtime Transform Gizmos\Resources\Shaders\Geometry2D.shader" />
+     <None Include="Assets\___PrefabWorldEditor\Resources\Shaders\OutlineShader.shader" />
      <None Include="Assets\Runtime Transform Gizmos\Readme\Hotkeys.txt" />
      <None Include="Assets\Runtime Transform Gizmos\Resources\Shaders\Gizmo Line.shader" />
      <None Include="Assets\Runtime Transform Gizmos\Readme\Readme.txt" />

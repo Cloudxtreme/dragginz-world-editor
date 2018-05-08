@@ -145,6 +145,7 @@ MonoBehaviour:
   levelSize: {x: 36, y: 36, z: 36}
   gridSize: 0.25
   trfmWalls: {fileID: 1414976071}
+  matElementMarker: {fileID: 2100000, guid: 71a7ad661511f084fbd9a2fdffa852d3, type: 2}
 --- !u!4 &361061324
 Transform:
   m_ObjectHideFlags: 0
@@ -172,7 +173,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400168, guid: b235179bd2a63d1468dd430670338c55, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 400168, guid: b235179bd2a63d1468dd430670338c55, type: 3}
       propertyPath: m_LocalPosition.z
@@ -409,15 +410,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4431017158349562, guid: 5b0e49069cad2224e9617b47f3df4453, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4431017158349562, guid: 5b0e49069cad2224e9617b47f3df4453, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4431017158349562, guid: 5b0e49069cad2224e9617b47f3df4453, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4431017158349562, guid: 5b0e49069cad2224e9617b47f3df4453, type: 2}
       propertyPath: m_LocalRotation.x
@@ -438,10 +439,6 @@ Prefab:
     - target: {fileID: 4431017158349562, guid: 5b0e49069cad2224e9617b47f3df4453, type: 2}
       propertyPath: m_RootOrder
       value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1536776109530688, guid: 5b0e49069cad2224e9617b47f3df4453, type: 2}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b0e49069cad2224e9617b47f3df4453, type: 2}
