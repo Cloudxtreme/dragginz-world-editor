@@ -325,6 +325,11 @@
      <Compile Include="Assets\Runtime Transform Gizmos\Scripts\Scene Management\Interaction\Raycast\TerrainRayHit.cs" />
      <Compile Include="Assets\Runtime Transform Gizmos\Scripts\Singleton\MonoSingletonBase.cs" />
      <Compile Include="Assets\Runtime Transform Gizmos\Scripts\Singleton\SingletonBase.cs" />
+     <Compile Include="Assets\RuntimeGizmos\Scripts\GizmoClickDetection.cs" />
+     <Compile Include="Assets\RuntimeGizmos\Scripts\GizmoRotateScript.cs" />
+     <Compile Include="Assets\RuntimeGizmos\Scripts\GizmoScaleScript.cs" />
+     <Compile Include="Assets\RuntimeGizmos\Scripts\GizmoTranslateScript.cs" />
+     <Compile Include="Assets\RuntimeGizmos\Scripts\GizmoViewScript.cs" />
      <None Include="Assets\Runtime Transform Gizmos\Resources\Shaders\GLLine.shader" />
      <None Include="Assets\Runtime Transform Gizmos\Resources\Shaders\TintedDiffuse.shader" />
      <None Include="Assets\Runtime Transform Gizmos\Readme\Version History.txt" />

@@ -24,6 +24,8 @@ namespace PrefabWorldEditor
 
 		public Material matElementMarker;
 
+		public GizmoTranslateScript gizmoTranslateScript;
+
 		//
 
 		private enum PartType {
@@ -103,7 +105,7 @@ namespace PrefabWorldEditor
 			createPart(PartList.Floor_2, PartType.Floor,  "MDC/Floor_2",  6f, .25f, 6f, false);
 			createPart(PartList.Wall_Z,  PartType.WallZ,  "MDC/Wall_Z",   3f, 3f, .5f, false);
 			createPart(PartList.Wall_X,  PartType.WallX,  "MDC/Wall_X",   0.5f, 3f, 3f, false);
-			createPart(PartList.Path_1,  PartType.Tunnel, "MDC/Path_1",   5f, 4f, 12f, true);
+			createPart(PartList.Path_1,  PartType.Tunnel, "MDC/Path_1",   5f, 1.8f, 12f, true);
 			createPart(PartList.Path_2,  PartType.Tunnel, "MDC/Path_2",   5f, 6f, 12f, true);
 			createPart(PartList.Path_3,  PartType.Tunnel, "MDC/Path_3",  12f, 3f, 3f, true);
 			createPart(PartList.Path_4,  PartType.Tunnel, "MDC/Path_4",   8f, 8f, 8f, true);
@@ -146,6 +148,8 @@ namespace PrefabWorldEditor
 				if (_goEditPart.activeSelf) {
 					resetMaterials (_selectedElement.go);
 					setMarkerScale (_curEditPart);
+				} else {
+					gizmoTranslateScript.gameObject.SetActive (false);
 				}
 			}
 
@@ -159,8 +163,10 @@ namespace PrefabWorldEditor
 
 			if (!_goEditPart.activeSelf) {
 				if (Input.GetMouseButtonDown (0)) {
-					if (_goHit != null) {
-						selectElement (_goHit.transform.parent);
+					if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) {
+						if (_goHit != null) {
+							selectElement (_goHit.transform.parent);
+						}
 					}
 				}
 				if (_selectedElement.go != null) {
@@ -268,8 +274,12 @@ namespace PrefabWorldEditor
 				getMaterials (_selectedElement.go, matElementMarker);
 				Part part = _parts [_selectedElement.part];
 				setMarkerScale (part);
+				gizmoTranslateScript.translateTarget = _selectedElement.go;
+				gizmoTranslateScript.init();
+				gizmoTranslateScript.gameObject.SetActive (true);
 			} else {
 				_selectedElement = new LevelElement();
+				gizmoTranslateScript.gameObject.SetActive (false);
 			}
 
 			setMarkerActive (_selectedElement.go != null);
