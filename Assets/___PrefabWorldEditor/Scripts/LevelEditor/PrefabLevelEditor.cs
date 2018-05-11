@@ -32,7 +32,8 @@ namespace PrefabWorldEditor
 			Floor,
 			WallZ,
 			WallX,
-			Tunnel
+			Tunnel,
+			Pillar
 		};
 
 		private enum PartList {
@@ -44,6 +45,9 @@ namespace PrefabWorldEditor
 			Path_2,
 			Path_3,
 			Path_4,
+			Pillar_1,
+			Pillar_2,
+			Pillar_3,
 			End_Of_List
 		};
 
@@ -101,14 +105,17 @@ namespace PrefabWorldEditor
         {
 			_parts = new Dictionary<PartList, Part>();
 
-			createPart(PartList.Floor_1, PartType.Floor,  "MDC/Floor_1",  6f, .75f, 6f, false);
-			createPart(PartList.Floor_2, PartType.Floor,  "MDC/Floor_2",  6f, .25f, 6f, false);
-			createPart(PartList.Wall_Z,  PartType.WallZ,  "MDC/Wall_Z",   3f, 3f, .5f, false);
-			createPart(PartList.Wall_X,  PartType.WallX,  "MDC/Wall_X",   0.5f, 3f, 3f, false);
-			createPart(PartList.Path_1,  PartType.Tunnel, "MDC/Path_1",   5f, 1.8f, 12f, true);
-			createPart(PartList.Path_2,  PartType.Tunnel, "MDC/Path_2",   5f, 6f, 12f, true);
-			createPart(PartList.Path_3,  PartType.Tunnel, "MDC/Path_3",  12f, 3f, 3f, true);
-			createPart(PartList.Path_4,  PartType.Tunnel, "MDC/Path_4",   8f, 8f, 8f, true);
+			createPart(PartList.Floor_1,  PartType.Floor,  "MDC/Floor_1",  6f, .75f, 6f, false);
+			createPart(PartList.Floor_2,  PartType.Floor,  "MDC/Floor_2",  6f, .25f, 6f, false);
+			createPart(PartList.Wall_Z,   PartType.WallZ,  "MDC/Wall_Z",   3f, 3f, .5f, false);
+			createPart(PartList.Wall_X,   PartType.WallX,  "MDC/Wall_X",   0.5f, 3f, 3f, false);
+			createPart(PartList.Path_1,   PartType.Tunnel, "MDC/Path_1",   5f, 1.8f, 12f, true);
+			createPart(PartList.Path_2,   PartType.Tunnel, "MDC/Path_2",   5f, 6f, 12f, true);
+			createPart(PartList.Path_3,   PartType.Tunnel, "MDC/Path_3",  12f, 3f, 3f, true);
+			createPart(PartList.Path_4,   PartType.Tunnel, "MDC/Path_4",   8f, 8f, 8f, true);
+			createPart(PartList.Pillar_1, PartType.Pillar, "MDC/Pillar_1", 2f, 3f, 2f, true);
+			createPart(PartList.Pillar_2, PartType.Pillar, "MDC/Pillar_2", 1.5f, 1.5f, 4.75f, true);
+			createPart(PartList.Pillar_3, PartType.Pillar, "MDC/Pillar_3", 1.5f, 1.5f, 1.5f, true);
 
             _container = new GameObject("[Container]").transform;
 
@@ -522,6 +529,8 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void getMaterials(GameObject go, Material setMaterial = null)
 		{
+			return;
+
 			_aSelectedElementMaterials.Clear ();
 
 			if (go != null) {
@@ -541,6 +550,8 @@ namespace PrefabWorldEditor
 
 		private void resetMaterials(GameObject go)
 		{
+			return;
+
 			if (go != null) {
 
 				int index = 0;
