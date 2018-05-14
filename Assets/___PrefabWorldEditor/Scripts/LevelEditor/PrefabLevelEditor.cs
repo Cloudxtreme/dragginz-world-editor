@@ -8,10 +8,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.EventSystems;
+
+using AssetsShared;
 
 namespace PrefabWorldEditor
 {
-	public class PrefabLevelEditor : MonoBehaviour
+	public class PrefabLevelEditor : MonoSingleton<PrefabLevelEditor>
     {
         public Transform playerEdit;
 		public Transform playerPlay;
@@ -56,6 +59,7 @@ namespace PrefabWorldEditor
 			public PartList id;
 			public PartType type;
 			public bool canRotate;
+			public bool usesGravity;
 
             public GameObject prefab;
 
@@ -105,17 +109,17 @@ namespace PrefabWorldEditor
         {
 			_parts = new Dictionary<PartList, Part>();
 
-			createPart(PartList.Floor_1,  PartType.Floor,  "MDC/Floor_1",  6f, .75f, 6f, false);
-			createPart(PartList.Floor_2,  PartType.Floor,  "MDC/Floor_2",  6f, .25f, 6f, false);
-			createPart(PartList.Wall_Z,   PartType.WallZ,  "MDC/Wall_Z",   3f, 3f, .5f, false);
-			createPart(PartList.Wall_X,   PartType.WallX,  "MDC/Wall_X",   0.5f, 3f, 3f, false);
-			createPart(PartList.Path_1,   PartType.Tunnel, "MDC/Path_1",   5f, 1.8f, 12f, true);
-			createPart(PartList.Path_2,   PartType.Tunnel, "MDC/Path_2",   5f, 6f, 12f, true);
-			createPart(PartList.Path_3,   PartType.Tunnel, "MDC/Path_3",  12f, 3f, 3f, true);
-			createPart(PartList.Path_4,   PartType.Tunnel, "MDC/Path_4",   8f, 8f, 8f, true);
-			createPart(PartList.Pillar_1, PartType.Pillar, "MDC/Pillar_1", 2f, 3f, 2f, true);
-			createPart(PartList.Pillar_2, PartType.Pillar, "MDC/Pillar_2", 1.5f, 1.5f, 4.75f, true);
-			createPart(PartList.Pillar_3, PartType.Pillar, "MDC/Pillar_3", 1.5f, 1.5f, 1.5f, true);
+			createPart(PartList.Floor_1,  PartType.Floor,  "MDC/Floor_1",  6f, .75f, 6f,      false, false);
+			createPart(PartList.Floor_2,  PartType.Floor,  "MDC/Floor_2",  6f, .25f, 6f,      false, false);
+			createPart(PartList.Wall_Z,   PartType.WallZ,  "MDC/Wall_Z",   3f, 3f, .5f,       false, false);
+			createPart(PartList.Wall_X,   PartType.WallX,  "MDC/Wall_X",   0.5f, 3f, 3f,      false, false);
+			createPart(PartList.Path_1,   PartType.Tunnel, "MDC/Path_1",   5f, 1.8f, 12f,     true, false);
+			createPart(PartList.Path_2,   PartType.Tunnel, "MDC/Path_2",   5f, 6f, 12f,       true, false);
+			createPart(PartList.Path_3,   PartType.Tunnel, "MDC/Path_3",  12f, 3f, 3f,        true, false);
+			createPart(PartList.Path_4,   PartType.Tunnel, "MDC/Path_4",   8f, 8f, 8f,        true, false);
+			createPart(PartList.Pillar_1, PartType.Pillar, "MDC/Pillar_1", 2f, 3f, 2f,        true, true);
+			createPart(PartList.Pillar_2, PartType.Pillar, "MDC/Pillar_2", 1.5f, 1.5f, 4.75f, true, true);
+			createPart(PartList.Pillar_3, PartType.Pillar, "MDC/Pillar_3", 1.5f, 1.5f, 1.5f,  true, true);
 
             _container = new GameObject("[Container]").transform;
 
@@ -128,7 +132,7 @@ namespace PrefabWorldEditor
 			_goEditPart    = createPartAt(_curEditPart.id, -10, -10, -10);
 			setMarkerScale (_curEditPart);
 			_curRotation   = 0;
-            disableMeshCollider();
+			setMeshCollider(_goEditPart, false);
 
 			_selectedElement = new LevelElement();
 			_aSelectedElementMaterials = new List<Material> ();
@@ -153,7 +157,7 @@ namespace PrefabWorldEditor
 				_goEditPart.SetActive (!_goEditPart.activeSelf);
 				setMarkerActive (_goEditPart.activeSelf);
 				if (_goEditPart.activeSelf) {
-					resetMaterials (_selectedElement.go);
+					resetSelectedElement ();
 					setMarkerScale (_curEditPart);
 				} else {
 					gizmoTranslateScript.gameObject.SetActive (false);
@@ -169,10 +173,13 @@ namespace PrefabWorldEditor
 			}
 
 			if (!_goEditPart.activeSelf) {
-				if (Input.GetMouseButtonDown (0)) {
-					if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) {
-						if (_goHit != null) {
-							selectElement (_goHit.transform.parent);
+				if (Input.GetMouseButtonDown (0))
+				{
+					if (!EventSystem.current.IsPointerOverGameObject ()) {
+						if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) {
+							if (_goHit != null) {
+								selectElement (_goHit.transform.parent);
+							}
 						}
 					}
 				}
@@ -200,7 +207,7 @@ namespace PrefabWorldEditor
 
 			setMarkerActive (_goEditPart.activeSelf);
 
-			resetMaterials (_selectedElement.go);
+			resetSelectedElement ();
 		}
 
 		//
@@ -255,17 +262,16 @@ namespace PrefabWorldEditor
 
 			if (Input.GetMouseButtonDown (0))
 			{
-				if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.type == PartType.Floor) {
-					fillY (_goEditPart.transform.position);
-				}
-				else if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.type == PartType.WallZ) {
-					fillZ (_goEditPart.transform.position);
-				}
-				else if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.type == PartType.WallX) {
-					fillX (_goEditPart.transform.position);
-				}
-				else {
-					placePart (_goEditPart.transform.position);
+				if (!EventSystem.current.IsPointerOverGameObject ()) {
+					if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.type == PartType.Floor) {
+						fillY (_goEditPart.transform.position);
+					} else if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.type == PartType.WallZ) {
+						fillZ (_goEditPart.transform.position);
+					} else if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) && _curEditPart.type == PartType.WallX) {
+						fillX (_goEditPart.transform.position);
+					} else {
+						placePart (_goEditPart.transform.position);
+					}
 				}
 			}
         }
@@ -273,12 +279,13 @@ namespace PrefabWorldEditor
 		//
 		private void selectElement(Transform trfmHit)
 		{
-			// reset last selected element material
-			resetMaterials (_selectedElement.go);
+			resetSelectedElement ();
 
 			if (_levelElements.ContainsKey (trfmHit.gameObject)) {
 				_selectedElement = _levelElements [trfmHit.gameObject];
-				getMaterials (_selectedElement.go, matElementMarker);
+				//getMaterials (_selectedElement.go, matElementMarker);
+				setMeshCollider (_selectedElement.go, false);
+				setRigidBody (_selectedElement.go, false);
 				Part part = _parts [_selectedElement.part];
 				setMarkerScale (part);
 				gizmoTranslateScript.translateTarget = _selectedElement.go;
@@ -359,26 +366,58 @@ namespace PrefabWorldEditor
 			_goEditPart = createPartAt(_curEditPart.id, -10, -10, -10);
 			setMarkerScale (_curEditPart);
 			_curRotation = 0;
-            disableMeshCollider();
+			setMeshCollider(_goEditPart, false);
         }
 
         //
-        private void disableMeshCollider () {
+		private void setMeshCollider (GameObject go, bool state) {
 
-            GameObject go = _goEditPart;
             if (go.GetComponent<Collider>()) {
-                go.GetComponent<Collider>().enabled = false;
+				go.GetComponent<Collider>().enabled = state;
             }
 			else {
 				foreach (Transform child in go.transform) {
 					if (child.gameObject.GetComponent<Collider> ()) {
-						child.gameObject.GetComponent<Collider> ().enabled = false;
+						child.gameObject.GetComponent<Collider> ().enabled = state;
 					}
 				}
             }
         }
 
-        //
+		//
+		private void setRigidBody (GameObject go, bool state) {
+
+			if (go.GetComponent<Rigidbody>()) {
+				go.GetComponent<Rigidbody>().useGravity = state;
+			}
+			else {
+				foreach (Transform child in go.transform) {
+					if (child.gameObject.GetComponent<Rigidbody> ()) {
+						child.gameObject.GetComponent<Rigidbody> ().useGravity = state;
+					}
+				}
+			}
+		}
+
+		//
+		private void setRigidBodies (bool state)
+		{
+			foreach (KeyValuePair<GameObject, LevelElement> element in _levelElements)
+			{
+				GameObject go = element.Value.go;
+				if (go.GetComponent<Rigidbody> ()) {
+					go.GetComponent<Rigidbody> ().useGravity = state;
+				} else {
+					foreach (Transform child in go.transform) {
+						if (child.gameObject.GetComponent<Rigidbody> ()) {
+							child.gameObject.GetComponent<Rigidbody> ().useGravity = state;
+						}
+					}
+				}
+			}
+		}
+
+		//
         private void placePart(Vector3 pos) {
 
             int x = (int)(pos.x / gridSize);
@@ -390,6 +429,9 @@ namespace PrefabWorldEditor
 			element.part = _curEditPart.id;
 			element.go = createPartAt(_curEditPart.id, x, y, z);
             element.go.transform.rotation = _goEditPart.transform.rotation;
+
+			setMeshCollider(element.go, true);
+			setRigidBody (element.go, _curEditPart.usesGravity);
 
 			_levelElements.Add(element.go, element);
         }
@@ -440,13 +482,14 @@ namespace PrefabWorldEditor
 		}
 
         //
-		private void createPart(PartList id, PartType type, string prefab, float w, float h, float d, bool canRotate)
+		private void createPart(PartList id, PartType type, string prefab, float w, float h, float d, bool canRotate, bool usesGravity)
         {
             Part p = new Part();
 
             p.id   = id;
 			p.type = type;
 			p.canRotate = canRotate;
+			p.usesGravity = usesGravity;
             p.prefab    = Resources.Load<GameObject>("Prefabs/" + prefab);
             p.w = w;
             p.h = h;
@@ -456,7 +499,8 @@ namespace PrefabWorldEditor
         }
 
         //
-		private GameObject createPartAt(PartList partId, float x, float y, float z) {
+		private GameObject createPartAt(PartList partId, float x, float y, float z)
+		{
             GameObject go = null;
 
             if (!_parts.ContainsKey(partId)) {
@@ -527,7 +571,7 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		// Material stuff
 		// ------------------------------------------------------------------------
-		private void getMaterials(GameObject go, Material setMaterial = null)
+		/*private void getMaterials(GameObject go, Material setMaterial = null)
 		{
 			return;
 
@@ -546,12 +590,10 @@ namespace PrefabWorldEditor
 					}
 				}
 			}
-		}
+		}*/
 
-		private void resetMaterials(GameObject go)
+		/*private void resetMaterials(GameObject go)
 		{
-			return;
-
 			if (go != null) {
 
 				int index = 0;
@@ -567,6 +609,17 @@ namespace PrefabWorldEditor
 			}
 
 			_aSelectedElementMaterials.Clear ();
+		}*/
+
+		private void resetSelectedElement()
+		{
+			if (_selectedElement.go != null) {
+
+				Part part = _parts [_selectedElement.part];
+
+				setMeshCollider(_selectedElement.go, true);
+				setRigidBody (_selectedElement.go, part.usesGravity);
+			}
 		}
 
 		// ------------------------------------------------------------------------

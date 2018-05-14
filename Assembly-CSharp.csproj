@@ -52,7 +52,11 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\Cameras\FlyCam.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\Core\Globals.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\PrefabLevelEditor.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PweMainMenu.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PwePopup.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\UISelectionBox.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Assets\AssetFactory.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Cameras\FlyCam.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Cameras\RTEditorCam.cs" />
