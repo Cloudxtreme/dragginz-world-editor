@@ -21,6 +21,7 @@ namespace PrefabWorldEditor
 	public class PweMainMenu : MonoSingleton<PweMainMenu>
     {
 		public GameObject goTransformSelection;
+		public GameObject goAssetTypeSelection;
 		//public GameObject goItemsSelection;
 		//public GameObject goDigSettings;
 
@@ -46,6 +47,11 @@ namespace PrefabWorldEditor
 		//public Slider sliderDigHeight;
 		//public Slider sliderDigDepth;
 
+		public Button btnAssetFloors;
+		public Button btnAssetWalls;
+		public Button btnAssetChunks;
+		public Button btnAssetProps;
+
 		public Text txtFileInfo;
 		public Text txtLevelName;
 		public Text txtCubeCount;
@@ -69,6 +75,7 @@ namespace PrefabWorldEditor
 		//private int _iSelectedLevel = -1;
 
         private int _iSelectedTool = -1;
+		private int _iSelectedAssetType = -1;
 
 		private Vector3 _v3DigSettings = new Vector3(1,1,1);
 		public Vector3 v3DigSettings {
@@ -95,6 +102,10 @@ namespace PrefabWorldEditor
 
 		public int iSelectedTool {
 			get { return _iSelectedTool; }
+		}
+
+		public int iSelectedAssetType {
+			get { return _iSelectedAssetType; }
 		}
 
 		#region SystemMethods
@@ -261,6 +272,15 @@ namespace PrefabWorldEditor
 			btnModeSelect.interactable = (mode != PrefabLevelEditor.EditMode.Transform);
 		}
 
+		//
+		public void setAssetTypeButtons(PrefabLevelEditor.AssetType type)
+		{
+			btnAssetFloors.interactable = (type != PrefabLevelEditor.AssetType.Floor);
+			btnAssetWalls.interactable  = (type != PrefabLevelEditor.AssetType.WallX && type != PrefabLevelEditor.AssetType.WallZ);
+			btnAssetChunks.interactable = (type != PrefabLevelEditor.AssetType.Chunk);
+			btnAssetProps.interactable  = (type != PrefabLevelEditor.AssetType.Prop);
+		}
+
 		/*public void setMenuPanels(AppState mode)
 		{
 			panelTools.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
@@ -289,6 +309,12 @@ namespace PrefabWorldEditor
 		public void showTransformBox(bool state) {
 			if (goTransformSelection != null) {
 				goTransformSelection.SetActive (state);
+			}
+		}
+
+		public void showAssetTypeBox(bool state) {
+			if (goAssetTypeSelection != null) {
+				goAssetTypeSelection.SetActive (state);
 			}
 		}
 
@@ -324,9 +350,9 @@ namespace PrefabWorldEditor
 
 			if (_iSelectedTool != toolId) {
 
-				setToolButtonImage (imgMove, (toolId == 0 ? "Textures/Tools/icon-move-selected" : "Textures/Tools/icon-move"));
+				setToolButtonImage (imgMove,   (toolId == 0 ? "Textures/Tools/icon-move-selected" : "Textures/Tools/icon-move"));
 				setToolButtonImage (imgRotate, (toolId == 1 ? "Textures/Tools/icon-rotate-selected" : "Textures/Tools/icon-rotate"));
-				setToolButtonImage (imgScale, (toolId == 2 ? "Textures/Tools/icon-scale-selected" : "Textures/Tools/icon-scale"));
+				setToolButtonImage (imgScale,  (toolId == 2 ? "Textures/Tools/icon-scale-selected" : "Textures/Tools/icon-scale"));
 				setToolButtonImage (imgVolume, (toolId == 3 ? "Textures/Tools/icon-volume-selected" : "Textures/Tools/icon-volume"));
 
 				_iSelectedTool = toolId;
@@ -343,6 +369,23 @@ namespace PrefabWorldEditor
             }
         }
 
+		// ---------------------------------------------------------------------------------------------
+		private void selectAssetType(int value, PrefabLevelEditor.AssetType type) {
+
+			if (_iSelectedAssetType != value) {
+
+				btnAssetFloors.interactable = (value != 0);
+				btnAssetWalls.interactable  = (value != 1);
+				btnAssetChunks.interactable = (value != 2);
+				btnAssetProps.interactable  = (value != 3);
+
+				_iSelectedAssetType = value;
+
+				PrefabLevelEditor.Instance.selectAssetType (type);
+			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Hack to set selected option to an invalid value!
 		/// </summary>
@@ -696,29 +739,42 @@ namespace PrefabWorldEditor
             AppController.Instance.switchToPlayMode();
         }*/
 
-		/// <summary>
-		/// ...
-		/// </summary>
+		//
         public void onSelectTransformTool(int value) {
-            //if (_gizmoSystem) {
-                if (value == 0) {
-                    //_gizmoSystem.ActiveGizmoType = GizmoType.Translation;
-                    selectTool(0);
-                }
-                else if (value == 1) {
-                    //_gizmoSystem.ActiveGizmoType = GizmoType.Rotation;
-                    selectTool(1);
-                }
-                else if (value == 2) {
-                    //_gizmoSystem.ActiveGizmoType = GizmoType.Scale;
-                    selectTool(2);
-                }
-                else if (value == 3) {
-                    //_gizmoSystem.ActiveGizmoType = GizmoType.VolumeScale;
-                    selectTool(3);
-                }
-           // }
+            if (value == 0) {
+                //_gizmoSystem.ActiveGizmoType = GizmoType.Translation;
+                selectTool(0);
+            }
+            else if (value == 1) {
+                //_gizmoSystem.ActiveGizmoType = GizmoType.Rotation;
+                selectTool(1);
+            }
+            else if (value == 2) {
+                //_gizmoSystem.ActiveGizmoType = GizmoType.Scale;
+                selectTool(2);
+            }
+            else if (value == 3) {
+                //_gizmoSystem.ActiveGizmoType = GizmoType.VolumeScale;
+                selectTool(3);
+            }
         }
+
+		//
+		public void onSelectAssetType(int value) {
+				
+			if (value == 0) {
+				selectAssetType(0, PrefabLevelEditor.AssetType.Floor);
+			}
+			else if (value == 1) {
+				selectAssetType(1, PrefabLevelEditor.AssetType.WallX);
+			}
+			else if (value == 2) {
+				selectAssetType(2, PrefabLevelEditor.AssetType.Chunk);
+			}
+			else if (value == 3) {
+				selectAssetType(3, PrefabLevelEditor.AssetType.Prop);
+			}
+		}
 
 		// -------------------------------------------------------------------------------------
 		public void onSelectMaterial(int value)
