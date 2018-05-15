@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4000011891241838}
   m_Layer: 0
   m_Name: Floor_1
-  m_TagString: Untagged
+  m_TagString: PartContainer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -194,5 +194,5 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 6.000002, y: 0.00002169609, z: 6.000001}
-  m_Center: {x: -0.00000035762787, y: 0.74999994, z: -0.000002503395}
+  m_Size: {x: 6.000001, y: 0.75, z: 6.000001}
+  m_Center: {x: -0.00000035762787, y: 0.375, z: -0.0000023841858}

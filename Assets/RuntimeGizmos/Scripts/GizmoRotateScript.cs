@@ -57,8 +57,17 @@ public class GizmoRotateScript : MonoBehaviour {
         detectors[2] = zTorus.GetComponent<GizmoClickDetection>();
 
         // Set the same position for the target and the gizmo
-        transform.position = rotateTarget.transform.position;
+		if (rotateTarget != null) {
+			transform.position = rotateTarget.transform.position;
+		}
     }
+
+	public void init()
+	{
+		if (rotateTarget != null) {
+			transform.position = rotateTarget.transform.position;
+		}
+	}
 
     /// <summary>
     ///     Once per frame

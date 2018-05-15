@@ -14,46 +14,44 @@ namespace PrefabLevelEditor
 
 		private static float movementSpeed = 0.15f;
 
-		private Camera _myCam;
+		//private Camera _myCam;
 
 		private Transform _player;
-		private Vector3 initialPos;
-		private Vector3 initialRotation;
+		//private Vector3 initialPos;
+		//private Vector3 initialRotation;
 
 		private Vector3 playerEuler;
 		private Vector3 camOffset;
         
-		private float _time;
-		private float _nextPosUpdate;
+		//private float _time;
+		//private float _nextPosUpdate;
 
         private bool _mouseRightIsDown;
-        private bool _move;
+        //private bool _move;
 
 		void Awake()
 		{
-			_myCam = GetComponent<Camera> ();
+			//_myCam = GetComponent<Camera> ();
 
 			_player = transform.parent;
 
-			initialPos = _player.position;
-
-			initialRotation = _player.eulerAngles;
+			//initialPos = _player.position;
+			//initialRotation = _player.eulerAngles;
 
 			playerEuler = _player.eulerAngles;
 
-			_time = 0;
-			_nextPosUpdate = 0;
+			//_time = 0;
+			//_nextPosUpdate = 0;
 
             _mouseRightIsDown = false;
-            _move = false;
+            //_move = false;
 		}
 
 		//
 		void Update ()
 		{
-			_time = Time.realtimeSinceStartup;
-
-			_move = Input.GetAxis ("Horizontal") != 0.0f || Input.GetAxis ("Vertical") != 0.0f || Input.GetAxis ("Depth") != 0.0f;
+			//_time = Time.realtimeSinceStartup;
+			//_move = Input.GetAxis ("Horizontal") != 0.0f || Input.GetAxis ("Vertical") != 0.0f || Input.GetAxis ("Depth") != 0.0f;
 
 			if (!_mouseRightIsDown) {
 				if (Input.GetMouseButtonDown (1)) {

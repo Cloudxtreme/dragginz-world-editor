@@ -14,7 +14,7 @@ using System;
 
 using AssetsShared;
 
-using RTEditor;
+//using RTEditor;
 
 namespace PrefabWorldEditor
 {
@@ -34,12 +34,8 @@ namespace PrefabWorldEditor
         public Transform panelPopup;
 
 		public Button btnModePlay;
-		public Button btnModeLook;
-		public Button btnModeDig;
-		public Button btnModePaint;
 		public Button btnModeBuild;
-		public Button btnModeProps;
-
+		public Button btnModeSelect;
 		public Button btnUNDO;
 
 		public Image imgMaterialHilight;
@@ -61,7 +57,7 @@ namespace PrefabWorldEditor
         public Image imgScale;
         public Image imgVolume;
 
-        private EditorGizmoSystem _gizmoSystem;
+        //private EditorGizmoSystem _gizmoSystem;
             
         private Dropdown _trfmDropDownFile = null;
 		private Text _txtPanelFile = null;
@@ -70,7 +66,7 @@ namespace PrefabWorldEditor
 		private Dropdown _trfmDropDownLevel = null;
 		private Text _txtPanelLevel = null;
 		private int _iDropDownLevelOptions = 0;
-		private int _iSelectedLevel = -1;
+		//private int _iSelectedLevel = -1;
 
         private int _iSelectedTool = -1;
 
@@ -79,10 +75,10 @@ namespace PrefabWorldEditor
 			get { return _v3DigSettings; }
 		}
 
-		private float _lastMouseWheelUpdate;
+		//private float _lastMouseWheelUpdate;
 
 		private int _iMatHiliteIndex   = 0;
-		private int _iMaterialBoxIndex = 0;
+		//private int _iMaterialBoxIndex = 0;
 		private int _iSelectedMaterial = 0;
 		public int iSelectedMaterial {
 			get { return _iSelectedMaterial; }
@@ -95,6 +91,10 @@ namespace PrefabWorldEditor
 
 		public int iSelectedRailgunMaterialIndex {
 			get { return selectionBoxRailgun.iSelected; }
+		}
+
+		public int iSelectedTool {
+			get { return _iSelectedTool; }
 		}
 
 		#region SystemMethods
@@ -147,6 +147,7 @@ namespace PrefabWorldEditor
 						//Debug.Log ("_iDropDownLevelOptions: "+_iDropDownLevelOptions);
 					}
 				}
+				panelLevelMenu.gameObject.SetActive (false);
 			}
 
 			/*if (sliderDigWidth != null) {
@@ -162,10 +163,10 @@ namespace PrefabWorldEditor
 				sliderDigDepth.maxValue = 2 / VoxelUtils.CHUNK_SIZE;
 			}*/
 
-			_lastMouseWheelUpdate = 0;
+			//_lastMouseWheelUpdate = 0;
         }
 
-		void OnEnable() {
+		/*void OnEnable() {
 			_gizmoSystem = EditorGizmoSystem.Instance;
 			if (_gizmoSystem != null) {
 				_gizmoSystem.ActiveGizmoTypeChanged += onGizmoChanged;
@@ -180,7 +181,7 @@ namespace PrefabWorldEditor
                 EditorObjectSelection.Instance.GameObjectClicked -= onGameObjectClicked;
 				EditorObjectSelection.Instance.SelectionChanged -= onSelectionChanged;
             }
-		}
+		}*/
 
 		#endregion
 
@@ -191,10 +192,18 @@ namespace PrefabWorldEditor
 			selectionBoxRailgun.init (changeRailgunSelection, Globals.materialsRailgun, "Railgun/");
 
 			onSelectTransformTool(0);
-			onSelectMaterial (0);
-			onSelectItem (0);
+
+			//onSelectMaterial (0);
+			//onSelectItem (0);
+
 			setLevelNameText ("New Level");
 			setUndoButton (false);
+
+			_txtPanelFile.color = Color.gray;
+			_trfmDropDownFile.interactable = false;
+
+			_txtPanelLevel.color = Color.gray;
+			_trfmDropDownLevel.interactable = false;
 		}
 
 		//
@@ -225,7 +234,7 @@ namespace PrefabWorldEditor
 
 		public void setCubeCountText(int count) {
 			if (txtCubeCount != null) {
-				txtCubeCount.text = "Cubes: " + String.Format("{0:0,0}", count);
+				txtCubeCount.text = "Objects: " + String.Format("{0:0,0}", count);
 			}
 		}
 		public void setCubeCountText(string s) {
@@ -234,36 +243,23 @@ namespace PrefabWorldEditor
 			}
 		}
 
-		/*
 		public void onButtonModePlayClicked() {
-			LevelEditor.Instance.setMode(AppState.Play);
-		}
-		public void onButtonModeLookClicked() {
-			LevelEditor.Instance.setMode(AppState.Select);
-		}
-		public void onButtonModeDigClicked() {
-			LevelEditor.Instance.setMode(AppState.Dig);
-		}
-		public void onButtonModePaintClicked() {
-			LevelEditor.Instance.setMode(AppState.Paint);
+			PrefabLevelEditor.Instance.setEditMode(PrefabLevelEditor.EditMode.Play);
 		}
 		public void onButtonModeBuildClicked() {
-			LevelEditor.Instance.setMode(AppState.Build);
+			PrefabLevelEditor.Instance.setEditMode(PrefabLevelEditor.EditMode.Place);
 		}
-		public void onButtonModePropsClicked() {
-			LevelEditor.Instance.setMode(AppState.Props);
+		public void onButtonModeSelectClicked() {
+			PrefabLevelEditor.Instance.setEditMode(PrefabLevelEditor.EditMode.Transform);
 		}
 
 		//
-		public void setModeButtons(AppState mode)
+		public void setModeButtons(PrefabLevelEditor.EditMode mode)
 		{
-			btnModePlay.interactable  = (mode != AppState.Play);
-			btnModeLook.interactable  = (mode != AppState.Select);
-			btnModeDig.interactable   = (mode != AppState.Dig);
-			btnModePaint.interactable = (mode != AppState.Paint);
-			btnModeBuild.interactable = (mode != AppState.Build);
-			btnModeProps.interactable = (mode != AppState.Props);
-		}*/
+			btnModePlay.interactable   = (mode != PrefabLevelEditor.EditMode.Play);
+			btnModeBuild.interactable  = (mode != PrefabLevelEditor.EditMode.Place);
+			btnModeSelect.interactable = (mode != PrefabLevelEditor.EditMode.Transform);
+		}
 
 		/*public void setMenuPanels(AppState mode)
 		{
@@ -284,7 +280,9 @@ namespace PrefabWorldEditor
 			//PrefabLevelEditor.Instance.undoLastActions ();
 		}
 		public void setUndoButton(bool state) {
-			btnUNDO.interactable = state;
+			if (btnUNDO != null) {
+				btnUNDO.interactable = state;
+			}
 		}
 
 		//
@@ -324,16 +322,17 @@ namespace PrefabWorldEditor
 
         private void selectTool(int toolId) {
 
-            if (_iSelectedTool == toolId) {
-                return;
-            }
+			if (_iSelectedTool != toolId) {
 
-            setToolButtonImage(imgMove,   (toolId == 0 ? "Sprites/icon-move-selected"   : "Sprites/icon-move"));
-            setToolButtonImage(imgRotate, (toolId == 1 ? "Sprites/icon-rotate-selected" : "Sprites/icon-rotate"));
-            setToolButtonImage(imgScale,  (toolId == 2 ? "Sprites/icon-scale-selected"  : "Sprites/icon-scale"));
-            setToolButtonImage(imgVolume, (toolId == 3 ? "Sprites/icon-volume-selected" : "Sprites/icon-volume"));
+				setToolButtonImage (imgMove, (toolId == 0 ? "Textures/Tools/icon-move-selected" : "Textures/Tools/icon-move"));
+				setToolButtonImage (imgRotate, (toolId == 1 ? "Textures/Tools/icon-rotate-selected" : "Textures/Tools/icon-rotate"));
+				setToolButtonImage (imgScale, (toolId == 2 ? "Textures/Tools/icon-scale-selected" : "Textures/Tools/icon-scale"));
+				setToolButtonImage (imgVolume, (toolId == 3 ? "Textures/Tools/icon-volume-selected" : "Textures/Tools/icon-volume"));
 
-            _iSelectedTool = toolId;
+				_iSelectedTool = toolId;
+
+				PrefabLevelEditor.Instance.selectTransformTool (_iSelectedTool);
+			}
         }
 
 		//
@@ -362,13 +361,9 @@ namespace PrefabWorldEditor
 		// ---------------------------------------------------------------------------------------------
 		private void showNewLevelDialog()
 		{
-			EditorObjectSelection.Instance.ClearSelection(false);
+			//EditorObjectSelection.Instance.ClearSelection(false);
 
-			if (_popup) {
-				_popup.showPopup (Globals.PopupMode.Confirmation, "New Level", "Are you sure?\nAll unsaved changes will be lost!", createNewLevel);
-			} else {
-				showLoadFileBrowser (1);
-			}
+			_popup.showPopup (Globals.PopupMode.Confirmation, "New Level", "Are you sure?\nAll unsaved changes will be lost!", createNewLevel);
 		}
 
 		//
@@ -385,7 +380,7 @@ namespace PrefabWorldEditor
 		// ---------------------------------------------------------------------------------------------
         private void showLoadFileDialog() {
 
-			EditorObjectSelection.Instance.ClearSelection(false);
+			//EditorObjectSelection.Instance.ClearSelection(false);
 
 			#if UNITY_WEBGL
 				AppController.Instance.showPopup(
@@ -397,11 +392,7 @@ namespace PrefabWorldEditor
 				return;
 			#endif
 
-			if (_popup) {
-				_popup.showPopup (Globals.PopupMode.Confirmation, "Load Level", "Are you sure?\nAll unsaved changes will be lost!", showLoadFileBrowser);
-			} else {
-				showLoadFileBrowser (1);
-			}
+			_popup.showPopup (Globals.PopupMode.Confirmation, "Load Level", "Are you sure?\nAll unsaved changes will be lost!", showLoadFileBrowser);
         }
 
 		//
@@ -431,7 +422,7 @@ namespace PrefabWorldEditor
 		// ---------------------------------------------------------------------------------------------
         private void showSaveFileDialog() {
 
-			EditorObjectSelection.Instance.ClearSelection(false);
+			//EditorObjectSelection.Instance.ClearSelection(false);
 
 			#if UNITY_WEBGL
 				AppController.Instance.showPopup(
@@ -669,7 +660,7 @@ namespace PrefabWorldEditor
 		}*/
 
 		//
-		private void onGizmoChanged(GizmoType newGizmoType) {
+		/*private void onGizmoChanged(GizmoType newGizmoType) {
 
 			if (newGizmoType == GizmoType.Translation) {
 				selectTool (0);
@@ -680,7 +671,7 @@ namespace PrefabWorldEditor
 			} else if (newGizmoType == GizmoType.VolumeScale) {
 				selectTool (3);
 			}
-		}
+		}*/
 
         private void onGameObjectClicked(GameObject clickedObject) {
 
@@ -690,10 +681,9 @@ namespace PrefabWorldEditor
 			}
         }
 
-		private void onSelectionChanged(ObjectSelectionChangedEventArgs selectionChangedEventArgs) {
-			
+		//private void onSelectionChanged(ObjectSelectionChangedEventArgs selectionChangedEventArgs) {
 			//PrefabLevelEditor.Instance.setSelectedObjects (selectionChangedEventArgs.SelectedObjects);
-		}
+		//}
 
         #endregion
 
@@ -710,24 +700,24 @@ namespace PrefabWorldEditor
 		/// ...
 		/// </summary>
         public void onSelectTransformTool(int value) {
-            if (_gizmoSystem) {
+            //if (_gizmoSystem) {
                 if (value == 0) {
-                    _gizmoSystem.ActiveGizmoType = GizmoType.Translation;
+                    //_gizmoSystem.ActiveGizmoType = GizmoType.Translation;
                     selectTool(0);
                 }
                 else if (value == 1) {
-                    _gizmoSystem.ActiveGizmoType = GizmoType.Rotation;
+                    //_gizmoSystem.ActiveGizmoType = GizmoType.Rotation;
                     selectTool(1);
                 }
                 else if (value == 2) {
-                    _gizmoSystem.ActiveGizmoType = GizmoType.Scale;
+                    //_gizmoSystem.ActiveGizmoType = GizmoType.Scale;
                     selectTool(2);
                 }
                 else if (value == 3) {
-                    _gizmoSystem.ActiveGizmoType = GizmoType.VolumeScale;
+                    //_gizmoSystem.ActiveGizmoType = GizmoType.VolumeScale;
                     selectTool(3);
                 }
-            }
+           // }
         }
 
 		// -------------------------------------------------------------------------------------
@@ -736,7 +726,7 @@ namespace PrefabWorldEditor
 			_iMatHiliteIndex = value;
 			imgMaterialHilight.transform.localPosition = new Vector2 (_iMatHiliteIndex * 38, 0);
 
-			int newMatIndex = _iMaterialBoxIndex + _iMatHiliteIndex;
+			//int newMatIndex = _iMaterialBoxIndex + _iMatHiliteIndex;
 			//changeMaterial (newMatIndex);
 		}
 
@@ -810,7 +800,7 @@ namespace PrefabWorldEditor
 
 		public void onDropDownLevelValueChanged(int value) {
 			if (_trfmDropDownLevel && value < _iDropDownLevelOptions) {
-				_iSelectedLevel = value;
+				//_iSelectedLevel = value;
 				//LevelEditor.Instance.teleportToLevelWithIndex(_iSelectedLevel);
 			}
 		}

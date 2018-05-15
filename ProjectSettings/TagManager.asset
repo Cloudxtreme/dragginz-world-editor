@@ -6,6 +6,8 @@ TagManager:
   tags:
   - DigAndDestroy
   - QuadrantCenter
+  - EditorWall
+  - PartContainer
   layers:
   - Default
   - TransparentFX

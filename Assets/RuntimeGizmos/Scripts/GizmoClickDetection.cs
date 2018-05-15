@@ -103,6 +103,7 @@ public class GizmoClickDetection : MonoBehaviour {
                         }
                     } catch (NullReferenceException exception) {
                         // Perhaps no previous materials could be found?
+						Debug.Log(exception.Message);
                     }
 
                 }
