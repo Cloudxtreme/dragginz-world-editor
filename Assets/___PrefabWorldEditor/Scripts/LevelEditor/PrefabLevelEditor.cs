@@ -69,12 +69,15 @@ namespace PrefabWorldEditor
 			Chunk_Stalagmite_3,
 			Chunk_Cliff_1,
 			Chunk_Cliff_2,
+			Chunk_WallEdge,
+			Chunk_LargeBricks,
 			Chunk_Block,
 			Chunk_Corner,
 			Chunk_Base,
 			Prop_BonePile,
 			Prop_Debris,
 			Prop_Grave_1,
+			Prop_TombStone,
 			End_Of_List
 		};
 
@@ -156,8 +159,8 @@ namespace PrefabWorldEditor
         {
 			_parts = new Dictionary<PartList, Part>();
 
-			createPart(PartList.Floor_1,  AssetType.Floor, "MDC/Floors/Floor_1",  4.00f,  0.34f,  4.00f, false, false, "Floor 1");
-			createPart(PartList.Floor_2,  AssetType.Floor, "MDC/Floors/Floor_2",  6.00f,  0.75f,  6.00f, false, false, "Floor 2");
+			createPart(PartList.Floor_1,  AssetType.Floor, "MDC/Floors/Floor_1",  4.00f,  0.10f,  4.00f, false, false, "Floor 1");
+			createPart(PartList.Floor_2,  AssetType.Floor, "MDC/Floors/Floor_2",  6.00f,  0.10f,  6.00f, false, false, "Floor 2");
 			createPart(PartList.Floor_3,  AssetType.Floor, "MDC/Floors/Floor_3",  6.00f,  0.25f,  6.00f, false, false, "Floor 3");
 
 			createPart(PartList.Wall_Z,   AssetType.Wall,  "MDC/WallsZ/Wall_Z",   3.00f,  3.00f,  0.50f, false, false, "Wall Left",  "Z");
@@ -174,9 +177,11 @@ namespace PrefabWorldEditor
 			createPart(PartList.Chunk_Stalagmite_1, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_1",  2.75f,  4.50f,  2.75f, true, false, "Stalagmite 1");
 			createPart(PartList.Chunk_Stalagmite_2, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_2",  4.30f,  6.00f,  3.60f, true, false, "Stalagmite 2");
 			createPart(PartList.Chunk_Stalagmite_3, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_3",  7.25f,  8.80f,  6.25f, true, false, "Stalagmite 3");
-
 			createPart(PartList.Chunk_Cliff_1,      AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_1",       8.00f,  8.00f,  4.00f, true, false, "Cliff 1");
 			createPart(PartList.Chunk_Cliff_2,      AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_2",      10.00f,  8.00f,  7.00f, true, false, "Cliff 2");
+
+			createPart(PartList.Chunk_WallEdge,     AssetType.Chunk, "MDC/Chunks/Chunk_WallEdge",      0.25f,  3.00f,  0.30f, true, false, "Wall Edge");
+			createPart(PartList.Chunk_LargeBricks,  AssetType.Chunk, "MDC/Chunks/Chunk_LargeBricks",   6.00f,  0.75f,  0.75f, true, false, "Large Bricks");
 			createPart(PartList.Chunk_Block,        AssetType.Chunk, "MDC/Chunks/Chunk_Block",         2.00f,  0.75f,  2.00f, true, false, "Weird Block");
 			createPart(PartList.Chunk_Corner,       AssetType.Chunk, "MDC/Chunks/Chunk_Corner",        4.00f,  2.00f,  4.00f, true, false, "Corner Chunk");
 			createPart(PartList.Chunk_Base,         AssetType.Chunk, "MDC/Chunks/Chunk_Base",          4.00f,  2.00f,  4.00f, true, false, "Rounded Base");
@@ -185,7 +190,8 @@ namespace PrefabWorldEditor
 			createPart(PartList.Prop_Debris,   AssetType.Prop, "MDC/Props/Prop_Debris",    3.30f,  1.20f,  3.70f, true,  false, "Debris");
 
 			// Gravity Props
-			createPart(PartList.Prop_Grave_1, AssetType.Prop, "MDC/Props/Prop_Grave_1",  1.00f,  0.88f,  3.00f, true,  true, "Grave");
+			createPart(PartList.Prop_Grave_1,   AssetType.Prop, "MDC/Props/Prop_Grave_1",    1.00f,  0.88f,  3.00f, true,  true, "Grave");
+			createPart(PartList.Prop_TombStone, AssetType.Prop, "MDC/Props/Prop_TombStone",  6.00f,  3.20f,  0.25f, true,  true, "Tomb Stone");
 
 			createPart(PartList.Pillar_1,     AssetType.Prop, "MDC/Props/Pillar_1",      2.00f,  3.00f,  2.00f, true,  true, "Pillar 1");
 			createPart(PartList.Pillar_2,     AssetType.Prop, "MDC/Props/Pillar_2",      1.50f,  1.50f,  4.75f, true,  true, "Pillar 2");
