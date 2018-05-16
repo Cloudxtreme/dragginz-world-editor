@@ -55,8 +55,8 @@ namespace PrefabWorldEditor
 		public Text txtFileInfo;
 		public Text txtLevelName;
 		public Text txtCubeCount;
-		public Text txtMovementSpeed;
-		public Text txtCameraPosition;
+		public Text txtInstructions;
+		public Text txtAssetName;
 
         public Image imgMove;
         public Image imgRotate;
@@ -231,15 +231,15 @@ namespace PrefabWorldEditor
 			}
 		}
 
-		public void setCameraPositionText(Vector3 pos) {
-			if (txtCameraPosition != null) {
-				txtCameraPosition.text = "Position: x" + pos.x.ToString("F2") + ", y"+ pos.y.ToString("F2") + ", z" + pos.z.ToString("F2");
+		public void setInstructionsText(string s) {
+			if (txtInstructions != null) {
+				txtInstructions.text = s;
 			}
 		}
 
-		public void setMovementSpeedText(float speed) {
-			if (txtMovementSpeed != null) {
-				txtMovementSpeed.text = "Movement Speed: " + speed.ToString("F2");
+		public void setAssetNameText(string s) {
+			if (txtAssetName != null) {
+				txtAssetName.text = s;
 			}
 		}
 
@@ -276,7 +276,7 @@ namespace PrefabWorldEditor
 		public void setAssetTypeButtons(PrefabLevelEditor.AssetType type)
 		{
 			btnAssetFloors.interactable = (type != PrefabLevelEditor.AssetType.Floor);
-			btnAssetWalls.interactable  = (type != PrefabLevelEditor.AssetType.WallX && type != PrefabLevelEditor.AssetType.WallZ);
+			btnAssetWalls.interactable  = (type != PrefabLevelEditor.AssetType.Wall);
 			btnAssetChunks.interactable = (type != PrefabLevelEditor.AssetType.Chunk);
 			btnAssetProps.interactable  = (type != PrefabLevelEditor.AssetType.Prop);
 		}
@@ -766,7 +766,7 @@ namespace PrefabWorldEditor
 				selectAssetType(0, PrefabLevelEditor.AssetType.Floor);
 			}
 			else if (value == 1) {
-				selectAssetType(1, PrefabLevelEditor.AssetType.WallX);
+				selectAssetType(1, PrefabLevelEditor.AssetType.Wall);
 			}
 			else if (value == 2) {
 				selectAssetType(2, PrefabLevelEditor.AssetType.Chunk);

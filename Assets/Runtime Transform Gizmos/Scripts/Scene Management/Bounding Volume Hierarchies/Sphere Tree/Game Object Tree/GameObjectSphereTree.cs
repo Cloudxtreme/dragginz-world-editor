@@ -10,6 +10,8 @@ namespace RTEditor
 {
     public class GameObjectSphereTree
     {
+		GameObject _container = null;
+
         #region Private Classes
         private class GameObjectTransformData
         {
@@ -283,11 +285,19 @@ namespace RTEditor
                 _nullCleanupTime = 0.0f;
             }
        
-			if (LevelEditor.Instance.curLevelChunk == null) {
+			if (_container == null) {
+				if (LevelEditor.Instance != null && LevelEditor.Instance.curLevelChunk != null) {
+					_container = LevelEditor.Instance.curLevelChunk.trfmProps.gameObject;
+				}
+				else {
+					_container = GameObject.Find ("[Container]");
+				}
+			}
+			if (_container == null) {
 				return;
 			}
-			GameObject container = LevelEditor.Instance.curLevelChunk.trfmProps.gameObject;
-			GameObject[] sceneObjects = container.GetAllChildren().ToArray();// MonoBehaviour.FindObjectsOfType<GameObject>();
+
+			GameObject[] sceneObjects = _container.GetAllChildren().ToArray();// MonoBehaviour.FindObjectsOfType<GameObject>();
             foreach(GameObject gameObject in sceneObjects)
             {
                 if (!IsGameObjectRegistered(gameObject)) 
