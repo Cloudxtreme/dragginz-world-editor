@@ -64,11 +64,17 @@ namespace PrefabWorldEditor
 			Pillar_3,
 			Chunk_Rock_1,
 			Chunk_Rock_2,
+			Chunk_Stalagmite_1,
+			Chunk_Stalagmite_2,
+			Chunk_Stalagmite_3,
 			Chunk_Cliff_1,
 			Chunk_Cliff_2,
 			Chunk_Block,
 			Chunk_Corner,
 			Chunk_Base,
+			Prop_BonePile,
+			Prop_Debris,
+			Prop_Grave_1,
 			End_Of_List
 		};
 
@@ -118,6 +124,8 @@ namespace PrefabWorldEditor
 		private Dictionary<AssetType, List<Part>> _assetTypeList;
 		private Dictionary<AssetType, int> _assetTypeIndex;
 
+		private List<GameObject> _listOfChildren;
+
         private float _rayDistance;
         private Ray _ray;
         private RaycastHit _hit;
@@ -161,17 +169,27 @@ namespace PrefabWorldEditor
 			//createPart(PartList.Path_4,   AssetType.Tunnel, "MDC/Caves/Path_4",    8.00f,  8.00f,  8.00f, true,  false, "Cave 4");
 
 
-			createPart(PartList.Chunk_Rock_1,  AssetType.Chunk, "MDC/Chunks/Chunk_Rock_1",   4.00f,  3.50f,  4.00f, true, false,  "Rock 1");
-			createPart(PartList.Chunk_Rock_2,  AssetType.Chunk, "MDC/Chunks/Chunk_Rock_2",   4.00f,  2.40f,  4.00f, true, false,  "Rock 2");
-			createPart(PartList.Chunk_Cliff_1, AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_1",  8.00f,  8.00f,  4.00f, true, false,  "Cliff 1");
-			createPart(PartList.Chunk_Cliff_2, AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_2", 10.00f,  8.00f,  7.00f, true, false,  "Cliff 2");
-			createPart(PartList.Chunk_Block,   AssetType.Chunk, "MDC/Chunks/Chunk_Block",    2.00f,  0.75f,  2.00f, true, false,  "Weird Block");
-			createPart(PartList.Chunk_Corner,  AssetType.Chunk, "MDC/Chunks/Chunk_Corner",   4.00f,  2.00f,  4.00f, true, false,  "Corner Chunk");
-			createPart(PartList.Chunk_Base,    AssetType.Chunk, "MDC/Chunks/Chunk_Base",     4.00f,  2.00f,  4.00f, true, false,  "Rounded Base");
+			createPart(PartList.Chunk_Rock_1,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_1",        4.00f,  3.50f,  4.00f, true, false, "Rock 1");
+			createPart(PartList.Chunk_Rock_2,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_2",        4.00f,  2.40f,  4.00f, true, false, "Rock 2");
+			createPart(PartList.Chunk_Stalagmite_1, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_1",  2.75f,  4.50f,  2.75f, true, false, "Stalagmite 1");
+			createPart(PartList.Chunk_Stalagmite_2, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_2",  4.30f,  6.00f,  3.60f, true, false, "Stalagmite 2");
+			createPart(PartList.Chunk_Stalagmite_3, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_3",  7.25f,  8.80f,  6.25f, true, false, "Stalagmite 3");
 
-			createPart(PartList.Pillar_1, AssetType.Prop, "MDC/Props/Pillar_1",  2.00f,  3.00f,  2.00f, true,  true,  "Pillar 1");
-			createPart(PartList.Pillar_2, AssetType.Prop, "MDC/Props/Pillar_2",  1.50f,  1.50f,  4.75f, true,  true,  "Pillar 2");
-			createPart(PartList.Pillar_3, AssetType.Prop, "MDC/Props/Pillar_3",  1.50f,  1.50f,  1.50f, true,  true,  "Pillar Base");
+			createPart(PartList.Chunk_Cliff_1,      AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_1",       8.00f,  8.00f,  4.00f, true, false, "Cliff 1");
+			createPart(PartList.Chunk_Cliff_2,      AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_2",      10.00f,  8.00f,  7.00f, true, false, "Cliff 2");
+			createPart(PartList.Chunk_Block,        AssetType.Chunk, "MDC/Chunks/Chunk_Block",         2.00f,  0.75f,  2.00f, true, false, "Weird Block");
+			createPart(PartList.Chunk_Corner,       AssetType.Chunk, "MDC/Chunks/Chunk_Corner",        4.00f,  2.00f,  4.00f, true, false, "Corner Chunk");
+			createPart(PartList.Chunk_Base,         AssetType.Chunk, "MDC/Chunks/Chunk_Base",          4.00f,  2.00f,  4.00f, true, false, "Rounded Base");
+
+			createPart(PartList.Prop_BonePile, AssetType.Prop, "MDC/Props/Prop_BonePile",  2.00f,  0.75f,  2.00f, true,  false, "Bone Pile");
+			createPart(PartList.Prop_Debris,   AssetType.Prop, "MDC/Props/Prop_Debris",    3.30f,  1.20f,  3.70f, true,  false, "Debris");
+
+			// Gravity Props
+			createPart(PartList.Prop_Grave_1, AssetType.Prop, "MDC/Props/Prop_Grave_1",  1.00f,  0.88f,  3.00f, true,  true, "Grave");
+
+			createPart(PartList.Pillar_1,     AssetType.Prop, "MDC/Props/Pillar_1",      2.00f,  3.00f,  2.00f, true,  true, "Pillar 1");
+			createPart(PartList.Pillar_2,     AssetType.Prop, "MDC/Props/Pillar_2",      1.50f,  1.50f,  4.75f, true,  true, "Pillar 2");
+			createPart(PartList.Pillar_3,     AssetType.Prop, "MDC/Props/Pillar_3",      1.50f,  1.50f,  1.50f, true,  true, "Pillar Base");
 
 			createAssetTypeCount ();
 
@@ -180,6 +198,8 @@ namespace PrefabWorldEditor
             setWalls();
 
 			_levelElements = new Dictionary<GameObject, LevelElement>();
+
+			_listOfChildren = new List<GameObject> ();
 
 			_curEditPart   = _parts [PartList.Floor_1];
             _v3EditPartPos = Vector3.zero;
@@ -598,7 +618,10 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void setMeshCollider (GameObject go, bool state) {
 
-            if (go.GetComponent<Collider>()) {
+			_listOfChildren.Clear ();
+			getChildrenRecursive (go);
+
+            /*if (go.GetComponent<Collider>()) {
 				go.GetComponent<Collider>().enabled = state;
             }
 			else {
@@ -607,15 +630,25 @@ namespace PrefabWorldEditor
 						child.gameObject.GetComponent<Collider> ().enabled = state;
 					}
 				}
-            }
+            }*/
+
+			int i, len = _listOfChildren.Count;
+			for (i = 0; i < len; ++i) {
+				if (_listOfChildren [i].GetComponent<Collider> ()) {
+					_listOfChildren [i].GetComponent<Collider> ().enabled = state;
+				}
+			}
         }
 
 		// ------------------------------------------------------------------------
 		private void setMeshColliders (bool state)
 		{
+			_listOfChildren.Clear ();
+
 			foreach (KeyValuePair<GameObject, LevelElement> element in _levelElements)
 			{
-				GameObject go = element.Value.go;
+				getChildrenRecursive (element.Value.go);
+				/*GameObject go = element.Value.go;
 				if (go.GetComponent<Collider> ()) {
 					go.GetComponent<Collider> ().enabled = state;
 				} else {
@@ -624,6 +657,30 @@ namespace PrefabWorldEditor
 							child.gameObject.GetComponent<Collider> ().enabled = state;
 						}
 					}
+				}*/
+			}
+
+			int i, len = _listOfChildren.Count;
+			for (i = 0; i < len; ++i) {
+				if (_listOfChildren [i].GetComponent<Collider> ()) {
+					_listOfChildren [i].GetComponent<Collider> ().enabled = state;
+				}
+			}
+		}
+
+		private void getChildrenRecursive(GameObject go)
+		{
+			if (go == null) {
+				return;
+			}
+
+			_listOfChildren.Add (go);
+
+			foreach (Transform child in go.transform)
+			{
+				if (child != null) {
+					_listOfChildren.Add (child.gameObject);
+					getChildrenRecursive (child.gameObject);
 				}
 			}
 		}
@@ -644,7 +701,7 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		private void setRigidBodies (bool state)
+		/*private void setRigidBodies (bool state)
 		{
 			foreach (KeyValuePair<GameObject, LevelElement> element in _levelElements)
 			{
@@ -659,7 +716,7 @@ namespace PrefabWorldEditor
 					}
 				}
 			}
-		}
+		}*/
 
 		// ------------------------------------------------------------------------
         private void placePart(Vector3 pos) {
