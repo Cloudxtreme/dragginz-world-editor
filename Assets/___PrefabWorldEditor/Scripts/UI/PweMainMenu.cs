@@ -31,6 +31,9 @@ namespace PrefabWorldEditor
         public Transform panelFileMenu;
 		public Transform panelLevelMenu;
 
+		public Transform panelAssetInfo;
+		public UIAssetInfo assetInfo;
+
 		public Transform blocker;
         public Transform panelPopup;
 
@@ -57,6 +60,7 @@ namespace PrefabWorldEditor
 		public Text txtCubeCount;
 		public Text txtInstructions;
 		public Text txtAssetName;
+		public Text txtSpecialHelp;
 
         public Image imgMove;
         public Image imgRotate;
@@ -243,6 +247,12 @@ namespace PrefabWorldEditor
 			}
 		}
 
+		public void setSpecialHelpText(string s) {
+			if (txtSpecialHelp != null) {
+				txtSpecialHelp.text = s;
+			}
+		}
+
 		public void setCubeCountText(int count) {
 			if (txtCubeCount != null) {
 				txtCubeCount.text = "Objects: " + String.Format("{0:0,0}", count);
@@ -342,6 +352,12 @@ namespace PrefabWorldEditor
 			}
 		}*/
 
+		public void showAssetInfoPanel(bool state) {
+			if (panelAssetInfo != null) {
+				panelAssetInfo.gameObject.SetActive(state);
+			}
+		}
+
 		#endregion
 
 		#region PrivateMethods
@@ -425,6 +441,7 @@ namespace PrefabWorldEditor
 
 			//EditorObjectSelection.Instance.ClearSelection(false);
 
+			/*
 			#if UNITY_WEBGL
 				AppController.Instance.showPopup(
 				PopupMode.Notification,
@@ -434,6 +451,7 @@ namespace PrefabWorldEditor
 				);
 				return;
 			#endif
+			*/
 
 			_popup.showPopup (Globals.PopupMode.Confirmation, "Load Level", "Are you sure?\nAll unsaved changes will be lost!", showLoadFileBrowser);
         }
@@ -467,6 +485,7 @@ namespace PrefabWorldEditor
 
 			//EditorObjectSelection.Instance.ClearSelection(false);
 
+			/*
 			#if UNITY_WEBGL
 				AppController.Instance.showPopup(
 				PopupMode.Notification,
@@ -476,6 +495,7 @@ namespace PrefabWorldEditor
 				);
 				return;
 			#endif
+			*/
 
 			_popup.showPopup(Globals.PopupMode.Input, "Save Level", "Level Name: (50 chars max)", "Enter Level Name...", showSaveFileDialogContinue);
         }

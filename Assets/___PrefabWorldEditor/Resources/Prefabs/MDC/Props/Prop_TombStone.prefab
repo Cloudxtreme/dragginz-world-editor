@@ -19,6 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4654563622597808}
+  - component: {fileID: 54824547643914116}
   m_Layer: 0
   m_Name: Prop_TombStone
   m_TagString: PartContainer
@@ -112,6 +113,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1282320195036372}
   m_Mesh: {fileID: 4300000, guid: cae43504964698841ab7ec45ff54d54a, type: 3}
+--- !u!54 &54824547643914116
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1063981925133424}
+  serializedVersion: 2
+  m_Mass: 500
+  m_Drag: 0.001
+  m_AngularDrag: 0.001
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!64 &64827756469976368
 MeshCollider:
   m_ObjectHideFlags: 1

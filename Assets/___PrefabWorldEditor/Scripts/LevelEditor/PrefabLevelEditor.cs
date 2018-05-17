@@ -49,7 +49,7 @@ namespace PrefabWorldEditor
 			Prop
 		};
 
-		private enum PartList {
+		public enum PartList {
 			Floor_1,
 			Floor_2,
 			Floor_3,
@@ -81,18 +81,18 @@ namespace PrefabWorldEditor
 			End_Of_List
 		};
 
-        private struct Part
+		public struct Part
         {
 			public PartList id;
 			public AssetType type;
-			public bool canRotate;
-			public bool usesGravity;
-
             public GameObject prefab;
 
             public float w;
             public float h;
             public float d;
+
+			public Vector3Int canRotate;
+			public bool usesGravity;
 
 			public string name;
 			public string extra;
@@ -119,7 +119,7 @@ namespace PrefabWorldEditor
 		private Part _curEditPart;
         private GameObject _goEditPart;
         private Vector3 _v3EditPartPos;
-		private int _curRotation;
+		//private int _curRotation;
 
 		private LevelElement _selectedElement;
 		//private List<Material> _aSelectedElementMaterials;
@@ -159,43 +159,43 @@ namespace PrefabWorldEditor
         {
 			_parts = new Dictionary<PartList, Part>();
 
-			createPart(PartList.Floor_1,  AssetType.Floor, "MDC/Floors/Floor_1",  4.00f,  0.10f,  4.00f, false, false, "Floor 1");
-			createPart(PartList.Floor_2,  AssetType.Floor, "MDC/Floors/Floor_2",  6.00f,  0.10f,  6.00f, false, false, "Floor 2");
-			createPart(PartList.Floor_3,  AssetType.Floor, "MDC/Floors/Floor_3",  6.00f,  0.25f,  6.00f, false, false, "Floor 3");
+			createPart(PartList.Floor_1,  AssetType.Floor, "MDC/Floors/Floor_1",  4.00f,  0.10f,  4.00f, Vector3Int.zero, false, "Floor 1");
+			createPart(PartList.Floor_2,  AssetType.Floor, "MDC/Floors/Floor_2",  6.00f,  0.10f,  6.00f, Vector3Int.zero, false, "Floor 2");
+			createPart(PartList.Floor_3,  AssetType.Floor, "MDC/Floors/Floor_3",  6.00f,  0.25f,  6.00f, Vector3Int.zero, false, "Floor 3");
 
-			createPart(PartList.Wall_Z,   AssetType.Wall,  "MDC/WallsZ/Wall_Z",   3.00f,  3.00f,  0.50f, false, false, "Wall Left",  "Z");
-			createPart(PartList.Wall_X,   AssetType.Wall,  "MDC/WallsX/Wall_X",   0.50f,  3.00f,  3.00f, false, false, "Wall Right", "X");
+			createPart(PartList.Wall_Z,   AssetType.Wall,  "MDC/WallsZ/Wall_Z",   3.00f,  3.00f,  0.50f, Vector3Int.zero, false, "Wall Left",  "Z");
+			createPart(PartList.Wall_X,   AssetType.Wall,  "MDC/WallsX/Wall_X",   0.50f,  3.00f,  3.00f, Vector3Int.zero, false, "Wall Right", "X");
 
-			//createPart(PartList.Path_1,   AssetType.Tunnel, "MDC/Caves/Path_1",    5.00f,  1.80f, 12.00f, true,  false, "Cave 1");
-			//createPart(PartList.Path_2,   AssetType.Tunnel, "MDC/Caves/Path_2",    5.00f,  6.00f, 12.00f, true,  false, "Cave 2");
-			//createPart(PartList.Path_3,   AssetType.Tunnel, "MDC/Caves/Path_3",   12.00f,  3.00f,  3.00f, true,  false, "Cave 3");
-			//createPart(PartList.Path_4,   AssetType.Tunnel, "MDC/Caves/Path_4",    8.00f,  8.00f,  8.00f, true,  false, "Cave 4");
+			//createPart(PartList.Path_1,   AssetType.Tunnel, "MDC/Caves/Path_1",    5.00f,  1.80f, 12.00f, Vector3Int.one,  false, "Cave 1");
+			//createPart(PartList.Path_2,   AssetType.Tunnel, "MDC/Caves/Path_2",    5.00f,  6.00f, 12.00f, Vector3Int.one,  false, "Cave 2");
+			//createPart(PartList.Path_3,   AssetType.Tunnel, "MDC/Caves/Path_3",   12.00f,  3.00f,  3.00f, Vector3Int.one,  false, "Cave 3");
+			//createPart(PartList.Path_4,   AssetType.Tunnel, "MDC/Caves/Path_4",    8.00f,  8.00f,  8.00f, Vector3Int.one,  false, "Cave 4");
 
 
-			createPart(PartList.Chunk_Rock_1,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_1",        4.00f,  3.50f,  4.00f, true, false, "Rock 1");
-			createPart(PartList.Chunk_Rock_2,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_2",        4.00f,  2.40f,  4.00f, true, false, "Rock 2");
-			createPart(PartList.Chunk_Stalagmite_1, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_1",  2.75f,  4.50f,  2.75f, true, false, "Stalagmite 1");
-			createPart(PartList.Chunk_Stalagmite_2, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_2",  4.30f,  6.00f,  3.60f, true, false, "Stalagmite 2");
-			createPart(PartList.Chunk_Stalagmite_3, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_3",  7.25f,  8.80f,  6.25f, true, false, "Stalagmite 3");
-			createPart(PartList.Chunk_Cliff_1,      AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_1",       8.00f,  8.00f,  4.00f, true, false, "Cliff 1");
-			createPart(PartList.Chunk_Cliff_2,      AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_2",      10.00f,  8.00f,  7.00f, true, false, "Cliff 2");
+			createPart(PartList.Chunk_Rock_1,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_1",        4.00f,  3.50f,  4.00f, Vector3Int.one, false, "Rock 1");
+			createPart(PartList.Chunk_Rock_2,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_2",        4.00f,  2.40f,  4.00f, Vector3Int.one, false, "Rock 2");
+			createPart(PartList.Chunk_Stalagmite_1, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_1",  2.75f,  4.50f,  2.75f, Vector3Int.one, false, "Stalagmite 1");
+			createPart(PartList.Chunk_Stalagmite_2, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_2",  4.30f,  6.00f,  3.60f, Vector3Int.one, false, "Stalagmite 2");
+			createPart(PartList.Chunk_Stalagmite_3, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_3",  7.25f,  8.80f,  6.25f, Vector3Int.one, false, "Stalagmite 3");
+			createPart(PartList.Chunk_Cliff_1,      AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_1",       8.00f,  8.00f,  4.00f, Vector3Int.one, false, "Cliff 1");
+			createPart(PartList.Chunk_Cliff_2,      AssetType.Chunk, "MDC/Chunks/Chunk_Cliff_2",      10.00f,  8.00f,  7.00f, Vector3Int.one, false, "Cliff 2");
 
-			createPart(PartList.Chunk_WallEdge,     AssetType.Chunk, "MDC/Chunks/Chunk_WallEdge",      0.25f,  3.00f,  0.30f, true, false, "Wall Edge");
-			createPart(PartList.Chunk_LargeBricks,  AssetType.Chunk, "MDC/Chunks/Chunk_LargeBricks",   6.00f,  0.75f,  0.75f, true, false, "Large Bricks");
-			createPart(PartList.Chunk_Block,        AssetType.Chunk, "MDC/Chunks/Chunk_Block",         2.00f,  0.75f,  2.00f, true, false, "Weird Block");
-			createPart(PartList.Chunk_Corner,       AssetType.Chunk, "MDC/Chunks/Chunk_Corner",        4.00f,  2.00f,  4.00f, true, false, "Corner Chunk");
-			createPart(PartList.Chunk_Base,         AssetType.Chunk, "MDC/Chunks/Chunk_Base",          4.00f,  2.00f,  4.00f, true, false, "Rounded Base");
+			createPart(PartList.Chunk_WallEdge,     AssetType.Chunk, "MDC/Chunks/Chunk_WallEdge",      0.25f,  3.00f,  0.30f, Vector3Int.one, false, "Wall Edge");
+			createPart(PartList.Chunk_LargeBricks,  AssetType.Chunk, "MDC/Chunks/Chunk_LargeBricks",   6.00f,  0.75f,  0.75f, Vector3Int.one, false, "Large Bricks");
+			createPart(PartList.Chunk_Block,        AssetType.Chunk, "MDC/Chunks/Chunk_Block",         2.00f,  0.75f,  2.00f, Vector3Int.one, false, "Weird Block");
+			createPart(PartList.Chunk_Corner,       AssetType.Chunk, "MDC/Chunks/Chunk_Corner",        4.00f,  2.00f,  4.00f, Vector3Int.one, false, "Corner Chunk");
+			createPart(PartList.Chunk_Base,         AssetType.Chunk, "MDC/Chunks/Chunk_Base",          4.00f,  2.00f,  4.00f, Vector3Int.one, false, "Rounded Base");
 
-			createPart(PartList.Prop_BonePile, AssetType.Prop, "MDC/Props/Prop_BonePile",  2.00f,  0.75f,  2.00f, true,  false, "Bone Pile");
-			createPart(PartList.Prop_Debris,   AssetType.Prop, "MDC/Props/Prop_Debris",    3.30f,  1.20f,  3.70f, true,  false, "Debris");
+			createPart(PartList.Prop_BonePile, AssetType.Prop, "MDC/Props/Prop_BonePile",  2.00f,  0.75f,  2.00f, Vector3Int.one,  false, "Bone Pile");
+			createPart(PartList.Prop_Debris,   AssetType.Prop, "MDC/Props/Prop_Debris",    3.30f,  1.20f,  3.70f, Vector3Int.one,  false, "Debris");
 
 			// Gravity Props
-			createPart(PartList.Prop_Grave_1,   AssetType.Prop, "MDC/Props/Prop_Grave_1",    1.00f,  0.88f,  3.00f, true,  true, "Grave");
-			createPart(PartList.Prop_TombStone, AssetType.Prop, "MDC/Props/Prop_TombStone",  6.00f,  3.20f,  0.25f, true,  true, "Tomb Stone");
+			createPart(PartList.Prop_Grave_1,   AssetType.Prop, "MDC/Props/Prop_Grave_1",    1.00f,  0.88f,  3.00f, Vector3Int.one,  true, "Grave");
+			createPart(PartList.Prop_TombStone, AssetType.Prop, "MDC/Props/Prop_TombStone",  6.00f,  3.20f,  0.25f, Vector3Int.one,  true, "Tomb Stone");
 
-			createPart(PartList.Pillar_1,     AssetType.Prop, "MDC/Props/Pillar_1",      2.00f,  3.00f,  2.00f, true,  true, "Pillar 1");
-			createPart(PartList.Pillar_2,     AssetType.Prop, "MDC/Props/Pillar_2",      1.50f,  1.50f,  4.75f, true,  true, "Pillar 2");
-			createPart(PartList.Pillar_3,     AssetType.Prop, "MDC/Props/Pillar_3",      1.50f,  1.50f,  1.50f, true,  true, "Pillar Base");
+			createPart(PartList.Pillar_1,     AssetType.Prop, "MDC/Props/Pillar_1",      2.00f,  3.00f,  2.00f, Vector3Int.one,  true, "Pillar 1");
+			createPart(PartList.Pillar_2,     AssetType.Prop, "MDC/Props/Pillar_2",      1.50f,  1.50f,  4.75f, Vector3Int.one,  true, "Pillar 2");
+			createPart(PartList.Pillar_3,     AssetType.Prop, "MDC/Props/Pillar_3",      1.50f,  1.50f,  1.50f, Vector3Int.one,  true, "Pillar Base");
 
 			createAssetTypeCount ();
 
@@ -207,15 +207,9 @@ namespace PrefabWorldEditor
 
 			_listOfChildren = new List<GameObject> ();
 
-			_curEditPart   = _parts [PartList.Floor_1];
             _v3EditPartPos = Vector3.zero;
-			_goEditPart    = createPartAt(_curEditPart.id, -10, -10, -10);
-			setMarkerScale (_curEditPart);
-			_curRotation   = 0;
-			setMeshCollider(_goEditPart, false);
 
-			_selectedElement = new LevelElement();
-			_selectedElement.part = PartList.End_Of_List;
+			resetSelectedElement ();
 
 			//_aSelectedElementMaterials = new List<Material> ();
 
@@ -223,6 +217,8 @@ namespace PrefabWorldEditor
 			_editMode = EditMode.None;
 
 			PweMainMenu.Instance.init ();
+
+			setNewEditPart(_assetTypeList[_assetType][0]);
 
 			setEditMode (EditMode.Place);
         }
@@ -250,15 +246,20 @@ namespace PrefabWorldEditor
 
 				goLights.SetActive (_editMode != EditMode.Play);
 
+				resetElementComponents ();
+				resetSelectedElement ();
+
 				PweMainMenu.Instance.setModeButtons (_editMode);
 				PweMainMenu.Instance.showTransformBox (_editMode == EditMode.Transform);
 				PweMainMenu.Instance.showAssetTypeBox (_editMode == EditMode.Place);
 				if (_editMode == EditMode.Place) {
 					PweMainMenu.Instance.setAssetTypeButtons (_assetType);
-					PweMainMenu.Instance.setAssetNameText (_curEditPart.name);
+					showAssetInfo (_curEditPart);
 				} else {
 					PweMainMenu.Instance.setAssetNameText ("");
+					PweMainMenu.Instance.setSpecialHelpText ("");
 				}
+				PweMainMenu.Instance.showAssetInfoPanel (_editMode == EditMode.Place);
 
 				playerEdit.gameObject.SetActive (_editMode != EditMode.Play);
 				playerPlay.gameObject.SetActive (!playerEdit.gameObject.activeSelf);
@@ -266,25 +267,17 @@ namespace PrefabWorldEditor
 				_goEditPart.SetActive (_editMode == EditMode.Place);
 				setMarkerActive (_goEditPart.activeSelf);
 
-				resetSelectedElement ();
-
 				if (_goEditPart.activeSelf) {
 					setMarkerScale (_curEditPart);
 				}
 
-				_selectedElement = new LevelElement ();
-				_selectedElement.part = PartList.End_Of_List;
-
-				gizmoTranslateScript.gameObject.SetActive (false);
-				gizmoRotateScript.gameObject.SetActive (false);
-
 				// Instructions
 				if (_editMode == EditMode.Place) {
-					PweMainMenu.Instance.setInstructionsText ("Mousewheel = Toggle Assets / Mousewheel+Shift = Rotate Asset");
+					PweMainMenu.Instance.setInstructionsText ("Use Mousewheel to toggle through assets");
 				} else if (_editMode == EditMode.Play) {
-					PweMainMenu.Instance.setAssetNameText ("");
+					PweMainMenu.Instance.setInstructionsText ("Press Esc to exit play mode");
 				} else if (_editMode == EditMode.Transform) {
-					PweMainMenu.Instance.setAssetNameText ("");
+					PweMainMenu.Instance.setInstructionsText ("Click object to select");
 				} else {
 					PweMainMenu.Instance.setInstructionsText ("");
 				}
@@ -444,10 +437,30 @@ namespace PrefabWorldEditor
 
 			setMarkerPosition (_goEditPart.transform);
 
-            if (Input.GetAxis("Mouse ScrollWheel") != 0) {
-                if (_timer > _lastMouseWheelUpdate) {
+            if (Input.GetAxis("Mouse ScrollWheel") != 0)
+			{
+                if (_timer > _lastMouseWheelUpdate)
+				{
                     _lastMouseWheelUpdate = _timer + 0.2f;
-					if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) {
+					float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
+					float multiply = 15f * dir;
+
+					if (Input.GetKey (KeyCode.X)) {
+						if (_curEditPart.canRotate.x == 1) {
+							_goEditPart.transform.Rotate (Vector3.right * multiply);
+						}
+					}
+					else if (Input.GetKey (KeyCode.Y)) {
+						if (_curEditPart.canRotate.y == 1) {
+							_goEditPart.transform.Rotate (Vector3.up * multiply);
+						}
+					}
+					else if (Input.GetKey (KeyCode.Z)) {
+						if (_curEditPart.canRotate.z == 1) {
+							_goEditPart.transform.Rotate (Vector3.forward * multiply);
+						}
+					}
+					/*else if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) {
 						if (_curEditPart.canRotate) {
 							_curRotation = (_curRotation < 3 ? _curRotation + 1 : 0);
 							if (_curRotation == 0) {
@@ -456,7 +469,8 @@ namespace PrefabWorldEditor
 								_goEditPart.transform.Rotate (Vector3.up * 90f);
 							}
 						}
-					} else {
+					}*/
+					else {
 						toggleEditPart();
 					}
                 }
@@ -498,7 +512,7 @@ namespace PrefabWorldEditor
 			{
 				if (_selectedElement.go != trfmHit.gameObject)
 				{
-					resetSelectedElement ();
+					resetElementComponents ();
 
 					_selectedElement = _levelElements [trfmHit.gameObject];
 					//getMaterials (_selectedElement.go, matElementMarker);
@@ -514,16 +528,15 @@ namespace PrefabWorldEditor
 					gizmoRotateScript.init();
 
 					selectTransformTool (PweMainMenu.Instance.iSelectedTool);
+
+					PweMainMenu.Instance.showAssetInfoPanel (true);
+					PweMainMenu.Instance.assetInfo.init (_parts [_selectedElement.part]);
 				}
 			}
 			else
 			{
+				resetElementComponents ();
 				resetSelectedElement ();
-
-				_selectedElement = new LevelElement();
-				_selectedElement.part = PartList.End_Of_List;
-				gizmoTranslateScript.gameObject.SetActive (false);
-				gizmoRotateScript.gameObject.SetActive (false);
 			}
 
 			setMarkerActive (_selectedElement.go != null);
@@ -571,14 +584,9 @@ namespace PrefabWorldEditor
 
 			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
 
-			_selectedElement = new LevelElement ();
+			resetSelectedElement ();
 
 			setMarkerActive (_goEditPart.activeSelf);
-
-			gizmoTranslateScript.translateTarget = null;
-			gizmoTranslateScript.gameObject.SetActive (false);
-			gizmoRotateScript.rotateTarget = null;
-			gizmoRotateScript.gameObject.SetActive (false);
 		}
 
 		// ------------------------------------------------------------------------
@@ -615,10 +623,35 @@ namespace PrefabWorldEditor
 
 			_goEditPart = createPartAt(_curEditPart.id, -10, -10, -10);
 			setMarkerScale (_curEditPart);
-			_curRotation = 0;
+			//_curRotation = 0;
 			setMeshCollider(_goEditPart, false);
 
-			PweMainMenu.Instance.setAssetNameText (_curEditPart.name);
+			showAssetInfo (_curEditPart);
+		}
+
+		// ------------------------------------------------------------------------
+		private void showAssetInfo(Part part)
+		{
+			PweMainMenu.Instance.setAssetNameText ((_assetTypeIndex [_assetType]+1).ToString() + " / " + _assetTypeList [_assetType].Count.ToString());
+			PweMainMenu.Instance.assetInfo.init (_curEditPart);
+
+			string s = "";
+
+			if (_assetType == AssetType.Floor) {
+				s = "Press left mouse button + shift key for a 'Floor Fill'!";
+			} else if (_assetType == AssetType.Wall) {
+				s = "Press left mouse button + shift key for a 'Wall Fill'!";
+			} else {
+				if (part.canRotate != Vector3Int.zero) {
+					s = "Use Mousewheel + ";
+					s += (part.canRotate.x == 1 ? "x" : "");
+					s += (part.canRotate.y == 1 ? "/y" : "");
+					s += (part.canRotate.z == 1 ? "/z" : "");
+					s += " to rotate selected object";
+				}
+			}
+
+			PweMainMenu.Instance.setSpecialHelpText (s);
 		}
 
 		// ------------------------------------------------------------------------
@@ -793,7 +826,8 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void createPart(
 			PartList id, AssetType type, string prefab,
-			float w, float h, float d, bool cr, bool ug, string n, string e = "") {
+			float w, float h, float d, Vector3Int cr, bool ug, string n, string e = "")
+		{
 
             Part p = new Part();
 
@@ -801,12 +835,12 @@ namespace PrefabWorldEditor
 			p.type   = type;
 			p.prefab = Resources.Load<GameObject>("Prefabs/" + prefab);
 
-			p.canRotate   = cr;
-			p.usesGravity = ug;
-            
 			p.w = w;
             p.h = h;
             p.d = d;
+
+			p.canRotate   = cr;
+			p.usesGravity = ug;
 
 			p.name  = n;
 			p.extra = e;
@@ -948,7 +982,24 @@ namespace PrefabWorldEditor
 			_aSelectedElementMaterials.Clear ();
 		}*/
 
+		// ------------------------------------------------------------------------
 		private void resetSelectedElement()
+		{
+			_selectedElement = new LevelElement();
+			_selectedElement.part = PartList.End_Of_List;
+
+			gizmoTranslateScript.translateTarget = null;
+			gizmoTranslateScript.gameObject.SetActive (false);
+
+			gizmoRotateScript.rotateTarget = null;
+			gizmoRotateScript.gameObject.SetActive (false);
+
+			PweMainMenu.Instance.showAssetInfoPanel (false);
+			PweMainMenu.Instance.setSpecialHelpText ("");
+		}
+
+		// ------------------------------------------------------------------------
+		private void resetElementComponents()
 		{
 			if (_selectedElement.go != null) {
 
