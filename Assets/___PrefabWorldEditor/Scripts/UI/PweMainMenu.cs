@@ -318,7 +318,7 @@ namespace PrefabWorldEditor
 		//
 		public void showTransformBox(bool state) {
 			if (goTransformSelection != null) {
-				goTransformSelection.SetActive (state);
+				goTransformSelection.SetActive (false);
 			}
 		}
 

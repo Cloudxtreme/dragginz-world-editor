@@ -98,6 +98,9 @@ namespace PrefabWorldEditor
 			public string extra;
         }
 
+		//
+		private PlacementTools _placementTools;
+
         private struct LevelElement
         {
             public GameObject go;
@@ -220,10 +223,12 @@ namespace PrefabWorldEditor
 			_selectedMeshRenderers = new List<MeshRenderer> ();
 			resetSelectedElement ();
 
-			//_aSelectedElementMaterials = new List<Material> ();
-
 			_assetType = AssetType.Floor;
 			_editMode = EditMode.None;
+
+			_placementTools = new PlacementTools ();
+			GameObject toolContainer = new GameObject("[ContainerTools]");
+			_placementTools.init (toolContainer);
 
 			PweMainMenu.Instance.init ();
 
@@ -397,7 +402,7 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void positionEditPart()
 		{
-			Part partHit = new Part();
+			/*Part partHit = new Part();
 			partHit.id = PartList.End_Of_List;
 
 			if (_goHit.tag == "PartContainer") {
@@ -408,8 +413,11 @@ namespace PrefabWorldEditor
 
 			if (partHit.id != PartList.End_Of_List) {
 				//Debug.Log ("partHit.id: " + partHit.id);
-			}
+			}*/
 
+			//
+			// Positioning
+			//
             _v3EditPartPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, _rayDistance));
             _v3EditPartPos.x = Mathf.RoundToInt(_v3EditPartPos.x / gridSize) * gridSize;
 			if (_v3EditPartPos.x - _curEditPart.w / 2 < 0) {
@@ -438,6 +446,23 @@ namespace PrefabWorldEditor
 
 			setMarkerPosition (_goEditPart.transform);
 
+			//
+			// Tools
+			//
+			_placementTools.customUpdate (_goEditPart.transform.position);
+
+			if (Input.GetKeyUp (KeyCode.Alpha1)) {
+				_placementTools.reset ();
+			}
+			else if (Input.GetKeyDown (KeyCode.Alpha1)) {
+				if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall) {
+					_placementTools.activate (PlacementTools.PlacementMode.Circle, _goEditPart.transform.position, _curEditPart);
+				}
+			}
+
+			//
+			// Mousewheel
+			//
             if (Input.GetAxis("Mouse ScrollWheel") != 0)
 			{
                 if (_timer > _lastMouseWheelUpdate)
@@ -446,7 +471,12 @@ namespace PrefabWorldEditor
 					float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
 					float multiply = 15f * dir;
 
-					if (Input.GetKey (KeyCode.X)) {
+					// Tools
+					if (Input.GetKey (KeyCode.Alpha1)) {
+						_placementTools.extend ((int)dir, _goEditPart.transform.position);
+					}
+					// Rotate
+					else if (Input.GetKey (KeyCode.X)) {
 						if (_curEditPart.canRotate.x == 1) {
 							_goEditPart.transform.Rotate (Vector3.right * multiply);
 						}
@@ -461,16 +491,12 @@ namespace PrefabWorldEditor
 							_goEditPart.transform.Rotate (Vector3.forward * multiply);
 						}
 					}
-					/*else if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) {
-						if (_curEditPart.canRotate) {
-							_curRotation = (_curRotation < 3 ? _curRotation + 1 : 0);
-							if (_curRotation == 0) {
-								_goEditPart.transform.rotation = Quaternion.identity;
-							} else {
-								_goEditPart.transform.Rotate (Vector3.up * 90f);
-							}
-						}
-					}*/
+					// Scale
+					else if (Input.GetKey (KeyCode.C)) {
+						Vector3 scale = _goEditPart.transform.localScale;
+						scale += new Vector3(.025f * dir, .025f * dir, .025f * dir);
+						_goEditPart.transform.localScale = scale;
+					}
 					else {
 						toggleEditPart();
 					}
@@ -545,7 +571,7 @@ namespace PrefabWorldEditor
 					selectTransformTool (PweMainMenu.Instance.iSelectedTool);
 
 					PweMainMenu.Instance.showAssetInfoPanel (true);
-					PweMainMenu.Instance.assetInfo.init (_parts [_selectedElement.part]);
+					showAssetInfo (_parts [_selectedElement.part]);
 				}
 			}
 			else
@@ -560,28 +586,39 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void positionSelectedElement()
 		{
-			_v3EditPartPos = _selectedElement.go.transform.position;
+			if (Input.GetAxis("Mouse ScrollWheel") != 0)
+			{
+				if (_timer > _lastMouseWheelUpdate)
+				{
+					Part part = _parts [_selectedElement.part];
 
-			if (Input.GetKeyDown (KeyCode.Alpha1)) {
-				_v3EditPartPos.x += gridSize;
-			}
-			else if (Input.GetKeyDown (KeyCode.Alpha2)) {
-				_v3EditPartPos.x -= gridSize;
-			}
-			else if (Input.GetKeyDown (KeyCode.Alpha3)) {
-				_v3EditPartPos.y += gridSize;
-			}
-			else if (Input.GetKeyDown (KeyCode.Alpha4)) {
-				_v3EditPartPos.y -= gridSize;
-			}
-			else if (Input.GetKeyDown (KeyCode.Alpha5)) {
-				_v3EditPartPos.z += gridSize;
-			}
-			else if (Input.GetKeyDown (KeyCode.Alpha6)) {
-				_v3EditPartPos.z -= gridSize;
-			}
+					_lastMouseWheelUpdate = _timer + 0.2f;
+					float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
+					float multiply = 15f * dir;
 
-			_selectedElement.go.transform.position = _v3EditPartPos;
+					if (Input.GetKey (KeyCode.X)) {
+						if (part.canRotate.x == 1) {
+							_selectedElement.go.transform.Rotate (Vector3.right * multiply);
+						}
+					}
+					else if (Input.GetKey (KeyCode.Y)) {
+						if (part.canRotate.y == 1) {
+							_selectedElement.go.transform.Rotate (Vector3.up * multiply);
+						}
+					}
+					else if (Input.GetKey (KeyCode.Z)) {
+						if (part.canRotate.z == 1) {
+							_selectedElement.go.transform.Rotate (Vector3.forward * multiply);
+						}
+					}
+					// Scale
+					else if (Input.GetKey (KeyCode.C)) {
+						Vector3 scale = _selectedElement.go.transform.localScale;
+						scale += new Vector3(.025f * dir, .025f * dir, .025f * dir);
+						_selectedElement.go.transform.localScale = scale;
+					}
+				}
+			}
 
 			setMarkerPosition (_selectedElement.go.transform);
 		}
@@ -658,12 +695,13 @@ namespace PrefabWorldEditor
 				s = "Press left mouse button + shift key for a 'Wall Fill'!";
 			} else {
 				if (part.canRotate != Vector3Int.zero) {
-					s = "Use Mousewheel + ";
+					s = "Mousewheel + ";
 					s += (part.canRotate.x == 1 ? "x" : "");
 					s += (part.canRotate.y == 1 ? "/y" : "");
 					s += (part.canRotate.z == 1 ? "/z" : "");
-					s += " to rotate selected object";
+					s += " = rotate object";
 				}
+				s += "\nMousewheel + c = scale object";
 			}
 
 			PweMainMenu.Instance.setSpecialHelpText (s);
@@ -688,7 +726,7 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		private void setMeshCollider (GameObject go, bool state) {
+		public void setMeshCollider (GameObject go, bool state) {
 
 			_listOfChildren.Clear ();
 			getChildrenRecursive (go);
@@ -871,7 +909,7 @@ namespace PrefabWorldEditor
         }
 
 		// ------------------------------------------------------------------------
-		private GameObject createPartAt(PartList partId, float x, float y, float z)
+		public GameObject createPartAt(PartList partId, float x, float y, float z)
 		{
             GameObject go = null;
 

@@ -89,18 +89,18 @@ public class GizmoTranslateScript : MonoBehaviour {
 
                             if (detectors[i].pressingPlane) {
                                 float deltaY = Input.GetAxis("Mouse Y") * (Time.deltaTime * distance);
-								offset = translateTarget.transform.up * deltaY;
+								offset = Vector3.up * deltaY; //translateTarget.transform.up * deltaY;
                                 offset = new Vector3(0.0f, offset.y, 0.0f);
                                 translateTarget.transform.Translate(offset);
 
                                 float deltaZ = Input.GetAxis("Mouse X") * (Time.deltaTime * distance);
-								offset = translateTarget.transform.forward * deltaZ;
+								offset = Vector3.forward * deltaZ; //translateTarget.transform.forward * deltaZ;
                                 offset = new Vector3(0.0f, 0.0f, offset.z);
                                 translateTarget.transform.Translate(offset);
 
                             } else {
                                 float delta = Input.GetAxis("Mouse X") * (Time.deltaTime * distance);
-								offset = (translateTarget.transform.right*-1) * delta;
+								offset = Vector3.left * delta; //(translateTarget.transform.right*-1) * delta;
                                 offset = new Vector3(offset.x, 0.0f, 0.0f);
                                 translateTarget.transform.Translate(offset);
                             }
@@ -114,18 +114,18 @@ public class GizmoTranslateScript : MonoBehaviour {
 
                             if (detectors[i].pressingPlane) {
                                 float deltaX = Input.GetAxis("Mouse X") * (Time.deltaTime * distance);
-							offset = translateTarget.transform.right * deltaX;
+								offset = Vector3.right * deltaX; //translateTarget.transform.right * deltaX;
                                 offset = new Vector3(offset.x, 0.0f, 0.0f);
                                 translateTarget.transform.Translate(offset);
 
                                 float deltaZ = Input.GetAxis("Mouse Y") * (Time.deltaTime * distance);
-							offset = translateTarget.transform.forward * deltaZ;
+								offset = Vector3.forward * deltaZ; //translateTarget.transform.forward * deltaZ;
                                 offset = new Vector3(0.0f, 0.0f, -offset.z);
                                 translateTarget.transform.Translate(offset);
 
                             } else {
                                 float delta = Input.GetAxis("Mouse Y") * (Time.deltaTime * distance);
-							offset = translateTarget.transform.up * delta;
+								offset = Vector3.up * delta; //translateTarget.transform.up * delta;
                                 offset = new Vector3(0.0f, offset.y, 0.0f);
                                 translateTarget.transform.Translate(offset);
                             }
@@ -139,18 +139,18 @@ public class GizmoTranslateScript : MonoBehaviour {
 
                             if (detectors[i].pressingPlane) {
                                 float deltaX = Input.GetAxis("Mouse X") * (Time.deltaTime * distance);
-							offset = translateTarget.transform.right * deltaX;
+								offset = Vector3.right * deltaX; //translateTarget.transform.right * deltaX;
                                 offset = new Vector3(offset.x, 0.0f, 0.0f);
                                 translateTarget.transform.Translate(offset);
 
                                 float deltaY = Input.GetAxis("Mouse Y") * (Time.deltaTime * distance);
-							offset = translateTarget.transform.up * deltaY;
+								offset = Vector3.up * deltaY; //translateTarget.transform.up * deltaY;
                                 offset = new Vector3(0.0f, offset.y, 0.0f);
                                 translateTarget.transform.Translate(offset);
 
                             } else {
                                 float delta = Input.GetAxis("Mouse X") * (Time.deltaTime * distance);
-							offset = translateTarget.transform.forward * delta;
+								offset = Vector3.forward * delta; //translateTarget.transform.forward * delta;
                                 offset = new Vector3(0.0f, 0.0f, offset.z);
                                 translateTarget.transform.Translate(offset);
                             }
