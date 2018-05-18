@@ -158,6 +158,7 @@
      <Compile Include="Assets\AssetsShared\Scripts\Utils\DataTypeQuaternion.cs" />
      <Compile Include="Assets\AssetsShared\Scripts\Utils\DataTypeVector2.cs" />
      <Compile Include="Assets\AssetsShared\Scripts\Utils\DataTypeVector3.cs" />
+     <Compile Include="Assets\AssetsShared\Scripts\Utils\GLTools.cs" />
      <Compile Include="Assets\AssetsShared\Scripts\Utils\MonoSingleton.cs" />
      <Compile Include="Assets\AssetsShared\Scripts\Utils\ReparentGameObject.cs" />
      <Compile Include="Assets\AssetsShared\Scripts\Utils\Singleton.cs" />

@@ -122,7 +122,8 @@ namespace PrefabWorldEditor
 		//private int _curRotation;
 
 		private LevelElement _selectedElement;
-		//private List<Material> _aSelectedElementMaterials;
+		private Bounds _selectedElementBounds;
+		private List<MeshRenderer> _selectedMeshRenderers;
 
 		private Dictionary<AssetType, List<Part>> _assetTypeList;
 		private Dictionary<AssetType, int> _assetTypeIndex;
@@ -131,6 +132,7 @@ namespace PrefabWorldEditor
 
         private float _rayDistance;
         private Ray _ray;
+		private LayerMask _layermask;
         private RaycastHit _hit;
         private GameObject _goHit;
 
@@ -148,6 +150,10 @@ namespace PrefabWorldEditor
 
 		public EditMode editMode {
 			get { return _editMode; }
+		}
+
+		public Bounds selectedElementBounds {
+			get { return _selectedElementBounds; }
 		}
 
 		#endregion
@@ -207,8 +213,11 @@ namespace PrefabWorldEditor
 
 			_listOfChildren = new List<GameObject> ();
 
+			_layermask = 1 << 12;
+
             _v3EditPartPos = Vector3.zero;
 
+			_selectedMeshRenderers = new List<MeshRenderer> ();
 			resetSelectedElement ();
 
 			//_aSelectedElementMaterials = new List<Material> ();
@@ -228,10 +237,24 @@ namespace PrefabWorldEditor
 		{
 			_timer = Time.realtimeSinceStartup;
 
-			if (_editMode == EditMode.Play) {
+			if (_editMode == EditMode.Play)
+			{
 				updatePlayMode ();
-			} else {
+			}
+			else
+			{
 				updateEditMode ();
+
+				if (_selectedElement.part != PartList.End_Of_List) {
+					if (_selectedMeshRenderers.Count > 0) {
+						_selectedElementBounds = _selectedMeshRenderers [0].bounds;
+						int i, len = _selectedMeshRenderers.Count;
+						for (i = 1; i < len; ++i) {
+							_selectedElementBounds.Encapsulate (_selectedMeshRenderers [i].bounds);
+						}
+						GLTools.drawBoundingBox (_selectedElementBounds, matElementMarker);
+					}
+				}
 			}
 		}
 
@@ -353,7 +376,7 @@ namespace PrefabWorldEditor
 				{
 					if (!EventSystem.current.IsPointerOverGameObject ()) {
 						if (_goHit != null) {
-							selectElement (_goHit.transform.parent);
+							selectElement (_goHit.transform); //.parent);
 						}
 					}
 				}
@@ -369,28 +392,6 @@ namespace PrefabWorldEditor
 			{
 				positionEditPart ();
 			}
-
-			/*if (!_goEditPart.activeSelf) {
-				if (Input.GetMouseButtonDown (0))
-				{
-					if (!EventSystem.current.IsPointerOverGameObject ()) {
-						if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) {
-							if (_goHit != null) {
-								selectElement (_goHit.transform.parent);
-							}
-						}
-					}
-				}
-				if (_selectedElement.go != null) {
-					if (Input.GetKeyDown (KeyCode.Delete)) {
-						deleteSelectedElement ();
-					} else {
-						positionSelectedElement ();
-					}
-				}
-			} else {
-				positionEditPart ();
-			}*/
 		}
 
 		// ------------------------------------------------------------------------
@@ -508,16 +509,30 @@ namespace PrefabWorldEditor
 				return;
 			}
 
-			if (_levelElements.ContainsKey (trfmHit.gameObject))
+			Transform trfmParent = trfmHit;
+
+			while (trfmParent.parent != null && trfmParent.tag != "PartContainer") {
+				trfmParent = trfmParent.parent;
+			}
+
+			// not an asset?
+			if (trfmParent.tag != "PartContainer") {
+				resetElementComponents ();
+				resetSelectedElement ();
+				return;
+			}
+
+			if (_levelElements.ContainsKey (trfmParent.gameObject))
 			{
-				if (_selectedElement.go != trfmHit.gameObject)
+				if (_selectedElement.go != trfmParent.gameObject)
 				{
 					resetElementComponents ();
 
-					_selectedElement = _levelElements [trfmHit.gameObject];
-					//getMaterials (_selectedElement.go, matElementMarker);
+					_selectedElement = _levelElements [trfmParent.gameObject];
 					setMeshCollider (_selectedElement.go, false);
 					setRigidBody (_selectedElement.go, false);
+
+					getSelectedMeshRenderers (_selectedElement.go);
 
 					Part part = _parts [_selectedElement.part];
 					setMarkerScale (part);
@@ -655,21 +670,28 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		private void setMeshCollider (GameObject go, bool state) {
+		//
+		// ------------------------------------------------------------------------
+		private void getSelectedMeshRenderers (GameObject go)
+		{
+			_selectedMeshRenderers.Clear ();
 
 			_listOfChildren.Clear ();
 			getChildrenRecursive (go);
 
-            /*if (go.GetComponent<Collider>()) {
-				go.GetComponent<Collider>().enabled = state;
-            }
-			else {
-				foreach (Transform child in go.transform) {
-					if (child.gameObject.GetComponent<Collider> ()) {
-						child.gameObject.GetComponent<Collider> ().enabled = state;
-					}
+			int i, len = _listOfChildren.Count;
+			for (i = 0; i < len; ++i) {
+				if (_listOfChildren [i].GetComponent<MeshRenderer> ()) {
+					_selectedMeshRenderers.Add(_listOfChildren [i].GetComponent<MeshRenderer> ());
 				}
-            }*/
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void setMeshCollider (GameObject go, bool state) {
+
+			_listOfChildren.Clear ();
+			getChildrenRecursive (go);
 
 			int i, len = _listOfChildren.Count;
 			for (i = 0; i < len; ++i) {
@@ -987,6 +1009,9 @@ namespace PrefabWorldEditor
 		{
 			_selectedElement = new LevelElement();
 			_selectedElement.part = PartList.End_Of_List;
+
+			_selectedMeshRenderers.Clear ();
+			_selectedElementBounds = new Bounds();
 
 			gizmoTranslateScript.translateTarget = null;
 			gizmoTranslateScript.gameObject.SetActive (false);

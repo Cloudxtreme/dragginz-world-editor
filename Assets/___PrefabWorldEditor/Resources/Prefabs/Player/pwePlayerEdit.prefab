@@ -330,6 +330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8c7f56933867c4daf3aee843d642d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  matLineBounds: {fileID: 2100000, guid: d5f91f5f0d3098c46b63b39d906f2a2c, type: 2}
 --- !u!124 &124947284000176350
 Behaviour:
   m_ObjectHideFlags: 1

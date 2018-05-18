@@ -8,9 +8,13 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace PrefabLevelEditor
+using AssetsShared;
+
+namespace PrefabWorldEditor
 {
-	public class FlyCam : MonoBehaviour {
+	public class FlyCam : MonoBehaviour
+	{
+		public Material matLineBounds;
 
 		private static float movementSpeed = 0.15f;
 
@@ -76,6 +80,11 @@ namespace PrefabLevelEditor
 			_player.position += (transform.right * Input.GetAxis ("Horizontal") + transform.forward * Input.GetAxis ("Vertical") + transform.up * Input.GetAxis ("Depth")) * movementSpeed;
 
             //Debug.Log(transform.forward);
+		}
+
+		void OnPostRender()
+		{
+			GLTools.drawBoundingBox (PrefabLevelEditor.Instance.selectedElementBounds, matLineBounds);
 		}
 	}
 }
