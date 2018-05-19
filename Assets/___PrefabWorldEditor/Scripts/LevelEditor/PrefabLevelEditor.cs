@@ -118,6 +118,7 @@ namespace PrefabWorldEditor
 
 		private Dictionary<PartList, Part> _parts;
 		private Dictionary<GameObject, LevelElement> _levelElements;
+		private int _iCounter;
 
 		private Part _curEditPart;
         private GameObject _goEditPart;
@@ -213,6 +214,7 @@ namespace PrefabWorldEditor
             setWalls();
 
 			_levelElements = new Dictionary<GameObject, LevelElement>();
+			_iCounter = 0;
 
 			_listOfChildren = new List<GameObject> ();
 
@@ -835,6 +837,29 @@ namespace PrefabWorldEditor
 
 			_levelElements.Add(element.go, element);
 
+			// add tool objects
+			if (_placementTools.placementMode != PlacementTools.PlacementMode.None) {
+
+				int i, len = _placementTools.gameObjects.Count;
+				for (i = 0; i < len; ++i) {
+					int j, len2 = _placementTools.gameObjects[i].Count;
+					for (j = 0; j < len2; ++j) {
+
+						GameObject go = _placementTools.gameObjects [i] [j];
+						go.transform.SetParent(_container);
+						go.name = "part_" + (_iCounter++).ToString (); //(_container.childCount+1).ToString();
+
+						setMeshCollider (go, true);
+
+						LevelElement elementTool = new LevelElement ();
+						elementTool.part = _curEditPart.id;
+						elementTool.go = go;
+						_levelElements.Add(go, elementTool);
+					}
+				}
+			}
+			_placementTools.reset ();
+
 			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
         }
 
@@ -919,7 +944,7 @@ namespace PrefabWorldEditor
 
             go = Instantiate(_parts[partId].prefab);
             if (go != null) {
-                go.name = "part_" + _container.childCount.ToString();
+				go.name = "part_" + (_iCounter++).ToString (); //(_container.childCount+1).ToString();
                 go.transform.SetParent(_container);
 				go.transform.position = new Vector3 (x, y, z); //new Vector3(x * gridSize, y * gridSize, z * gridSize);
             }

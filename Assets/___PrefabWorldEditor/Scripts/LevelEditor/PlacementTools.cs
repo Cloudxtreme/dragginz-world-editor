@@ -32,10 +32,20 @@ namespace PrefabWorldEditor
 
 		private int _step;
 
+		//
+
 		#region Getters
 
 		public PlacementMode placementMode {
 			get { return _placementMode; }
+		}
+
+		//public GameObject container {
+		//	get { return _container; }
+		//}
+
+		public List<List<GameObject>> gameObjects {
+			get { return _gameObjects; }
 		}
 
 		#endregion
@@ -88,7 +98,9 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		public void customUpdate(Vector3 posOrigin)
 		{
-			_container.transform.position = posOrigin;
+			if (_placementMode != PlacementMode.None) {
+				_container.transform.position = posOrigin;
+			}
 		}
 
 		// ------------------------------------------------------------------------
