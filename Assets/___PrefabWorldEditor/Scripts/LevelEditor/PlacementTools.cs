@@ -19,6 +19,7 @@ namespace PrefabWorldEditor
 		public enum PlacementMode {
 			None,
 			Circle,
+			Quad,
 			Mount
 		};
 
@@ -39,10 +40,6 @@ namespace PrefabWorldEditor
 		public PlacementMode placementMode {
 			get { return _placementMode; }
 		}
-
-		//public GameObject container {
-		//	get { return _container; }
-		//}
 
 		public List<List<GameObject>> gameObjects {
 			get { return _gameObjects; }
@@ -68,6 +65,8 @@ namespace PrefabWorldEditor
 			foreach (Transform childTransform in _container.transform) {
 				GameObject.Destroy(childTransform.gameObject);
 			}
+
+			_gameObjects.Clear ();
 
 			_step = 0;
 
@@ -123,32 +122,70 @@ namespace PrefabWorldEditor
 
 			_container.transform.position = posOrigin;
 
+			if (_placementMode == PlacementMode.Circle) {
+				createCircle ();
+			} else if (_placementMode == PlacementMode.Quad) {
+				createQuad ();
+			}
+
+			_step++;
+		}
+
+		// ------------------------------------------------------------------------
+		private void createCircle()
+		{
 			GameObject go;
-			if (_placementMode == PlacementMode.Circle)
+			float radius = (float)(_step+1) * 2f;
+			int i, len = 5 + ((_step+1) * 2);
+			for (i = 0; i < len; ++i)
 			{
-				float radius = (float)(_step+1) * 2f;
-				int i, len = 5 + ((_step+1) * 2);
-				for (i = 0; i < len; ++i)     
+				float angle = (float)i * Mathf.PI * 2f / (float)len;
+				Vector3 pos = new Vector3 (Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius;
+
+				go = PrefabLevelEditor.Instance.createPartAt (_curPart.id, 0, 0, 0);
+				if (go != null)
 				{
-					float angle = (float)i * Mathf.PI * 2f / (float)len;
-					Vector3 pos = new Vector3 (Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius;
+					go.name = "temp_part_" + _container.transform.childCount.ToString();
+					go.transform.SetParent(_container.transform);
+					go.transform.localPosition = pos;
+
+					PrefabLevelEditor.Instance.setMeshCollider (go, false);
+					PrefabLevelEditor.Instance.setRigidBody (go, false);
+
+					_gameObjects [_step].Add (go);
+				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void createQuad()
+		{
+			GameObject go;
+			float distance = (_curPart.w + _curPart.d) / 2.5f;
+			int x, z, len = _step + 1;
+			for (x = -len; x <= len; ++x)
+			{
+				for (z = -len; z <= len; ++z)
+				{
+					if (x > -len && x < len && z > -len && z < len) {
+						continue;
+					}
+
+					Vector3 pos = new Vector3 (x * distance, 0, z * distance);
 
 					go = PrefabLevelEditor.Instance.createPartAt (_curPart.id, 0, 0, 0);
-					if (go != null)
-					{
-						go.name = "temp_part_" + _container.transform.childCount.ToString();
-						go.transform.SetParent(_container.transform);
+					if (go != null) {
+						go.name = "temp_part_" + _container.transform.childCount.ToString ();
+						go.transform.SetParent (_container.transform);
 						go.transform.localPosition = pos;
 
 						PrefabLevelEditor.Instance.setMeshCollider (go, false);
+						PrefabLevelEditor.Instance.setRigidBody (go, false);
 
 						_gameObjects [_step].Add (go);
 					}
 				}
 			}
-
-			_step++;
-			//Debug.Log ("step: " + _step);
 		}
 
 		// ------------------------------------------------------------------------
@@ -157,7 +194,6 @@ namespace PrefabWorldEditor
 			if (_step > 1) {
 
 				_step--;
-				//Debug.Log ("step: " + _step);
 
 				int i, len = _gameObjects [_step].Count;
 				for (i = 0; i < len; ++i) {

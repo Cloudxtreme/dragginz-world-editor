@@ -117,7 +117,7 @@ namespace PrefabWorldEditor
         private Transform _container;
 
 		private Dictionary<PartList, Part> _parts;
-		private Dictionary<GameObject, LevelElement> _levelElements;
+		private Dictionary<string, LevelElement> _levelElements;
 		private int _iCounter;
 
 		private Part _curEditPart;
@@ -213,7 +213,7 @@ namespace PrefabWorldEditor
 
             setWalls();
 
-			_levelElements = new Dictionary<GameObject, LevelElement>();
+			_levelElements = new Dictionary<string, LevelElement>();
 			_iCounter = 0;
 
 			_listOfChildren = new List<GameObject> ();
@@ -462,6 +462,15 @@ namespace PrefabWorldEditor
 				}
 			}
 
+			if (Input.GetKeyUp (KeyCode.Alpha2)) {
+				_placementTools.reset ();
+			}
+			else if (Input.GetKeyDown (KeyCode.Alpha2)) {
+				if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall) {
+					_placementTools.activate (PlacementTools.PlacementMode.Quad, _goEditPart.transform.position, _curEditPart);
+				}
+			}
+
 			//
 			// Mousewheel
 			//
@@ -475,6 +484,9 @@ namespace PrefabWorldEditor
 
 					// Tools
 					if (Input.GetKey (KeyCode.Alpha1)) {
+						_placementTools.extend ((int)dir, _goEditPart.transform.position);
+					}
+					else if (Input.GetKey (KeyCode.Alpha2)) {
 						_placementTools.extend ((int)dir, _goEditPart.transform.position);
 					}
 					// Rotate
@@ -522,12 +534,12 @@ namespace PrefabWorldEditor
         }
 
 		// ------------------------------------------------------------------------
-		private void getPartFromGameObject(ref Part partHit, GameObject go) {
+		/*private void getPartFromGameObject(ref Part partHit, GameObject go) {
 
 			if (_levelElements.ContainsKey (go)) {
 				partHit = _parts [_levelElements [go].part];
 			}
-		}
+		}*/
 
 		// ------------------------------------------------------------------------
 		private void selectElement(Transform trfmHit)
@@ -550,13 +562,13 @@ namespace PrefabWorldEditor
 				return;
 			}
 
-			if (_levelElements.ContainsKey (trfmParent.gameObject))
+			if (_levelElements.ContainsKey (trfmParent.gameObject.name))
 			{
 				if (_selectedElement.go != trfmParent.gameObject)
 				{
 					resetElementComponents ();
 
-					_selectedElement = _levelElements [trfmParent.gameObject];
+					_selectedElement = _levelElements [trfmParent.gameObject.name];
 					setMeshCollider (_selectedElement.go, false);
 					setRigidBody (_selectedElement.go, false);
 
@@ -629,8 +641,8 @@ namespace PrefabWorldEditor
 		private void deleteSelectedElement()
 		{
 			if (_selectedElement.go != null) {
-				if (_levelElements.ContainsKey (_selectedElement.go)) {
-					_levelElements.Remove (_selectedElement.go);
+				if (_levelElements.ContainsKey (_selectedElement.go.name)) {
+					_levelElements.Remove (_selectedElement.go.name);
 				}
 				Destroy (_selectedElement.go);
 				_selectedElement.go = null;
@@ -698,12 +710,13 @@ namespace PrefabWorldEditor
 			} else {
 				if (part.canRotate != Vector3Int.zero) {
 					s = "Mousewheel + ";
-					s += (part.canRotate.x == 1 ? "x" : "");
-					s += (part.canRotate.y == 1 ? "/y" : "");
-					s += (part.canRotate.z == 1 ? "/z" : "");
+					s += (part.canRotate.x == 1 ? "'X'" : "");
+					s += (part.canRotate.y == 1 ? "/ 'Y'" : "");
+					s += (part.canRotate.z == 1 ? "/ 'Z'" : "");
 					s += " = rotate object";
 				}
-				s += "\nMousewheel + c = scale object";
+				s += "\nMousewheel + 'C' = scale object";
+				s += "\nMousewheel + '1' / '2' = placement patterns";
 			}
 
 			PweMainMenu.Instance.setSpecialHelpText (s);
@@ -746,7 +759,7 @@ namespace PrefabWorldEditor
 		{
 			_listOfChildren.Clear ();
 
-			foreach (KeyValuePair<GameObject, LevelElement> element in _levelElements)
+			foreach (KeyValuePair<string, LevelElement> element in _levelElements)
 			{
 				getChildrenRecursive (element.Value.go);
 				/*GameObject go = element.Value.go;
@@ -787,7 +800,7 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		private void setRigidBody (GameObject go, bool state) {
+		public void setRigidBody (GameObject go, bool state) {
 
 			if (go.GetComponent<Rigidbody>()) {
 				go.GetComponent<Rigidbody>().useGravity = state;
@@ -835,7 +848,7 @@ namespace PrefabWorldEditor
 			setMeshCollider(element.go, true);
 			setRigidBody (element.go, _curEditPart.usesGravity);
 
-			_levelElements.Add(element.go, element);
+			_levelElements.Add(element.go.name, element);
 
 			// add tool objects
 			if (_placementTools.placementMode != PlacementTools.PlacementMode.None) {
@@ -846,15 +859,19 @@ namespace PrefabWorldEditor
 					for (j = 0; j < len2; ++j) {
 
 						GameObject go = _placementTools.gameObjects [i] [j];
-						go.transform.SetParent(_container);
-						go.name = "part_" + (_iCounter++).ToString (); //(_container.childCount+1).ToString();
+						if (go != null) {
+							go.transform.SetParent (_container);
+							go.name = "part_" + (_iCounter++).ToString (); //(_container.childCount+1).ToString();
 
-						setMeshCollider (go, true);
+							setMeshCollider (go, true);
+							setRigidBody (go, _curEditPart.usesGravity);
 
-						LevelElement elementTool = new LevelElement ();
-						elementTool.part = _curEditPart.id;
-						elementTool.go = go;
-						_levelElements.Add(go, elementTool);
+							LevelElement elementTool = new LevelElement ();
+							elementTool.part = _curEditPart.id;
+							elementTool.go = go;
+
+							_levelElements.Add (go.name, elementTool);
+						}
 					}
 				}
 			}
