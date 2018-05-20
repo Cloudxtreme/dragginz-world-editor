@@ -14,7 +14,7 @@ using AssetsShared;
 
 namespace PrefabWorldEditor
 {
-	public class PlacementTools
+	public class PlacementTool
     {
 		public enum PlacementMode {
 			None,
@@ -23,15 +23,17 @@ namespace PrefabWorldEditor
 			Mount
 		};
 
-		private PlacementMode  _placementMode;
+		private static bool _initialised = false;
 
-		private GameObject _container;
+		protected static PlacementMode  _placementMode;
 
-		private List<List<GameObject>> _gameObjects;
+		protected static GameObject _container;
 
-		private PrefabLevelEditor.Part _curPart;
+		protected static List<List<GameObject>> _gameObjects;
 
-		private int _step;
+		protected static PrefabLevelEditor.Part _curPart;
+
+		protected static int _step;
 
 		//
 
@@ -47,18 +49,27 @@ namespace PrefabWorldEditor
 
 		#endregion
 
-		// ------------------------------------------------------------------------
-		// Public Methods
-		// ------------------------------------------------------------------------
-		public void init(GameObject container)
-        {
-			_container = container;
+		//
+		// CONSTRUCTOR
+		//
+		public PlacementTool(GameObject container)
+		{
+			if (!_initialised)
+			{
+				Debug.Log ("init");
 
-			_gameObjects = new List<List<GameObject>> ();
+				_initialised = true;
 
-			reset ();
+				_container = container;
+
+				_gameObjects = new List<List<GameObject>> ();
+
+				reset ();
+			}
         }
 
+		// ------------------------------------------------------------------------
+		// Public Methods
 		// ------------------------------------------------------------------------
 		public void reset()
 		{
@@ -76,6 +87,8 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		public void activate(PlacementMode mode, Vector3 posOrigin, PrefabLevelEditor.Part part)
 		{
+			reset (); // just in case
+
 			_curPart = part;
 			_step = 0;
 
@@ -110,6 +123,8 @@ namespace PrefabWorldEditor
 			if (mode != _placementMode) {
 
 				_placementMode = mode;
+
+				PwePlacementTools.Instance.showToolPanels (mode);
 			}
 		}
 
@@ -122,70 +137,21 @@ namespace PrefabWorldEditor
 
 			_container.transform.position = posOrigin;
 
-			if (_placementMode == PlacementMode.Circle) {
+			createObjects ();
+
+			/*if (_placementMode == PlacementMode.Circle) {
 				createCircle ();
 			} else if (_placementMode == PlacementMode.Quad) {
 				createQuad ();
-			}
+			}*/
 
 			_step++;
 		}
 
 		// ------------------------------------------------------------------------
-		private void createCircle()
+		public virtual void createObjects()
 		{
-			GameObject go;
-			float radius = (float)(_step+1) * 2f;
-			int i, len = 5 + ((_step+1) * 2);
-			for (i = 0; i < len; ++i)
-			{
-				float angle = (float)i * Mathf.PI * 2f / (float)len;
-				Vector3 pos = new Vector3 (Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius;
-
-				go = PrefabLevelEditor.Instance.createPartAt (_curPart.id, 0, 0, 0);
-				if (go != null)
-				{
-					go.name = "temp_part_" + _container.transform.childCount.ToString();
-					go.transform.SetParent(_container.transform);
-					go.transform.localPosition = pos;
-
-					PrefabLevelEditor.Instance.setMeshCollider (go, false);
-					PrefabLevelEditor.Instance.setRigidBody (go, false);
-
-					_gameObjects [_step].Add (go);
-				}
-			}
-		}
-
-		// ------------------------------------------------------------------------
-		private void createQuad()
-		{
-			GameObject go;
-			float distance = (_curPart.w + _curPart.d) / 2.5f;
-			int x, z, len = _step + 1;
-			for (x = -len; x <= len; ++x)
-			{
-				for (z = -len; z <= len; ++z)
-				{
-					if (x > -len && x < len && z > -len && z < len) {
-						continue;
-					}
-
-					Vector3 pos = new Vector3 (x * distance, 0, z * distance);
-
-					go = PrefabLevelEditor.Instance.createPartAt (_curPart.id, 0, 0, 0);
-					if (go != null) {
-						go.name = "temp_part_" + _container.transform.childCount.ToString ();
-						go.transform.SetParent (_container.transform);
-						go.transform.localPosition = pos;
-
-						PrefabLevelEditor.Instance.setMeshCollider (go, false);
-						PrefabLevelEditor.Instance.setRigidBody (go, false);
-
-						_gameObjects [_step].Add (go);
-					}
-				}
-			}
+			// OVERRIDE ME
 		}
 
 		// ------------------------------------------------------------------------

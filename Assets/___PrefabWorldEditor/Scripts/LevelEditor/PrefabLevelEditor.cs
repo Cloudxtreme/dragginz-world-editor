@@ -99,7 +99,7 @@ namespace PrefabWorldEditor
         }
 
 		//
-		private PlacementTools _placementTools;
+		//private PlacementTool _placementTools;
 
         private struct LevelElement
         {
@@ -133,6 +133,9 @@ namespace PrefabWorldEditor
 		private Dictionary<AssetType, int> _assetTypeIndex;
 
 		private List<GameObject> _listOfChildren;
+
+		private List<PlacementTool> _aPlacementTools;
+		private PlacementTool _curPlacementTool;
 
         private float _rayDistance;
         private Ray _ray;
@@ -228,9 +231,15 @@ namespace PrefabWorldEditor
 			_assetType = AssetType.Floor;
 			_editMode = EditMode.None;
 
-			_placementTools = new PlacementTools ();
+			//PlacementTool._container = new GameObject("[ContainerTools]");
 			GameObject toolContainer = new GameObject("[ContainerTools]");
-			_placementTools.init (toolContainer);
+			_aPlacementTools = new List<PlacementTool> ();
+			_aPlacementTools.Add (new PlacementToolCircle (toolContainer));
+			_aPlacementTools.Add (new PlacementToolQuad (toolContainer));
+
+			//_placementTools = new PlacementTool ();
+			//GameObject toolContainer = new GameObject("[ContainerTools]");
+			//_placementTools.init (toolContainer);
 
 			PweMainMenu.Instance.init ();
 
@@ -278,10 +287,12 @@ namespace PrefabWorldEditor
 
 				resetElementComponents ();
 				resetSelectedElement ();
+				resetCurPlacementTool ();
 
 				PweMainMenu.Instance.setModeButtons (_editMode);
 				PweMainMenu.Instance.showTransformBox (_editMode == EditMode.Transform);
 				PweMainMenu.Instance.showAssetTypeBox (_editMode == EditMode.Place);
+				PweMainMenu.Instance.showPlacementToolBox (_editMode == EditMode.Place);
 				if (_editMode == EditMode.Place) {
 					PweMainMenu.Instance.setAssetTypeButtons (_assetType);
 					showAssetInfo (_curEditPart);
@@ -333,8 +344,35 @@ namespace PrefabWorldEditor
 		{
 			_assetType = type;
 
+			//if (_curEditPart.type == AssetType.Floor && _curEditPart.type == AssetType.Wall) {
+				resetCurPlacementTool ();
+			//}
+
 			int index = _assetTypeIndex [_assetType];
 			setNewEditPart(_assetTypeList[_assetType][index]);
+		}
+
+		// ------------------------------------------------------------------------
+		public void selectPlacementTool(PlacementTool.PlacementMode mode)
+		{
+			if (_curPlacementTool == null || _curPlacementTool.placementMode != mode)
+			{
+				if (_goEditPart != null)
+				{
+					if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall)
+					{
+						if (mode == PlacementTool.PlacementMode.Circle) {
+							_curPlacementTool = _aPlacementTools [0];
+						} else {
+							_curPlacementTool = _aPlacementTools [1];
+						}
+
+						_curPlacementTool.activate (mode, _goEditPart.transform.position, _curEditPart);
+
+						PwePlacementTools.Instance.showToolPanels (mode);
+					}
+				}
+			}
 		}
 
 		// ------------------------------------------------------------------------
@@ -357,7 +395,10 @@ namespace PrefabWorldEditor
 			if (Input.GetKeyDown (KeyCode.Escape)) {
 				if (PweMainMenu.Instance.popup.isVisible ()) {
 					PweMainMenu.Instance.popup.hide ();
-				} else {
+				} else if (_curPlacementTool != null) {
+					resetCurPlacementTool ();
+				}
+				else {
 					setEditMode (EditMode.Transform);
 				}
 			}
@@ -399,6 +440,17 @@ namespace PrefabWorldEditor
 			{
 				positionEditPart ();
 			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void resetCurPlacementTool()
+		{
+			if (_curPlacementTool != null) {
+				_curPlacementTool.reset ();
+				_curPlacementTool = null;
+			}
+			PweMainMenu.Instance.setPlacementToolButtons (PlacementTool.PlacementMode.None);
+			PwePlacementTools.Instance.showToolPanels (PlacementTool.PlacementMode.None);
 		}
 
 		// ------------------------------------------------------------------------
@@ -451,25 +503,37 @@ namespace PrefabWorldEditor
 			//
 			// Tools
 			//
-			_placementTools.customUpdate (_goEditPart.transform.position);
+			if (_curPlacementTool != null) {
+				_curPlacementTool.customUpdate (_goEditPart.transform.position);
+			}
 
+			/*
 			if (Input.GetKeyUp (KeyCode.Alpha1)) {
-				_placementTools.reset ();
+				if (_curPlacementTool != null) {
+					_curPlacementTool.reset ();
+					_curPlacementTool = null;
+				}
 			}
 			else if (Input.GetKeyDown (KeyCode.Alpha1)) {
 				if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall) {
-					_placementTools.activate (PlacementTools.PlacementMode.Circle, _goEditPart.transform.position, _curEditPart);
+					_curPlacementTool = _aPlacementTools [0];
+					_curPlacementTool.activate (PlacementTool.PlacementMode.Circle, _goEditPart.transform.position, _curEditPart);
 				}
 			}
 
 			if (Input.GetKeyUp (KeyCode.Alpha2)) {
-				_placementTools.reset ();
+				if (_curPlacementTool != null) {
+					_curPlacementTool.reset ();
+					_curPlacementTool = null;
+				}
 			}
 			else if (Input.GetKeyDown (KeyCode.Alpha2)) {
 				if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall) {
-					_placementTools.activate (PlacementTools.PlacementMode.Quad, _goEditPart.transform.position, _curEditPart);
+					_curPlacementTool = _aPlacementTools [1];
+					_curPlacementTool.activate (PlacementTool.PlacementMode.Quad, _goEditPart.transform.position, _curEditPart);
 				}
 			}
+			*/
 
 			//
 			// Mousewheel
@@ -483,11 +547,8 @@ namespace PrefabWorldEditor
 					float multiply = 15f * dir;
 
 					// Tools
-					if (Input.GetKey (KeyCode.Alpha1)) {
-						_placementTools.extend ((int)dir, _goEditPart.transform.position);
-					}
-					else if (Input.GetKey (KeyCode.Alpha2)) {
-						_placementTools.extend ((int)dir, _goEditPart.transform.position);
+					if (_curPlacementTool != null) {
+						_curPlacementTool.extend ((int)dir, _goEditPart.transform.position);
 					}
 					// Rotate
 					else if (Input.GetKey (KeyCode.X)) {
@@ -716,7 +777,7 @@ namespace PrefabWorldEditor
 					s += " = rotate object";
 				}
 				s += "\nMousewheel + 'C' = scale object";
-				s += "\nMousewheel + '1' / '2' = placement patterns";
+				//s += "\nMousewheel + '1' / '2' = placement patterns";
 			}
 
 			PweMainMenu.Instance.setSpecialHelpText (s);
@@ -851,31 +912,33 @@ namespace PrefabWorldEditor
 			_levelElements.Add(element.go.name, element);
 
 			// add tool objects
-			if (_placementTools.placementMode != PlacementTools.PlacementMode.None) {
+			if (_curPlacementTool != null) {
+				if (_curPlacementTool.placementMode != PlacementTool.PlacementMode.None) {
 
-				int i, len = _placementTools.gameObjects.Count;
-				for (i = 0; i < len; ++i) {
-					int j, len2 = _placementTools.gameObjects[i].Count;
-					for (j = 0; j < len2; ++j) {
+					int i, len = _curPlacementTool.gameObjects.Count;
+					for (i = 0; i < len; ++i) {
+						int j, len2 = _curPlacementTool.gameObjects [i].Count;
+						for (j = 0; j < len2; ++j) {
 
-						GameObject go = _placementTools.gameObjects [i] [j];
-						if (go != null) {
-							go.transform.SetParent (_container);
-							go.name = "part_" + (_iCounter++).ToString (); //(_container.childCount+1).ToString();
+							GameObject go = _curPlacementTool.gameObjects [i] [j];
+							if (go != null) {
+								go.transform.SetParent (_container);
+								go.name = "part_" + (_iCounter++).ToString (); //(_container.childCount+1).ToString();
 
-							setMeshCollider (go, true);
-							setRigidBody (go, _curEditPart.usesGravity);
+								setMeshCollider (go, true);
+								setRigidBody (go, _curEditPart.usesGravity);
 
-							LevelElement elementTool = new LevelElement ();
-							elementTool.part = _curEditPart.id;
-							elementTool.go = go;
+								LevelElement elementTool = new LevelElement ();
+								elementTool.part = _curEditPart.id;
+								elementTool.go = go;
 
-							_levelElements.Add (go.name, elementTool);
+								_levelElements.Add (go.name, elementTool);
+							}
 						}
 					}
 				}
+				resetCurPlacementTool ();
 			}
-			_placementTools.reset ();
 
 			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
         }

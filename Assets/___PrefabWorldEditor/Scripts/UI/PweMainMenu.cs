@@ -22,6 +22,7 @@ namespace PrefabWorldEditor
     {
 		public GameObject goTransformSelection;
 		public GameObject goAssetTypeSelection;
+		public GameObject goPlacementToolButtons;
 		//public GameObject goItemsSelection;
 		//public GameObject goDigSettings;
 
@@ -54,6 +55,9 @@ namespace PrefabWorldEditor
 		public Button btnAssetWalls;
 		public Button btnAssetChunks;
 		public Button btnAssetProps;
+
+		public Button btnPlacementToolCircle;
+		public Button btnPlacementToolQuad;
 
 		public Text txtFileInfo;
 		public Text txtLevelName;
@@ -291,6 +295,13 @@ namespace PrefabWorldEditor
 			btnAssetProps.interactable  = (type != PrefabLevelEditor.AssetType.Prop);
 		}
 
+		//
+		public void setPlacementToolButtons(PlacementTool.PlacementMode mode)
+		{
+			btnPlacementToolCircle.interactable = (mode != PlacementTool.PlacementMode.Circle);
+			btnPlacementToolQuad.interactable   = (mode != PlacementTool.PlacementMode.Quad);
+		}
+
 		/*public void setMenuPanels(AppState mode)
 		{
 			panelTools.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
@@ -319,6 +330,12 @@ namespace PrefabWorldEditor
 		public void showTransformBox(bool state) {
 			if (goTransformSelection != null) {
 				goTransformSelection.SetActive (false);
+			}
+		}
+
+		public void showPlacementToolBox(bool state) {
+			if (goPlacementToolButtons != null) {
+				goPlacementToolButtons.SetActive (state);
 			}
 		}
 
@@ -390,15 +407,24 @@ namespace PrefabWorldEditor
 
 			if (_iSelectedAssetType != value) {
 
-				btnAssetFloors.interactable = (value != 0);
-				btnAssetWalls.interactable  = (value != 1);
-				btnAssetChunks.interactable = (value != 2);
-				btnAssetProps.interactable  = (value != 3);
+				setAssetTypeButtons (type);
+				//btnAssetFloors.interactable = (value != 0);
+				//btnAssetWalls.interactable  = (value != 1);
+				//btnAssetChunks.interactable = (value != 2);
+				//btnAssetProps.interactable  = (value != 3);
 
 				_iSelectedAssetType = value;
 
 				PrefabLevelEditor.Instance.selectAssetType (type);
 			}
+		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void selectPlacementTool(PlacementTool.PlacementMode mode)
+		{
+			setPlacementToolButtons (mode);
+
+			PrefabLevelEditor.Instance.selectPlacementTool (mode);
 		}
 
 		// ---------------------------------------------------------------------------------------------
@@ -793,6 +819,17 @@ namespace PrefabWorldEditor
 			}
 			else if (value == 3) {
 				selectAssetType(3, PrefabLevelEditor.AssetType.Prop);
+			}
+		}
+
+		//
+		public void onSelectPlacementTool(int value) {
+
+			if (value == 0) {
+				selectPlacementTool(PlacementTool.PlacementMode.Circle);
+			}
+			else if (value == 1) {
+				selectPlacementTool(PlacementTool.PlacementMode.Quad);
 			}
 		}
 
