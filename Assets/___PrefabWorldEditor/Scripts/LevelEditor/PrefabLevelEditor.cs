@@ -242,6 +242,7 @@ namespace PrefabWorldEditor
 			//_placementTools.init (toolContainer);
 
 			PweMainMenu.Instance.init ();
+			PwePlacementTools.Instance.init ();
 
 			setNewEditPart(_assetTypeList[_assetType][0]);
 
@@ -367,11 +368,20 @@ namespace PrefabWorldEditor
 							_curPlacementTool = _aPlacementTools [1];
 						}
 
-						_curPlacementTool.activate (mode, _goEditPart.transform.position, _curEditPart);
-
+						PwePlacementTools.Instance.reset ();
 						PwePlacementTools.Instance.showToolPanels (mode);
+
+						_curPlacementTool.activate (mode, _goEditPart.transform.position, _curEditPart);
 					}
 				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		public void placementToolValueChange(int valueId, int value)
+		{
+			if (_curPlacementTool != null) {
+				_curPlacementTool.update (valueId, value);
 			}
 		}
 
@@ -546,12 +556,8 @@ namespace PrefabWorldEditor
 					float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
 					float multiply = 15f * dir;
 
-					// Tools
-					if (_curPlacementTool != null) {
-						_curPlacementTool.extend ((int)dir, _goEditPart.transform.position);
-					}
 					// Rotate
-					else if (Input.GetKey (KeyCode.X)) {
+					if (Input.GetKey (KeyCode.X)) {
 						if (_curEditPart.canRotate.x == 1) {
 							_goEditPart.transform.Rotate (Vector3.right * multiply);
 						}

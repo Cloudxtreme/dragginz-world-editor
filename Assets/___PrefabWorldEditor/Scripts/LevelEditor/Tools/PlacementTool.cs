@@ -33,7 +33,11 @@ namespace PrefabWorldEditor
 
 		protected static PrefabLevelEditor.Part _curPart;
 
-		protected static int _step;
+		protected static int _radius;
+		protected static int _interval;
+		protected static int _density;
+
+		//protected static int _step;
 
 		//
 
@@ -56,8 +60,6 @@ namespace PrefabWorldEditor
 		{
 			if (!_initialised)
 			{
-				Debug.Log ("init");
-
 				_initialised = true;
 
 				_container = container;
@@ -79,7 +81,11 @@ namespace PrefabWorldEditor
 
 			_gameObjects.Clear ();
 
-			_step = 0;
+			_radius   = 1;
+			_interval = 1;
+			_density  = 1;
+
+			//_step = 0;
 
 			setPlacementMode (PlacementMode.None);
 		}
@@ -90,21 +96,55 @@ namespace PrefabWorldEditor
 			reset (); // just in case
 
 			_curPart = part;
-			_step = 0;
 
 			setPlacementMode (mode);
-
-			createNextStep (posOrigin);
 		}
 
 		// ------------------------------------------------------------------------
-		public void extend(int dir, Vector3 posOrigin)
+		/*public void extend(int dir, Vector3 posOrigin)
 		{
 			if (dir > 0) {
 				createNextStep (posOrigin);
 			} else {
 				removeLastStep ();
 			}
+		}*/
+
+		// ------------------------------------------------------------------------
+		public void update(int valueId, int value)
+		{
+			if (valueId == 0) {
+				_radius = value;
+				removeAll ();
+			} else if (valueId == 1) {
+				_interval = value;
+			} else if (valueId == 2) {
+				_density = value;
+				removeAll ();
+			}
+
+			if (_gameObjects.Count < _interval) {
+				while (_gameObjects.Count < _interval) {
+					createStep ();
+				}
+			} else if (_gameObjects.Count > _interval) {
+				while (_gameObjects.Count > _interval) {
+					removeLastStep ();
+				}
+			}
+
+			int i;
+			for (i = 1; i < _interval; ++i) {
+				if (_gameObjects [i].Count <= 0) {
+					createObjects (i);
+				}
+			}	
+		}
+
+		// ------------------------------------------------------------------------
+		public virtual void createObjects(int step)
+		{
+			// OVERRIDE ME
 		}
 
 		// ------------------------------------------------------------------------
@@ -129,45 +169,37 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		private void createNextStep(Vector3 posOrigin)
+		// Protected Methods
+		// ------------------------------------------------------------------------
+		protected void createStep()
 		{
-			if (_gameObjects.Count <= _step) {
-				_gameObjects.Add (new List<GameObject> ());
-			}
-
-			_container.transform.position = posOrigin;
-
-			createObjects ();
-
-			/*if (_placementMode == PlacementMode.Circle) {
-				createCircle ();
-			} else if (_placementMode == PlacementMode.Quad) {
-				createQuad ();
-			}*/
-
-			_step++;
+			_gameObjects.Add (new List<GameObject> ());
 		}
 
 		// ------------------------------------------------------------------------
-		public virtual void createObjects()
+		protected void removeLastStep()
 		{
-			// OVERRIDE ME
-		}
+			int count = _gameObjects.Count;
+			if (count > 0) {
 
-		// ------------------------------------------------------------------------
-		private void removeLastStep()
-		{
-			if (_step > 1) {
-
-				_step--;
-
-				int i, len = _gameObjects [_step].Count;
+				int i, len = _gameObjects [count-1].Count;
 				for (i = 0; i < len; ++i) {
-					GameObject.Destroy (_gameObjects [_step][i]);
+					GameObject.Destroy (_gameObjects [count-1][i]);
 				}
 
-				_gameObjects [_step].Clear ();
+				_gameObjects [count-1].Clear ();
+				_gameObjects.RemoveAt (count-1);
 			}
+		}
+
+		// ------------------------------------------------------------------------
+		protected void removeAll ()
+		{
+			foreach (Transform childTransform in _container.transform) {
+				GameObject.Destroy(childTransform.gameObject);
+			}
+
+			_gameObjects.Clear ();
 		}
 	}
 }

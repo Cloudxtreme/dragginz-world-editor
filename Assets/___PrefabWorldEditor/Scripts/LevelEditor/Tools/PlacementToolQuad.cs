@@ -22,13 +22,11 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		// Override Methods
-		// ------------------------------------------------------------------------
-		public override void createObjects()
+		public override void createObjects(int step)
 		{
 			GameObject go;
-			float distance = (_curPart.w + _curPart.d) / 2.5f;
-			int x, z, len = _step + 1;
+			float distance = (float)_radius * (float)(step); //(_curPart.w + _curPart.d) / 2.5f;
+			int x, z, len = step;
 			for (x = -len; x <= len; ++x)
 			{
 				for (z = -len; z <= len; ++z)
@@ -48,7 +46,7 @@ namespace PrefabWorldEditor
 						PrefabLevelEditor.Instance.setMeshCollider (go, false);
 						PrefabLevelEditor.Instance.setRigidBody (go, false);
 
-						_gameObjects [_step].Add (go);
+						_gameObjects [step].Add (go);
 					}
 				}
 			}
