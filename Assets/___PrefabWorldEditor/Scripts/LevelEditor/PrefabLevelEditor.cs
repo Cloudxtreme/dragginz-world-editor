@@ -236,6 +236,7 @@ namespace PrefabWorldEditor
 			_aPlacementTools = new List<PlacementTool> ();
 			_aPlacementTools.Add (new PlacementToolCircle (toolContainer));
 			_aPlacementTools.Add (new PlacementToolQuad (toolContainer));
+			_aPlacementTools.Add (new PlacementToolMount (toolContainer));
 
 			//_placementTools = new PlacementTool ();
 			//GameObject toolContainer = new GameObject("[ContainerTools]");
@@ -364,8 +365,10 @@ namespace PrefabWorldEditor
 					{
 						if (mode == PlacementTool.PlacementMode.Circle) {
 							_curPlacementTool = _aPlacementTools [0];
-						} else {
+						} else if (mode == PlacementTool.PlacementMode.Quad) {
 							_curPlacementTool = _aPlacementTools [1];
+						} else {
+							_curPlacementTool = _aPlacementTools [2];
 						}
 
 						PwePlacementTools.Instance.reset ();
@@ -516,34 +519,6 @@ namespace PrefabWorldEditor
 			if (_curPlacementTool != null) {
 				_curPlacementTool.customUpdate (_goEditPart.transform.position);
 			}
-
-			/*
-			if (Input.GetKeyUp (KeyCode.Alpha1)) {
-				if (_curPlacementTool != null) {
-					_curPlacementTool.reset ();
-					_curPlacementTool = null;
-				}
-			}
-			else if (Input.GetKeyDown (KeyCode.Alpha1)) {
-				if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall) {
-					_curPlacementTool = _aPlacementTools [0];
-					_curPlacementTool.activate (PlacementTool.PlacementMode.Circle, _goEditPart.transform.position, _curEditPart);
-				}
-			}
-
-			if (Input.GetKeyUp (KeyCode.Alpha2)) {
-				if (_curPlacementTool != null) {
-					_curPlacementTool.reset ();
-					_curPlacementTool = null;
-				}
-			}
-			else if (Input.GetKeyDown (KeyCode.Alpha2)) {
-				if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall) {
-					_curPlacementTool = _aPlacementTools [1];
-					_curPlacementTool.activate (PlacementTool.PlacementMode.Quad, _goEditPart.transform.position, _curEditPart);
-				}
-			}
-			*/
 
 			//
 			// Mousewheel
@@ -906,6 +881,13 @@ namespace PrefabWorldEditor
 			//int y = (int)(pos.y / gridSize);
 			//int z = (int)(pos.z / gridSize);
 			//Debug.Log (x+", "+y+", "+z);
+
+			// Tools
+			if (_curPlacementTool != null && _curPlacementTool.placementMode == PlacementTool.PlacementMode.Mount) {
+				if (!_curPlacementTool.inverse) {
+					pos.y += _curPlacementTool.interval * 0.5f;
+				}
+			}
 
 			LevelElement element = new LevelElement ();
 			element.part = _curEditPart.id;

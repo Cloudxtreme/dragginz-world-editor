@@ -32,6 +32,13 @@ namespace PrefabWorldEditor
 		public Slider quadSliderInterval;
 		public Slider quadSliderDensity;
 
+		// Mount Tool Panel
+		public Transform mountToolPanel;
+		public Slider mountSliderRadius;
+		public Slider mountSliderInterval;
+		public Slider mountSliderDensity;
+		public Toggle mountToggleInverse;
+
 		#region SystemMethods
 
         void Awake() {
@@ -63,6 +70,15 @@ namespace PrefabWorldEditor
 			quadSliderDensity.minValue  = 1;
 			quadSliderDensity.maxValue  = 10;
 
+			mountSliderRadius.minValue   = 1;
+			mountSliderRadius.maxValue   = 10;
+
+			mountSliderInterval.minValue = 1;
+			mountSliderInterval.maxValue = 10;
+
+			mountSliderDensity.minValue  = 1;
+			mountSliderDensity.maxValue  = 10;
+
 			reset ();
 		}
 
@@ -76,6 +92,11 @@ namespace PrefabWorldEditor
 			quadSliderRadius.value     = 1;
 			quadSliderInterval.value   = 1;
 			quadSliderDensity.value    = 1;
+
+			mountSliderRadius.value    = 1;
+			mountSliderInterval.value  = 1;
+			mountSliderDensity.value   = 1;
+			mountToggleInverse.isOn    = false;
 		}
 
 		//
@@ -83,6 +104,7 @@ namespace PrefabWorldEditor
 
 			circleToolPanel.gameObject.SetActive (mode == PlacementTool.PlacementMode.Circle);
 			quadToolPanel.gameObject.SetActive (mode == PlacementTool.PlacementMode.Quad);
+			mountToolPanel.gameObject.SetActive (mode == PlacementTool.PlacementMode.Mount);
 		}
 
 		//
@@ -112,6 +134,23 @@ namespace PrefabWorldEditor
 		public void onSliderQuadDensityChange(Single value)
 		{
 			PrefabLevelEditor.Instance.placementToolValueChange(2, (int)quadSliderDensity.value);
+		}
+
+		public void onSliderMountRadiusChange(Single value)
+		{
+			PrefabLevelEditor.Instance.placementToolValueChange(0, (int)mountSliderRadius.value);
+		}
+		public void onSliderMountIntervalChange(Single value)
+		{
+			PrefabLevelEditor.Instance.placementToolValueChange(1, (int)mountSliderInterval.value);
+		}
+		public void onSliderMountDensityChange(Single value)
+		{
+			PrefabLevelEditor.Instance.placementToolValueChange(2, (int)mountSliderDensity.value);
+		}
+		public void onToggleMountInverseChange(Boolean value)
+		{
+			PrefabLevelEditor.Instance.placementToolValueChange(3, (mountToggleInverse.isOn ? 1 : 0));
 		}
 
 		#endregion

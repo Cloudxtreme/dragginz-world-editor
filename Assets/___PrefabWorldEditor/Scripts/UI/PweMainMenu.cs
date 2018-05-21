@@ -58,6 +58,7 @@ namespace PrefabWorldEditor
 
 		public Button btnPlacementToolCircle;
 		public Button btnPlacementToolQuad;
+		public Button btnPlacementToolMount;
 
 		public Text txtFileInfo;
 		public Text txtLevelName;
@@ -300,6 +301,7 @@ namespace PrefabWorldEditor
 		{
 			btnPlacementToolCircle.interactable = (mode != PlacementTool.PlacementMode.Circle);
 			btnPlacementToolQuad.interactable   = (mode != PlacementTool.PlacementMode.Quad);
+			btnPlacementToolMount.interactable   = (mode != PlacementTool.PlacementMode.Mount);
 		}
 
 		/*public void setMenuPanels(AppState mode)
@@ -830,6 +832,9 @@ namespace PrefabWorldEditor
 			}
 			else if (value == 1) {
 				selectPlacementTool(PlacementTool.PlacementMode.Quad);
+			}
+			else if (value == 2) {
+				selectPlacementTool(PlacementTool.PlacementMode.Mount);
 			}
 		}
 

@@ -36,8 +36,7 @@ namespace PrefabWorldEditor
 		protected static int _radius;
 		protected static int _interval;
 		protected static int _density;
-
-		//protected static int _step;
+		protected static bool _inverse;
 
 		//
 
@@ -45,6 +44,14 @@ namespace PrefabWorldEditor
 
 		public PlacementMode placementMode {
 			get { return _placementMode; }
+		}
+
+		public int interval {
+			get { return _interval; }
+		}
+
+		public bool inverse {
+			get { return _inverse; }
 		}
 
 		public List<List<GameObject>> gameObjects {
@@ -85,6 +92,8 @@ namespace PrefabWorldEditor
 			_interval = 1;
 			_density  = 1;
 
+			_inverse = false;
+
 			//_step = 0;
 
 			setPlacementMode (PlacementMode.None);
@@ -101,16 +110,6 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		/*public void extend(int dir, Vector3 posOrigin)
-		{
-			if (dir > 0) {
-				createNextStep (posOrigin);
-			} else {
-				removeLastStep ();
-			}
-		}*/
-
-		// ------------------------------------------------------------------------
 		public void update(int valueId, int value)
 		{
 			if (valueId == 0) {
@@ -118,8 +117,12 @@ namespace PrefabWorldEditor
 				removeAll ();
 			} else if (valueId == 1) {
 				_interval = value;
+				removeAll ();
 			} else if (valueId == 2) {
 				_density = value;
+				removeAll ();
+			} else if (valueId == 3) {
+				_inverse = (value == 1);
 				removeAll ();
 			}
 
