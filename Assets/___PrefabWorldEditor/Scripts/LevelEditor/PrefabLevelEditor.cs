@@ -123,7 +123,6 @@ namespace PrefabWorldEditor
 		private Part _curEditPart;
         private GameObject _goEditPart;
         private Vector3 _v3EditPartPos;
-		//private int _curRotation;
 
 		private LevelElement _selectedElement;
 		private Bounds _selectedElementBounds;
@@ -231,16 +230,11 @@ namespace PrefabWorldEditor
 			_assetType = AssetType.Floor;
 			_editMode = EditMode.None;
 
-			//PlacementTool._container = new GameObject("[ContainerTools]");
 			GameObject toolContainer = new GameObject("[ContainerTools]");
 			_aPlacementTools = new List<PlacementTool> ();
 			_aPlacementTools.Add (new PlacementToolCircle (toolContainer));
 			_aPlacementTools.Add (new PlacementToolQuad (toolContainer));
 			_aPlacementTools.Add (new PlacementToolMount (toolContainer));
-
-			//_placementTools = new PlacementTool ();
-			//GameObject toolContainer = new GameObject("[ContainerTools]");
-			//_placementTools.init (toolContainer);
 
 			PweMainMenu.Instance.init ();
 			PwePlacementTools.Instance.init ();
@@ -359,11 +353,20 @@ namespace PrefabWorldEditor
 		{
 			if (_curPlacementTool == null || _curPlacementTool.placementMode != mode)
 			{
-				if (_goEditPart != null)
+				if (_editMode == EditMode.Transform)
+				{
+					if (_selectedElement.go != null) {
+
+						activatePlacementTool (mode, _selectedElement.go.transform.position, _parts[_selectedElement.part]);
+					}
+				}
+				else if (_goEditPart != null)
 				{
 					if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall)
 					{
-						if (mode == PlacementTool.PlacementMode.Circle) {
+						activatePlacementTool (mode, _goEditPart.transform.position, _curEditPart);
+
+						/*if (mode == PlacementTool.PlacementMode.Circle) {
 							_curPlacementTool = _aPlacementTools [0];
 						} else if (mode == PlacementTool.PlacementMode.Quad) {
 							_curPlacementTool = _aPlacementTools [1];
@@ -374,7 +377,7 @@ namespace PrefabWorldEditor
 						PwePlacementTools.Instance.reset ();
 						PwePlacementTools.Instance.showToolPanels (mode);
 
-						_curPlacementTool.activate (mode, _goEditPart.transform.position, _curEditPart);
+						_curPlacementTool.activate (mode, _goEditPart.transform.position, _curEditPart);*/
 					}
 				}
 			}
@@ -467,21 +470,25 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		private void positionEditPart()
+		private void activatePlacementTool(PlacementTool.PlacementMode mode, Vector3 pos, Part part)
 		{
-			/*Part partHit = new Part();
-			partHit.id = PartList.End_Of_List;
-
-			if (_goHit.tag == "PartContainer") {
-				getPartFromGameObject (ref partHit, _goHit);
-			} else if (_goHit.transform.parent.tag == "PartContainer") {
-				getPartFromGameObject (ref partHit, _goHit.transform.parent.gameObject);
+			if (mode == PlacementTool.PlacementMode.Circle) {
+				_curPlacementTool = _aPlacementTools [0];
+			} else if (mode == PlacementTool.PlacementMode.Quad) {
+				_curPlacementTool = _aPlacementTools [1];
+			} else {
+				_curPlacementTool = _aPlacementTools [2];
 			}
 
-			if (partHit.id != PartList.End_Of_List) {
-				//Debug.Log ("partHit.id: " + partHit.id);
-			}*/
+			PwePlacementTools.Instance.reset ();
+			PwePlacementTools.Instance.showToolPanels (mode);
 
+			_curPlacementTool.activate (mode, pos, part); //_goEditPart.transform.position, _curEditPart);
+		}
+
+		// ------------------------------------------------------------------------
+		private void positionEditPart()
+		{
 			//
 			// Positioning
 			//
@@ -517,7 +524,11 @@ namespace PrefabWorldEditor
 			// Tools
 			//
 			if (_curPlacementTool != null) {
-				_curPlacementTool.customUpdate (_goEditPart.transform.position);
+				if (_editMode == EditMode.Transform && _selectedElement.go != null) {
+					_curPlacementTool.customUpdate (_selectedElement.go.transform.position);
+				} else if (_goEditPart != null) {
+					_curPlacementTool.customUpdate (_goEditPart.transform.position);
+				}
 			}
 
 			//
@@ -576,14 +587,6 @@ namespace PrefabWorldEditor
         }
 
 		// ------------------------------------------------------------------------
-		/*private void getPartFromGameObject(ref Part partHit, GameObject go) {
-
-			if (_levelElements.ContainsKey (go)) {
-				partHit = _parts [_levelElements [go].part];
-			}
-		}*/
-
-		// ------------------------------------------------------------------------
 		private void selectElement(Transform trfmHit)
 		{
 			// gizmo?
@@ -601,6 +604,7 @@ namespace PrefabWorldEditor
 			if (trfmParent.tag != "PartContainer") {
 				resetElementComponents ();
 				resetSelectedElement ();
+				resetCurPlacementTool ();
 				return;
 			}
 
@@ -628,12 +632,15 @@ namespace PrefabWorldEditor
 
 					PweMainMenu.Instance.showAssetInfoPanel (true);
 					showAssetInfo (_parts [_selectedElement.part]);
+
+					PweMainMenu.Instance.showPlacementToolBox (true);
 				}
 			}
 			else
 			{
 				resetElementComponents ();
 				resetSelectedElement ();
+				resetCurPlacementTool ();
 			}
 
 			setMarkerActive (_selectedElement.go != null);
@@ -693,6 +700,7 @@ namespace PrefabWorldEditor
 			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
 
 			resetSelectedElement ();
+			resetCurPlacementTool ();
 
 			setMarkerActive (_goEditPart.activeSelf);
 		}
@@ -731,7 +739,6 @@ namespace PrefabWorldEditor
 
 			_goEditPart = createPartAt(_curEditPart.id, -10, -10, -10);
 			setMarkerScale (_curEditPart);
-			//_curRotation = 0;
 			setMeshCollider(_goEditPart, false);
 
 			showAssetInfo (_curEditPart);
@@ -758,7 +765,6 @@ namespace PrefabWorldEditor
 					s += " = rotate object";
 				}
 				s += "\nMousewheel + 'C' = scale object";
-				//s += "\nMousewheel + '1' / '2' = placement patterns";
 			}
 
 			PweMainMenu.Instance.setSpecialHelpText (s);
@@ -804,16 +810,6 @@ namespace PrefabWorldEditor
 			foreach (KeyValuePair<string, LevelElement> element in _levelElements)
 			{
 				getChildrenRecursive (element.Value.go);
-				/*GameObject go = element.Value.go;
-				if (go.GetComponent<Collider> ()) {
-					go.GetComponent<Collider> ().enabled = state;
-				} else {
-					foreach (Transform child in go.transform) {
-						if (child.gameObject.GetComponent<Collider> ()) {
-							child.gameObject.GetComponent<Collider> ().enabled = state;
-						}
-					}
-				}*/
 			}
 
 			int i, len = _listOfChildren.Count;
@@ -857,31 +853,8 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		/*private void setRigidBodies (bool state)
+        private void placePart(Vector3 pos)
 		{
-			foreach (KeyValuePair<GameObject, LevelElement> element in _levelElements)
-			{
-				GameObject go = element.Value.go;
-				if (go.GetComponent<Rigidbody> ()) {
-					go.GetComponent<Rigidbody> ().useGravity = state;
-				} else {
-					foreach (Transform child in go.transform) {
-						if (child.gameObject.GetComponent<Rigidbody> ()) {
-							child.gameObject.GetComponent<Rigidbody> ().useGravity = state;
-						}
-					}
-				}
-			}
-		}*/
-
-		// ------------------------------------------------------------------------
-        private void placePart(Vector3 pos) {
-
-			//int x = (int)(pos.x / gridSize);
-			//int y = (int)(pos.y / gridSize);
-			//int z = (int)(pos.z / gridSize);
-			//Debug.Log (x+", "+y+", "+z);
-
 			// Tools
 			if (_curPlacementTool != null && _curPlacementTool.placementMode == PlacementTool.PlacementMode.Mount) {
 				if (!_curPlacementTool.inverse) {
@@ -1091,49 +1064,6 @@ namespace PrefabWorldEditor
                 child.gameObject.isStatic = true;
             }
         }
-
-		// ------------------------------------------------------------------------
-		// Material stuff
-		// ------------------------------------------------------------------------
-		/*private void getMaterials(GameObject go, Material setMaterial = null)
-		{
-			return;
-
-			_aSelectedElementMaterials.Clear ();
-
-			if (go != null) {
-
-				foreach (Transform child in go.transform) { 
-				
-					Renderer r = child.GetComponent<Renderer> ();
-					if (r != null) {
-						_aSelectedElementMaterials.Add (r.material);
-						if (setMaterial != null) {
-							r.material = setMaterial;
-						}
-					}
-				}
-			}
-		}*/
-
-		/*private void resetMaterials(GameObject go)
-		{
-			if (go != null) {
-
-				int index = 0;
-				int len = _aSelectedElementMaterials.Count;
-				foreach (Transform child in go.transform) { 
-
-					Renderer r = child.GetComponent<Renderer> ();
-					if (r != null && index < len) {
-						r.material = _aSelectedElementMaterials[index];
-						index++;
-					}
-				}
-			}
-
-			_aSelectedElementMaterials.Clear ();
-		}*/
 
 		// ------------------------------------------------------------------------
 		private void resetSelectedElement()

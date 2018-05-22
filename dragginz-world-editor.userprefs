@@ -1,15 +1,15 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolMount.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\___PrefabWorldEditor\Scripts\LevelEditor\PrefabLevelEditor.cs">
     <Files>
       <File FileName="Assets\___PrefabWorldEditor\Scripts\Core\Globals.cs" Line="16" Column="72" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\PrefabLevelEditor.cs" Line="387" Column="29" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\UI\PweMainMenu.cs" Line="831" Column="24" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\UI\PwePlacementTools.cs" Line="153" Column="55" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementTool.cs" Line="125" Column="13" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolCircle.cs" Line="27" Column="50" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolQuad.cs" Line="28" Column="52" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolMount.cs" Line="30" Column="25" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\PrefabLevelEditor.cs" Line="528" Column="57" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\UI\PweMainMenu.cs" Line="1" Column="1" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\UI\PwePlacementTools.cs" Line="1" Column="1" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementTool.cs" Line="154" Column="27" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolCircle.cs" Line="1" Column="1" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolQuad.cs" Line="1" Column="1" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolMount.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
