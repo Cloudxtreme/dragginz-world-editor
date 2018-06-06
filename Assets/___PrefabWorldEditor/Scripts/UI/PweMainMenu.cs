@@ -55,6 +55,7 @@ namespace PrefabWorldEditor
 		public Button btnAssetWalls;
 		public Button btnAssetChunks;
 		public Button btnAssetProps;
+		public Button btnAssetDungeons;
 
 		public Button btnPlacementToolCircle;
 		public Button btnPlacementToolQuad;
@@ -290,10 +291,11 @@ namespace PrefabWorldEditor
 		//
 		public void setAssetTypeButtons(PrefabLevelEditor.AssetType type)
 		{
-			btnAssetFloors.interactable = (type != PrefabLevelEditor.AssetType.Floor);
-			btnAssetWalls.interactable  = (type != PrefabLevelEditor.AssetType.Wall);
-			btnAssetChunks.interactable = (type != PrefabLevelEditor.AssetType.Chunk);
-			btnAssetProps.interactable  = (type != PrefabLevelEditor.AssetType.Prop);
+			btnAssetFloors.interactable   = (type != PrefabLevelEditor.AssetType.Floor);
+			btnAssetWalls.interactable    = (type != PrefabLevelEditor.AssetType.Wall);
+			btnAssetChunks.interactable   = (type != PrefabLevelEditor.AssetType.Chunk);
+			btnAssetProps.interactable    = (type != PrefabLevelEditor.AssetType.Prop);
+			btnAssetDungeons.interactable = (type != PrefabLevelEditor.AssetType.Dungeon);
 		}
 
 		//
@@ -811,16 +813,19 @@ namespace PrefabWorldEditor
 		public void onSelectAssetType(int value) {
 				
 			if (value == 0) {
-				selectAssetType(0, PrefabLevelEditor.AssetType.Floor);
+				selectAssetType(value, PrefabLevelEditor.AssetType.Floor);
 			}
 			else if (value == 1) {
-				selectAssetType(1, PrefabLevelEditor.AssetType.Wall);
+				selectAssetType(value, PrefabLevelEditor.AssetType.Wall);
 			}
 			else if (value == 2) {
-				selectAssetType(2, PrefabLevelEditor.AssetType.Chunk);
+				selectAssetType(value, PrefabLevelEditor.AssetType.Chunk);
 			}
 			else if (value == 3) {
-				selectAssetType(3, PrefabLevelEditor.AssetType.Prop);
+				selectAssetType(value, PrefabLevelEditor.AssetType.Prop);
+			}
+			else if (value == 4) {
+				selectAssetType(value, PrefabLevelEditor.AssetType.Dungeon);
 			}
 		}
 

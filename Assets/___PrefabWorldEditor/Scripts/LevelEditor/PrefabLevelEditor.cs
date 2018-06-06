@@ -46,7 +46,8 @@ namespace PrefabWorldEditor
 			Wall,
 			Tunnel,
 			Chunk,
-			Prop
+			Prop,
+			Dungeon
 		};
 
 		public enum PartList {
@@ -78,6 +79,10 @@ namespace PrefabWorldEditor
 			Prop_Debris,
 			Prop_Grave_1,
 			Prop_TombStone,
+			Dungeon_Floor,
+			Dungeon_Wall_L,
+			Dungeon_Wall_LR,
+			Dungeon_T,
 			End_Of_List
 		};
 
@@ -178,12 +183,6 @@ namespace PrefabWorldEditor
 			createPart(PartList.Wall_Z,   AssetType.Wall,  "MDC/WallsZ/Wall_Z",   3.00f,  3.00f,  0.50f, Vector3Int.zero, false, "Wall Left",  "Z");
 			createPart(PartList.Wall_X,   AssetType.Wall,  "MDC/WallsX/Wall_X",   0.50f,  3.00f,  3.00f, Vector3Int.zero, false, "Wall Right", "X");
 
-			//createPart(PartList.Path_1,   AssetType.Tunnel, "MDC/Caves/Path_1",    5.00f,  1.80f, 12.00f, Vector3Int.one,  false, "Cave 1");
-			//createPart(PartList.Path_2,   AssetType.Tunnel, "MDC/Caves/Path_2",    5.00f,  6.00f, 12.00f, Vector3Int.one,  false, "Cave 2");
-			//createPart(PartList.Path_3,   AssetType.Tunnel, "MDC/Caves/Path_3",   12.00f,  3.00f,  3.00f, Vector3Int.one,  false, "Cave 3");
-			//createPart(PartList.Path_4,   AssetType.Tunnel, "MDC/Caves/Path_4",    8.00f,  8.00f,  8.00f, Vector3Int.one,  false, "Cave 4");
-
-
 			createPart(PartList.Chunk_Rock_1,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_1",        4.00f,  3.50f,  4.00f, Vector3Int.one, false, "Rock 1");
 			createPart(PartList.Chunk_Rock_2,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_2",        4.00f,  2.40f,  4.00f, Vector3Int.one, false, "Rock 2");
 			createPart(PartList.Chunk_Stalagmite_1, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_1",  2.75f,  4.50f,  2.75f, Vector3Int.one, false, "Stalagmite 1");
@@ -208,6 +207,14 @@ namespace PrefabWorldEditor
 			createPart(PartList.Pillar_1,     AssetType.Prop, "MDC/Props/Pillar_1",      2.00f,  3.00f,  2.00f, Vector3Int.one,  true, "Pillar 1");
 			createPart(PartList.Pillar_2,     AssetType.Prop, "MDC/Props/Pillar_2",      1.50f,  1.50f,  4.75f, Vector3Int.one,  true, "Pillar 2");
 			createPart(PartList.Pillar_3,     AssetType.Prop, "MDC/Props/Pillar_3",      1.50f,  1.50f,  1.50f, Vector3Int.one,  true, "Pillar Base");
+
+			// Dungeons
+			createPart(PartList.Dungeon_Floor,   AssetType.Dungeon, "Dungeons/Dungeon_Floor",   2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Floor");
+			createPart(PartList.Dungeon_Wall_L,  AssetType.Dungeon, "Dungeons/Dungeon_Wall_L",  2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Wall");
+			createPart(PartList.Dungeon_Wall_LR, AssetType.Dungeon, "Dungeons/Dungeon_Wall_LR", 2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Walls");
+			createPart(PartList.Dungeon_T,       AssetType.Dungeon, "Dungeons/Dungeon_T",       2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon T Intersection");
+
+			//
 
 			createAssetTypeCount ();
 
@@ -540,7 +547,7 @@ namespace PrefabWorldEditor
 				{
                     _lastMouseWheelUpdate = _timer + 0.2f;
 					float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
-					float multiply = 15f * dir;
+					float multiply = (_curEditPart.type == AssetType.Dungeon ? 90f * dir : 15f * dir);
 
 					// Rotate
 					if (Input.GetKey (KeyCode.X)) {
