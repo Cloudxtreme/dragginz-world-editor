@@ -23,6 +23,7 @@ namespace PrefabWorldEditor
 		public GameObject goTransformSelection;
 		public GameObject goAssetTypeSelection;
 		public GameObject goPlacementToolButtons;
+		public GameObject goDungeonToolButtons;
 		//public GameObject goItemsSelection;
 		//public GameObject goDigSettings;
 
@@ -343,6 +344,12 @@ namespace PrefabWorldEditor
 			}
 		}
 
+		public void showDungeonToolBox(bool state) {
+			if (goDungeonToolButtons != null) {
+				goDungeonToolButtons.SetActive (state);
+			}
+		}
+
 		public void showAssetTypeBox(bool state) {
 			if (goAssetTypeSelection != null) {
 				goAssetTypeSelection.SetActive (state);
@@ -430,6 +437,15 @@ namespace PrefabWorldEditor
 
 			PrefabLevelEditor.Instance.selectPlacementTool (mode);
 		}
+
+		// ---------------------------------------------------------------------------------------------
+		private void selectDungeonTool(PlacementTool.PlacementMode mode)
+		{
+			//setPlacementToolButtons (mode);
+
+			//PrefabLevelEditor.Instance.selectPlacementTool (mode);
+		}
+
 
 		// ---------------------------------------------------------------------------------------------
 		/// <summary>
@@ -840,6 +856,20 @@ namespace PrefabWorldEditor
 			}
 			else if (value == 2) {
 				selectPlacementTool(PlacementTool.PlacementMode.Mount);
+			}
+		}
+
+		//
+		public void onSelectDungeonTool(int value) {
+
+			if (value == 0) {
+				selectDungeonTool(PlacementTool.PlacementMode.Circle);
+			}
+			else if (value == 1) {
+				selectDungeonTool(PlacementTool.PlacementMode.Quad);
+			}
+			else if (value == 2) {
+				selectDungeonTool(PlacementTool.PlacementMode.Mount);
 			}
 		}
 

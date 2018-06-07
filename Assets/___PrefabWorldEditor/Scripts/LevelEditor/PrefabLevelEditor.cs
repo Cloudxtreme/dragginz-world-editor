@@ -82,6 +82,7 @@ namespace PrefabWorldEditor
 			Dungeon_Floor,
 			Dungeon_Wall_L,
 			Dungeon_Wall_LR,
+			Dungeon_Corner,
 			Dungeon_T,
 			End_Of_List
 		};
@@ -212,6 +213,7 @@ namespace PrefabWorldEditor
 			createPart(PartList.Dungeon_Floor,   AssetType.Dungeon, "Dungeons/Dungeon_Floor",   2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Floor");
 			createPart(PartList.Dungeon_Wall_L,  AssetType.Dungeon, "Dungeons/Dungeon_Wall_L",  2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Wall");
 			createPart(PartList.Dungeon_Wall_LR, AssetType.Dungeon, "Dungeons/Dungeon_Wall_LR", 2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Walls");
+			createPart(PartList.Dungeon_Corner,  AssetType.Dungeon, "Dungeons/Dungeon_Corner",  2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Corner");
 			createPart(PartList.Dungeon_T,       AssetType.Dungeon, "Dungeons/Dungeon_T",       2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon T Intersection");
 
 			//
@@ -245,6 +247,7 @@ namespace PrefabWorldEditor
 
 			PweMainMenu.Instance.init ();
 			PwePlacementTools.Instance.init ();
+			PweDungeonTools.Instance.init ();
 
 			setNewEditPart(_assetTypeList[_assetType][0]);
 
@@ -296,6 +299,8 @@ namespace PrefabWorldEditor
 				PweMainMenu.Instance.showTransformBox (_editMode == EditMode.Transform);
 				PweMainMenu.Instance.showAssetTypeBox (_editMode == EditMode.Place);
 				PweMainMenu.Instance.showPlacementToolBox (_editMode == EditMode.Place);
+				PweMainMenu.Instance.showDungeonToolBox (false);
+
 				if (_editMode == EditMode.Place) {
 					PweMainMenu.Instance.setAssetTypeButtons (_assetType);
 					showAssetInfo (_curEditPart);
@@ -372,19 +377,6 @@ namespace PrefabWorldEditor
 					if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall)
 					{
 						activatePlacementTool (mode, _goEditPart.transform.position, _curEditPart);
-
-						/*if (mode == PlacementTool.PlacementMode.Circle) {
-							_curPlacementTool = _aPlacementTools [0];
-						} else if (mode == PlacementTool.PlacementMode.Quad) {
-							_curPlacementTool = _aPlacementTools [1];
-						} else {
-							_curPlacementTool = _aPlacementTools [2];
-						}
-
-						PwePlacementTools.Instance.reset ();
-						PwePlacementTools.Instance.showToolPanels (mode);
-
-						_curPlacementTool.activate (mode, _goEditPart.transform.position, _curEditPart);*/
 					}
 				}
 			}
@@ -641,6 +633,7 @@ namespace PrefabWorldEditor
 					showAssetInfo (_parts [_selectedElement.part]);
 
 					PweMainMenu.Instance.showPlacementToolBox (true);
+					PweMainMenu.Instance.showDungeonToolBox (false);
 				}
 			}
 			else
