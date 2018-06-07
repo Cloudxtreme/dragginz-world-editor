@@ -748,8 +748,8 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: onToggleMountInverseChange
+      - m_Target: {fileID: 114256473625859368}
+        m_MethodName: onToggleRoomRandomChange
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -878,8 +878,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: onSliderMountRadiusChange
+      - m_Target: {fileID: 114256473625859368}
+        m_MethodName: onSliderRoomSizeChange
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -956,7 +956,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Room Settings
+  m_Text: The Room Settings
 --- !u!114 &114764179500375456
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1003,8 +1003,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: onSliderMountDensityChange
+      - m_Target: {fileID: 114256473625859368}
+        m_MethodName: onSliderRoomDensityChange
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1143,8 +1143,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: onSliderMountIntervalChange
+      - m_Target: {fileID: 114256473625859368}
+        m_MethodName: onSliderRoomIntervalChange
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -62,6 +62,10 @@ namespace PrefabWorldEditor
 		public Button btnPlacementToolQuad;
 		public Button btnPlacementToolMount;
 
+		public Button btnDungeonToolRoom;
+		public Button btnDungeonToolMaze;
+		public Button btnDungeonToolMisc;
+
 		public Text txtFileInfo;
 		public Text txtLevelName;
 		public Text txtCubeCount;
@@ -307,6 +311,14 @@ namespace PrefabWorldEditor
 			btnPlacementToolMount.interactable   = (mode != PlacementTool.PlacementMode.Mount);
 		}
 
+		//
+		public void setDungeonToolButtons(DungeonTool.DungeonPreset preset)
+		{
+			btnDungeonToolRoom.interactable = (preset != DungeonTool.DungeonPreset.Room);
+			btnDungeonToolMaze.interactable = (preset != DungeonTool.DungeonPreset.Maze);
+			btnDungeonToolMisc.interactable = (preset != DungeonTool.DungeonPreset.Misc);
+		}
+
 		/*public void setMenuPanels(AppState mode)
 		{
 			panelTools.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
@@ -419,10 +431,6 @@ namespace PrefabWorldEditor
 			if (_iSelectedAssetType != value) {
 
 				setAssetTypeButtons (type);
-				//btnAssetFloors.interactable = (value != 0);
-				//btnAssetWalls.interactable  = (value != 1);
-				//btnAssetChunks.interactable = (value != 2);
-				//btnAssetProps.interactable  = (value != 3);
 
 				_iSelectedAssetType = value;
 
@@ -439,11 +447,11 @@ namespace PrefabWorldEditor
 		}
 
 		// ---------------------------------------------------------------------------------------------
-		private void selectDungeonTool(PlacementTool.PlacementMode mode)
+		private void selectDungeonTool(DungeonTool.DungeonPreset preset)
 		{
-			//setPlacementToolButtons (mode);
+			setDungeonToolButtons (preset);
 
-			//PrefabLevelEditor.Instance.selectPlacementTool (mode);
+			PrefabLevelEditor.Instance.selectDungeonTool (preset);
 		}
 
 
@@ -863,13 +871,13 @@ namespace PrefabWorldEditor
 		public void onSelectDungeonTool(int value) {
 
 			if (value == 0) {
-				selectDungeonTool(PlacementTool.PlacementMode.Circle);
+				selectDungeonTool(DungeonTool.DungeonPreset.Room);
 			}
 			else if (value == 1) {
-				selectDungeonTool(PlacementTool.PlacementMode.Quad);
+				selectDungeonTool(DungeonTool.DungeonPreset.Maze);
 			}
 			else if (value == 2) {
-				selectDungeonTool(PlacementTool.PlacementMode.Mount);
+				selectDungeonTool(DungeonTool.DungeonPreset.Misc);
 			}
 		}
 

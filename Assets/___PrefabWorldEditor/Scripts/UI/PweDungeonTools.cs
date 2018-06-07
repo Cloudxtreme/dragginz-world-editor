@@ -71,21 +71,21 @@ namespace PrefabWorldEditor
 		// Events
 		//
 
-		public void onSliderMountRadiusChange(Single value)
+		public void onSliderRoomSizeChange(Single value)
 		{
-			//PrefabLevelEditor.Instance.placementToolValueChange(0, (int)roomSliderSize.value);
+			PrefabLevelEditor.Instance.dungeonToolValueChange(0, (int)roomSliderSize.value);
 		}
-		public void onSliderMountIntervalChange(Single value)
+		public void onSliderRoomIntervalChange(Single value)
 		{
-			//PrefabLevelEditor.Instance.placementToolValueChange(1, (int)roomSliderInterval.value);
+			PrefabLevelEditor.Instance.dungeonToolValueChange(1, (int)roomSliderInterval.value);
 		}
-		public void onSliderMountDensityChange(Single value)
+		public void onSliderRoomDensityChange(Single value)
 		{
-			//PrefabLevelEditor.Instance.placementToolValueChange(2, (int)roomSliderDensity.value);
+			PrefabLevelEditor.Instance.dungeonToolValueChange(2, (int)roomSliderDensity.value);
 		}
-		public void onToggleMountInverseChange(Boolean value)
+		public void onToggleRoomRandomChange(Boolean value)
 		{
-			//PrefabLevelEditor.Instance.placementToolValueChange(3, (roomToggleRandom.isOn ? 1 : 0));
+			PrefabLevelEditor.Instance.dungeonToolValueChange(3, (roomToggleRandom.isOn ? 1 : 0));
 		}
 
 		#endregion

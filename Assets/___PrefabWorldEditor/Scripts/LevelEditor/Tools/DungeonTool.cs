@@ -19,7 +19,8 @@ namespace PrefabWorldEditor
 		public enum DungeonPreset {
 			None,
 			Room,
-			Maze
+			Maze,
+			Misc
 		};
 
 		private static bool _initialised = false;
@@ -95,17 +96,17 @@ namespace PrefabWorldEditor
 
 			//_step = 0;
 
-			setPlacementMode (DungeonPreset.None);
+			setDungeonPreset (DungeonPreset.None);
 		}
 
 		// ------------------------------------------------------------------------
-		public void activate(DungeonPreset mode, Vector3 posOrigin, PrefabLevelEditor.Part part)
+		public void activate(DungeonPreset preset, Vector3 posOrigin, PrefabLevelEditor.Part part)
 		{
 			reset (); // just in case
 
 			_curPart = part;
 
-			setPlacementMode (mode);
+			setDungeonPreset (preset);
 		}
 
 		// ------------------------------------------------------------------------
@@ -160,13 +161,13 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		// Private Methods
 		// ------------------------------------------------------------------------
-		private void setPlacementMode(DungeonPreset mode)
+		private void setDungeonPreset(DungeonPreset preset)
 		{
-			if (mode != _dungeonPreset) {
+			if (preset != _dungeonPreset) {
 
-				_dungeonPreset = mode;
+				_dungeonPreset = preset;
 
-				//PwePlacementTools.Instance.showToolPanels (mode);
+				PweDungeonTools.Instance.showToolPanels (preset);
 			}
 		}
 
