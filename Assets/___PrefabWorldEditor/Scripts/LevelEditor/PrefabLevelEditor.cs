@@ -86,6 +86,10 @@ namespace PrefabWorldEditor
 			Dungeon_DeadEnd,
 			Dungeon_Turn,
 			Dungeon_T,
+			Dungeon_Stairs_1,
+			Dungeon_Stairs_2,
+			Dungeon_Ramp_1,
+			Dungeon_Ramp_2,
 			End_Of_List
 		};
 
@@ -216,13 +220,17 @@ namespace PrefabWorldEditor
 			createPart(PartList.Pillar_3,     AssetType.Prop, "MDC/Props/Pillar_3",      1.50f,  1.50f,  1.50f, Vector3Int.one,  true, "Pillar Base");
 
 			// Dungeons
-			createPart(PartList.Dungeon_Floor,   AssetType.Dungeon, "Dungeons/Dungeon_Floor",   2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Floor");
-			createPart(PartList.Dungeon_Wall_L,  AssetType.Dungeon, "Dungeons/Dungeon_Wall_L",  2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Wall");
-			createPart(PartList.Dungeon_Wall_LR, AssetType.Dungeon, "Dungeons/Dungeon_Wall_LR", 2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Walls");
-			createPart(PartList.Dungeon_Corner,  AssetType.Dungeon, "Dungeons/Dungeon_Corner",  2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Corner");
-			createPart(PartList.Dungeon_DeadEnd, AssetType.Dungeon, "Dungeons/Dungeon_DeadEnd", 2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Dead End");
-			createPart(PartList.Dungeon_Turn,    AssetType.Dungeon, "Dungeons/Dungeon_Turn",    2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Turn");
-			createPart(PartList.Dungeon_T,       AssetType.Dungeon, "Dungeons/Dungeon_T",       2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon T Intersection");
+			createPart(PartList.Dungeon_Floor,    AssetType.Dungeon, "Dungeons/Dungeon_Floor",    2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Floor");
+			createPart(PartList.Dungeon_Wall_L,   AssetType.Dungeon, "Dungeons/Dungeon_Wall_L",   2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Wall");
+			createPart(PartList.Dungeon_Wall_LR,  AssetType.Dungeon, "Dungeons/Dungeon_Wall_LR",  2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Walls");
+			createPart(PartList.Dungeon_Corner,   AssetType.Dungeon, "Dungeons/Dungeon_Corner",   2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Corner");
+			createPart(PartList.Dungeon_DeadEnd,  AssetType.Dungeon, "Dungeons/Dungeon_DeadEnd",  2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Dead End");
+			createPart(PartList.Dungeon_Turn,     AssetType.Dungeon, "Dungeons/Dungeon_Turn",     2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Turn");
+			createPart(PartList.Dungeon_T,        AssetType.Dungeon, "Dungeons/Dungeon_T",        2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon T Intersection");
+			createPart(PartList.Dungeon_Stairs_1, AssetType.Dungeon, "Dungeons/Dungeon_Stairs_1", 2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Stairs Lower");
+			createPart(PartList.Dungeon_Stairs_2, AssetType.Dungeon, "Dungeons/Dungeon_Stairs_2", 2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Stairs Upper");
+			createPart(PartList.Dungeon_Ramp_1,   AssetType.Dungeon, "Dungeons/Dungeon_Ramp_1",   2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Ramp Lower");
+			createPart(PartList.Dungeon_Ramp_2,   AssetType.Dungeon, "Dungeons/Dungeon_Ramp_2",   2.00f, 2.00f, 2.00f, Vector3Int.one, false, "Dungeon Ramp Upper");
 
 			//
 
