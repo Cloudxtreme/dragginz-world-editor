@@ -2232,7 +2232,7 @@ GameObject:
   - component: {fileID: 114685596928085192}
   - component: {fileID: 114091250419312176}
   m_Layer: 5
-  m_Name: ButtonMisc
+  m_Name: ButtonRandom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4993,7 +4993,7 @@ MonoBehaviour:
   btnPlacementToolMount: {fileID: 114860634358378714}
   btnDungeonToolRoom: {fileID: 114535839269086070}
   btnDungeonToolMaze: {fileID: 114483666882019862}
-  btnDungeonToolMisc: {fileID: 114091250419312176}
+  btnDungeonToolRandom: {fileID: 114091250419312176}
   txtFileInfo: {fileID: 114797442108725934}
   txtLevelName: {fileID: 114104852725803144}
   txtCubeCount: {fileID: 114237845626516528}
@@ -6536,7 +6536,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Misc
+  m_Text: Random
 --- !u!114 &114558287453030404
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9980,7 +9980,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00004196167}
+  m_AnchoredPosition: {x: 0, y: -0.0000038146973}
   m_SizeDelta: {x: 0, y: 28}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224055923133634880
@@ -11170,7 +11170,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00004196167}
+  m_AnchoredPosition: {x: 0, y: -0.0000038146973}
   m_SizeDelta: {x: 0, y: 28}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224425439138029460

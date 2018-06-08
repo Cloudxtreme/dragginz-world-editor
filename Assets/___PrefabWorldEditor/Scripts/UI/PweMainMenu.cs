@@ -64,7 +64,7 @@ namespace PrefabWorldEditor
 
 		public Button btnDungeonToolRoom;
 		public Button btnDungeonToolMaze;
-		public Button btnDungeonToolMisc;
+		public Button btnDungeonToolRandom;
 
 		public Text txtFileInfo;
 		public Text txtLevelName;
@@ -316,7 +316,7 @@ namespace PrefabWorldEditor
 		{
 			btnDungeonToolRoom.interactable = (preset != DungeonTool.DungeonPreset.Room);
 			btnDungeonToolMaze.interactable = (preset != DungeonTool.DungeonPreset.Maze);
-			btnDungeonToolMisc.interactable = (preset != DungeonTool.DungeonPreset.Misc);
+			btnDungeonToolRandom.interactable = (preset != DungeonTool.DungeonPreset.Random);
 		}
 
 		/*public void setMenuPanels(AppState mode)
@@ -877,7 +877,7 @@ namespace PrefabWorldEditor
 				selectDungeonTool(DungeonTool.DungeonPreset.Maze);
 			}
 			else if (value == 2) {
-				selectDungeonTool(DungeonTool.DungeonPreset.Misc);
+				selectDungeonTool(DungeonTool.DungeonPreset.Random);
 			}
 		}
 

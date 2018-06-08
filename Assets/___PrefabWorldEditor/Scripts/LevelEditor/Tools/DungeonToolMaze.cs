@@ -14,13 +14,13 @@ using AssetsShared;
 
 namespace PrefabWorldEditor
 {
-	public class DungeonToolRoom : DungeonTool
+	public class DungeonToolMaze : DungeonTool
     {
 		private PrefabLevelEditor.Part partFloor;
 		private PrefabLevelEditor.Part partWall;
 		private PrefabLevelEditor.Part partCorner;
 
-		public DungeonToolRoom(GameObject container) : base(container)
+		public DungeonToolMaze(GameObject container) : base(container)
 		{
 			partFloor  = PrefabLevelEditor.Instance.parts [PrefabLevelEditor.PartList.Dungeon_Floor];
 			partWall   = PrefabLevelEditor.Instance.parts [PrefabLevelEditor.PartList.Dungeon_Wall_L];

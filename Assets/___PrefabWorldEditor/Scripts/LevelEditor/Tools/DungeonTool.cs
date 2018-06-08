@@ -20,7 +20,7 @@ namespace PrefabWorldEditor
 			None,
 			Room,
 			Maze,
-			Misc
+			Random
 		};
 
 		private static bool _initialised = false;
@@ -29,14 +29,14 @@ namespace PrefabWorldEditor
 
 		protected static GameObject _container;
 
-		protected static List<List<GameObject>> _gameObjects;
+		protected static List<List<PrefabLevelEditor.LevelElement>> _dungeonElements;
 
 		protected static PrefabLevelEditor.Part _curPart;
 
-		protected static int _radius;
-		protected static int _interval;
-		protected static int _density;
-		protected static bool _inverse;
+		protected static int _size;
+		protected static int _unused1;
+		protected static int _unused2;
+		protected static bool _unused3;
 
 		//
 
@@ -47,15 +47,15 @@ namespace PrefabWorldEditor
 		}
 
 		public int interval {
-			get { return _interval; }
+			get { return _unused1; }
 		}
 
 		public bool inverse {
-			get { return _inverse; }
+			get { return _unused3; }
 		}
 
-		public List<List<GameObject>> gameObjects {
-			get { return _gameObjects; }
+		public List<List<PrefabLevelEditor.LevelElement>> dungeonElements {
+			get { return _dungeonElements; }
 		}
 
 		#endregion
@@ -71,7 +71,7 @@ namespace PrefabWorldEditor
 
 				_container = container;
 
-				_gameObjects = new List<List<GameObject>> ();
+				_dungeonElements = new List<List<PrefabLevelEditor.LevelElement>> ();
 
 				reset ();
 			}
@@ -86,15 +86,13 @@ namespace PrefabWorldEditor
 				GameObject.Destroy(childTransform.gameObject);
 			}
 
-			_gameObjects.Clear ();
+			_dungeonElements.Clear ();
 
-			_radius   = 1;
-			_interval = 1;
-			_density  = 1;
+			_size    = 1;
+			_unused1 = 1;
+			_unused2 = 1;
 
-			_inverse = false;
-
-			//_step = 0;
+			_unused3 = false;
 
 			setDungeonPreset (DungeonPreset.None);
 		}
@@ -113,39 +111,39 @@ namespace PrefabWorldEditor
 		public void update(int valueId, int value)
 		{
 			if (valueId == 0) {
-				_radius = value;
+				_size = value;
 				removeAll ();
 			} else if (valueId == 1) {
-				_interval = value;
+				_unused1 = value;
 				removeAll ();
 			} else if (valueId == 2) {
-				_density = value;
+				_unused2 = value;
 				removeAll ();
 			} else if (valueId == 3) {
-				_inverse = (value == 1);
+				_unused3 = (value == 1);
 				removeAll ();
 			}
 
-			if (_gameObjects.Count < _interval) {
-				while (_gameObjects.Count < _interval) {
+			if (_dungeonElements.Count < _size) {
+				while (_dungeonElements.Count < _size) {
 					createStep ();
 				}
-			} else if (_gameObjects.Count > _interval) {
-				while (_gameObjects.Count > _interval) {
+			} else if (_dungeonElements.Count > _size) {
+				while (_dungeonElements.Count > _size) {
 					removeLastStep ();
 				}
 			}
 
 			int i;
-			for (i = 1; i < _interval; ++i) {
-				if (_gameObjects [i].Count <= 0) {
-					createObjects (i);
+			for (i = 1; i < _size; ++i) {
+				if (_dungeonElements [i].Count <= 0) {
+					createObjects (i, _size);
 				}
 			}	
 		}
 
 		// ------------------------------------------------------------------------
-		public virtual void createObjects(int step)
+		public virtual void createObjects(int step, int numSteps)
 		{
 			// OVERRIDE ME
 		}
@@ -176,22 +174,22 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		protected void createStep()
 		{
-			_gameObjects.Add (new List<GameObject> ());
+			_dungeonElements.Add (new List<PrefabLevelEditor.LevelElement> ());
 		}
 
 		// ------------------------------------------------------------------------
 		protected void removeLastStep()
 		{
-			int count = _gameObjects.Count;
+			int count = _dungeonElements.Count;
 			if (count > 0) {
 
-				int i, len = _gameObjects [count-1].Count;
+				int i, len = _dungeonElements [count-1].Count;
 				for (i = 0; i < len; ++i) {
-					GameObject.Destroy (_gameObjects [count-1][i]);
+					GameObject.Destroy (_dungeonElements [count-1][i].go);
 				}
 
-				_gameObjects [count-1].Clear ();
-				_gameObjects.RemoveAt (count-1);
+				_dungeonElements [count-1].Clear ();
+				_dungeonElements.RemoveAt (count-1);
 			}
 		}
 
@@ -202,7 +200,7 @@ namespace PrefabWorldEditor
 				GameObject.Destroy(childTransform.gameObject);
 			}
 
-			_gameObjects.Clear ();
+			_dungeonElements.Clear ();
 		}
 	}
 }

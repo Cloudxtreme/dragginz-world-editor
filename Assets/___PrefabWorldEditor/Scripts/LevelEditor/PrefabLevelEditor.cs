@@ -106,10 +106,7 @@ namespace PrefabWorldEditor
 			public string extra;
         }
 
-		//
-		//private PlacementTool _placementTools;
-
-        private struct LevelElement
+		public struct LevelElement
         {
             public GameObject go;
 			public PartList part;
@@ -167,6 +164,10 @@ namespace PrefabWorldEditor
 
 		public EditMode editMode {
 			get { return _editMode; }
+		}
+
+		public Dictionary<PartList, Part> parts {
+			get { return _parts; }
 		}
 
 		public Bounds selectedElementBounds {
@@ -254,6 +255,8 @@ namespace PrefabWorldEditor
 
 			_aDungeonTools = new List<DungeonTool> ();
 			_aDungeonTools.Add (new DungeonToolRoom (toolContainer));
+			_aDungeonTools.Add (new DungeonToolMaze (toolContainer));
+			_aDungeonTools.Add (new DungeonToolRandom (toolContainer));
 
 			PweMainMenu.Instance.init ();
 			PwePlacementTools.Instance.init ();
@@ -539,6 +542,12 @@ namespace PrefabWorldEditor
 		{
 			if (preset == DungeonTool.DungeonPreset.Room) {
 				_curDungeonTool = _aDungeonTools [0];
+			}
+			else if (preset == DungeonTool.DungeonPreset.Maze) {
+				_curDungeonTool = _aDungeonTools [1];
+			}
+			else if (preset == DungeonTool.DungeonPreset.Random) {
+				_curDungeonTool = _aDungeonTools [2];
 			}
 
 			PweDungeonTools.Instance.reset ();
@@ -945,34 +954,71 @@ namespace PrefabWorldEditor
 			// add tool objects
 			if (_curPlacementTool != null) {
 				if (_curPlacementTool.placementMode != PlacementTool.PlacementMode.None) {
-
-					int i, len = _curPlacementTool.gameObjects.Count;
-					for (i = 0; i < len; ++i) {
-						int j, len2 = _curPlacementTool.gameObjects [i].Count;
-						for (j = 0; j < len2; ++j) {
-
-							GameObject go = _curPlacementTool.gameObjects [i] [j];
-							if (go != null) {
-								go.transform.SetParent (_container);
-								go.name = "part_" + (_iCounter++).ToString (); //(_container.childCount+1).ToString();
-
-								setMeshCollider (go, true);
-								setRigidBody (go, _curEditPart.usesGravity);
-
-								LevelElement elementTool = new LevelElement ();
-								elementTool.part = _curEditPart.id;
-								elementTool.go = go;
-
-								_levelElements.Add (go.name, elementTool);
-							}
-						}
-					}
+					placePattern ();
 				}
 				resetCurPlacementTool ();
+			}
+			else if (_curDungeonTool != null) {
+				if (_curDungeonTool.dungeonPreset != DungeonTool.DungeonPreset.None) {
+					placeDungeon ();
+				}
+				resetCurDungeonTool ();
 			}
 
 			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
         }
+
+		// ------------------------------------------------------------------------
+		private void placePattern()
+		{
+			int i, len = _curPlacementTool.gameObjects.Count;
+			for (i = 0; i < len; ++i) {
+				int j, len2 = _curPlacementTool.gameObjects [i].Count;
+				for (j = 0; j < len2; ++j) {
+
+					GameObject go = _curPlacementTool.gameObjects [i] [j];
+					if (go != null) {
+						go.transform.SetParent (_container);
+						go.name = "part_" + (_iCounter++).ToString ();
+
+						setMeshCollider (go, true);
+						setRigidBody (go, _curEditPart.usesGravity);
+
+						LevelElement elementTool = new LevelElement ();
+						elementTool.part = _curEditPart.id;
+						elementTool.go = go;
+
+						_levelElements.Add (go.name, elementTool);
+					}
+				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void placeDungeon()
+		{
+			int i, len = _curDungeonTool.dungeonElements.Count;
+			for (i = 0; i < len; ++i) {
+				int j, len2 = _curDungeonTool.dungeonElements [i].Count;
+				for (j = 0; j < len2; ++j) {
+
+					GameObject go = _curDungeonTool.dungeonElements [i] [j].go;
+					if (go != null) {
+						go.transform.SetParent (_container);
+						go.name = "part_" + (_iCounter++).ToString ();
+
+						setMeshCollider (go, true);
+						setRigidBody (go, false);
+
+						LevelElement elementTool = new LevelElement ();
+						elementTool.part = _curDungeonTool.dungeonElements [i] [j].part;
+						elementTool.go = go;
+
+						_levelElements.Add (go.name, elementTool);
+					}
+				}
+			}
+		}
 
 		// ------------------------------------------------------------------------
 		private void fillX(Vector3 pos)
