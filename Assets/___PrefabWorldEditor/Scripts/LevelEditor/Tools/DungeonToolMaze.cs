@@ -3,7 +3,6 @@
 // Company : Decentralised Team of Developers
 //
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -19,12 +18,14 @@ namespace PrefabWorldEditor
 		private PrefabLevelEditor.Part partFloor;
 		private PrefabLevelEditor.Part partWall;
 		private PrefabLevelEditor.Part partCorner;
+		private PrefabLevelEditor.Part partTurn;
 
 		public DungeonToolMaze(GameObject container) : base(container)
 		{
 			partFloor  = PrefabLevelEditor.Instance.parts [PrefabLevelEditor.PartList.Dungeon_Floor];
 			partWall   = PrefabLevelEditor.Instance.parts [PrefabLevelEditor.PartList.Dungeon_Wall_L];
 			partCorner = PrefabLevelEditor.Instance.parts [PrefabLevelEditor.PartList.Dungeon_Corner];
+			partTurn   = PrefabLevelEditor.Instance.parts [PrefabLevelEditor.PartList.Dungeon_Turn];
 		}
 
 		// ------------------------------------------------------------------------
@@ -50,7 +51,7 @@ namespace PrefabWorldEditor
 					isWall = false;
 					if (step < (numSteps - 1))
 					{
-						partId = partFloor.id;
+						partId = partTurn.id;
 					}
 					else
 					{
@@ -70,8 +71,7 @@ namespace PrefabWorldEditor
 						go.transform.SetParent (_container.transform);
 						go.transform.localPosition = pos;
 
-						if (isWall)
-						{
+						if (isWall) {
 							if (x == -len && z == len) {
 								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
 							} else if (x == len && z == -len) {
@@ -85,6 +85,8 @@ namespace PrefabWorldEditor
 							} else if (z == len) {
 								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
 							}
+						} else {
+							go.transform.rotation = Quaternion.Euler (new Vector3 (0, Random.Range(0, 4) * 90, 0));
 						}
 
 						PrefabLevelEditor.Instance.setMeshCollider (go, false);
