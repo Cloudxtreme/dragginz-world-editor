@@ -950,15 +950,18 @@ namespace PrefabWorldEditor
 				}
 			}
 
-			LevelElement element = new LevelElement ();
-			element.part = _curEditPart.id;
-			element.go = createPartAt(_curEditPart.id, pos.x, pos.y, pos.z);
-            element.go.transform.rotation = _goEditPart.transform.rotation;
+			if (_curDungeonTool == null)
+			{
+				LevelElement element = new LevelElement ();
+				element.part = _curEditPart.id;
+				element.go = createPartAt (_curEditPart.id, pos.x, pos.y, pos.z);
+				element.go.transform.rotation = _goEditPart.transform.rotation;
 
-			setMeshCollider(element.go, true);
-			setRigidBody (element.go, _curEditPart.usesGravity);
+				setMeshCollider (element.go, true);
+				setRigidBody (element.go, _curEditPart.usesGravity);
 
-			_levelElements.Add(element.go.name, element);
+				_levelElements.Add (element.go.name, element);
+			}
 
 			// add tool objects
 			if (_curPlacementTool != null) {

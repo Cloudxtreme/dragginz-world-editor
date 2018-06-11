@@ -37,37 +37,34 @@ namespace PrefabWorldEditor
 
 			float distance = 2.0f;
 
-			int step;
-			for (step = 1; step < _size; ++step)
-			{
-				int x, z, len = step;
-				for (x = -len; x <= len; ++x) {
-					for (z = -len; z <= len; ++z) {
-						
-						if (x > -len && x < len && z > -len && z < len) {
-							continue;
-						}
+			int xStart = _width / 2 * -1;
+			int xEnd = xStart + _width;
+			int zStart = _depth / 2 * -1;
+			int zEnd = zStart + _depth;
 
-						Vector3 pos = new Vector3 (x * distance, 0, z * distance);
+			int x, z;
+			for (x = xStart; x < xEnd; ++x) {
+				for (z = zStart; z < zEnd; ++z) {
 
-						partId = parts [Random.Range (0, parts.Length)].id;
-						go = PrefabLevelEditor.Instance.createPartAt (partId, 0, 0, 0);
+					Vector3 pos = new Vector3 (x * distance, 0, z * distance);
 
-						if (go != null) {
-							go.name = "temp_part_" + _container.transform.childCount.ToString ();
-							go.transform.SetParent (_container.transform);
-							go.transform.localPosition = pos;
-							go.transform.rotation = Quaternion.Euler (new Vector3 (0, Random.Range (0, 4) * 90, 0));
+					partId = parts [Random.Range (0, parts.Length)].id;
+					go = PrefabLevelEditor.Instance.createPartAt (partId, 0, 0, 0);
 
-							PrefabLevelEditor.Instance.setMeshCollider (go, false);
-							PrefabLevelEditor.Instance.setRigidBody (go, false);
+					if (go != null) {
+						go.name = "temp_part_" + _container.transform.childCount.ToString ();
+						go.transform.SetParent (_container.transform);
+						go.transform.localPosition = pos;
+						go.transform.rotation = Quaternion.Euler (new Vector3 (0, Random.Range (0, 4) * 90, 0));
 
-							PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
-							element.go = go;
-							element.part = partId;
+						PrefabLevelEditor.Instance.setMeshCollider (go, false);
+						PrefabLevelEditor.Instance.setRigidBody (go, false);
 
-							_dungeonElements.Add (element);
-						}
+						PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
+						element.go = go;
+						element.part = partId;
+
+						_dungeonElements.Add (element);
 					}
 				}
 			}

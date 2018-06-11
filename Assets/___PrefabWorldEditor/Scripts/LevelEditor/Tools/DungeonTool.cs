@@ -33,9 +33,9 @@ namespace PrefabWorldEditor
 
 		protected static PrefabLevelEditor.Part _curPart;
 
-		protected static int _size;
-		protected static int _unused1;
-		protected static int _unused2;
+		protected static int _width;
+		protected static int _depth;
+		protected static int _height;
 		protected static bool _unused3;
 
 		//
@@ -47,7 +47,7 @@ namespace PrefabWorldEditor
 		}
 
 		public int interval {
-			get { return _unused1; }
+			get { return _depth; }
 		}
 
 		public bool inverse {
@@ -88,9 +88,9 @@ namespace PrefabWorldEditor
 
 			_dungeonElements.Clear ();
 
-			_size    = 1;
-			_unused1 = 1;
-			_unused2 = 1;
+			_width  = 1;
+			_depth  = 1;
+			_height = 1;
 
 			_unused3 = false;
 
@@ -111,11 +111,11 @@ namespace PrefabWorldEditor
 		public void update(int valueId, int value)
 		{
 			if (valueId == 0) {
-				_size = value;
+				_width = value;
 			} else if (valueId == 1) {
-				_unused1 = value;
+				_depth = value;
 			} else if (valueId == 2) {
-				_unused2 = value;
+				_height = value;
 			} else if (valueId == 3) {
 				_unused3 = (value == 1);
 			}

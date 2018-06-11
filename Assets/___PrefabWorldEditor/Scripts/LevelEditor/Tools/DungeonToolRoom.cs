@@ -36,63 +36,60 @@ namespace PrefabWorldEditor
 			float distance = 2.0f;
 			bool isWall = false;
 
-			int step;
-			for (step = 1; step < _size; ++step)
-			{
-				int x, z, len = step;
-				for (x = -len; x <= len; ++x) {
-					for (z = -len; z <= len; ++z) {
-						
-						if (x > -len && x < len && z > -len && z < len) {
-							continue;
-						}
+			int xStart = _width / 2 * -1;
+			int xEnd = xStart + _width;
+			int zStart = _depth / 2 * -1;
+			int zEnd = zStart + _depth;
 
-						Vector3 pos = new Vector3 (x * distance, 0, z * distance);
+			int x, z;
+			for (x = xStart; x < xEnd; ++x) {
+				for (z = zStart; z < zEnd; ++z) {
+					
+					Vector3 pos = new Vector3 (x * distance, 0, z * distance);
 
-						isWall = false;
-						if (step < (_size - 1)) {
-							partId = partFloor.id;
+					isWall = false;
+					if (x > xStart && z > zStart && x < (xEnd - 1) && z < (zEnd - 1)) {
+						partId = partFloor.id;
+					} else {
+						if ((x == xStart && z == zStart) || (x == (xEnd - 1) && z == (zEnd - 1)) || (x == xStart && z == (zEnd - 1)) || (x == (xEnd - 1) && z == zStart)) {
+							partId = partCorner.id;
 						} else {
-							if ((x == -len && z == -len) || (x == len && z == len) || (x == -len && z == len) || (x == len && z == -len)) {
-								partId = partCorner.id;
-							} else {
-								partId = partWall.id;
+							partId = partWall.id;
+						}
+						isWall = true;
+					}
+
+					go = PrefabLevelEditor.Instance.createPartAt (partId, 0, 0, 0);
+
+					if (go != null) {
+						go.name = "temp_part_" + _container.transform.childCount.ToString ();
+						go.transform.SetParent (_container.transform);
+						go.transform.localPosition = pos;
+
+						if (isWall) {
+							if (x == xStart && z == (zEnd - 1)) {
+								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
+							} else if (x == (xEnd - 1) && z == zStart) {
+								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
+							} else if (x == xStart) {
+								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, 0));
+							} else if (x == (xEnd - 1)) {
+								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 180, 0));
+							} else if (z == zStart) {
+								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
+							} else if (z == (zEnd - 1)) {
+								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
 							}
-							isWall = true;
 						}
 
-						go = PrefabLevelEditor.Instance.createPartAt (partId, 0, 0, 0);
+						PrefabLevelEditor.Instance.setMeshCollider (go, false);
+						PrefabLevelEditor.Instance.setRigidBody (go, false);
 
-						if (go != null) {
-							go.name = "temp_part_" + _container.transform.childCount.ToString ();
-							go.transform.SetParent (_container.transform);
-							go.transform.localPosition = pos;
+						PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
+						element.go = go;
+						element.part = partId;
 
-							if (isWall) {
-								if (x == -len && z == len) {
-									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
-								} else if (x == len && z == -len) {
-									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
-								} else if (x == -len) {
-									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, 0));
-								} else if (x == len) {
-									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 180, 0));
-								} else if (z == -len) {
-									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
-								} else if (z == len) {
-									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
-								}
-							}
-
-							PrefabLevelEditor.Instance.setMeshCollider (go, false);
-							PrefabLevelEditor.Instance.setRigidBody (go, false);
-
-							PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
-							element.go = go;
-							element.part = partId;
-
-							_dungeonElements.Add (element);
-						}
+						_dungeonElements.Add (element);
 					}
 				}
 			}
