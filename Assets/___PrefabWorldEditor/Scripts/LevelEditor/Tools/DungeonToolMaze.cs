@@ -33,7 +33,7 @@ namespace PrefabWorldEditor
 			GameObject go;
 			PrefabLevelEditor.PartList partId;
 
-			float distance = 2.0f;
+			float distance = _cubeSize;
 			bool isWall = false;
 
 			int xStart = _width / 2 * -1;

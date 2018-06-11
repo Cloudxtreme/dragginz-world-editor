@@ -36,7 +36,9 @@ namespace PrefabWorldEditor
 		protected static int _width;
 		protected static int _depth;
 		protected static int _height;
-		protected static bool _unused3;
+		protected static bool _ceiling;
+
+		protected static float _cubeSize = 2.0f;
 
 		//
 
@@ -46,12 +48,20 @@ namespace PrefabWorldEditor
 			get { return _dungeonPreset; }
 		}
 
-		public int interval {
+		public float cubeSize {
+			get { return _cubeSize; }
+		}
+
+		public int width {
+			get { return _width; }
+		}
+
+		public int depth {
 			get { return _depth; }
 		}
 
-		public bool inverse {
-			get { return _unused3; }
+		public int height {
+			get { return _height; }
 		}
 
 		public List<PrefabLevelEditor.LevelElement> dungeonElements {
@@ -88,11 +98,11 @@ namespace PrefabWorldEditor
 
 			_dungeonElements.Clear ();
 
-			_width  = 1;
-			_depth  = 1;
+			_width  = 2;
+			_depth  = 2;
 			_height = 1;
 
-			_unused3 = false;
+			_ceiling = false;
 
 			setDungeonPreset (DungeonPreset.None);
 		}
@@ -105,6 +115,9 @@ namespace PrefabWorldEditor
 			_curPart = part;
 
 			setDungeonPreset (preset);
+
+			removeAll ();
+			createObjects ();
 		}
 
 		// ------------------------------------------------------------------------
@@ -117,11 +130,10 @@ namespace PrefabWorldEditor
 			} else if (valueId == 2) {
 				_height = value;
 			} else if (valueId == 3) {
-				_unused3 = (value == 1);
+				_ceiling = (value == 1);
 			}
 
 			removeAll ();
-
 			createObjects ();
 		}
 

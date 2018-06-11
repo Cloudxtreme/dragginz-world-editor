@@ -28,7 +28,7 @@ namespace PrefabWorldEditor
 		public Text roomDepthValue;
 		public Slider roomSliderHeight;
 		public Text roomHeightValue;
-		//public Toggle roomToggleRandom;
+		public Toggle roomToggleCeiling;
 
 		// Maze Tool Panel
 		public Transform mazeToolPanel;
@@ -61,24 +61,24 @@ namespace PrefabWorldEditor
 
 		public void init()
 		{
-			roomSliderWidth.minValue  = 1;
-			roomSliderWidth.maxValue  = 36;
-			roomSliderDepth.minValue  = 1;
-			roomSliderDepth.maxValue  = 36;
+			roomSliderWidth.minValue  = 2;
+			roomSliderWidth.maxValue  = 18;
+			roomSliderDepth.minValue  = 2;
+			roomSliderDepth.maxValue  = 18;
 			roomSliderHeight.minValue = 1;
-			roomSliderHeight.maxValue = 36;
+			roomSliderHeight.maxValue = 18;
 
-			mazeSliderWidth.minValue = 1;
-			mazeSliderWidth.maxValue = 36;
-			mazeSliderDepth.minValue = 1;
-			mazeSliderDepth.maxValue = 36;
+			mazeSliderWidth.minValue = 2;
+			mazeSliderWidth.maxValue = 18;
+			mazeSliderDepth.minValue = 2;
+			mazeSliderDepth.maxValue = 18;
 			//mazeSliderDensity.minValue = 1;
 			//mazeSliderDensity.maxValue = 10;
 
-			randomSliderWidth.minValue = 1;
-			randomSliderWidth.maxValue = 36;
-			randomSliderDepth.minValue = 1;
-			randomSliderDepth.maxValue = 36;
+			randomSliderWidth.minValue = 2;
+			randomSliderWidth.maxValue = 18;
+			randomSliderDepth.minValue = 2;
+			randomSliderDepth.maxValue = 18;
 			//randomSliderDensity.minValue = 1;
 			//randomSliderDensity.maxValue = 10;
 
@@ -88,18 +88,18 @@ namespace PrefabWorldEditor
 		//
 		public void reset()
 		{
-			roomSliderWidth.value  = 1;
-			roomSliderDepth.value  = 1;
+			roomSliderWidth.value  = 2;
+			roomSliderDepth.value  = 2;
 			roomSliderHeight.value = 1;
-			//roomToggleRandom.isOn    = false;
+			roomToggleCeiling.isOn  = false;
 
-			mazeSliderWidth.value = 1;
-			mazeSliderDepth.value = 1;
+			mazeSliderWidth.value = 2;
+			mazeSliderDepth.value = 2;
 			//mazeSliderDensity.value  = 1;
 			//mazeToggleRandom.isOn    = false;
 
-			randomSliderWidth.value = 1;
-			randomSliderDepth.value = 1;
+			randomSliderWidth.value = 2;
+			randomSliderDepth.value = 2;
 			//randomSliderDensity.value  = 1;
 			//randomToggleRandom.isOn    = false;
 		}
@@ -131,10 +131,10 @@ namespace PrefabWorldEditor
 			roomHeightValue.text = ((int)roomSliderHeight.value).ToString ();
 			PrefabLevelEditor.Instance.dungeonToolValueChange(2, (int)roomSliderHeight.value);
 		}
-		/*public void onToggleRoomRandomChange(Boolean value)
+		public void onToggleRoomCeilingChange(Boolean value)
 		{
-			PrefabLevelEditor.Instance.dungeonToolValueChange(3, (roomToggleRandom.isOn ? 1 : 0));
-		}*/
+			PrefabLevelEditor.Instance.dungeonToolValueChange(3, (roomToggleCeiling.isOn ? 1 : 0));
+		}
 
 		public void onSliderMazeWidthChange(Single value)
 		{
