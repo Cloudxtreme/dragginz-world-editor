@@ -29,7 +29,7 @@ namespace PrefabWorldEditor
 
 		protected static GameObject _container;
 
-		protected static List<List<PrefabLevelEditor.LevelElement>> _dungeonElements;
+		protected static List<PrefabLevelEditor.LevelElement> _dungeonElements;
 
 		protected static PrefabLevelEditor.Part _curPart;
 
@@ -54,7 +54,7 @@ namespace PrefabWorldEditor
 			get { return _unused3; }
 		}
 
-		public List<List<PrefabLevelEditor.LevelElement>> dungeonElements {
+		public List<PrefabLevelEditor.LevelElement> dungeonElements {
 			get { return _dungeonElements; }
 		}
 
@@ -71,7 +71,7 @@ namespace PrefabWorldEditor
 
 				_container = container;
 
-				_dungeonElements = new List<List<PrefabLevelEditor.LevelElement>> ();
+				_dungeonElements = new List<PrefabLevelEditor.LevelElement> ();
 
 				reset ();
 			}
@@ -112,38 +112,21 @@ namespace PrefabWorldEditor
 		{
 			if (valueId == 0) {
 				_size = value;
-				removeAll ();
 			} else if (valueId == 1) {
 				_unused1 = value;
-				removeAll ();
 			} else if (valueId == 2) {
 				_unused2 = value;
-				removeAll ();
 			} else if (valueId == 3) {
 				_unused3 = (value == 1);
-				removeAll ();
 			}
 
-			if (_dungeonElements.Count < _size) {
-				while (_dungeonElements.Count < _size) {
-					createStep ();
-				}
-			} else if (_dungeonElements.Count > _size) {
-				while (_dungeonElements.Count > _size) {
-					removeLastStep ();
-				}
-			}
+			removeAll ();
 
-			int i;
-			for (i = 1; i < _size; ++i) {
-				if (_dungeonElements [i].Count <= 0) {
-					createObjects (i, _size);
-				}
-			}	
+			createObjects ();
 		}
 
 		// ------------------------------------------------------------------------
-		public virtual void createObjects(int step, int numSteps)
+		public virtual void createObjects()
 		{
 			// OVERRIDE ME
 		}
@@ -171,28 +154,6 @@ namespace PrefabWorldEditor
 
 		// ------------------------------------------------------------------------
 		// Protected Methods
-		// ------------------------------------------------------------------------
-		protected void createStep()
-		{
-			_dungeonElements.Add (new List<PrefabLevelEditor.LevelElement> ());
-		}
-
-		// ------------------------------------------------------------------------
-		protected void removeLastStep()
-		{
-			int count = _dungeonElements.Count;
-			if (count > 0) {
-
-				int i, len = _dungeonElements [count-1].Count;
-				for (i = 0; i < len; ++i) {
-					GameObject.Destroy (_dungeonElements [count-1][i].go);
-				}
-
-				_dungeonElements [count-1].Clear ();
-				_dungeonElements.RemoveAt (count-1);
-			}
-		}
-
 		// ------------------------------------------------------------------------
 		protected void removeAll ()
 		{

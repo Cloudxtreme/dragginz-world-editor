@@ -29,7 +29,7 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		public override void createObjects(int step, int numSteps)
+		public override void createObjects()
 		{
 			GameObject go;
 			PrefabLevelEditor.PartList partId;
@@ -37,66 +37,65 @@ namespace PrefabWorldEditor
 			float distance = 2.0f;
 			bool isWall = false;
 
-			int x, z, len = step;
-			for (x = -len; x <= len; ++x)
+			int step;
+			for (step = 1; step < _size; ++step)
 			{
-				for (z = -len; z <= len; ++z)
-				{
-					if (x > -len && x < len && z > -len && z < len) {
-						continue;
-					}
-
-					Vector3 pos = new Vector3 (x * distance, 0, z * distance);
-
-					isWall = false;
-					if (step < (numSteps - 1))
-					{
-						partId = partTurn.id;
-					}
-					else
-					{
-						if ((x == -len && z == -len) || (x == len && z == len) || (x == -len && z == len) || (x == len && z == -len)) {
-							partId = partCorner.id;
-						} else {
-							partId = partWall.id;
+				int x, z, len = step;
+				for (x = -len; x <= len; ++x) {
+					for (z = -len; z <= len; ++z) {
+						
+						if (x > -len && x < len && z > -len && z < len) {
+							continue;
 						}
-						isWall = true;
-					}
 
-					go = PrefabLevelEditor.Instance.createPartAt (partId, 0, 0, 0);
+						Vector3 pos = new Vector3 (x * distance, 0, z * distance);
 
-					if (go != null)
-					{
-						go.name = "temp_part_" + _container.transform.childCount.ToString ();
-						go.transform.SetParent (_container.transform);
-						go.transform.localPosition = pos;
-
-						if (isWall) {
-							if (x == -len && z == len) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
-							} else if (x == len && z == -len) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
-							} else if (x == -len) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, 0));
-							} else if (x == len) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 180, 0));
-							} else if (z == -len) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
-							} else if (z == len) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
+						isWall = false;
+						if (step < (_size - 1)) {
+							partId = partTurn.id;
+						} else {
+							if ((x == -len && z == -len) || (x == len && z == len) || (x == -len && z == len) || (x == len && z == -len)) {
+								partId = partCorner.id;
+							} else {
+								partId = partWall.id;
 							}
-						} else {
-							go.transform.rotation = Quaternion.Euler (new Vector3 (0, Random.Range(0, 4) * 90, 0));
+							isWall = true;
 						}
 
-						PrefabLevelEditor.Instance.setMeshCollider (go, false);
-						PrefabLevelEditor.Instance.setRigidBody (go, false);
+						go = PrefabLevelEditor.Instance.createPartAt (partId, 0, 0, 0);
 
-						PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
-						element.go = go;
-						element.part = partId;
+						if (go != null) {
+							go.name = "temp_part_" + _container.transform.childCount.ToString ();
+							go.transform.SetParent (_container.transform);
+							go.transform.localPosition = pos;
 
-						_dungeonElements [step].Add (element);
+							if (isWall) {
+								if (x == -len && z == len) {
+									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
+								} else if (x == len && z == -len) {
+									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
+								} else if (x == -len) {
+									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, 0));
+								} else if (x == len) {
+									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 180, 0));
+								} else if (z == -len) {
+									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
+								} else if (z == len) {
+									go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
+								}
+							} else {
+								go.transform.rotation = Quaternion.Euler (new Vector3 (0, Random.Range (0, 4) * 90, 0));
+							}
+
+							PrefabLevelEditor.Instance.setMeshCollider (go, false);
+							PrefabLevelEditor.Instance.setRigidBody (go, false);
+
+							PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
+							element.go = go;
+							element.part = partId;
+
+							_dungeonElements.Add (element);
+						}
 					}
 				}
 			}

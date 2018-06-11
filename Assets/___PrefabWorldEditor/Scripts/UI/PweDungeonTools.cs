@@ -23,6 +23,7 @@ namespace PrefabWorldEditor
 		// Room Tool Panel
 		public Transform roomToolPanel;
 		public Slider roomSliderSize;
+		public Text roomSizeValue;
 		//public Slider roomSliderInterval;
 		//public Slider roomSliderDensity;
 		//public Toggle roomToggleRandom;
@@ -30,6 +31,7 @@ namespace PrefabWorldEditor
 		// Maze Tool Panel
 		public Transform mazeToolPanel;
 		public Slider mazeSliderSize;
+		public Text mazeSizeValue;
 		//public Slider mazeSliderInterval;
 		//public Slider mazeSliderDensity;
 		//public Toggle mazeToggleRandom;
@@ -37,6 +39,7 @@ namespace PrefabWorldEditor
 		// Random Tool Panel
 		public Transform randomToolPanel;
 		public Slider randomSliderSize;
+		public Text randomSizeValue;
 		//public Slider randomSliderInterval;
 		//public Slider randomSliderDensity;
 		//public Toggle randomToggleRandom;
@@ -55,21 +58,21 @@ namespace PrefabWorldEditor
 		public void init()
 		{
 			roomSliderSize.minValue = 1;
-			roomSliderSize.maxValue = 10;
+			roomSliderSize.maxValue = 36;
 			//roomSliderInterval.minValue = 1;
 			//roomSliderInterval.maxValue = 10;
 			//roomSliderDensity.minValue = 1;
 			//roomSliderDensity.maxValue = 10;
 
 			mazeSliderSize.minValue = 1;
-			mazeSliderSize.maxValue = 10;
+			mazeSliderSize.maxValue = 36;
 			//mazeSliderInterval.minValue = 1;
 			//mazeSliderInterval.maxValue = 10;
 			//mazeSliderDensity.minValue = 1;
 			//mazeSliderDensity.maxValue = 10;
 
 			randomSliderSize.minValue = 1;
-			randomSliderSize.maxValue = 10;
+			randomSliderSize.maxValue = 36;
 			//randomSliderInterval.minValue = 1;
 			//randomSliderInterval.maxValue = 10;
 			//randomSliderDensity.minValue = 1;
@@ -81,7 +84,8 @@ namespace PrefabWorldEditor
 		//
 		public void reset()
 		{
-			roomSliderSize.value     = 1;
+			roomSliderSize.value = 1;
+			//roomSizeValue.text = roomSliderSize.value.ToString ();
 			//roomSliderInterval.value = 1;
 			//roomSliderDensity.value  = 1;
 			//roomToggleRandom.isOn    = false;
@@ -111,6 +115,7 @@ namespace PrefabWorldEditor
 
 		public void onSliderRoomSizeChange(Single value)
 		{
+			roomSizeValue.text = ((int)roomSliderSize.value).ToString ();
 			PrefabLevelEditor.Instance.dungeonToolValueChange(0, (int)roomSliderSize.value);
 		}
 		/*public void onSliderRoomIntervalChange(Single value)
@@ -128,6 +133,7 @@ namespace PrefabWorldEditor
 
 		public void onSliderMazeSizeChange(Single value)
 		{
+			mazeSizeValue.text = ((int)mazeSliderSize.value).ToString ();
 			PrefabLevelEditor.Instance.dungeonToolValueChange(0, (int)mazeSliderSize.value);
 		}
 		/*public void onSliderMazeIntervalChange(Single value)
@@ -145,6 +151,7 @@ namespace PrefabWorldEditor
 
 		public void onSliderRandomSizeChange(Single value)
 		{
+			randomSizeValue.text = ((int)randomSliderSize.value).ToString ();
 			PrefabLevelEditor.Instance.dungeonToolValueChange(0, (int)randomSliderSize.value);
 		}
 

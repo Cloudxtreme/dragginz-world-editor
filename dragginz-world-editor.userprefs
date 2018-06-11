@@ -3,12 +3,13 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonToolRoom.cs">
     <Files>
       <File FileName="Assets\___PrefabWorldEditor\Scripts\Core\Globals.cs" Line="1" Column="1" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\PrefabLevelEditor.cs" Line="1" Column="1" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\UI\PweMainMenu.cs" Line="1" Column="1" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\UI\PweDungeonTools.cs" Line="1" Column="1" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonTool.cs" Line="34" Column="52" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonToolRoom.cs" Line="81" Column="9" />
-      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolQuad.cs" Line="52" Column="5" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\PrefabLevelEditor.cs" Line="1012" Column="5" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\UI\PweMainMenu.cs" Line="454" Column="48" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\UI\PweDungeonTools.cs" Line="116" Column="31" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonTool.cs" Line="164" Column="20" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonToolRoom.cs" Line="94" Column="24" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonToolMaze.cs" Line="97" Column="24" />
+      <File FileName="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonToolRandom.cs" Line="69" Column="24" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -431,6 +431,7 @@ namespace PrefabWorldEditor
 				{
 					if (_curEditPart.type == AssetType.Dungeon)
 					{
+						setNewEditPart(_assetTypeList[_assetType][0]); // reset to floor tile
 						activateDungeonTool (preset, _goEditPart.transform.position, _curEditPart);
 					}
 				}
@@ -617,41 +618,41 @@ namespace PrefabWorldEditor
 			//
 			// Mousewheel
 			//
-            if (Input.GetAxis("Mouse ScrollWheel") != 0)
+			if (_curPlacementTool == null && _curDungeonTool == null)
 			{
-                if (_timer > _lastMouseWheelUpdate)
+				if (Input.GetAxis ("Mouse ScrollWheel") != 0)
 				{
-                    _lastMouseWheelUpdate = _timer + 0.2f;
-					float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
-					float multiply = (_curEditPart.type == AssetType.Dungeon ? 90f * dir : 15f * dir);
+					if (_timer > _lastMouseWheelUpdate)
+					{
+						_lastMouseWheelUpdate = _timer + 0.2f;
+						float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
+						float multiply = (_curEditPart.type == AssetType.Dungeon ? 90f * dir : 15f * dir);
 
-					// Rotate
-					if (Input.GetKey (KeyCode.X)) {
-						if (_curEditPart.canRotate.x == 1) {
-							_goEditPart.transform.Rotate (Vector3.right * multiply);
+						// Rotate
+						if (Input.GetKey (KeyCode.X)) {
+							if (_curEditPart.canRotate.x == 1) {
+								_goEditPart.transform.Rotate (Vector3.right * multiply);
+							}
+						} else if (Input.GetKey (KeyCode.Y)) {
+							if (_curEditPart.canRotate.y == 1) {
+								_goEditPart.transform.Rotate (Vector3.up * multiply);
+							}
+						} else if (Input.GetKey (KeyCode.Z)) {
+							if (_curEditPart.canRotate.z == 1) {
+								_goEditPart.transform.Rotate (Vector3.forward * multiply);
+							}
+						}
+						// Scale
+						else if (Input.GetKey (KeyCode.C)) {
+							Vector3 scale = _goEditPart.transform.localScale;
+							scale += new Vector3 (.025f * dir, .025f * dir, .025f * dir);
+							_goEditPart.transform.localScale = scale;
+						} else {
+							toggleEditPart ();
 						}
 					}
-					else if (Input.GetKey (KeyCode.Y)) {
-						if (_curEditPart.canRotate.y == 1) {
-							_goEditPart.transform.Rotate (Vector3.up * multiply);
-						}
-					}
-					else if (Input.GetKey (KeyCode.Z)) {
-						if (_curEditPart.canRotate.z == 1) {
-							_goEditPart.transform.Rotate (Vector3.forward * multiply);
-						}
-					}
-					// Scale
-					else if (Input.GetKey (KeyCode.C)) {
-						Vector3 scale = _goEditPart.transform.localScale;
-						scale += new Vector3(.025f * dir, .025f * dir, .025f * dir);
-						_goEditPart.transform.localScale = scale;
-					}
-					else {
-						toggleEditPart();
-					}
-                }
-            }
+				}
+			}
 
 			if (Input.GetMouseButtonDown (0))
 			{
@@ -1007,23 +1008,20 @@ namespace PrefabWorldEditor
 		{
 			int i, len = _curDungeonTool.dungeonElements.Count;
 			for (i = 0; i < len; ++i) {
-				int j, len2 = _curDungeonTool.dungeonElements [i].Count;
-				for (j = 0; j < len2; ++j) {
 
-					GameObject go = _curDungeonTool.dungeonElements [i] [j].go;
-					if (go != null) {
-						go.transform.SetParent (_container);
-						go.name = "part_" + (_iCounter++).ToString ();
+				GameObject go = _curDungeonTool.dungeonElements [i].go;
+				if (go != null) {
+					go.transform.SetParent (_container);
+					go.name = "part_" + (_iCounter++).ToString ();
 
-						setMeshCollider (go, true);
-						setRigidBody (go, false);
+					setMeshCollider (go, true);
+					setRigidBody (go, false);
 
-						LevelElement elementTool = new LevelElement ();
-						elementTool.part = _curDungeonTool.dungeonElements [i] [j].part;
-						elementTool.go = go;
+					LevelElement elementTool = new LevelElement ();
+					elementTool.part = _curDungeonTool.dungeonElements [i].part;
+					elementTool.go = go;
 
-						_levelElements.Add (go.name, elementTool);
-					}
+					_levelElements.Add (go.name, elementTool);
 				}
 			}
 		}
