@@ -269,6 +269,7 @@ namespace PrefabWorldEditor
 			_aDungeonTools.Add (new DungeonToolRoom (toolContainer));
 			_aDungeonTools.Add (new DungeonToolMaze (toolContainer));
 			_aDungeonTools.Add (new DungeonToolRandom (toolContainer));
+			_aDungeonTools.Add (new DungeonToolStaircase (toolContainer));
 
 			PweMainMenu.Instance.init ();
 			PwePlacementTools.Instance.init ();
@@ -561,6 +562,9 @@ namespace PrefabWorldEditor
 			}
 			else if (preset == DungeonTool.DungeonPreset.Random) {
 				_curDungeonTool = _aDungeonTools [2];
+			}
+			else if (preset == DungeonTool.DungeonPreset.Staircase) {
+				_curDungeonTool = _aDungeonTools [3];
 			}
 
 			PweDungeonTools.Instance.reset ();

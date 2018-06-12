@@ -20,7 +20,8 @@ namespace PrefabWorldEditor
 			None,
 			Room,
 			Maze,
-			Random
+			Random,
+			Staircase
 		};
 
 		private static bool _initialised = false;
@@ -115,6 +116,10 @@ namespace PrefabWorldEditor
 			_curPart = part;
 
 			setDungeonPreset (preset);
+
+			//if (preset == DungeonPreset.Staircase) {
+			//	_height = 2;
+			//}
 
 			removeAll ();
 			createObjects ();

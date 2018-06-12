@@ -879,6 +879,9 @@ namespace PrefabWorldEditor
 			else if (value == 2) {
 				selectDungeonTool(DungeonTool.DungeonPreset.Random);
 			}
+			else if (value == 3) {
+				selectDungeonTool(DungeonTool.DungeonPreset.Staircase);
+			}
 		}
 
 		// -------------------------------------------------------------------------------------

@@ -475,7 +475,17 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 224247956217557420, guid: 7fe64c6806e78e74395c687103dce12c,
+    - target: {fileID: 224546793943366274, guid: 7fe64c6806e78e74395c687103dce12c,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224085749120876938, guid: 7fe64c6806e78e74395c687103dce12c,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224153271474892518, guid: 7fe64c6806e78e74395c687103dce12c,
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -485,17 +495,12 @@ Prefab:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 224550379040080454, guid: 7fe64c6806e78e74395c687103dce12c,
-        type: 2}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 224344154481863228, guid: 7fe64c6806e78e74395c687103dce12c,
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 224698690656113558, guid: 7fe64c6806e78e74395c687103dce12c,
+    - target: {fileID: 224550379040080454, guid: 7fe64c6806e78e74395c687103dce12c,
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -506,6 +511,16 @@ Prefab:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224740697425044724, guid: 7fe64c6806e78e74395c687103dce12c,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224698690656113558, guid: 7fe64c6806e78e74395c687103dce12c,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224247956217557420, guid: 7fe64c6806e78e74395c687103dce12c,
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -1164,12 +1179,12 @@ Prefab:
     - target: {fileID: 224424469187855848, guid: 7156a026b5d20c9429e81a2de754946f,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000011444092
+      value: -0.000019073486
       objectReference: {fileID: 0}
     - target: {fileID: 224054764340674924, guid: 7156a026b5d20c9429e81a2de754946f,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000011444092
+      value: -0.000019073486
       objectReference: {fileID: 0}
     - target: {fileID: 224211271770905138, guid: 7156a026b5d20c9429e81a2de754946f,
         type: 2}

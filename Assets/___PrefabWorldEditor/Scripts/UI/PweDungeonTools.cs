@@ -36,8 +36,6 @@ namespace PrefabWorldEditor
 		public Text mazeWidthValue;
 		public Slider mazeSliderDepth;
 		public Text mazeDepthValue;
-		//public Slider mazeSliderDensity;
-		//public Toggle mazeToggleRandom;
 
 		// Random Tool Panel
 		public Transform randomToolPanel;
@@ -45,8 +43,16 @@ namespace PrefabWorldEditor
 		public Text randomWidthValue;
 		public Slider randomSliderDepth;
 		public Text randomDepthValue;
-		//public Slider randomSliderDensity;
-		//public Toggle randomToggleRandom;
+
+		// Staircase Tool Panel
+		public Transform stairsToolPanel;
+		public Slider stairsSliderWidth;
+		public Text stairsWidthValue;
+		public Slider stairsSliderDepth;
+		public Text stairsDepthValue;
+		public Slider stairsSliderHeight;
+		public Text stairsHeightValue;
+		public Toggle stairsToggleCeiling;
 
 		#region SystemMethods
 
@@ -72,15 +78,18 @@ namespace PrefabWorldEditor
 			mazeSliderWidth.maxValue = 18;
 			mazeSliderDepth.minValue = 2;
 			mazeSliderDepth.maxValue = 18;
-			//mazeSliderDensity.minValue = 1;
-			//mazeSliderDensity.maxValue = 10;
 
 			randomSliderWidth.minValue = 2;
 			randomSliderWidth.maxValue = 18;
 			randomSliderDepth.minValue = 2;
 			randomSliderDepth.maxValue = 18;
-			//randomSliderDensity.minValue = 1;
-			//randomSliderDensity.maxValue = 10;
+
+			stairsSliderWidth.minValue  = 2;
+			stairsSliderWidth.maxValue  = 18;
+			stairsSliderDepth.minValue  = 2;
+			stairsSliderDepth.maxValue  = 18;
+			stairsSliderHeight.minValue = 1;
+			stairsSliderHeight.maxValue = 18;
 
 			reset ();
 		}
@@ -95,13 +104,14 @@ namespace PrefabWorldEditor
 
 			mazeSliderWidth.value = 2;
 			mazeSliderDepth.value = 2;
-			//mazeSliderDensity.value  = 1;
-			//mazeToggleRandom.isOn    = false;
 
 			randomSliderWidth.value = 2;
 			randomSliderDepth.value = 2;
-			//randomSliderDensity.value  = 1;
-			//randomToggleRandom.isOn    = false;
+
+			stairsSliderWidth.value  = 2;
+			stairsSliderDepth.value  = 2;
+			stairsSliderHeight.value = 1;
+			stairsToggleCeiling.isOn  = false;
 		}
 
 		//
@@ -110,6 +120,7 @@ namespace PrefabWorldEditor
 			roomToolPanel.gameObject.SetActive (mode == DungeonTool.DungeonPreset.Room);
 			mazeToolPanel.gameObject.SetActive (mode == DungeonTool.DungeonPreset.Maze);
 			randomToolPanel.gameObject.SetActive (mode == DungeonTool.DungeonPreset.Random);
+			stairsToolPanel.gameObject.SetActive (mode == DungeonTool.DungeonPreset.Staircase);
 		}
 
 		//
@@ -136,6 +147,8 @@ namespace PrefabWorldEditor
 			PrefabLevelEditor.Instance.dungeonToolValueChange(3, (roomToggleCeiling.isOn ? 1 : 0));
 		}
 
+		//
+
 		public void onSliderMazeWidthChange(Single value)
 		{
 			mazeWidthValue.text = ((int)mazeSliderWidth.value).ToString ();
@@ -146,14 +159,8 @@ namespace PrefabWorldEditor
 			mazeDepthValue.text = ((int)mazeSliderDepth.value).ToString ();
 			PrefabLevelEditor.Instance.dungeonToolValueChange(1, (int)mazeSliderDepth.value);
 		}
-		/*public void onSliderMazeDensityChange(Single value)
-		{
-			PrefabLevelEditor.Instance.dungeonToolValueChange(2, (int)mazeSliderDensity.value);
-		}
-		public void onToggleMazeRandomChange(Boolean value)
-		{
-			PrefabLevelEditor.Instance.dungeonToolValueChange(3, (mazeToggleRandom.isOn ? 1 : 0));
-		}*/
+
+		//
 
 		public void onSliderRandomWidthChange(Single value)
 		{
@@ -164,6 +171,28 @@ namespace PrefabWorldEditor
 		{
 			randomDepthValue.text = ((int)randomSliderDepth.value).ToString ();
 			PrefabLevelEditor.Instance.dungeonToolValueChange(1, (int)randomSliderDepth.value);
+		}
+
+		//
+
+		public void onSliderStairsWidthChange(Single value)
+		{
+			stairsWidthValue.text = ((int)stairsSliderWidth.value).ToString ();
+			PrefabLevelEditor.Instance.dungeonToolValueChange(0, (int)stairsSliderWidth.value);
+		}
+		public void onSliderStairsDepthChange(Single value)
+		{
+			stairsDepthValue.text = ((int)stairsSliderDepth.value).ToString ();
+			PrefabLevelEditor.Instance.dungeonToolValueChange(1, (int)stairsSliderDepth.value);
+		}
+		public void onSliderStairsHeightChange(Single value)
+		{
+			stairsHeightValue.text = ((int)stairsSliderHeight.value).ToString ();
+			PrefabLevelEditor.Instance.dungeonToolValueChange(2, (int)stairsSliderHeight.value);
+		}
+		public void onToggleStairsCeilingChange(Boolean value)
+		{
+			PrefabLevelEditor.Instance.dungeonToolValueChange(3, (stairsToggleCeiling.isOn ? 1 : 0));
 		}
 
 		#endregion
