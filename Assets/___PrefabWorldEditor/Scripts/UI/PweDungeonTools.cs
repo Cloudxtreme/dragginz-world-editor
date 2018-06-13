@@ -84,9 +84,9 @@ namespace PrefabWorldEditor
 			randomSliderDepth.minValue = 2;
 			randomSliderDepth.maxValue = 18;
 
-			stairsSliderWidth.minValue  = 2;
+			stairsSliderWidth.minValue  = 3;
 			stairsSliderWidth.maxValue  = 18;
-			stairsSliderDepth.minValue  = 2;
+			stairsSliderDepth.minValue  = 3;
 			stairsSliderDepth.maxValue  = 18;
 			stairsSliderHeight.minValue = 1;
 			stairsSliderHeight.maxValue = 18;
@@ -108,8 +108,8 @@ namespace PrefabWorldEditor
 			randomSliderWidth.value = 2;
 			randomSliderDepth.value = 2;
 
-			stairsSliderWidth.value  = 2;
-			stairsSliderDepth.value  = 2;
+			stairsSliderWidth.value  = 3;
+			stairsSliderDepth.value  = 3;
 			stairsSliderHeight.value = 1;
 			stairsToggleCeiling.isOn  = false;
 		}

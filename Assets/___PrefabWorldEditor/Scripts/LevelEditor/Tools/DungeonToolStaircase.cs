@@ -24,6 +24,19 @@ namespace PrefabWorldEditor
 		private PrefabLevelEditor.Part partStairsLower;
 		private PrefabLevelEditor.Part partStairsUpper;
 
+		private struct stairStep
+		{
+			public Vector3Int pos;
+			public float rot;
+			public PrefabLevelEditor.PartList partId;
+
+			public stairStep(Vector3Int p, float r, PrefabLevelEditor.PartList id) {
+				pos = p;
+				rot = r;
+				partId = id;
+			}
+		};
+
 		public DungeonToolStaircase(GameObject container) : base(container)
 		{
 			partFloor    = PrefabLevelEditor.Instance.parts [PrefabLevelEditor.PartList.Dungeon_Floor];
@@ -50,11 +63,52 @@ namespace PrefabWorldEditor
 			int zEnd = zStart + _depth;
 
 			bool isLowerStairs = true;
-			Vector3Int v3NextStairs = new Vector3Int (xStart, 0, zStart);
-			int stairsRotation = 0;
+			Vector3Int v3NextStairs = new Vector3Int (0, 0, 0);
+			int stairsStep = 0;
+			float stairsRotation = 0;
 			bool isStairs = false;
 				
 			int x, z, y;
+
+			// create stair step positions first
+			List<stairStep> stairSteps = new List<stairStep> ();
+			stairStep step;
+			for (y = 0; y < _height; ++y)
+			{
+				// first stairs
+				if (stairsStep == 0)
+				{	// z+
+					step = new stairStep(new Vector3Int (xStart, y, zEnd-2), stairsRotation, partStairsLower.id);
+					stairSteps.Add (step);
+					step = new stairStep(new Vector3Int (xStart, y, zEnd-1), stairsRotation, partStairsUpper.id);
+					stairSteps.Add (step);
+				}
+				else if (stairsStep == 1)
+				{	// x+
+					step = new stairStep(new Vector3Int (xEnd-2, y, zEnd-1), stairsRotation, partStairsLower.id);
+					stairSteps.Add (step);
+					step = new stairStep(new Vector3Int (xEnd-1, y, zEnd-1), stairsRotation, partStairsUpper.id);
+					stairSteps.Add (step);
+				}
+				else if (stairsStep == 2)
+				{	// z-
+					step = new stairStep(new Vector3Int (xEnd-1, y, zStart+1), stairsRotation, partStairsLower.id);
+					stairSteps.Add (step);
+					step = new stairStep(new Vector3Int (xEnd-1, y, zStart), stairsRotation, partStairsUpper.id);
+					stairSteps.Add (step);
+				}
+				else if (stairsStep == 3)
+				{	// x-
+					step = new stairStep(new Vector3Int (xStart+1, y, zStart), stairsRotation, partStairsLower.id);
+					stairSteps.Add (step);
+					step = new stairStep(new Vector3Int (xStart, y, zStart), stairsRotation, partStairsUpper.id);
+					stairSteps.Add (step);
+				}
+
+				stairsStep = (stairsStep < 3 ? stairsStep + 1 : 0);
+				stairsRotation = (stairsRotation < 270 ? stairsRotation + 90 : 0);
+			}
+
 			for (x = xStart; x < xEnd; ++x) {
 				for (z = zStart; z < zEnd; ++z) {
 					for (y = 0; y <= _height; ++y) {
@@ -64,29 +118,70 @@ namespace PrefabWorldEditor
 						isWall = false;
 						isStairs = false;
 
-						if (y == _height)
-						{
+						partId = partFloor.id;
+
+						if (y == _height) {
 							if (!_ceiling) {
 								continue;
 							} else {
 								partId = partFloor.id;
 							}
 						}
+						else if (x == xStart && y == 0 && z == zStart) {
+							partId = partWall.id;
+						}
 						else
 						{
-							if (x == v3NextStairs.x && y == v3NextStairs.y && z == v3NextStairs.z)
+							int s, numStairSteps = stairSteps.Count;
+							for (s = 0; s < numStairSteps; ++s) {
+								if (stairSteps[s].pos.x == x && stairSteps[s].pos.y == y && stairSteps[s].pos.z == z) {
+									step = stairSteps [s];
+									partId = step.partId;
+									stairsRotation = step.rot;
+									isStairs = true;
+									break;
+								}
+							}
+
+							/*if (x == v3NextStairs.x && y == v3NextStairs.y && z == v3NextStairs.z)
 							{
 								partId = isLowerStairs ? partStairsLower.id : partStairsUpper.id;
 								isLowerStairs = !isLowerStairs;
-								if (isLowerStairs) {
+
+								if (isLowerStairs)
+								{
 									v3NextStairs.y++;
-									v3NextStairs.z = zStart;
-								} else {
-									v3NextStairs.z++;
+									stairsStep = (stairsStep < 3 ? stairsStep + 1 : 0);
+
+									if (stairsStep == 0) {
+										v3NextStairs.x = xStart;
+										v3NextStairs.z = zStart;
+									} else if (stairsStep == 1) {
+										v3NextStairs.x = xEnd - 2;
+										v3NextStairs.z = zEnd - 1;
+									} else if (stairsStep == 2) {
+										v3NextStairs.x = xEnd - 1;
+										v3NextStairs.z = zEnd - 2;
+									} else if (stairsStep == 3) {
+										v3NextStairs.x = xEnd - 2;
+										v3NextStairs.z = zStart;
+									}
+								}
+								else
+								{
+									if (stairsStep == 0) {
+										v3NextStairs.z++;
+									} else if (stairsStep == 1) {
+										v3NextStairs.x++;
+									} else if (stairsStep == 2) {
+										v3NextStairs.z--;
+									} else if (stairsStep == 3) {
+										v3NextStairs.x--;
+									}
 								}
 								isStairs = true;
-							}
-							else {
+							}*/
+							if (!isStairs) {
 								if (x > xStart && z > zStart && x < (xEnd - 1) && z < (zEnd - 1)) {
 									if (y > 0) {
 										continue; // no floors on upper floors
@@ -120,9 +215,9 @@ namespace PrefabWorldEditor
 
 							if (isStairs) {
 								go.transform.rotation = Quaternion.Euler (new Vector3 (0, stairsRotation, 0));
-								if (isLowerStairs) {
-									stairsRotation += 90;
-								}
+								//if (isLowerStairs) {
+								//	stairsRotation = (stairsRotation < 270 ? stairsRotation + 90 : 0);
+								//}
 							}
 							else if (isWall) {
 								if (x == xStart && z == (zEnd - 1)) {

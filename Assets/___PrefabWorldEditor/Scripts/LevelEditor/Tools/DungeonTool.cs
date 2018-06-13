@@ -117,9 +117,10 @@ namespace PrefabWorldEditor
 
 			setDungeonPreset (preset);
 
-			//if (preset == DungeonPreset.Staircase) {
-			//	_height = 2;
-			//}
+			if (preset == DungeonPreset.Staircase) {
+				_width  = 3;
+				_depth  = 3;
+			}
 
 			removeAll ();
 			createObjects ();
