@@ -123,6 +123,48 @@ namespace PrefabWorldEditor
 			stairsToolPanel.gameObject.SetActive (mode == DungeonTool.DungeonPreset.Staircase);
 		}
 
+		public void updateWidthValue(int value, DungeonTool.DungeonPreset mode)
+		{
+			if (mode == DungeonTool.DungeonPreset.Room) {
+				roomSliderWidth.value += value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Maze) {
+				mazeSliderWidth.value += value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Random) {
+				randomSliderWidth.value += value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Staircase) {
+				stairsSliderWidth.value += value;
+			}
+		}
+
+		public void updateDepthValue(int value, DungeonTool.DungeonPreset mode)
+		{
+			if (mode == DungeonTool.DungeonPreset.Room) {
+				roomSliderDepth.value += value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Maze) {
+				mazeSliderDepth.value += value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Random) {
+				randomSliderDepth.value += value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Staircase) {
+				stairsSliderDepth.value += value;
+			}
+		}
+
+		public void updateHeightValue(int value, DungeonTool.DungeonPreset mode)
+		{
+			if (mode == DungeonTool.DungeonPreset.Room) {
+				roomSliderHeight.value += value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Staircase) {
+				stairsSliderHeight.value += value;
+			}
+		}
+
 		//
 		// Events
 		//

@@ -521,6 +521,8 @@ namespace PrefabWorldEditor
 			}
 			PweMainMenu.Instance.setPlacementToolButtons (PlacementTool.PlacementMode.None);
 			PwePlacementTools.Instance.showToolPanels (PlacementTool.PlacementMode.None);
+
+			showAssetInfo (_curEditPart);
 		}
 
 		// ------------------------------------------------------------------------
@@ -549,6 +551,8 @@ namespace PrefabWorldEditor
 			}
 			PweMainMenu.Instance.setDungeonToolButtons (DungeonTool.DungeonPreset.None);
 			PweDungeonTools.Instance.showToolPanels (DungeonTool.DungeonPreset.None);
+
+			showAssetInfo (_curEditPart);
 		}
 
 		// ------------------------------------------------------------------------
@@ -571,6 +575,8 @@ namespace PrefabWorldEditor
 			PweDungeonTools.Instance.showToolPanels (preset);
 
 			_curDungeonTool.activate (preset, pos, part);
+
+			showAssetInfo (part);
 		}
 
 		// ------------------------------------------------------------------------
@@ -640,17 +646,29 @@ namespace PrefabWorldEditor
 			//
 			// Mousewheel
 			//
-			if (_curPlacementTool == null && _curDungeonTool == null)
+			if (Input.GetAxis ("Mouse ScrollWheel") != 0)
 			{
-				if (Input.GetAxis ("Mouse ScrollWheel") != 0)
+				if (_timer > _lastMouseWheelUpdate)
 				{
-					if (_timer > _lastMouseWheelUpdate)
-					{
-						_lastMouseWheelUpdate = _timer + 0.2f;
-						float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
+					_lastMouseWheelUpdate = _timer + 0.2f;
+					float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
+
+					if (_curDungeonTool != null) {
+					
+						if (Input.GetKey (KeyCode.Alpha1)) {
+							PweDungeonTools.Instance.updateWidthValue ((int)dir, _curDungeonTool.dungeonPreset);
+						}
+						else if (Input.GetKey (KeyCode.Alpha2)) {
+							PweDungeonTools.Instance.updateDepthValue ((int)dir, _curDungeonTool.dungeonPreset);
+						}
+						else if (Input.GetKey (KeyCode.Alpha3)) {
+							PweDungeonTools.Instance.updateHeightValue ((int)dir, _curDungeonTool.dungeonPreset);
+						}
+					}
+					else if (_curPlacementTool == null) {
+						
 						float multiply = (_curEditPart.type == AssetType.Dungeon ? 90f * dir : 15f * dir);
 
-						// Rotate
 						if (Input.GetKey (KeyCode.X)) {
 							if (_curEditPart.canRotate.x == 1) {
 								_goEditPart.transform.Rotate (Vector3.right * multiply);
@@ -664,7 +682,6 @@ namespace PrefabWorldEditor
 								_goEditPart.transform.Rotate (Vector3.forward * multiply);
 							}
 						}
-						// Scale
 						else if (Input.GetKey (KeyCode.C)) {
 							Vector3 scale = _goEditPart.transform.localScale;
 							scale += new Vector3 (.025f * dir, .025f * dir, .025f * dir);
@@ -864,17 +881,23 @@ namespace PrefabWorldEditor
 
 			if (_assetType == AssetType.Floor) {
 				s = "Press left mouse button + shift key for a 'Floor Fill'!";
-			} else if (_assetType == AssetType.Wall) {
+			}else if (_assetType == AssetType.Wall) {
 				s = "Press left mouse button + shift key for a 'Wall Fill'!";
-			} else {
-				if (part.canRotate != Vector3Int.zero) {
-					s = "Mousewheel + ";
-					s += (part.canRotate.x == 1 ? "'X'" : "");
-					s += (part.canRotate.y == 1 ? "/ 'Y'" : "");
-					s += (part.canRotate.z == 1 ? "/ 'Z'" : "");
-					s += " = rotate object";
+			}
+			else {
+				s = "Mousewheel + ";
+				if (_curDungeonTool != null) {
+					s += "'1'/'2'/'3' = change preset settings";
+				} else {
+					if (part.canRotate != Vector3Int.zero) {
+						s = "Mousewheel + ";
+						s += (part.canRotate.x == 1 ? "'X'" : "");
+						s += (part.canRotate.y == 1 ? "/ 'Y'" : "");
+						s += (part.canRotate.z == 1 ? "/ 'Z'" : "");
+						s += " = rotate object";
+					}
+					s += "\nMousewheel + 'C' = scale object";
 				}
-				s += "\nMousewheel + 'C' = scale object";
 			}
 
 			PweMainMenu.Instance.setSpecialHelpText (s);
