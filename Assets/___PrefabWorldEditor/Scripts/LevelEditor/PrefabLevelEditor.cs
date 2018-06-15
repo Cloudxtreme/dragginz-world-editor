@@ -150,6 +150,9 @@ namespace PrefabWorldEditor
 		private List<DungeonTool> _aDungeonTools;
 		private DungeonTool _curDungeonTool;
 
+		private List<RoomTool> _aRoomTools;
+		private RoomTool _curRoomTool;
+
         private float _rayDistance;
         private Ray _ray;
 		private LayerMask _layermask;
@@ -272,9 +275,13 @@ namespace PrefabWorldEditor
 			_aDungeonTools.Add (new DungeonToolRandom (toolContainer));
 			_aDungeonTools.Add (new DungeonToolStaircase (toolContainer));
 
+			_aRoomTools = new List<RoomTool> ();
+			_aRoomTools.Add (new RoomToolDefault (toolContainer));
+
 			PweMainMenu.Instance.init ();
 			PwePlacementTools.Instance.init ();
 			PweDungeonTools.Instance.init ();
+			PweRoomTools.Instance.init ();
 
 			setNewEditPart(_assetTypeList[_assetType][0]);
 
@@ -322,12 +329,14 @@ namespace PrefabWorldEditor
 				resetSelectedElement ();
 				resetCurPlacementTool ();
 				resetCurDungeonTool ();
+				resetCurRoomTool ();
 
 				PweMainMenu.Instance.setModeButtons (_editMode);
 				PweMainMenu.Instance.showTransformBox (_editMode == EditMode.Transform);
 				PweMainMenu.Instance.showAssetTypeBox (_editMode == EditMode.Place);
-				PweMainMenu.Instance.showPlacementToolBox (_editMode == EditMode.Place && _assetType != AssetType.Dungeon);
+				PweMainMenu.Instance.showPlacementToolBox (_editMode == EditMode.Place && (_assetType == AssetType.Chunk || _assetType == AssetType.Prop));
 				PweMainMenu.Instance.showDungeonToolBox (_editMode == EditMode.Place && _assetType == AssetType.Dungeon);
+				PweMainMenu.Instance.showRoomToolBox (_editMode == EditMode.Place && (_assetType == AssetType.Floor || _assetType == AssetType.Wall));
 
 				if (_editMode == EditMode.Place) {
 					PweMainMenu.Instance.setAssetTypeButtons (_assetType);
@@ -380,11 +389,13 @@ namespace PrefabWorldEditor
 		{
 			_assetType = type;
 
-			PweMainMenu.Instance.showPlacementToolBox (_editMode == EditMode.Place && _assetType != AssetType.Dungeon);
+			PweMainMenu.Instance.showPlacementToolBox (_editMode == EditMode.Place && (_assetType == AssetType.Chunk || _assetType == AssetType.Prop));
 			PweMainMenu.Instance.showDungeonToolBox (_editMode == EditMode.Place && _assetType == AssetType.Dungeon);
+			PweMainMenu.Instance.showRoomToolBox (_editMode == EditMode.Place && (_assetType == AssetType.Floor || _assetType == AssetType.Wall));
 
 			resetCurPlacementTool ();
 			resetCurDungeonTool ();
+			resetCurRoomTool ();
 
 			int index = _assetTypeIndex [_assetType];
 			setNewEditPart(_assetTypeList[_assetType][index]);
@@ -421,14 +432,6 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		public void dungeonToolValueChange(int valueId, int value)
-		{
-			if (_curDungeonTool != null) {
-				_curDungeonTool.update (valueId, value);
-			}
-		}
-
-		// ------------------------------------------------------------------------
 		public void selectDungeonTool(DungeonTool.DungeonPreset preset)
 		{
 			if (_curDungeonTool == null || _curDungeonTool.dungeonPreset != preset)
@@ -441,6 +444,37 @@ namespace PrefabWorldEditor
 						activateDungeonTool (preset, _goEditPart.transform.position, _curEditPart);
 					}
 				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		public void dungeonToolValueChange(int valueId, int value)
+		{
+			if (_curDungeonTool != null) {
+				_curDungeonTool.update (valueId, value);
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		public void selectRoomTool(RoomTool.RoomPattern pattern)
+		{
+			if (_curRoomTool == null || _curRoomTool.roomPattern != pattern)
+			{
+				if (_editMode == EditMode.Place)
+				{
+					if (_curEditPart.type == AssetType.Floor || _curEditPart.type == AssetType.Wall)
+					{
+						activateRoomTool (pattern, _goEditPart.transform.position, _curEditPart);
+					}
+				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		public void roomToolValueChange(int valueId, int value)
+		{
+			if (_curRoomTool != null) {
+				_curRoomTool.update (valueId, value);
 			}
 		}
 
@@ -468,6 +502,8 @@ namespace PrefabWorldEditor
 					resetCurPlacementTool ();
 				} else if (_curDungeonTool != null) {
 					resetCurDungeonTool ();
+				} else if (_curRoomTool != null) {
+					resetCurRoomTool ();
 				}
 				else {
 					setEditMode (EditMode.Transform);
@@ -584,6 +620,36 @@ namespace PrefabWorldEditor
 			showAssetInfo (part);
 		}
 
+		// ------------------------------------------------------------------------
+		private void activateRoomTool(RoomTool.RoomPattern pattern, Vector3 pos, Part part)
+		{
+			if (pattern == RoomTool.RoomPattern.Default) {
+				_curRoomTool = _aRoomTools [0];
+			}
+
+			PweRoomTools.Instance.reset ();
+			PweRoomTools.Instance.showToolPanels (pattern);
+
+			_curRoomTool.activate (pattern, pos, part);
+
+			showAssetInfo (part);
+		}
+
+		// ------------------------------------------------------------------------
+		private void resetCurRoomTool()
+		{
+			if (_curRoomTool != null) {
+				_curRoomTool.reset ();
+				_curRoomTool = null;
+			}
+			PweMainMenu.Instance.setRoomToolButtons (RoomTool.RoomPattern.None);
+			PweRoomTools.Instance.showToolPanels (RoomTool.RoomPattern.None);
+
+			showAssetInfo (_curEditPart);
+		}
+
+		// ------------------------------------------------------------------------
+		//
 		// ------------------------------------------------------------------------
 		private void positionEditPart()
 		{
@@ -744,6 +810,7 @@ namespace PrefabWorldEditor
 				resetSelectedElement ();
 				resetCurPlacementTool ();
 				resetCurDungeonTool ();
+				resetCurRoomTool ();
 				return;
 			}
 
@@ -772,8 +839,9 @@ namespace PrefabWorldEditor
 					PweMainMenu.Instance.showAssetInfoPanel (true);
 					showAssetInfo (_parts [_selectedElement.part]);
 
-					PweMainMenu.Instance.showPlacementToolBox (true);
+					PweMainMenu.Instance.showPlacementToolBox (false);
 					PweMainMenu.Instance.showDungeonToolBox (false);
+					PweMainMenu.Instance.showRoomToolBox (false);
 				}
 			}
 			else
@@ -782,6 +850,7 @@ namespace PrefabWorldEditor
 				resetSelectedElement ();
 				resetCurPlacementTool ();
 				resetCurDungeonTool ();
+				resetCurRoomTool ();
 			}
 
 			setMarkerActive (_selectedElement.go != null);

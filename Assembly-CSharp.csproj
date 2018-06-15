@@ -64,10 +64,13 @@
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolCube.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolMount.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolQuad.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\RoomTool.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\RoomToolDefault.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PweDungeonTools.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PweMainMenu.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PwePlacementTools.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PwePopup.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PweRoomTools.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\UIAssetInfo.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\UISelectionBox.cs" />
      <Compile Include="Assets\__VoxelWorldEditor\Scripts\Assets\AssetFactory.cs" />

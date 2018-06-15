@@ -24,6 +24,8 @@ namespace PrefabWorldEditor
 		public GameObject goAssetTypeSelection;
 		public GameObject goPlacementToolButtons;
 		public GameObject goDungeonToolButtons;
+		public GameObject goRoomToolButtons;
+
 		//public GameObject goItemsSelection;
 		//public GameObject goDigSettings;
 
@@ -67,6 +69,8 @@ namespace PrefabWorldEditor
 		public Button btnDungeonToolMaze;
 		public Button btnDungeonToolRandom;
 		public Button btnDungeonToolStaircase;
+
+		public Button btnRoomToolDefault;
 
 		public Text txtFileInfo;
 		public Text txtLevelName;
@@ -323,6 +327,12 @@ namespace PrefabWorldEditor
 			btnDungeonToolStaircase.interactable = (preset != DungeonTool.DungeonPreset.Staircase);
 		}
 
+		//
+		public void setRoomToolButtons(RoomTool.RoomPattern pattern)
+		{
+			btnRoomToolDefault.interactable = (pattern != RoomTool.RoomPattern.Default);
+		}
+
 		/*public void setMenuPanels(AppState mode)
 		{
 			panelTools.gameObject.SetActive(mode != AppState.Play && mode != AppState.Null);
@@ -363,6 +373,12 @@ namespace PrefabWorldEditor
 		public void showDungeonToolBox(bool state) {
 			if (goDungeonToolButtons != null) {
 				goDungeonToolButtons.SetActive (state);
+			}
+		}
+
+		public void showRoomToolBox(bool state) {
+			if (goRoomToolButtons != null) {
+				goRoomToolButtons.SetActive (state);
 			}
 		}
 
@@ -458,6 +474,13 @@ namespace PrefabWorldEditor
 			PrefabLevelEditor.Instance.selectDungeonTool (preset);
 		}
 
+		// ---------------------------------------------------------------------------------------------
+		private void selectRoomTool(RoomTool.RoomPattern pattern)
+		{
+			setRoomToolButtons (pattern);
+
+			PrefabLevelEditor.Instance.selectRoomTool (pattern);
+		}
 
 		// ---------------------------------------------------------------------------------------------
 		/// <summary>
@@ -888,6 +911,14 @@ namespace PrefabWorldEditor
 			}
 			else if (value == 3) {
 				selectDungeonTool(DungeonTool.DungeonPreset.Staircase);
+			}
+		}
+
+		//
+		public void onSelectRoomTool(int value) {
+
+			if (value == 0) {
+				selectRoomTool(RoomTool.RoomPattern.Default);
 			}
 		}
 
