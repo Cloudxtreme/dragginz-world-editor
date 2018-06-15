@@ -48,6 +48,15 @@ namespace PrefabWorldEditor
 		public Text mountDensityValue;
 		public Toggle mountToggleInverse;
 
+		// Quad Tool Panel
+		public Transform cubeToolPanel;
+		public Slider cubeSliderRadius;
+		public Text cubeRadiusValue;
+		public Slider cubeSliderInterval;
+		public Text cubeIntervalValue;
+		public Slider cubeSliderDensity;
+		public Text cubeDensityValue;
+
 		#region SystemMethods
 
         void Awake() {
@@ -63,30 +72,31 @@ namespace PrefabWorldEditor
 		{
 			circleSliderRadius.minValue   = 1;
 			circleSliderRadius.maxValue   = 10;
-
 			circleSliderInterval.minValue = 2;
 			circleSliderInterval.maxValue = 10;
-
 			circleSliderDensity.minValue  = 1;
 			circleSliderDensity.maxValue  = 10;
 
 			quadSliderRadius.minValue   = 1;
 			quadSliderRadius.maxValue   = 10;
-
 			quadSliderInterval.minValue = 2;
 			quadSliderInterval.maxValue = 10;
-
 			quadSliderDensity.minValue  = 1;
 			quadSliderDensity.maxValue  = 10;
 
 			mountSliderRadius.minValue   = 1;
 			mountSliderRadius.maxValue   = 10;
-
 			mountSliderInterval.minValue = 2;
 			mountSliderInterval.maxValue = 10;
-
 			mountSliderDensity.minValue  = 1;
 			mountSliderDensity.maxValue  = 10;
+
+			cubeSliderRadius.minValue   = 1;
+			cubeSliderRadius.maxValue   = 10;
+			cubeSliderInterval.minValue = 2;
+			cubeSliderInterval.maxValue = 10;
+			cubeSliderDensity.minValue  = 1;
+			cubeSliderDensity.maxValue  = 10;
 
 			reset ();
 		}
@@ -106,6 +116,10 @@ namespace PrefabWorldEditor
 			mountSliderInterval.value  = 2;
 			mountSliderDensity.value   = 1;
 			mountToggleInverse.isOn    = false;
+
+			cubeSliderRadius.value     = 1;
+			cubeSliderInterval.value   = 2;
+			cubeSliderDensity.value    = 1;
 		}
 
 		//
@@ -114,6 +128,7 @@ namespace PrefabWorldEditor
 			circleToolPanel.gameObject.SetActive (mode == PlacementTool.PlacementMode.Circle);
 			quadToolPanel.gameObject.SetActive (mode == PlacementTool.PlacementMode.Quad);
 			mountToolPanel.gameObject.SetActive (mode == PlacementTool.PlacementMode.Mount);
+			cubeToolPanel.gameObject.SetActive (mode == PlacementTool.PlacementMode.Cube);
 		}
 
 		//
@@ -129,6 +144,9 @@ namespace PrefabWorldEditor
 			else if (mode == PlacementTool.PlacementMode.Mount) {
 				mountSliderRadius.value += value;
 			}
+			else if (mode == PlacementTool.PlacementMode.Cube) {
+				cubeSliderRadius.value += value;
+			}
 		}
 
 		public void updateIntervalValue(int value, PlacementTool.PlacementMode mode)
@@ -142,6 +160,9 @@ namespace PrefabWorldEditor
 			else if (mode == PlacementTool.PlacementMode.Mount) {
 				mountSliderInterval.value += value;
 			}
+			else if (mode == PlacementTool.PlacementMode.Cube) {
+				cubeSliderInterval.value += value;
+			}
 		}
 
 		public void updateDensityValue(int value, PlacementTool.PlacementMode mode)
@@ -154,6 +175,9 @@ namespace PrefabWorldEditor
 			}
 			else if (mode == PlacementTool.PlacementMode.Mount) {
 				mountSliderDensity.value += value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Cube) {
+				cubeSliderDensity.value += value;
 			}
 		}
 
@@ -215,6 +239,24 @@ namespace PrefabWorldEditor
 		public void onToggleMountInverseChange(Boolean value)
 		{
 			PrefabLevelEditor.Instance.placementToolValueChange(3, (mountToggleInverse.isOn ? 1 : 0));
+		}
+
+		//
+
+		public void onSliderCubeRadiusChange(Single value)
+		{
+			cubeRadiusValue.text = ((int)cubeSliderRadius.value).ToString ();
+			PrefabLevelEditor.Instance.placementToolValueChange(0, (int)cubeSliderRadius.value);
+		}
+		public void onSliderCubeIntervalChange(Single value)
+		{
+			cubeIntervalValue.text = ((int)cubeSliderInterval.value).ToString ();
+			PrefabLevelEditor.Instance.placementToolValueChange(1, (int)cubeSliderInterval.value);
+		}
+		public void onSliderCubeDensityChange(Single value)
+		{
+			cubeDensityValue.text = ((int)cubeSliderDensity.value).ToString ();
+			PrefabLevelEditor.Instance.placementToolValueChange(2, (int)cubeSliderDensity.value);
 		}
 
 		#endregion

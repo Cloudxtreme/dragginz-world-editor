@@ -61,10 +61,12 @@ namespace PrefabWorldEditor
 		public Button btnPlacementToolCircle;
 		public Button btnPlacementToolQuad;
 		public Button btnPlacementToolMount;
+		public Button btnPlacementToolCube;
 
 		public Button btnDungeonToolRoom;
 		public Button btnDungeonToolMaze;
 		public Button btnDungeonToolRandom;
+		public Button btnDungeonToolStaircase;
 
 		public Text txtFileInfo;
 		public Text txtLevelName;
@@ -308,15 +310,17 @@ namespace PrefabWorldEditor
 		{
 			btnPlacementToolCircle.interactable = (mode != PlacementTool.PlacementMode.Circle);
 			btnPlacementToolQuad.interactable   = (mode != PlacementTool.PlacementMode.Quad);
-			btnPlacementToolMount.interactable   = (mode != PlacementTool.PlacementMode.Mount);
+			btnPlacementToolMount.interactable  = (mode != PlacementTool.PlacementMode.Mount);
+			btnPlacementToolCube.interactable   = (mode != PlacementTool.PlacementMode.Cube);
 		}
 
 		//
 		public void setDungeonToolButtons(DungeonTool.DungeonPreset preset)
 		{
-			btnDungeonToolRoom.interactable = (preset != DungeonTool.DungeonPreset.Room);
-			btnDungeonToolMaze.interactable = (preset != DungeonTool.DungeonPreset.Maze);
-			btnDungeonToolRandom.interactable = (preset != DungeonTool.DungeonPreset.Random);
+			btnDungeonToolRoom.interactable      = (preset != DungeonTool.DungeonPreset.Room);
+			btnDungeonToolMaze.interactable      = (preset != DungeonTool.DungeonPreset.Maze);
+			btnDungeonToolRandom.interactable    = (preset != DungeonTool.DungeonPreset.Random);
+			btnDungeonToolStaircase.interactable = (preset != DungeonTool.DungeonPreset.Staircase);
 		}
 
 		/*public void setMenuPanels(AppState mode)
@@ -864,6 +868,9 @@ namespace PrefabWorldEditor
 			}
 			else if (value == 2) {
 				selectPlacementTool(PlacementTool.PlacementMode.Mount);
+			}
+			else if (value == 3) {
+				selectPlacementTool(PlacementTool.PlacementMode.Cube);
 			}
 		}
 

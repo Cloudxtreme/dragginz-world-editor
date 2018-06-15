@@ -20,7 +20,8 @@ namespace PrefabWorldEditor
 			None,
 			Circle,
 			Quad,
-			Mount
+			Mount,
+			Cube
 		};
 
 		private static bool _initialised = false;
@@ -29,7 +30,7 @@ namespace PrefabWorldEditor
 
 		protected static GameObject _container;
 
-		protected static List<List<GameObject>> _gameObjects;
+		protected static List<PrefabLevelEditor.LevelElement> _elements;
 
 		protected static PrefabLevelEditor.Part _curPart;
 
@@ -54,8 +55,8 @@ namespace PrefabWorldEditor
 			get { return _inverse; }
 		}
 
-		public List<List<GameObject>> gameObjects {
-			get { return _gameObjects; }
+		public List<PrefabLevelEditor.LevelElement> elements {
+			get { return _elements; }
 		}
 
 		#endregion
@@ -71,7 +72,7 @@ namespace PrefabWorldEditor
 
 				_container = container;
 
-				_gameObjects = new List<List<GameObject>> ();
+				_elements = new List<PrefabLevelEditor.LevelElement> ();
 
 				reset ();
 			}
@@ -86,7 +87,7 @@ namespace PrefabWorldEditor
 				GameObject.Destroy(childTransform.gameObject);
 			}
 
-			_gameObjects.Clear ();
+			_elements.Clear ();
 
 			_radius   = 1;
 			_interval = 2;
@@ -123,27 +124,11 @@ namespace PrefabWorldEditor
 			}
 
 			removeAll ();
-
-			if (_gameObjects.Count < _interval) {
-				while (_gameObjects.Count < _interval) {
-					createStep ();
-				}
-			} else if (_gameObjects.Count > _interval) {
-				while (_gameObjects.Count > _interval) {
-					removeLastStep ();
-				}
-			}
-
-			int i;
-			for (i = 1; i < _interval; ++i) {
-				if (_gameObjects [i].Count <= 0) {
-					createObjects (i);
-				}
-			}	
+			createObjects ();
 		}
 
 		// ------------------------------------------------------------------------
-		public virtual void createObjects(int step)
+		public virtual void createObjects() //int step)
 		{
 			// OVERRIDE ME
 		}
@@ -172,35 +157,13 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		// Protected Methods
 		// ------------------------------------------------------------------------
-		protected void createStep()
-		{
-			_gameObjects.Add (new List<GameObject> ());
-		}
-
-		// ------------------------------------------------------------------------
-		protected void removeLastStep()
-		{
-			int count = _gameObjects.Count;
-			if (count > 0) {
-
-				int i, len = _gameObjects [count-1].Count;
-				for (i = 0; i < len; ++i) {
-					GameObject.Destroy (_gameObjects [count-1][i]);
-				}
-
-				_gameObjects [count-1].Clear ();
-				_gameObjects.RemoveAt (count-1);
-			}
-		}
-
-		// ------------------------------------------------------------------------
 		protected void removeAll ()
 		{
 			foreach (Transform childTransform in _container.transform) {
 				GameObject.Destroy(childTransform.gameObject);
 			}
 
-			_gameObjects.Clear ();
+			_elements.Clear ();
 		}
 	}
 }

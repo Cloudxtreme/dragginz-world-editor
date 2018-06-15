@@ -22,34 +22,53 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		public override void createObjects(int step)
+		public override void createObjects() //int step)
 		{
-			float radius = (float)_radius * (float)(step);
-			float height = (float)(_gameObjects.Count - step) * 0.5f;
-			if (_inverse) {
-				height = (float)step * 0.5f;
-			}
-
 			GameObject go;
-			int i, len = (5 + step) * _density;
-			for (i = 0; i < len; ++i)
+			int i, len = (5 + _interval) * _density;
+			for (i = 0; i < _interval; ++i)
 			{
-				float angle = (float)i * Mathf.PI * 2f / (float)len;
-				Vector3 pos = new Vector3 (Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius;
-				pos.y = height;
-
-				go = PrefabLevelEditor.Instance.createPartAt (_curPart.id, 0, 0, 0);
-				if (go != null)
-				{
-					go.name = "temp_part_" + _container.transform.childCount.ToString();
-					go.transform.SetParent(_container.transform);
-					go.transform.localPosition = pos;
-
-					PrefabLevelEditor.Instance.setMeshCollider (go, false);
-					PrefabLevelEditor.Instance.setRigidBody (go, false);
-
-					_gameObjects [step].Add (go);
+				float radius = (float)_radius * (float)(i);
+				float height = (float)((_interval-1) - i) * .5f;
+				if (_inverse) {
+					height = (float)i * .5f;
 				}
+
+				// first element is center element
+				if (i == 0) {
+					createElement (new Vector3 (0, height, 0));
+					continue;
+				}
+
+				int j, steps = (3 + i * 2) * _density;
+				for (j = 0; j < steps; ++j)
+				{
+					float angle = (float)j * Mathf.PI * 2f / (float)steps;
+					Vector3 pos = new Vector3 (Mathf.Cos (angle), height, Mathf.Sin (angle)) * radius;
+
+					createElement (pos);
+				}
+			}
+		}
+
+		//
+		private void createElement(Vector3 pos) {
+
+			GameObject go = PrefabLevelEditor.Instance.createPartAt (_curPart.id, 0, 0, 0);
+			if (go != null)
+			{
+				go.name = "temp_part_" + _container.transform.childCount.ToString ();
+				go.transform.SetParent (_container.transform);
+				go.transform.localPosition = pos;
+
+				PrefabLevelEditor.Instance.setMeshCollider (go, false);
+				PrefabLevelEditor.Instance.setRigidBody (go, false);
+
+				PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
+				element.go = go;
+				element.part = _curPart.id;
+
+				_elements.Add (element);
 			}
 		}
 	}

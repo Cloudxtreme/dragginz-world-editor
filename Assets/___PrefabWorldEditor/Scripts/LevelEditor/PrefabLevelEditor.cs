@@ -264,6 +264,7 @@ namespace PrefabWorldEditor
 			_aPlacementTools.Add (new PlacementToolCircle (toolContainer));
 			_aPlacementTools.Add (new PlacementToolQuad (toolContainer));
 			_aPlacementTools.Add (new PlacementToolMount (toolContainer));
+			_aPlacementTools.Add (new PlacementToolCube (toolContainer));
 
 			_aDungeonTools = new List<DungeonTool> ();
 			_aDungeonTools.Add (new DungeonToolRoom (toolContainer));
@@ -532,8 +533,10 @@ namespace PrefabWorldEditor
 				_curPlacementTool = _aPlacementTools [0];
 			} else if (mode == PlacementTool.PlacementMode.Quad) {
 				_curPlacementTool = _aPlacementTools [1];
-			} else {
+			} else if (mode == PlacementTool.PlacementMode.Mount) {
 				_curPlacementTool = _aPlacementTools [2];
+			} else {
+				_curPlacementTool = _aPlacementTools [3];
 			}
 
 			PwePlacementTools.Instance.reset ();
@@ -1010,7 +1013,7 @@ namespace PrefabWorldEditor
 				}
 			}
 
-			if (_curDungeonTool == null)
+			if (_curPlacementTool == null && _curDungeonTool == null)
 			{
 				LevelElement element = new LevelElement ();
 				element.part = _curEditPart.id;
@@ -1043,25 +1046,22 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void placePattern()
 		{
-			int i, len = _curPlacementTool.gameObjects.Count;
+			int i, len = _curPlacementTool.elements.Count;
 			for (i = 0; i < len; ++i) {
-				int j, len2 = _curPlacementTool.gameObjects [i].Count;
-				for (j = 0; j < len2; ++j) {
 
-					GameObject go = _curPlacementTool.gameObjects [i] [j];
-					if (go != null) {
-						go.transform.SetParent (_container);
-						go.name = "part_" + (_iCounter++).ToString ();
+				GameObject go = _curPlacementTool.elements [i].go;
+				if (go != null) {
+					go.transform.SetParent (_container);
+					go.name = "part_" + (_iCounter++).ToString ();
 
-						setMeshCollider (go, true);
-						setRigidBody (go, _curEditPart.usesGravity);
+					setMeshCollider (go, true);
+					setRigidBody (go, _curEditPart.usesGravity);
 
-						LevelElement elementTool = new LevelElement ();
-						elementTool.part = _curEditPart.id;
-						elementTool.go = go;
+					LevelElement elementTool = new LevelElement ();
+					elementTool.part = _curEditPart.id;
+					elementTool.go = go;
 
-						_levelElements.Add (go.name, elementTool);
-					}
+					_levelElements.Add (go.name, elementTool);
 				}
 			}
 		}

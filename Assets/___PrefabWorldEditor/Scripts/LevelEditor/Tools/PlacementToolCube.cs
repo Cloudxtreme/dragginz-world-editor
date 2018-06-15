@@ -14,35 +14,53 @@ using AssetsShared;
 
 namespace PrefabWorldEditor
 {
-	public class PlacementToolCircle : PlacementTool
+	public class PlacementToolCube : PlacementTool
     {
-		public PlacementToolCircle(GameObject container) : base(container)
+		public PlacementToolCube(GameObject container) : base(container)
 		{
 			//
 		}
 
 		// ------------------------------------------------------------------------
-		public override void createObjects() //int step)
+		public override void createObjects()
 		{
 			GameObject go;
+
 			int i;
-			for (i = 0; i < _interval; ++i)
-			{
+			for (i = 0; i < _interval; ++i) {
+
 				// first element is center element
 				if (i == 0) {
 					createElement (Vector3.zero);
 					continue;
 				}
 
-				float radius = (float)_radius * (float)(i);
+				// create rings around center
+				int steps = (2 + i) * _density;
 
-				int j, steps = (3 + i * 2) * _density;
-				for (j = 0; j < steps; ++j)
-				{
-					float angle = (float)j * Mathf.PI * 2f / (float)steps;
-					Vector3 pos = new Vector3 (Mathf.Cos (angle), 0, Mathf.Sin (angle)) * radius;
+				float size = (float)i * (float)_radius;
+				float start = size / 2 * -1;
+				float end = start + size;
+				float distance = size / (float)(steps-1);
 
-					createElement (pos);
+				int x, z, y;
+				for (x = 0; x < steps; ++x) {
+					for (z = 0; z < steps; ++z) {
+						for (y = 0; y < steps; ++y) {
+
+							if (x > 0 && x < (steps - 1) && z > 0 && z < (steps - 1) && y > 0 && y < (steps - 1)) {
+								continue;
+							}
+
+							float xPos = start + (float)x * distance;
+							float zPos = start + (float)z * distance;
+							float yPos = (float)y * distance;
+
+							Vector3 pos = new Vector3 (xPos, yPos, zPos);
+
+							createElement (pos);
+						}
+					}
 				}
 			}
 		}

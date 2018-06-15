@@ -61,6 +61,7 @@
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonToolStaircase.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementTool.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolCircle.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolCube.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolMount.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolQuad.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PweDungeonTools.cs" />
