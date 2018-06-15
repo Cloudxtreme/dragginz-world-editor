@@ -540,6 +540,8 @@ namespace PrefabWorldEditor
 			PwePlacementTools.Instance.showToolPanels (mode);
 
 			_curPlacementTool.activate (mode, pos, part);
+
+			showAssetInfo (part);
 		}
 
 		// ------------------------------------------------------------------------
@@ -657,15 +659,25 @@ namespace PrefabWorldEditor
 					
 						if (Input.GetKey (KeyCode.Alpha1)) {
 							PweDungeonTools.Instance.updateWidthValue ((int)dir, _curDungeonTool.dungeonPreset);
-						}
-						else if (Input.GetKey (KeyCode.Alpha2)) {
+						} else if (Input.GetKey (KeyCode.Alpha2)) {
 							PweDungeonTools.Instance.updateDepthValue ((int)dir, _curDungeonTool.dungeonPreset);
-						}
-						else if (Input.GetKey (KeyCode.Alpha3)) {
+						} else if (Input.GetKey (KeyCode.Alpha3)) {
 							PweDungeonTools.Instance.updateHeightValue ((int)dir, _curDungeonTool.dungeonPreset);
 						}
 					}
-					else if (_curPlacementTool == null) {
+					else if (_curPlacementTool != null) {
+						
+						if (Input.GetKey (KeyCode.Alpha1)) {
+							PwePlacementTools.Instance.updateRadiusValue ((int)dir, _curPlacementTool.placementMode);
+						}
+						else if (Input.GetKey (KeyCode.Alpha2)) {
+							PwePlacementTools.Instance.updateIntervalValue ((int)dir, _curPlacementTool.placementMode);
+						}
+						else if (Input.GetKey (KeyCode.Alpha3)) {
+							PwePlacementTools.Instance.updateDensityValue ((int)dir, _curPlacementTool.placementMode);
+						}
+					}
+					else {
 						
 						float multiply = (_curEditPart.type == AssetType.Dungeon ? 90f * dir : 15f * dir);
 
@@ -888,7 +900,10 @@ namespace PrefabWorldEditor
 				s = "Mousewheel + ";
 				if (_curDungeonTool != null) {
 					s += "'1'/'2'/'3' = change preset settings";
-				} else {
+				} else if (_curPlacementTool != null) {
+					s += "'1'/'2'/'3' = change pattern settings";
+				}
+				else {
 					if (part.canRotate != Vector3Int.zero) {
 						s = "Mousewheel + ";
 						s += (part.canRotate.x == 1 ? "'X'" : "");

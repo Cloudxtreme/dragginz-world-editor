@@ -89,12 +89,10 @@ namespace PrefabWorldEditor
 			_gameObjects.Clear ();
 
 			_radius   = 1;
-			_interval = 1;
+			_interval = 2;
 			_density  = 1;
 
 			_inverse = false;
-
-			//_step = 0;
 
 			setPlacementMode (PlacementMode.None);
 		}
@@ -107,6 +105,8 @@ namespace PrefabWorldEditor
 			_curPart = part;
 
 			setPlacementMode (mode);
+
+			update (-1, -1);
 		}
 
 		// ------------------------------------------------------------------------
@@ -114,17 +114,15 @@ namespace PrefabWorldEditor
 		{
 			if (valueId == 0) {
 				_radius = value;
-				removeAll ();
 			} else if (valueId == 1) {
 				_interval = value;
-				removeAll ();
 			} else if (valueId == 2) {
 				_density = value;
-				removeAll ();
 			} else if (valueId == 3) {
 				_inverse = (value == 1);
-				removeAll ();
 			}
+
+			removeAll ();
 
 			if (_gameObjects.Count < _interval) {
 				while (_gameObjects.Count < _interval) {
