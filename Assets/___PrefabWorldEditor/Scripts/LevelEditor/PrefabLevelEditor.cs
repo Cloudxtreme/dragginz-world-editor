@@ -131,6 +131,10 @@ namespace PrefabWorldEditor
 		private Dictionary<string, LevelElement> _levelElements;
 		private int _iCounter;
 
+		private List<List<GameObject>> _aElementGroups;
+		private int _iSelectedGroupIndex;
+		private bool _groupEventHandlerSet;
+
 		private Part _curEditPart;
         private GameObject _goEditPart;
         private Vector3 _v3EditPartPos;
@@ -249,6 +253,10 @@ namespace PrefabWorldEditor
 			_levelElements = new Dictionary<string, LevelElement>();
 			_iCounter = 0;
 
+			_aElementGroups = new List<List<GameObject>> ();
+			_iSelectedGroupIndex = -1;
+			_groupEventHandlerSet = false;
+
 			_listOfChildren = new List<GameObject> ();
 
             _v3EditPartPos = Vector3.zero;
@@ -314,6 +322,29 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		// Public Methods
 		// ------------------------------------------------------------------------
+		public void clearLevel()
+		{
+			setNewEditPart(_assetTypeList[_assetType][0]); // reset to floor tile
+			setEditMode(EditMode.None);
+
+			PweMainMenu.Instance.popup.showPopup (Globals.PopupMode.Confirmation, "Clear Level", "Are you sure?", clearLevelConfirm);
+		}
+
+		//
+		private void clearLevelConfirm(int buttonId) {
+
+			PweMainMenu.Instance.popup.hide();
+			if (buttonId == 1)
+			{
+				foreach (KeyValuePair<string, LevelElement> element in _levelElements) {
+					GameObject.Destroy (element.Value.go);
+				}
+				_levelElements.Clear ();
+				_aElementGroups.Clear ();
+			}
+		}
+
+		// ------------------------------------------------------------------------
 		public void setEditMode(EditMode mode)
 		{
 			if (mode != _editMode) {
@@ -347,11 +378,16 @@ namespace PrefabWorldEditor
 				playerEdit.gameObject.SetActive (_editMode != EditMode.Play);
 				playerPlay.gameObject.SetActive (!playerEdit.gameObject.activeSelf);
 
-				_goEditPart.SetActive (_editMode == EditMode.Place);
-				setMarkerActive (_goEditPart.activeSelf);
-
-				if (_goEditPart.activeSelf) {
-					setMarkerScale (_curEditPart);
+				if (_goEditPart != null)
+				{
+					_goEditPart.SetActive (_editMode == EditMode.Place);
+					setMarkerActive (_goEditPart.activeSelf);
+					if (_goEditPart.activeSelf) {
+						setMarkerScale (_curEditPart);
+					}
+				}
+				else {
+					setMarkerActive (false);
 				}
 
 				// Instructions
@@ -361,6 +397,7 @@ namespace PrefabWorldEditor
 					PweMainMenu.Instance.setInstructionsText ("Press Esc to exit play mode");
 				} else if (_editMode == EditMode.Transform) {
 					PweMainMenu.Instance.setInstructionsText ("Click object to select");
+					PweMainMenu.Instance.setSpecialHelpText ("Shift+Click = Select group of objects");
 				} else {
 					PweMainMenu.Instance.setInstructionsText ("");
 				}
@@ -378,6 +415,13 @@ namespace PrefabWorldEditor
 			}
 			if (gizmoRotateScript.gameObject.activeSelf && gizmoRotateScript.rotateTarget == null) {
 				gizmoRotateScript.gameObject.SetActive (false);
+			}
+
+			if (gizmoTranslateScript.gameObject.activeSelf) {
+				if (!_groupEventHandlerSet) {
+					gizmoTranslateScript.positionChanged += onSelectedObjectPositionChanged;
+					_groupEventHandlerSet = true;
+				}
 			}
 		}
 
@@ -528,7 +572,7 @@ namespace PrefabWorldEditor
 				{
 					if (!EventSystem.current.IsPointerOverGameObject ()) {
 						if (_goHit != null) {
-							selectElement (_goHit.transform); //.parent);
+							selectElement (_goHit.transform);
 						}
 					}
 				}
@@ -543,6 +587,26 @@ namespace PrefabWorldEditor
 			else if (_editMode == EditMode.Place)
 			{
 				positionEditPart ();
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void onSelectedObjectPositionChanged(Vector3 posChange) {
+
+			if (_iSelectedGroupIndex != -1) {
+				if (posChange != Vector3.zero) {
+
+					//Debug.Log("onSelectedObjectPositionChanged - posChange: "+posChange);
+
+					Vector3 pos;
+					int i, len = _aElementGroups [_iSelectedGroupIndex].Count;
+					for (i = 0; i < len; ++i) {
+						if (_aElementGroups [_iSelectedGroupIndex] [i] != _selectedElement.go) {
+							pos = _aElementGroups [_iSelectedGroupIndex] [i].transform.position + posChange;
+							_aElementGroups [_iSelectedGroupIndex] [i].transform.position = pos;
+						}
+					}
+				}
 			}
 		}
 
@@ -809,6 +873,8 @@ namespace PrefabWorldEditor
 				return;
 			}
 
+			_iSelectedGroupIndex = -1;
+
 			Transform trfmParent = trfmHit;
 
 			while (trfmParent.parent != null && trfmParent.tag != "PartContainer") {
@@ -827,6 +893,15 @@ namespace PrefabWorldEditor
 
 			if (_levelElements.ContainsKey (trfmParent.gameObject.name))
 			{
+				bool isShift = (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift));
+
+				// group select
+				if (isShift) {
+					_iSelectedGroupIndex = findElementInGroup (trfmParent.gameObject);
+					Debug.Log ("_iSelectedGroupIndex: "+_iSelectedGroupIndex);
+				}
+
+				// single object select
 				if (_selectedElement.go != trfmParent.gameObject)
 				{
 					resetElementComponents ();
@@ -865,6 +940,25 @@ namespace PrefabWorldEditor
 			}
 
 			setMarkerActive (_selectedElement.go != null);
+		}
+
+		// ------------------------------------------------------------------------
+		private int findElementInGroup(GameObject go)
+		{
+			int index = -1;
+			int i, len = _aElementGroups.Count;
+			for (i = 0; i < len; ++i) {
+				int j, len2 = _aElementGroups[i].Count;
+				for (j = 0; j < len2; ++j) {
+					if (_aElementGroups [i] [j] == go) {
+						index = i;
+						i = len;
+						break;
+					}
+				}
+			}
+
+			return index;
 		}
 
 		// ------------------------------------------------------------------------
@@ -916,6 +1010,7 @@ namespace PrefabWorldEditor
 				}
 				Destroy (_selectedElement.go);
 				_selectedElement.go = null;
+				_iSelectedGroupIndex = -1;
 			}
 
 			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
@@ -1131,6 +1226,8 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void placePattern()
 		{
+			List<GameObject> aGOs = new List<GameObject> ();
+
 			int i, len = _curPlacementTool.elements.Count;
 			for (i = 0; i < len; ++i) {
 
@@ -1147,13 +1244,21 @@ namespace PrefabWorldEditor
 					elementTool.go = go;
 
 					_levelElements.Add (go.name, elementTool);
+
+					aGOs.Add (go);
 				}
+			}
+
+			if (aGOs.Count > 0) {
+				_aElementGroups.Add (aGOs);
 			}
 		}
 
 		// ------------------------------------------------------------------------
 		private void placeDungeon()
 		{
+			List<GameObject> aGOs = new List<GameObject> ();
+
 			int i, len = _curDungeonTool.dungeonElements.Count;
 			for (i = 0; i < len; ++i) {
 
@@ -1170,13 +1275,21 @@ namespace PrefabWorldEditor
 					elementTool.go = go;
 
 					_levelElements.Add (go.name, elementTool);
+
+					aGOs.Add (go);
 				}
+			}
+
+			if (aGOs.Count > 0) {
+				_aElementGroups.Add (aGOs);
 			}
 		}
 
 		// ------------------------------------------------------------------------
 		private void placeRoom()
 		{
+			List<GameObject> aGOs = new List<GameObject> ();
+
 			int i, len = _curRoomTool.roomElements.Count;
 			for (i = 0; i < len; ++i) {
 
@@ -1193,7 +1306,13 @@ namespace PrefabWorldEditor
 					elementTool.go = go;
 
 					_levelElements.Add (go.name, elementTool);
+
+					aGOs.Add (go);
 				}
+			}
+
+			if (aGOs.Count > 0) {
+				_aElementGroups.Add (aGOs);
 			}
 		}
 
@@ -1361,6 +1480,8 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void resetSelectedElement()
 		{
+			_iSelectedGroupIndex = -1;
+
 			_selectedElement = new LevelElement();
 			_selectedElement.part = PartList.End_Of_List;
 
@@ -1369,6 +1490,11 @@ namespace PrefabWorldEditor
 
 			gizmoTranslateScript.translateTarget = null;
 			gizmoTranslateScript.gameObject.SetActive (false);
+
+			if (_groupEventHandlerSet) {
+				gizmoTranslateScript.positionChanged -= onSelectedObjectPositionChanged;
+				_groupEventHandlerSet = false;
+			}
 
 			gizmoRotateScript.rotateTarget = null;
 			gizmoRotateScript.gameObject.SetActive (false);

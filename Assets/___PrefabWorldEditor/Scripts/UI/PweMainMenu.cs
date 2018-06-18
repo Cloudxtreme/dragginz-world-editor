@@ -44,6 +44,7 @@ namespace PrefabWorldEditor
 		public Button btnModePlay;
 		public Button btnModeBuild;
 		public Button btnModeSelect;
+		public Button btnModeClear;
 		public Button btnUNDO;
 
 		public Image imgMaterialHilight;
@@ -290,6 +291,9 @@ namespace PrefabWorldEditor
 		public void onButtonModeSelectClicked() {
 			PrefabLevelEditor.Instance.setEditMode(PrefabLevelEditor.EditMode.Transform);
 		}
+		public void onButtonModeClearClicked() {
+			PrefabLevelEditor.Instance.clearLevel();
+		}
 
 		//
 		public void setModeButtons(PrefabLevelEditor.EditMode mode)
@@ -297,6 +301,7 @@ namespace PrefabWorldEditor
 			btnModePlay.interactable   = (mode != PrefabLevelEditor.EditMode.Play);
 			btnModeBuild.interactable  = (mode != PrefabLevelEditor.EditMode.Place);
 			btnModeSelect.interactable = (mode != PrefabLevelEditor.EditMode.Transform);
+			btnModeClear.interactable  = (mode != PrefabLevelEditor.EditMode.Play);
 		}
 
 		//

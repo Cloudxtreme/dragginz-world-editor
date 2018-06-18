@@ -15,7 +15,13 @@ using System.Collections;
 /// </version>
 public class GizmoTranslateScript : MonoBehaviour {
 
-    /// <summary>
+	/// <summary>
+	/// Event handler which can be used to handle a position changed event.
+	/// </summary>
+	public delegate void PositionChangedHandler(Vector3 v3PosChange);
+	public event PositionChangedHandler positionChanged;
+
+	/// <summary>
     ///     X axis of gizmo
     /// </summary>
     public GameObject xAxisObject;
@@ -39,6 +45,8 @@ public class GizmoTranslateScript : MonoBehaviour {
     ///     Array of detector scripts stored as [x, y, z]
     /// </summary>
     private GizmoClickDetection[] detectors;
+
+	private Vector3 lastPos;
 
     /// <summary>
     ///     On wake up
@@ -70,6 +78,8 @@ public class GizmoTranslateScript : MonoBehaviour {
     public void Update() {
 
 		transform.forward = translateTarget.transform.forward;
+
+		lastPos = translateTarget.transform.position;
 
         for (int i = 0; i < 3; i++) {
             if (Input.GetMouseButton(0) && detectors[i].pressing) {
@@ -160,6 +170,10 @@ public class GizmoTranslateScript : MonoBehaviour {
 
                 // Move the gizmo to match the target position
                 transform.position = translateTarget.transform.position;
+
+				if (positionChanged != null) {
+					positionChanged (transform.position - lastPos);
+				}
 
                 break;
             }
