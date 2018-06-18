@@ -62,8 +62,6 @@ namespace PrefabWorldEditor
 			int zStart = _depth / 2 * -1;
 			int zEnd = zStart + _depth;
 
-			bool isLowerStairs = true;
-			Vector3Int v3NextStairs = new Vector3Int (0, 0, 0);
 			int stairsStep = 0;
 			float stairsRotation = 0;
 			bool isStairs = false;
@@ -143,44 +141,6 @@ namespace PrefabWorldEditor
 								}
 							}
 
-							/*if (x == v3NextStairs.x && y == v3NextStairs.y && z == v3NextStairs.z)
-							{
-								partId = isLowerStairs ? partStairsLower.id : partStairsUpper.id;
-								isLowerStairs = !isLowerStairs;
-
-								if (isLowerStairs)
-								{
-									v3NextStairs.y++;
-									stairsStep = (stairsStep < 3 ? stairsStep + 1 : 0);
-
-									if (stairsStep == 0) {
-										v3NextStairs.x = xStart;
-										v3NextStairs.z = zStart;
-									} else if (stairsStep == 1) {
-										v3NextStairs.x = xEnd - 2;
-										v3NextStairs.z = zEnd - 1;
-									} else if (stairsStep == 2) {
-										v3NextStairs.x = xEnd - 1;
-										v3NextStairs.z = zEnd - 2;
-									} else if (stairsStep == 3) {
-										v3NextStairs.x = xEnd - 2;
-										v3NextStairs.z = zStart;
-									}
-								}
-								else
-								{
-									if (stairsStep == 0) {
-										v3NextStairs.z++;
-									} else if (stairsStep == 1) {
-										v3NextStairs.x++;
-									} else if (stairsStep == 2) {
-										v3NextStairs.z--;
-									} else if (stairsStep == 3) {
-										v3NextStairs.x--;
-									}
-								}
-								isStairs = true;
-							}*/
 							if (!isStairs) {
 								if (x > xStart && z > zStart && x < (xEnd - 1) && z < (zEnd - 1)) {
 									if (y > 0) {
@@ -215,9 +175,6 @@ namespace PrefabWorldEditor
 
 							if (isStairs) {
 								go.transform.rotation = Quaternion.Euler (new Vector3 (0, stairsRotation, 0));
-								//if (isLowerStairs) {
-								//	stairsRotation = (stairsRotation < 270 ? stairsRotation + 90 : 0);
-								//}
 							}
 							else if (isWall) {
 								if (x == xStart && z == (zEnd - 1)) {

@@ -23,71 +23,84 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		public override void createObjects()
 		{
-			GameObject go;
-			PrefabLevelEditor.PartList partId;
+			if (_curPart.type == PrefabLevelEditor.AssetType.Floor) {
+				createFloor ();
+			} else {
+				if (_curPart.extra == "Z") {
+					createWallZ ();
+				} else {
+					createWallX ();
+				}
+			}
+		}
 
-			float distance = 2f;//_cubeSize;
-			bool isWall = false;
-
+		// ------------------------------------------------------------------------
+		private void createFloor()
+		{
 			int xStart = _width / 2 * -1;
 			int xEnd = xStart + _width;
-			int zStart = _depth / 2 * -1;
-			int zEnd = zStart + _depth;
+			int zStart = _height / 2 * -1;
+			int zEnd = zStart + _height;
 
-			/*int x, z;
+			int x, z;
 			for (x = xStart; x < xEnd; ++x) {
 				for (z = zStart; z < zEnd; ++z) {
-
-					Vector3 pos = new Vector3 (x * distance, 0, z * distance);
-
-					isWall = false;
-					if (x > xStart && z > zStart && x < (xEnd - 1) && z < (zEnd - 1)) {
-						partId = partTurn.id;
-					} else {
-						if ((x == xStart && z == zStart) || (x == (xEnd - 1) && z == (zEnd - 1)) || (x == xStart && z == (zEnd - 1)) || (x == (xEnd - 1) && z == zStart)) {
-							partId = partCorner.id;
-						} else {
-							partId = partWall.id;
-						}
-						isWall = true;
-					}
-
-					go = PrefabLevelEditor.Instance.createPartAt (partId, 0, 0, 0);
-
-					if (go != null) {
-						go.name = "temp_part_" + _container.transform.childCount.ToString ();
-						go.transform.SetParent (_container.transform);
-						go.transform.localPosition = pos;
-
-						if (isWall) {
-							if (x == xStart && z == (zEnd - 1)) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
-							} else if (x == (xEnd - 1) && z == zStart) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
-							} else if (x == xStart) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, 0));
-							} else if (x == (xEnd - 1)) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 180, 0));
-							} else if (z == zStart) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 270, 0));
-							} else if (z == (zEnd - 1)) {
-								go.transform.rotation = Quaternion.Euler (new Vector3 (0, 90, 0));
-							}
-						} else {
-							go.transform.rotation = Quaternion.Euler (new Vector3 (0, Random.Range (0, 4) * 90, 0));
-						}
-
-						PrefabLevelEditor.Instance.setMeshCollider (go, false);
-						PrefabLevelEditor.Instance.setRigidBody (go, false);
-
-						PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
-						element.go = go;
-						element.part = partId;
-
-						_roomElements.Add (element);
-					}
+					createElement (new Vector3 (x * _floorSize, 0, z * _floorSize));
 				}
-			}*/
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void createWallZ()
+		{
+			int xStart = _width / 2 * -1;
+			int xEnd = xStart + _width;
+			int yStart = _height / 2 * -1;
+			int yEnd = yStart + _height;
+
+			int x, y;
+			for (x = xStart; x < xEnd; ++x) {
+				for (y = yStart; y < yEnd; ++y) {
+					createElement (new Vector3 (x * _wallSize, y * _wallSize, 0));
+				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void createWallX()
+		{
+			int zStart = _width / 2 * -1;
+			int zEnd = zStart + _width;
+			int yStart = _height / 2 * -1;
+			int yEnd = yStart + _height;
+
+			int z, y;
+			for (z = zStart; z < zEnd; ++z) {
+				for (y = yStart; y < yEnd; ++y) {
+					createElement (new Vector3 (0, y * _wallSize, z * _wallSize));
+				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void createElement(Vector3 pos) {
+
+			GameObject go = PrefabLevelEditor.Instance.createPartAt (_curPart.id, 0, 0, 0);
+			if (go != null)
+			{
+				go.name = "temp_part_" + _container.transform.childCount.ToString ();
+				go.transform.SetParent (_container.transform);
+				go.transform.localPosition = pos;
+
+				PrefabLevelEditor.Instance.setMeshCollider (go, false);
+				PrefabLevelEditor.Instance.setRigidBody (go, false);
+
+				PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
+				element.go = go;
+				element.part = _curPart.id;
+
+				_roomElements.Add (element);
+			}
 		}
 	}
 }

@@ -24,8 +24,7 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		public override void createObjects() //int step)
 		{
-			GameObject go;
-			int i, len = (5 + _interval) * _density;
+			int i;
 			for (i = 0; i < _interval; ++i)
 			{
 				float radius = (float)_radius * (float)(i);

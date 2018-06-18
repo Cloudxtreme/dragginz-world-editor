@@ -24,8 +24,6 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		public override void createObjects() //int step)
 		{
-			GameObject go;
-
 			int i;
 			for (i = 0; i < _interval; ++i) {
 
@@ -40,7 +38,6 @@ namespace PrefabWorldEditor
 
 				float size = (float)i * (float)_radius;
 				float start = size / 2 * -1;
-				float end = start + size;
 				float distance = size / (float)(steps-1);
 
 				int x, z;

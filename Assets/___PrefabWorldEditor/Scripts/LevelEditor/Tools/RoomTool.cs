@@ -35,7 +35,8 @@ namespace PrefabWorldEditor
 		protected static int _depth;
 		protected static int _height;
 
-		//protected static float _cubeSize = 2.0f;
+		protected static float _floorSize = 4.0f;
+		protected static float _wallSize  = 3.0f;
 
 		//
 

@@ -155,7 +155,6 @@ namespace PrefabWorldEditor
 
         private float _rayDistance;
         private Ray _ray;
-		private LayerMask _layermask;
         private RaycastHit _hit;
         private GameObject _goHit;
 
@@ -251,8 +250,6 @@ namespace PrefabWorldEditor
 			_iCounter = 0;
 
 			_listOfChildren = new List<GameObject> ();
-
-			_layermask = 1 << 12;
 
             _v3EditPartPos = Vector3.zero;
 
@@ -713,6 +710,11 @@ namespace PrefabWorldEditor
 					_curDungeonTool.customUpdate (_goEditPart.transform.position);
 				}
 			}
+			else if (_curRoomTool != null) {
+				if (_goEditPart != null) {
+					_curRoomTool.customUpdate (_goEditPart.transform.position);
+				}
+			}
 
 			//
 			// Mousewheel
@@ -744,6 +746,15 @@ namespace PrefabWorldEditor
 						}
 						else if (Input.GetKey (KeyCode.Alpha3)) {
 							PwePlacementTools.Instance.updateDensityValue ((int)dir, _curPlacementTool.placementMode);
+						}
+					}
+					else if (_curRoomTool != null) {
+
+						if (Input.GetKey (KeyCode.Alpha1)) {
+							PweRoomTools.Instance.updateWidthValue ((int)dir, _curRoomTool.roomPattern);
+						}
+						else if (Input.GetKey (KeyCode.Alpha2)) {
+							PweRoomTools.Instance.updateHeightValue ((int)dir, _curRoomTool.roomPattern);
 						}
 					}
 					else {
@@ -963,28 +974,27 @@ namespace PrefabWorldEditor
 
 			string s = "";
 
-			if (_assetType == AssetType.Floor) {
+			s = "Mousewheel + ";
+			if (_curDungeonTool != null) {
+				s += "'1'/'2'/'3' = change preset settings";
+			} else if (_curPlacementTool != null) {
+				s += "'1'/'2'/'3' = change pattern settings";
+			} else if (_curRoomTool != null) {
+				s += "'1'/'2' = change size settings";
+			} else if (_assetType == AssetType.Floor) {
 				s = "Press left mouse button + shift key for a 'Floor Fill'!";
-			}else if (_assetType == AssetType.Wall) {
+			} else if (_assetType == AssetType.Wall) {
 				s = "Press left mouse button + shift key for a 'Wall Fill'!";
 			}
 			else {
-				s = "Mousewheel + ";
-				if (_curDungeonTool != null) {
-					s += "'1'/'2'/'3' = change preset settings";
-				} else if (_curPlacementTool != null) {
-					s += "'1'/'2'/'3' = change pattern settings";
+				if (part.canRotate != Vector3Int.zero) {
+					s = "Mousewheel + ";
+					s += (part.canRotate.x == 1 ? "'X'" : "");
+					s += (part.canRotate.y == 1 ? "/ 'Y'" : "");
+					s += (part.canRotate.z == 1 ? "/ 'Z'" : "");
+					s += " = rotate object";
 				}
-				else {
-					if (part.canRotate != Vector3Int.zero) {
-						s = "Mousewheel + ";
-						s += (part.canRotate.x == 1 ? "'X'" : "");
-						s += (part.canRotate.y == 1 ? "/ 'Y'" : "");
-						s += (part.canRotate.z == 1 ? "/ 'Z'" : "");
-						s += " = rotate object";
-					}
-					s += "\nMousewheel + 'C' = scale object";
-				}
+				s += "\nMousewheel + 'C' = scale object";
 			}
 
 			PweMainMenu.Instance.setSpecialHelpText (s);
@@ -1082,7 +1092,7 @@ namespace PrefabWorldEditor
 				}
 			}
 
-			if (_curPlacementTool == null && _curDungeonTool == null)
+			if (_curPlacementTool == null && _curDungeonTool == null && _curRoomTool == null)
 			{
 				LevelElement element = new LevelElement ();
 				element.part = _curEditPart.id;
@@ -1107,6 +1117,12 @@ namespace PrefabWorldEditor
 					placeDungeon ();
 				}
 				resetCurDungeonTool ();
+			}
+			else if (_curRoomTool != null) {
+				if (_curRoomTool.roomPattern != RoomTool.RoomPattern.None) {
+					placeRoom ();
+				}
+				resetCurRoomTool ();
 			}
 
 			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
@@ -1151,6 +1167,29 @@ namespace PrefabWorldEditor
 
 					LevelElement elementTool = new LevelElement ();
 					elementTool.part = _curDungeonTool.dungeonElements [i].part;
+					elementTool.go = go;
+
+					_levelElements.Add (go.name, elementTool);
+				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void placeRoom()
+		{
+			int i, len = _curRoomTool.roomElements.Count;
+			for (i = 0; i < len; ++i) {
+
+				GameObject go = _curRoomTool.roomElements [i].go;
+				if (go != null) {
+					go.transform.SetParent (_container);
+					go.name = "part_" + (_iCounter++).ToString ();
+
+					setMeshCollider (go, true);
+					setRigidBody (go, _curEditPart.usesGravity);
+
+					LevelElement elementTool = new LevelElement ();
+					elementTool.part = _curEditPart.id;
 					elementTool.go = go;
 
 					_levelElements.Add (go.name, elementTool);

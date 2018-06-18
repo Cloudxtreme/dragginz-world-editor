@@ -24,7 +24,6 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		public override void createObjects() //int step)
 		{
-			GameObject go;
 			int i;
 			for (i = 0; i < _interval; ++i)
 			{
