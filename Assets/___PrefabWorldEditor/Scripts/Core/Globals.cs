@@ -13,7 +13,7 @@ namespace PrefabWorldEditor
 {
 	public static class Globals
     {
-		static public readonly string version = "Prefab World Editor v06.18.1a";
+		static public readonly string version = "Prefab World Editor v06.18.2a";
 
 		static public readonly int levelSaveFormatVersion = 100;
 

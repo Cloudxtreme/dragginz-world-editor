@@ -306,16 +306,18 @@ namespace PrefabWorldEditor
 			{
 				updateEditMode ();
 
-				if (_selectedElement.part != PartList.End_Of_List) {
-					if (_selectedMeshRenderers.Count > 0) {
-						_selectedElementBounds = _selectedMeshRenderers [0].bounds;
-						int i, len = _selectedMeshRenderers.Count;
-						for (i = 1; i < len; ++i) {
-							_selectedElementBounds.Encapsulate (_selectedMeshRenderers [i].bounds);
+				/*if (_selectedElement.go != null) {
+					if (_selectedElement.part != PartList.End_Of_List) {
+						
+						if (_selectedMeshRenderers.Count > 0) {
+							_selectedElementBounds = _selectedMeshRenderers [0].bounds;
+							int i, len = _selectedMeshRenderers.Count;
+							for (i = 1; i < len; ++i) {
+								_selectedElementBounds.Encapsulate (_selectedMeshRenderers [i].bounds);
+							}
 						}
-						GLTools.drawBoundingBox (_selectedElementBounds, matElementMarker);
 					}
-				}
+				}*/
 			}
 		}
 
@@ -593,8 +595,11 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void onSelectedObjectPositionChanged(Vector3 posChange) {
 
-			if (_iSelectedGroupIndex != -1) {
-				if (posChange != Vector3.zero) {
+			if (posChange != Vector3.zero) {
+
+				getSelectedMeshRendererBounds ();
+
+				if (_iSelectedGroupIndex != -1) {
 
 					//Debug.Log("onSelectedObjectPositionChanged - posChange: "+posChange);
 
@@ -604,6 +609,23 @@ namespace PrefabWorldEditor
 						if (_aElementGroups [_iSelectedGroupIndex] [i] != _selectedElement.go) {
 							pos = _aElementGroups [_iSelectedGroupIndex] [i].transform.position + posChange;
 							_aElementGroups [_iSelectedGroupIndex] [i].transform.position = pos;
+						}
+					}
+				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void getSelectedMeshRendererBounds()
+		{
+			if (_selectedElement.go != null) {
+				if (_selectedElement.part != PartList.End_Of_List) {
+
+					if (_selectedMeshRenderers.Count > 0) {
+						_selectedElementBounds = _selectedMeshRenderers [0].bounds;
+						int i, len = _selectedMeshRenderers.Count;
+						for (i = 1; i < len; ++i) {
+							_selectedElementBounds.Encapsulate (_selectedMeshRenderers [i].bounds);
 						}
 					}
 				}
@@ -898,7 +920,6 @@ namespace PrefabWorldEditor
 				// group select
 				if (isShift) {
 					_iSelectedGroupIndex = findElementInGroup (trfmParent.gameObject);
-					Debug.Log ("_iSelectedGroupIndex: "+_iSelectedGroupIndex);
 				}
 
 				// single object select
@@ -910,7 +931,8 @@ namespace PrefabWorldEditor
 					setMeshCollider (_selectedElement.go, false);
 					setRigidBody (_selectedElement.go, false);
 
-					getSelectedMeshRenderers (_selectedElement.go);
+					getSelectedMeshRenderers (_selectedElement.go, _iSelectedGroupIndex);
+					getSelectedMeshRendererBounds ();
 
 					Part part = _parts [_selectedElement.part];
 					setMarkerScale (part);
@@ -1098,14 +1120,27 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		//
 		// ------------------------------------------------------------------------
-		private void getSelectedMeshRenderers (GameObject go)
+		private void getSelectedMeshRenderers (GameObject go, int iSelectedGroupIndex)
 		{
 			_selectedMeshRenderers.Clear ();
 
 			_listOfChildren.Clear ();
-			getChildrenRecursive (go);
 
-			int i, len = _listOfChildren.Count;
+			int i, len;
+
+			if (iSelectedGroupIndex != -1)
+			{
+				len = _aElementGroups [iSelectedGroupIndex].Count;
+				for (i = 0; i < len; ++i) {
+					getChildrenRecursive (_aElementGroups [iSelectedGroupIndex] [i]);
+				}
+			}
+			else
+			{
+				getChildrenRecursive (go);
+			}
+
+			len = _listOfChildren.Count;
 			for (i = 0; i < len; ++i) {
 				if (_listOfChildren [i].GetComponent<MeshRenderer> ()) {
 					_selectedMeshRenderers.Add(_listOfChildren [i].GetComponent<MeshRenderer> ());
