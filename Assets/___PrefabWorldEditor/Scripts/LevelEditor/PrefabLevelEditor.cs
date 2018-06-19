@@ -399,7 +399,7 @@ namespace PrefabWorldEditor
 					PweMainMenu.Instance.setInstructionsText ("Press Esc to exit play mode");
 				} else if (_editMode == EditMode.Transform) {
 					PweMainMenu.Instance.setInstructionsText ("Click object to select");
-					PweMainMenu.Instance.setSpecialHelpText ("Shift+Click = Select group of objects");
+					PweMainMenu.Instance.setSpecialHelpText ("Shift+Click = Select group of objects\nClick+'C' = Copy Object");
 				} else {
 					PweMainMenu.Instance.setInstructionsText ("");
 				}
@@ -574,7 +574,11 @@ namespace PrefabWorldEditor
 				{
 					if (!EventSystem.current.IsPointerOverGameObject ()) {
 						if (_goHit != null) {
-							selectElement (_goHit.transform);
+							if (Input.GetKey (KeyCode.C)) {
+								copyElement (_goHit.transform);
+							} else {
+								selectElement (_goHit.transform);
+							}
 						}
 					}
 				}
@@ -739,13 +743,34 @@ namespace PrefabWorldEditor
 		{
 			float snap = gridSize;
 			if (_goEditPart != null && _curEditPart.type == AssetType.Dungeon) {
-				snap = 2f;
+				snap = 1f;
+			}
+
+			_v3EditPartPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, _rayDistance));
+
+			// snap dungeon pieces on top of each other!
+			if (_goHit != null) {
+				if (_curDungeonTool == null && _curEditPart.type == AssetType.Dungeon)
+				{
+					Transform trfmParent = _goHit.transform;
+					while (trfmParent.parent != null && trfmParent.tag != "PartContainer") {
+						trfmParent = trfmParent.parent;
+					}
+
+					// not an asset?
+					if (trfmParent.tag == "PartContainer") {
+						//Debug.Log (trfmParent.name);
+						if (_levelElements.ContainsKey(trfmParent.name)) {
+							//Debug.Log ("hit object is of type "+_parts[_levelElements[trfmParent.name].part].type);
+							_v3EditPartPos.y = trfmParent.position.y + 2f;
+						}
+					}
+				}
 			}
 
 			//
 			// Positioning
 			//
-            _v3EditPartPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, _rayDistance));
 			_v3EditPartPos.x = Mathf.RoundToInt(_v3EditPartPos.x / snap) * snap;
 			if (_v3EditPartPos.x - _curEditPart.w / 2 < 0) {
 				_v3EditPartPos.x = _curEditPart.w / 2;
@@ -897,28 +922,70 @@ namespace PrefabWorldEditor
         }
 
 		// ------------------------------------------------------------------------
-		private void selectElement(Transform trfmHit)
+		private void copyElement(Transform trfmHit)
 		{
-			// gizmo?
-			if (trfmHit.gameObject.layer == 11) {
+			if (trfmHit.gameObject.layer == 11) { // gizmo?
 				return;
 			}
 
 			_iSelectedGroupIndex = -1;
 
 			Transform trfmParent = trfmHit;
+			while (trfmParent.parent != null && trfmParent.tag != "PartContainer") {
+				trfmParent = trfmParent.parent;
+			}
 
+			// not an asset?
+			if (trfmParent.tag != "PartContainer")
+			{
+				resetEditTools ();
+			}
+			else
+			{
+				if (_levelElements.ContainsKey (trfmParent.gameObject.name)) {
+
+					setEditMode (EditMode.Place);
+
+					LevelElement element = _levelElements [trfmParent.gameObject.name];
+					Part part = _parts [element.part];
+					selectAssetType (part.type);
+
+					Debug.LogWarning ("copy element type " + part.type + ", id: " + part.id);
+
+					int index = 0;
+					int i, len = _assetTypeList [part.type].Count;
+					for (i = 0; i < len; ++i) {
+						if (_assetTypeList [part.type] [i].id == part.id) {
+							Debug.Log ("    -> " + _assetTypeList [part.type] [i].id);
+							index = i;
+							break;
+						}
+					}
+					Debug.Log ("    index: " + index);
+
+					_assetTypeIndex [part.type] = index;
+					setNewEditPart(_assetTypeList[part.type][index]);
+				}
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void selectElement(Transform trfmHit)
+		{
+			if (trfmHit.gameObject.layer == 11) { // gizmo?
+				return;
+			}
+
+			_iSelectedGroupIndex = -1;
+
+			Transform trfmParent = trfmHit;
 			while (trfmParent.parent != null && trfmParent.tag != "PartContainer") {
 				trfmParent = trfmParent.parent;
 			}
 
 			// not an asset?
 			if (trfmParent.tag != "PartContainer") {
-				resetElementComponents ();
-				resetSelectedElement ();
-				resetCurPlacementTool ();
-				resetCurDungeonTool ();
-				resetCurRoomTool ();
+				resetEditTools ();
 				return;
 			}
 
@@ -963,14 +1030,20 @@ namespace PrefabWorldEditor
 			}
 			else
 			{
-				resetElementComponents ();
-				resetSelectedElement ();
-				resetCurPlacementTool ();
-				resetCurDungeonTool ();
-				resetCurRoomTool ();
+				resetEditTools ();
 			}
 
 			setMarkerActive (_selectedElement.go != null);
+		}
+
+		// ------------------------------------------------------------------------
+		private void resetEditTools()
+		{
+			resetElementComponents ();
+			resetSelectedElement ();
+			resetCurPlacementTool ();
+			resetCurDungeonTool ();
+			resetCurRoomTool ();
 		}
 
 		// ------------------------------------------------------------------------
