@@ -604,11 +604,12 @@ namespace PrefabWorldEditor
 					//Debug.Log("onSelectedObjectPositionChanged - posChange: "+posChange);
 
 					Vector3 pos;
-					int i, len = _aElementGroups [_iSelectedGroupIndex].Count;
+					int index = _iSelectedGroupIndex;
+					int i, len = _aElementGroups [index].Count;
 					for (i = 0; i < len; ++i) {
-						if (_aElementGroups [_iSelectedGroupIndex] [i] != _selectedElement.go) {
-							pos = _aElementGroups [_iSelectedGroupIndex] [i].transform.position + posChange;
-							_aElementGroups [_iSelectedGroupIndex] [i].transform.position = pos;
+						if (_aElementGroups [index] [i] != null && _aElementGroups [index] [i] != _selectedElement.go) {
+							pos = _aElementGroups [index] [i].transform.position + posChange;
+							_aElementGroups [index] [i].transform.position = pos;
 						}
 					}
 				}
@@ -736,11 +737,16 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void positionEditPart()
 		{
+			float snap = gridSize;
+			if (_goEditPart != null && _curEditPart.type == AssetType.Dungeon) {
+				snap = 2f;
+			}
+
 			//
 			// Positioning
 			//
             _v3EditPartPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, _rayDistance));
-            _v3EditPartPos.x = Mathf.RoundToInt(_v3EditPartPos.x / gridSize) * gridSize;
+			_v3EditPartPos.x = Mathf.RoundToInt(_v3EditPartPos.x / snap) * snap;
 			if (_v3EditPartPos.x - _curEditPart.w / 2 < 0) {
 				_v3EditPartPos.x = _curEditPart.w / 2;
 			}
@@ -748,7 +754,7 @@ namespace PrefabWorldEditor
 				_v3EditPartPos.x = levelSize.x - _curEditPart.w / 2;
 			}
 
-            _v3EditPartPos.y = Mathf.RoundToInt(_v3EditPartPos.y / gridSize) * gridSize;
+			_v3EditPartPos.y = Mathf.RoundToInt(_v3EditPartPos.y / snap) * snap;
 			if (_v3EditPartPos.y - _curEditPart.h / 2 < 0) {
 				_v3EditPartPos.y = _curEditPart.h / 2;
 			}
@@ -756,7 +762,7 @@ namespace PrefabWorldEditor
 				_v3EditPartPos.y = levelSize.y - _curEditPart.h / 2;
 			}
 
-            _v3EditPartPos.z = Mathf.RoundToInt(_v3EditPartPos.z / gridSize) * gridSize;
+			_v3EditPartPos.z = Mathf.RoundToInt(_v3EditPartPos.z / snap) * snap;
 			if (_v3EditPartPos.z - _curEditPart.d / 2 < 0) {
 				_v3EditPartPos.z = _curEditPart.d / 2;
 			}
@@ -805,12 +811,15 @@ namespace PrefabWorldEditor
 			//
 			// Mousewheel
 			//
-			if (Input.GetAxis ("Mouse ScrollWheel") != 0)
+
+			float mousewheel = Input.GetAxis ("Mouse ScrollWheel");
+
+			if (mousewheel != 0)
 			{
 				if (_timer > _lastMouseWheelUpdate)
 				{
 					_lastMouseWheelUpdate = _timer + 0.2f;
-					float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
+					float dir = (mousewheel > 0 ? 1 : -1);
 
 					if (_curDungeonTool != null) {
 					
@@ -865,7 +874,7 @@ namespace PrefabWorldEditor
 							scale += new Vector3 (.025f * dir, .025f * dir, .025f * dir);
 							_goEditPart.transform.localScale = scale;
 						} else {
-							toggleEditPart ();
+							toggleEditPart (mousewheel);
 						}
 					}
 				}
@@ -986,36 +995,38 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void positionSelectedElement()
 		{
-			if (Input.GetAxis("Mouse ScrollWheel") != 0)
+			float mousewheel = Input.GetAxis ("Mouse ScrollWheel");
+
+			if (mousewheel != 0)
 			{
 				if (_timer > _lastMouseWheelUpdate)
 				{
 					Part part = _parts [_selectedElement.part];
 
 					_lastMouseWheelUpdate = _timer + 0.2f;
-					float dir = (Input.GetAxis ("Mouse ScrollWheel") > 0 ? 1 : -1);
+					float dir = (mousewheel > 0 ? 1 : -1);
 					float multiply = 15f * dir;
 
 					if (Input.GetKey (KeyCode.X)) {
 						if (part.canRotate.x == 1) {
 							_selectedElement.go.transform.Rotate (Vector3.right * multiply);
 						}
-					}
-					else if (Input.GetKey (KeyCode.Y)) {
+					} else if (Input.GetKey (KeyCode.Y)) {
 						if (part.canRotate.y == 1) {
 							_selectedElement.go.transform.Rotate (Vector3.up * multiply);
 						}
-					}
-					else if (Input.GetKey (KeyCode.Z)) {
+					} else if (Input.GetKey (KeyCode.Z)) {
 						if (part.canRotate.z == 1) {
 							_selectedElement.go.transform.Rotate (Vector3.forward * multiply);
 						}
 					}
-					// Scale
-					else if (Input.GetKey (KeyCode.C)) {
+					else if (Input.GetKey (KeyCode.C)) { // Scale
 						Vector3 scale = _selectedElement.go.transform.localScale;
-						scale += new Vector3(.025f * dir, .025f * dir, .025f * dir);
+						scale += new Vector3 (.025f * dir, .025f * dir, .025f * dir);
 						_selectedElement.go.transform.localScale = scale;
+					}
+					else {
+						toggleSelectedElement (mousewheel);
 					}
 				}
 			}
@@ -1040,19 +1051,74 @@ namespace PrefabWorldEditor
 			resetSelectedElement ();
 			resetCurPlacementTool ();
 
-
 			setMarkerActive (_goEditPart.activeSelf);
 		}
 
 		// ------------------------------------------------------------------------
-        private void toggleEditPart()
+		private void toggleSelectedElement(float mousewheel)
 		{
-			float direction = Input.GetAxis ("Mouse ScrollWheel");
+			Part part = _parts[_selectedElement.part];
 
+			int max = _assetTypeList [part.type].Count;
+			int i, index = 0;
+			for (i = 0; i < max; ++i) {
+				if (_assetTypeList [part.type] [i].id == part.id) {
+					index = i;
+					break;
+				}
+			}
+
+			if (mousewheel > 0) {
+				if (++index >= max) {
+					index = 0;
+				}
+			} else {
+				if (--index < 0) {
+					index = max - 1;
+				}
+			}
+
+			Part newPart = _assetTypeList [part.type] [index];
+			showAssetInfo (newPart);
+
+			string name = _selectedElement.go.name;
+			Vector3 pos = _selectedElement.go.transform.position;
+			Quaternion rot = _selectedElement.go.transform.rotation;
+
+			if (_levelElements.ContainsKey (name)) {
+				
+				Destroy (_selectedElement.go);
+
+				LevelElement element = _levelElements [name];
+				element.part = newPart.id;
+				element.go = createPartAt (newPart.id, pos.x, pos.y, pos.z);
+				element.go.transform.rotation = rot;
+				element.go.name = name;
+
+				setMeshCollider (element.go, false);
+				setRigidBody (element.go, false);
+
+				_levelElements [name] = element;
+
+				_selectedElement = _levelElements [name];
+
+				getSelectedMeshRenderers (_selectedElement.go, _iSelectedGroupIndex);
+				getSelectedMeshRendererBounds ();
+
+				setMarkerScale (newPart);
+
+				gizmoTranslateScript.translateTarget = _selectedElement.go;
+				gizmoRotateScript.rotateTarget = _selectedElement.go;
+			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void toggleEditPart(float mousewheel)
+		{
 			int index = _assetTypeIndex [_assetType];
 			int max = _assetTypeList [_assetType].Count;
 						
-			if (direction > 0) {
+			if (mousewheel > 0) {
 				if (++index >= max) {
 					index = 0;
 				}
@@ -1086,8 +1152,12 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void showAssetInfo(Part part)
 		{
-			PweMainMenu.Instance.setAssetNameText ((_assetTypeIndex [_assetType]+1).ToString() + " / " + _assetTypeList [_assetType].Count.ToString());
-			PweMainMenu.Instance.assetInfo.init (_curEditPart);
+			if (_editMode == EditMode.Place) {
+				PweMainMenu.Instance.setAssetNameText ((_assetTypeIndex [_assetType] + 1).ToString () + " / " + _assetTypeList [_assetType].Count.ToString ());
+			} else {
+				PweMainMenu.Instance.setAssetNameText ("");
+			}
+			PweMainMenu.Instance.assetInfo.init (part);
 
 			string s = "";
 
