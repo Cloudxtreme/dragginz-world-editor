@@ -22,6 +22,7 @@ namespace PrefabWorldEditor
 		};
 
 		private static bool _initialised = false;
+		private static bool _rebuildOnUpdate = true;
 
 		protected static RoomPattern _roomPattern;
 
@@ -112,13 +113,26 @@ namespace PrefabWorldEditor
 
 			setRoomPattern (pattern);
 
-			removeAll ();
-			createObjects ();
+			update (-1, -1); // force update
 		}
 
 		// ------------------------------------------------------------------------
 		public void activateAndCopy(RoomPattern pattern, PrefabLevelEditor.Part part, int w, int h, int d)
 		{
+			_rebuildOnUpdate = false;
+
+			reset (); // just in case
+
+			_curPart = part;
+
+			setRoomPattern (pattern);
+
+			PweRoomTools.Instance.setWidthValue (w, pattern);
+			PweRoomTools.Instance.setHeightValue (h, pattern);
+
+			_rebuildOnUpdate = true;
+
+			update (-1, -1); // force update
 		}
 
 		// ------------------------------------------------------------------------
@@ -132,8 +146,10 @@ namespace PrefabWorldEditor
 				_height = value;
 			}
 
-			removeAll ();
-			createObjects ();
+			if (_rebuildOnUpdate) {
+				removeAll ();
+				createObjects ();
+			}
 		}
 
 		// ------------------------------------------------------------------------

@@ -132,6 +132,8 @@ namespace PrefabWorldEditor
 		}
 
 		//
+		// UPDATE VALUES
+		//
 
 		public void updateRadiusValue(int value, PlacementTool.PlacementMode mode)
 		{
@@ -178,6 +180,65 @@ namespace PrefabWorldEditor
 			}
 			else if (mode == PlacementTool.PlacementMode.Cube) {
 				cubeSliderDensity.value += value;
+			}
+		}
+
+		//
+		// SET VALUES
+		//
+
+		public void setRadiusValue(int value, PlacementTool.PlacementMode mode)
+		{
+			if (mode == PlacementTool.PlacementMode.Circle) {
+				circleSliderRadius.value = value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Quad) {
+				quadSliderRadius.value = value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Mount) {
+				mountSliderRadius.value = value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Cube) {
+				cubeSliderRadius.value = value;
+			}
+		}
+
+		public void setIntervalValue(int value, PlacementTool.PlacementMode mode)
+		{
+			if (mode == PlacementTool.PlacementMode.Circle) {
+				circleSliderInterval.value = value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Quad) {
+				quadSliderInterval.value = value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Mount) {
+				mountSliderInterval.value = value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Cube) {
+				cubeSliderInterval.value = value;
+			}
+		}
+
+		public void setDensityValue(int value, PlacementTool.PlacementMode mode)
+		{
+			if (mode == PlacementTool.PlacementMode.Circle) {
+				circleSliderDensity.value = value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Quad) {
+				quadSliderDensity.value = value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Mount) {
+				mountSliderDensity.value = value;
+			}
+			else if (mode == PlacementTool.PlacementMode.Cube) {
+				cubeSliderDensity.value = value;
+			}
+		}
+
+		public void setInverseValue(bool value, PlacementTool.PlacementMode mode)
+		{
+			if (mode == PlacementTool.PlacementMode.Mount) {
+				mountToggleInverse.isOn = value;
 			}
 		}
 

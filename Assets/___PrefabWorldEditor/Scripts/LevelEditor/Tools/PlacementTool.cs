@@ -25,6 +25,7 @@ namespace PrefabWorldEditor
 		};
 
 		private static bool _initialised = false;
+		private static bool _rebuildOnUpdate = true;
 
 		protected static PlacementMode  _placementMode;
 
@@ -119,12 +120,26 @@ namespace PrefabWorldEditor
 
 			setPlacementMode (mode);
 
-			update (-1, -1);
+			update (-1, -1); // force update
 		}
 
 		// ------------------------------------------------------------------------
 		public void activateAndCopy(PlacementMode mode, PrefabLevelEditor.Part part, int r, int i, int d, bool inverse)
 		{
+			_rebuildOnUpdate = false;
+
+			_curPart = part;
+
+			setPlacementMode (mode);
+
+			PwePlacementTools.Instance.setRadiusValue (r, mode);
+			PwePlacementTools.Instance.setIntervalValue (i, mode);
+			PwePlacementTools.Instance.setDensityValue (d, mode);
+			PwePlacementTools.Instance.setInverseValue (inverse, mode);
+
+			_rebuildOnUpdate = true;
+
+			update (-1, -1); // force update
 		}
 
 		// ------------------------------------------------------------------------
@@ -140,8 +155,10 @@ namespace PrefabWorldEditor
 				_inverse = (value == 1);
 			}
 
-			removeAll ();
-			createObjects ();
+			if (_rebuildOnUpdate) {
+				removeAll ();
+				createObjects ();
+			}
 		}
 
 		// ------------------------------------------------------------------------

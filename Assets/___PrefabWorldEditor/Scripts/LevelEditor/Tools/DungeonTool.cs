@@ -127,8 +127,7 @@ namespace PrefabWorldEditor
 				_depth  = 3;
 			}
 
-			removeAll ();
-			createObjects ();
+			update (-1, -1); // force update
 		}
 
 		// ------------------------------------------------------------------------

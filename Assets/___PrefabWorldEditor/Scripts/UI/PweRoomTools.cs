@@ -59,6 +59,10 @@ namespace PrefabWorldEditor
 			defaultToolPanel.gameObject.SetActive (mode == RoomTool.RoomPattern.Default);
 		}
 
+		//
+		// UPDATE VALUES
+		//
+
 		public void updateWidthValue(int value, RoomTool.RoomPattern mode)
 		{
 			if (mode == RoomTool.RoomPattern.Default) {
@@ -70,6 +74,24 @@ namespace PrefabWorldEditor
 		{
 			if (mode == RoomTool.RoomPattern.Default) {
 				defaultSliderHeight.value += value;
+			}
+		}
+
+		//
+		// SET VALUES
+		//
+
+		public void setWidthValue(int value, RoomTool.RoomPattern mode)
+		{
+			if (mode == RoomTool.RoomPattern.Default) {
+				defaultSliderWidth.value = value;
+			}
+		}
+
+		public void setHeightValue(int value, RoomTool.RoomPattern mode)
+		{
+			if (mode == RoomTool.RoomPattern.Default) {
+				defaultSliderHeight.value = value;
 			}
 		}
 

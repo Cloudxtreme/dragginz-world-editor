@@ -682,9 +682,11 @@ namespace PrefabWorldEditor
 			_curPlacementTool.activate (mode, part);
 		}
 
-		private void activatePlacementTool(PlacementTool.PlacementMode mode, Part part, LevelController.ElementGroup elementGroup)
+		private void activatePlacementTool(PlacementTool.PlacementMode mode, Part part, LevelController.ElementGroup elmGrp)
 		{
 			setPlacementTool (mode, part);
+
+			_curPlacementTool.activateAndCopy (mode, part, elmGrp.radius, elmGrp.interval, elmGrp.density, elmGrp.inverse);
 		}
 
 		private void setPlacementTool(PlacementTool.PlacementMode mode, Part part)
@@ -781,9 +783,11 @@ namespace PrefabWorldEditor
 			_curRoomTool.activate (pattern, part);
 		}
 
-		private void activateRoomTool(RoomTool.RoomPattern pattern, Part part, LevelController.ElementGroup elementGroup)
+		private void activateRoomTool(RoomTool.RoomPattern pattern, Part part, LevelController.ElementGroup elmGrp)
 		{
 			setRoomTool (pattern, part);
+
+			_curRoomTool.activateAndCopy (pattern, part, elmGrp.width, elmGrp.height, elmGrp.depth);
 		}
 
 		private void setRoomTool(RoomTool.RoomPattern pattern, Part part)
