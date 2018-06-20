@@ -46,6 +46,10 @@ namespace PrefabWorldEditor
 			get { return _roomPattern; }
 		}
 
+		public PrefabLevelEditor.Part curPart {
+			get { return _curPart; }
+		}
+
 		public int width {
 			get { return _width; }
 		}
@@ -100,7 +104,7 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		public void activate(RoomPattern pattern, Vector3 posOrigin, PrefabLevelEditor.Part part)
+		public void activate(RoomPattern pattern, PrefabLevelEditor.Part part)
 		{
 			reset (); // just in case
 
@@ -113,6 +117,11 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
+		public void activateAndCopy(RoomPattern pattern, PrefabLevelEditor.Part part, int w, int h, int d)
+		{
+		}
+
+		// ------------------------------------------------------------------------
 		public void update(int valueId, int value)
 		{
 			if (valueId == 0) {
@@ -122,6 +131,15 @@ namespace PrefabWorldEditor
 			} else if (valueId == 2) {
 				_height = value;
 			}
+
+			removeAll ();
+			createObjects ();
+		}
+
+		// ------------------------------------------------------------------------
+		public void updatePart(PrefabLevelEditor.Part part)
+		{
+			_curPart = part;
 
 			removeAll ();
 			createObjects ();

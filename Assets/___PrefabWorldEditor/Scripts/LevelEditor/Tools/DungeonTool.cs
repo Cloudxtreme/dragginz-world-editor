@@ -25,14 +25,13 @@ namespace PrefabWorldEditor
 		};
 
 		private static bool _initialised = false;
+		private static bool _rebuildOnUpdate = true;
 
 		protected static DungeonPreset _dungeonPreset;
 
 		protected static GameObject _container;
 
 		protected static List<PrefabLevelEditor.LevelElement> _dungeonElements;
-
-		protected static PrefabLevelEditor.Part _curPart;
 
 		protected static int _width;
 		protected static int _depth;
@@ -55,14 +54,22 @@ namespace PrefabWorldEditor
 
 		public int width {
 			get { return _width; }
+			set { _width = value; }
 		}
 
 		public int depth {
 			get { return _depth; }
+			set { _depth = value; }
 		}
 
 		public int height {
 			get { return _height; }
+			set { _height = value; }
+		}
+
+		public bool ceiling {
+			get { return _ceiling; }
+			set { _ceiling = value; }
 		}
 
 		public List<PrefabLevelEditor.LevelElement> dungeonElements {
@@ -109,11 +116,9 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		public void activate(DungeonPreset preset, Vector3 posOrigin, PrefabLevelEditor.Part part)
+		public void activate(DungeonPreset preset)
 		{
 			reset (); // just in case
-
-			_curPart = part;
 
 			setDungeonPreset (preset);
 
@@ -124,6 +129,25 @@ namespace PrefabWorldEditor
 
 			removeAll ();
 			createObjects ();
+		}
+
+		// ------------------------------------------------------------------------
+		public void activateAndCopy(DungeonPreset preset, int w, int h, int d, bool c)
+		{
+			_rebuildOnUpdate = false;
+
+			reset (); // just in case
+
+			setDungeonPreset (preset);
+
+			PweDungeonTools.Instance.setWidthValue (w, preset);
+			PweDungeonTools.Instance.setHeightValue (h, preset);
+			PweDungeonTools.Instance.setDepthValue (d, preset);
+			PweDungeonTools.Instance.setCeilingValue (c, preset);
+
+			_rebuildOnUpdate = true;
+
+			update (-1, -1); // force update
 		}
 
 		// ------------------------------------------------------------------------
@@ -139,8 +163,10 @@ namespace PrefabWorldEditor
 				_ceiling = (value == 1);
 			}
 
-			removeAll ();
-			createObjects ();
+			if (_rebuildOnUpdate) {
+				removeAll ();
+				createObjects ();
+			}
 		}
 
 		// ------------------------------------------------------------------------

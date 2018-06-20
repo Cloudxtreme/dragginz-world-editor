@@ -123,6 +123,9 @@ namespace PrefabWorldEditor
 			stairsToolPanel.gameObject.SetActive (mode == DungeonTool.DungeonPreset.Staircase);
 		}
 
+		//
+		// UPDATE VALUES
+		//
 		public void updateWidthValue(int value, DungeonTool.DungeonPreset mode)
 		{
 			if (mode == DungeonTool.DungeonPreset.Room) {
@@ -162,6 +165,61 @@ namespace PrefabWorldEditor
 			}
 			else if (mode == DungeonTool.DungeonPreset.Staircase) {
 				stairsSliderHeight.value += value;
+			}
+		}
+
+		//
+		// SET VALUES
+		//
+		public void setWidthValue(int value, DungeonTool.DungeonPreset mode)
+		{
+			if (mode == DungeonTool.DungeonPreset.Room) {
+				roomSliderWidth.value = value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Maze) {
+				mazeSliderWidth.value = value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Random) {
+				randomSliderWidth.value = value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Staircase) {
+				stairsSliderWidth.value = value;
+			}
+		}
+
+		public void setDepthValue(int value, DungeonTool.DungeonPreset mode)
+		{
+			if (mode == DungeonTool.DungeonPreset.Room) {
+				roomSliderDepth.value = value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Maze) {
+				mazeSliderDepth.value = value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Random) {
+				randomSliderDepth.value = value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Staircase) {
+				stairsSliderDepth.value = value;
+			}
+		}
+
+		public void setHeightValue(int value, DungeonTool.DungeonPreset mode)
+		{
+			if (mode == DungeonTool.DungeonPreset.Room) {
+				roomSliderHeight.value = value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Staircase) {
+				stairsSliderHeight.value = value;
+			}
+		}
+
+		public void setCeilingValue(bool value, DungeonTool.DungeonPreset mode)
+		{
+			if (mode == DungeonTool.DungeonPreset.Room) {
+				roomToggleCeiling.isOn = value;
+			}
+			else if (mode == DungeonTool.DungeonPreset.Staircase) {
+				stairsToggleCeiling.isOn = value;
 			}
 		}
 

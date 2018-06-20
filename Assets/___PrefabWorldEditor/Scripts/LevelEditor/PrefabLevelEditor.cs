@@ -16,6 +16,8 @@ namespace PrefabWorldEditor
 {
 	public class PrefabLevelEditor : MonoSingleton<PrefabLevelEditor>
     {
+		#region PublicProperties
+
 		public GameObject goLights;
 
         public Transform playerEdit;
@@ -118,6 +120,12 @@ namespace PrefabWorldEditor
 			public PartList part;
         }
 
+		#endregion
+
+		#region PrivateProperties
+
+		private LevelController _levelController;
+
 		private Transform _trfmMarkerX;
 		private Transform _trfmMarkerY;
 		private Transform _trfmMarkerZ;
@@ -131,8 +139,8 @@ namespace PrefabWorldEditor
 		private Dictionary<string, LevelElement> _levelElements;
 		private int _iCounter;
 
-		private List<List<GameObject>> _aElementGroups;
-		private int _iSelectedGroupIndex;
+		//private List<List<GameObject>> _aElementGroups;
+		//private int _iSelectedGroupIndex;
 		private bool _groupEventHandlerSet;
 
 		private Part _curEditPart;
@@ -167,6 +175,8 @@ namespace PrefabWorldEditor
 
         private float _timer;
         private float _lastMouseWheelUpdate;
+
+		#endregion
 
 		#region Getters
 
@@ -248,13 +258,16 @@ namespace PrefabWorldEditor
 
             _container = new GameObject("[Container]").transform;
 
+			_levelController = new LevelController ();
+			_levelController.init (_container);
+
             setWalls();
 
 			_levelElements = new Dictionary<string, LevelElement>();
 			_iCounter = 0;
 
-			_aElementGroups = new List<List<GameObject>> ();
-			_iSelectedGroupIndex = -1;
+			//_aElementGroups = new List<List<GameObject>> ();
+			//_iSelectedGroupIndex = -1;
 			_groupEventHandlerSet = false;
 
 			_listOfChildren = new List<GameObject> ();
@@ -342,7 +355,8 @@ namespace PrefabWorldEditor
 					GameObject.Destroy (element.Value.go);
 				}
 				_levelElements.Clear ();
-				_aElementGroups.Clear ();
+				//_aElementGroups.Clear ();
+				_levelController.aElementGroups.Clear ();
 			}
 		}
 
@@ -399,7 +413,7 @@ namespace PrefabWorldEditor
 					PweMainMenu.Instance.setInstructionsText ("Press Esc to exit play mode");
 				} else if (_editMode == EditMode.Transform) {
 					PweMainMenu.Instance.setInstructionsText ("Click object to select");
-					PweMainMenu.Instance.setSpecialHelpText ("Shift+Click = Select group of objects\nClick+'C' = Copy Object");
+					PweMainMenu.Instance.setSpecialHelpText ("Shift+Click = Select group of objects\nClick+'C' = Copy object\nShift+Click+'C' = Copy group of objects");
 				} else {
 					PweMainMenu.Instance.setInstructionsText ("");
 				}
@@ -453,14 +467,14 @@ namespace PrefabWorldEditor
 				{
 					if (_selectedElement.go != null) {
 
-						activatePlacementTool (mode, _selectedElement.go.transform.position, _parts[_selectedElement.part]);
+						activatePlacementTool (mode, _parts[_selectedElement.part]);
 					}
 				}
 				else if (_goEditPart != null)
 				{
 					if (_curEditPart.type != AssetType.Floor && _curEditPart.type != AssetType.Wall)
 					{
-						activatePlacementTool (mode, _goEditPart.transform.position, _curEditPart);
+						activatePlacementTool (mode, _curEditPart);
 					}
 				}
 			}
@@ -484,7 +498,7 @@ namespace PrefabWorldEditor
 					if (_curEditPart.type == AssetType.Dungeon)
 					{
 						setNewEditPart(_assetTypeList[_assetType][0]); // reset to floor tile
-						activateDungeonTool (preset, _goEditPart.transform.position, _curEditPart);
+						activateDungeonTool (preset);
 					}
 				}
 			}
@@ -507,7 +521,7 @@ namespace PrefabWorldEditor
 				{
 					if (_curEditPart.type == AssetType.Floor || _curEditPart.type == AssetType.Wall)
 					{
-						activateRoomTool (pattern, _goEditPart.transform.position, _curEditPart);
+						activateRoomTool (pattern, _curEditPart);
 					}
 				}
 			}
@@ -603,19 +617,27 @@ namespace PrefabWorldEditor
 
 				getSelectedMeshRendererBounds ();
 
-				if (_iSelectedGroupIndex != -1) {
+				if (_levelController.iSelectedGroupIndex != -1) {
 
 					//Debug.Log("onSelectedObjectPositionChanged - posChange: "+posChange);
 
 					Vector3 pos;
-					int index = _iSelectedGroupIndex;
+					int index = _levelController.iSelectedGroupIndex;
+					int i, len = _levelController.aElementGroups [index].gameObjects.Count;
+					for (i = 0; i < len; ++i) {
+						if (_levelController.aElementGroups [index].gameObjects [i] != null && _levelController.aElementGroups [index].gameObjects [i] != _selectedElement.go) {
+							pos = _levelController.aElementGroups [index].gameObjects [i].transform.position + posChange;
+							_levelController.aElementGroups [index].gameObjects [i].transform.position = pos;
+						}
+					}
+					/*int index = _iSelectedGroupIndex;
 					int i, len = _aElementGroups [index].Count;
 					for (i = 0; i < len; ++i) {
 						if (_aElementGroups [index] [i] != null && _aElementGroups [index] [i] != _selectedElement.go) {
 							pos = _aElementGroups [index] [i].transform.position + posChange;
 							_aElementGroups [index] [i].transform.position = pos;
 						}
-					}
+					}*/
 				}
 			}
 		}
@@ -638,6 +660,8 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
+		// PLACEMENT TOOL
+		// ------------------------------------------------------------------------
 		private void resetCurPlacementTool()
 		{
 			if (_curPlacementTool != null) {
@@ -651,7 +675,19 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		private void activatePlacementTool(PlacementTool.PlacementMode mode, Vector3 pos, Part part)
+		private void activatePlacementTool(PlacementTool.PlacementMode mode, Part part)
+		{
+			setPlacementTool (mode, part);
+
+			_curPlacementTool.activate (mode, part);
+		}
+
+		private void activatePlacementTool(PlacementTool.PlacementMode mode, Part part, LevelController.ElementGroup elementGroup)
+		{
+			setPlacementTool (mode, part);
+		}
+
+		private void setPlacementTool(PlacementTool.PlacementMode mode, Part part)
 		{
 			if (mode == PlacementTool.PlacementMode.Circle) {
 				_curPlacementTool = _aPlacementTools [0];
@@ -666,17 +702,18 @@ namespace PrefabWorldEditor
 			PwePlacementTools.Instance.reset ();
 			PwePlacementTools.Instance.showToolPanels (mode);
 
-			_curPlacementTool.activate (mode, pos, part);
-
 			showAssetInfo (part);
 		}
 
+		// ------------------------------------------------------------------------
+		// DUNGEON TOOL
 		// ------------------------------------------------------------------------
 		private void resetCurDungeonTool()
 		{
 			if (_curDungeonTool != null) {
 				_curDungeonTool.reset ();
 				_curDungeonTool = null;
+				PweMainMenu.Instance.showAssetInfoPanel (true);
 			}
 			PweMainMenu.Instance.setDungeonToolButtons (DungeonTool.DungeonPreset.None);
 			PweDungeonTools.Instance.showToolPanels (DungeonTool.DungeonPreset.None);
@@ -685,7 +722,21 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		private void activateDungeonTool(DungeonTool.DungeonPreset preset, Vector3 pos, Part part)
+		private void activateDungeonTool(DungeonTool.DungeonPreset preset)
+		{
+			setDungeonTool (preset);
+
+			_curDungeonTool.activate (preset);
+		}
+
+		private void activateDungeonTool(DungeonTool.DungeonPreset preset, LevelController.ElementGroup elmGrp)
+		{
+			setDungeonTool (preset);
+
+			_curDungeonTool.activateAndCopy (preset, elmGrp.width, elmGrp.height, elmGrp.depth, elmGrp.ceiling);
+		}
+
+		private void setDungeonTool(DungeonTool.DungeonPreset preset)
 		{
 			if (preset == DungeonTool.DungeonPreset.Room) {
 				_curDungeonTool = _aDungeonTools [0];
@@ -703,26 +754,12 @@ namespace PrefabWorldEditor
 			PweDungeonTools.Instance.reset ();
 			PweDungeonTools.Instance.showToolPanels (preset);
 
-			_curDungeonTool.activate (preset, pos, part);
-
-			showAssetInfo (part);
+			PweMainMenu.Instance.setAssetNameText ("");
+			PweMainMenu.Instance.showAssetInfoPanel (false);
 		}
 
 		// ------------------------------------------------------------------------
-		private void activateRoomTool(RoomTool.RoomPattern pattern, Vector3 pos, Part part)
-		{
-			if (pattern == RoomTool.RoomPattern.Default) {
-				_curRoomTool = _aRoomTools [0];
-			}
-
-			PweRoomTools.Instance.reset ();
-			PweRoomTools.Instance.showToolPanels (pattern);
-
-			_curRoomTool.activate (pattern, pos, part);
-
-			showAssetInfo (part);
-		}
-
+		// ROOM TOOL
 		// ------------------------------------------------------------------------
 		private void resetCurRoomTool()
 		{
@@ -734,6 +771,31 @@ namespace PrefabWorldEditor
 			PweRoomTools.Instance.showToolPanels (RoomTool.RoomPattern.None);
 
 			showAssetInfo (_curEditPart);
+		}
+
+		// ------------------------------------------------------------------------
+		private void activateRoomTool(RoomTool.RoomPattern pattern, Part part)
+		{
+			setRoomTool (pattern, part);
+
+			_curRoomTool.activate (pattern, part);
+		}
+
+		private void activateRoomTool(RoomTool.RoomPattern pattern, Part part, LevelController.ElementGroup elementGroup)
+		{
+			setRoomTool (pattern, part);
+		}
+
+		private void setRoomTool(RoomTool.RoomPattern pattern, Part part)
+		{
+			if (pattern == RoomTool.RoomPattern.Default) {
+				_curRoomTool = _aRoomTools [0];
+			}
+
+			PweRoomTools.Instance.reset ();
+			PweRoomTools.Instance.showToolPanels (pattern);
+
+			showAssetInfo (part);
 		}
 
 		// ------------------------------------------------------------------------
@@ -860,12 +922,13 @@ namespace PrefabWorldEditor
 						
 						if (Input.GetKey (KeyCode.Alpha1)) {
 							PwePlacementTools.Instance.updateRadiusValue ((int)dir, _curPlacementTool.placementMode);
-						}
-						else if (Input.GetKey (KeyCode.Alpha2)) {
+						} else if (Input.GetKey (KeyCode.Alpha2)) {
 							PwePlacementTools.Instance.updateIntervalValue ((int)dir, _curPlacementTool.placementMode);
-						}
-						else if (Input.GetKey (KeyCode.Alpha3)) {
+						} else if (Input.GetKey (KeyCode.Alpha3)) {
 							PwePlacementTools.Instance.updateDensityValue ((int)dir, _curPlacementTool.placementMode);
+						} else {
+							toggleEditPart (mousewheel);
+							_curPlacementTool.updatePart (_curEditPart);
 						}
 					}
 					else if (_curRoomTool != null) {
@@ -875,6 +938,9 @@ namespace PrefabWorldEditor
 						}
 						else if (Input.GetKey (KeyCode.Alpha2)) {
 							PweRoomTools.Instance.updateHeightValue ((int)dir, _curRoomTool.roomPattern);
+						} else {
+							toggleEditPart (mousewheel);
+							_curRoomTool.updatePart (_curEditPart);
 						}
 					}
 					else {
@@ -928,7 +994,7 @@ namespace PrefabWorldEditor
 				return;
 			}
 
-			_iSelectedGroupIndex = -1;
+			_levelController.iSelectedGroupIndex = -1;
 
 			Transform trfmParent = trfmHit;
 			while (trfmParent.parent != null && trfmParent.tag != "PartContainer") {
@@ -939,34 +1005,69 @@ namespace PrefabWorldEditor
 			if (trfmParent.tag != "PartContainer")
 			{
 				resetEditTools ();
+				return;
 			}
-			else
-			{
-				if (_levelElements.ContainsKey (trfmParent.gameObject.name)) {
 
-					setEditMode (EditMode.Place);
+			if (_levelElements.ContainsKey (trfmParent.gameObject.name)) {
 
-					LevelElement element = _levelElements [trfmParent.gameObject.name];
-					Part part = _parts [element.part];
-					selectAssetType (part.type);
+				bool isShift = (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift));
+				int groupIndex = -1;
 
-					Debug.LogWarning ("copy element type " + part.type + ", id: " + part.id);
+				// group select
+				if (isShift) {
+					groupIndex = findElementInGroup (trfmParent.gameObject);
+				}
 
-					int index = 0;
-					int i, len = _assetTypeList [part.type].Count;
-					for (i = 0; i < len; ++i) {
-						if (_assetTypeList [part.type] [i].id == part.id) {
-							Debug.Log ("    -> " + _assetTypeList [part.type] [i].id);
-							index = i;
-							break;
-						}
+				setEditMode (EditMode.Place);
+
+				// copy placement/dungeon/room?
+				if (groupIndex != -1)
+				{
+					_levelController.iSelectedGroupIndex = groupIndex;
+
+					LevelController.ElementGroup elementGroup = _levelController.aElementGroups [_levelController.iSelectedGroupIndex];
+					if (elementGroup.groupType == "dungeon")
+					{
+						selectAssetType (AssetType.Dungeon);
+						setNewEditPart(_assetTypeList[_assetType][0]); // reset to floor tile
+						activateDungeonTool (elementGroup.dungeon, elementGroup);
 					}
-					Debug.Log ("    index: " + index);
-
-					_assetTypeIndex [part.type] = index;
-					setNewEditPart(_assetTypeList[part.type][index]);
+					else if (elementGroup.groupType == "placement")
+					{
+						selectAsset(elementGroup.part);
+						activatePlacementTool (elementGroup.placement, _curEditPart, elementGroup);
+					}
+					else if (elementGroup.groupType == "room")
+					{
+						selectAsset(elementGroup.part);
+						activateRoomTool (elementGroup.room, _curEditPart, elementGroup);
+					}
+				}
+				else
+				{
+					LevelElement element = _levelElements [trfmParent.gameObject.name];
+					selectAsset(_parts [element.part]);
 				}
 			}
+		}
+
+		// ------------------------------------------------------------------------
+		private void selectAsset(Part part)
+		{
+			selectAssetType (part.type);
+
+			int index = 0;
+			int i, len = _assetTypeList [part.type].Count;
+			for (i = 0; i < len; ++i) {
+				if (_assetTypeList [part.type] [i].id == part.id) {
+					//Debug.Log ("    -> " + _assetTypeList [part.type] [i].id);
+					index = i;
+					break;
+				}
+			}
+
+			_assetTypeIndex [part.type] = index;
+			setNewEditPart (_assetTypeList [part.type] [index]);
 		}
 
 		// ------------------------------------------------------------------------
@@ -976,7 +1077,7 @@ namespace PrefabWorldEditor
 				return;
 			}
 
-			_iSelectedGroupIndex = -1;
+			_levelController.iSelectedGroupIndex = -1;
 
 			Transform trfmParent = trfmHit;
 			while (trfmParent.parent != null && trfmParent.tag != "PartContainer") {
@@ -995,7 +1096,7 @@ namespace PrefabWorldEditor
 
 				// group select
 				if (isShift) {
-					_iSelectedGroupIndex = findElementInGroup (trfmParent.gameObject);
+					_levelController.iSelectedGroupIndex = findElementInGroup (trfmParent.gameObject);
 				}
 
 				// single object select
@@ -1007,7 +1108,7 @@ namespace PrefabWorldEditor
 					setMeshCollider (_selectedElement.go, false);
 					setRigidBody (_selectedElement.go, false);
 
-					getSelectedMeshRenderers (_selectedElement.go, _iSelectedGroupIndex);
+					getSelectedMeshRenderers (_selectedElement.go, _levelController.iSelectedGroupIndex);
 					getSelectedMeshRendererBounds ();
 
 					Part part = _parts [_selectedElement.part];
@@ -1050,11 +1151,11 @@ namespace PrefabWorldEditor
 		private int findElementInGroup(GameObject go)
 		{
 			int index = -1;
-			int i, len = _aElementGroups.Count;
+			int i, len = _levelController.aElementGroups.Count;
 			for (i = 0; i < len; ++i) {
-				int j, len2 = _aElementGroups[i].Count;
+				int j, len2 = _levelController.aElementGroups [i].gameObjects.Count;
 				for (j = 0; j < len2; ++j) {
-					if (_aElementGroups [i] [j] == go) {
+					if (_levelController.aElementGroups [i].gameObjects [j] == go) {
 						index = i;
 						i = len;
 						break;
@@ -1116,7 +1217,7 @@ namespace PrefabWorldEditor
 				}
 				Destroy (_selectedElement.go);
 				_selectedElement.go = null;
-				_iSelectedGroupIndex = -1;
+				_levelController.iSelectedGroupIndex = -1;
 			}
 
 			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
@@ -1175,7 +1276,7 @@ namespace PrefabWorldEditor
 
 				_selectedElement = _levelElements [name];
 
-				getSelectedMeshRenderers (_selectedElement.go, _iSelectedGroupIndex);
+				getSelectedMeshRenderers (_selectedElement.go, _levelController.iSelectedGroupIndex);
 				getSelectedMeshRendererBounds ();
 
 				setMarkerScale (newPart);
@@ -1273,9 +1374,9 @@ namespace PrefabWorldEditor
 
 			if (iSelectedGroupIndex != -1)
 			{
-				len = _aElementGroups [iSelectedGroupIndex].Count;
+				len = _levelController.aElementGroups [iSelectedGroupIndex].gameObjects.Count;
 				for (i = 0; i < len; ++i) {
-					getChildrenRecursive (_aElementGroups [iSelectedGroupIndex] [i]);
+					getChildrenRecursive (_levelController.aElementGroups [iSelectedGroupIndex].gameObjects [i]);
 				}
 			}
 			else
@@ -1428,7 +1529,21 @@ namespace PrefabWorldEditor
 			}
 
 			if (aGOs.Count > 0) {
-				_aElementGroups.Add (aGOs);
+				LevelController.ElementGroup elementGroup = new LevelController.ElementGroup ();
+				elementGroup.groupType = "placement";
+				elementGroup.part = _curPlacementTool.curPart;
+				elementGroup.placement = _curPlacementTool.placementMode;
+				elementGroup.gameObjects = new List<GameObject> ();
+				len = aGOs.Count;
+				for (i = 0; i < len; ++i) {
+					elementGroup.gameObjects.Add (aGOs [i]);
+				}
+				elementGroup.radius   = _curPlacementTool.radius;
+				elementGroup.interval = _curPlacementTool.interval;
+				elementGroup.density  = _curPlacementTool.density;
+				elementGroup.inverse  = _curPlacementTool.inverse;
+				_levelController.aElementGroups.Add (elementGroup);
+				//_aElementGroups.Add (aGOs);
 			}
 		}
 
@@ -1459,7 +1574,20 @@ namespace PrefabWorldEditor
 			}
 
 			if (aGOs.Count > 0) {
-				_aElementGroups.Add (aGOs);
+				LevelController.ElementGroup elementGroup = new LevelController.ElementGroup ();
+				elementGroup.groupType = "dungeon";
+				elementGroup.dungeon = _curDungeonTool.dungeonPreset;
+				elementGroup.gameObjects = new List<GameObject> ();
+				len = aGOs.Count;
+				for (i = 0; i < len; ++i) {
+					elementGroup.gameObjects.Add (aGOs [i]);
+				}
+				elementGroup.width   = _curDungeonTool.width;
+				elementGroup.height  = _curDungeonTool.height;
+				elementGroup.depth   = _curDungeonTool.depth;
+				elementGroup.ceiling = _curDungeonTool.ceiling;
+				_levelController.aElementGroups.Add (elementGroup);
+				//_aElementGroups.Add (aGOs);
 			}
 		}
 
@@ -1490,7 +1618,19 @@ namespace PrefabWorldEditor
 			}
 
 			if (aGOs.Count > 0) {
-				_aElementGroups.Add (aGOs);
+				LevelController.ElementGroup elementGroup = new LevelController.ElementGroup ();
+				elementGroup.groupType = "room";
+				elementGroup.part = _curRoomTool.curPart;
+				elementGroup.room = _curRoomTool.roomPattern;
+				elementGroup.gameObjects = new List<GameObject> ();
+				len = aGOs.Count;
+				for (i = 0; i < len; ++i) {
+					elementGroup.gameObjects.Add (aGOs [i]);
+				}
+				elementGroup.width  = _curRoomTool.width;
+				elementGroup.height = _curRoomTool.height;
+				_levelController.aElementGroups.Add (elementGroup);
+				//_aElementGroups.Add (aGOs);
 			}
 		}
 
@@ -1658,7 +1798,7 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void resetSelectedElement()
 		{
-			_iSelectedGroupIndex = -1;
+			_levelController.iSelectedGroupIndex = -1;
 
 			_selectedElement = new LevelElement();
 			_selectedElement.part = PartList.End_Of_List;

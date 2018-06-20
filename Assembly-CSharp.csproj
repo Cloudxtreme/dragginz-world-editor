@@ -53,6 +53,7 @@
   <ItemGroup>
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\Cameras\FlyCam.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\Core\Globals.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\LevelController.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\PrefabLevelEditor.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonTool.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\DungeonToolMaze.cs" />

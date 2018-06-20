@@ -47,8 +47,20 @@ namespace PrefabWorldEditor
 			get { return _placementMode; }
 		}
 
+		public PrefabLevelEditor.Part curPart {
+			get { return _curPart; }
+		}
+
+		public int radius {
+			get { return _radius; }
+		}
+
 		public int interval {
 			get { return _interval; }
+		}
+
+		public int density {
+			get { return _density; }
 		}
 
 		public bool inverse {
@@ -99,7 +111,7 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		public void activate(PlacementMode mode, Vector3 posOrigin, PrefabLevelEditor.Part part)
+		public void activate(PlacementMode mode, PrefabLevelEditor.Part part)
 		{
 			reset (); // just in case
 
@@ -108,6 +120,11 @@ namespace PrefabWorldEditor
 			setPlacementMode (mode);
 
 			update (-1, -1);
+		}
+
+		// ------------------------------------------------------------------------
+		public void activateAndCopy(PlacementMode mode, PrefabLevelEditor.Part part, int r, int i, int d, bool inverse)
+		{
 		}
 
 		// ------------------------------------------------------------------------
@@ -122,6 +139,15 @@ namespace PrefabWorldEditor
 			} else if (valueId == 3) {
 				_inverse = (value == 1);
 			}
+
+			removeAll ();
+			createObjects ();
+		}
+
+		// ------------------------------------------------------------------------
+		public void updatePart(PrefabLevelEditor.Part part)
+		{
+			_curPart = part;
 
 			removeAll ();
 			createObjects ();
