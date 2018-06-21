@@ -31,7 +31,7 @@ namespace PrefabWorldEditor
 
 		protected static GameObject _container;
 
-		protected static List<PrefabLevelEditor.LevelElement> _elements;
+		protected static List<LevelController.LevelElement> _elements;
 
 		protected static PrefabLevelEditor.Part _curPart;
 
@@ -68,7 +68,7 @@ namespace PrefabWorldEditor
 			get { return _inverse; }
 		}
 
-		public List<PrefabLevelEditor.LevelElement> elements {
+		public List<LevelController.LevelElement> elements {
 			get { return _elements; }
 		}
 
@@ -85,7 +85,7 @@ namespace PrefabWorldEditor
 
 				_container = container;
 
-				_elements = new List<PrefabLevelEditor.LevelElement> ();
+				_elements = new List<LevelController.LevelElement> ();
 
 				reset ();
 			}

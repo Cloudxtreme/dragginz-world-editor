@@ -84,10 +84,10 @@ namespace PrefabWorldEditor
 							go.transform.rotation = Quaternion.Euler (new Vector3 (0, Random.Range (0, 4) * 90, 0));
 						}
 
-						PrefabLevelEditor.Instance.setMeshCollider (go, false);
-						PrefabLevelEditor.Instance.setRigidBody (go, false);
+						PrefabLevelEditor.Instance.levelController.setMeshCollider (go, false);
+						PrefabLevelEditor.Instance.levelController.setRigidBody (go, false);
 
-						PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
+						LevelController.LevelElement element = new LevelController.LevelElement ();
 						element.go = go;
 						element.part = partId;
 

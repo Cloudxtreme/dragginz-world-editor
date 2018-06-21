@@ -114,12 +114,6 @@ namespace PrefabWorldEditor
 			public string extra;
         }
 
-		public struct LevelElement
-        {
-            public GameObject go;
-			public PartList part;
-        }
-
 		#endregion
 
 		#region PrivateProperties
@@ -136,25 +130,22 @@ namespace PrefabWorldEditor
         private Transform _container;
 
 		private Dictionary<PartList, Part> _parts;
-		private Dictionary<string, LevelElement> _levelElements;
 		private int _iCounter;
 
-		//private List<List<GameObject>> _aElementGroups;
-		//private int _iSelectedGroupIndex;
 		private bool _groupEventHandlerSet;
 
 		private Part _curEditPart;
         private GameObject _goEditPart;
         private Vector3 _v3EditPartPos;
 
-		private LevelElement _selectedElement;
-		private Bounds _selectedElementBounds;
-		private List<MeshRenderer> _selectedMeshRenderers;
+		//private LevelController.LevelElement _selectedElement;
+		//private Bounds _selectedElementBounds;
+		//private List<MeshRenderer> _selectedMeshRenderers;
 
 		private Dictionary<AssetType, List<Part>> _assetTypeList;
 		private Dictionary<AssetType, int> _assetTypeIndex;
 
-		private List<GameObject> _listOfChildren;
+		//private List<GameObject> _listOfChildren;
 
 		private List<PlacementTool> _aPlacementTools;
 		private PlacementTool _curPlacementTool;
@@ -184,16 +175,16 @@ namespace PrefabWorldEditor
 			get { return _container.gameObject; }
 		}
 
+		public LevelController levelController {
+			get { return _levelController; }
+		}
+
 		public EditMode editMode {
 			get { return _editMode; }
 		}
 
 		public Dictionary<PartList, Part> parts {
 			get { return _parts; }
-		}
-
-		public Bounds selectedElementBounds {
-			get { return _selectedElementBounds; }
 		}
 
 		#endregion
@@ -263,18 +254,15 @@ namespace PrefabWorldEditor
 
             setWalls();
 
-			_levelElements = new Dictionary<string, LevelElement>();
 			_iCounter = 0;
 
-			//_aElementGroups = new List<List<GameObject>> ();
-			//_iSelectedGroupIndex = -1;
 			_groupEventHandlerSet = false;
 
-			_listOfChildren = new List<GameObject> ();
+			//_listOfChildren = new List<GameObject> ();
 
             _v3EditPartPos = Vector3.zero;
 
-			_selectedMeshRenderers = new List<MeshRenderer> ();
+			//_selectedMeshRenderers = new List<MeshRenderer> ();
 			resetSelectedElement ();
 
 			_assetType = AssetType.Floor;
@@ -318,19 +306,6 @@ namespace PrefabWorldEditor
 			else
 			{
 				updateEditMode ();
-
-				/*if (_selectedElement.go != null) {
-					if (_selectedElement.part != PartList.End_Of_List) {
-						
-						if (_selectedMeshRenderers.Count > 0) {
-							_selectedElementBounds = _selectedMeshRenderers [0].bounds;
-							int i, len = _selectedMeshRenderers.Count;
-							for (i = 1; i < len; ++i) {
-								_selectedElementBounds.Encapsulate (_selectedMeshRenderers [i].bounds);
-							}
-						}
-					}
-				}*/
 			}
 		}
 
@@ -351,11 +326,10 @@ namespace PrefabWorldEditor
 			PweMainMenu.Instance.popup.hide();
 			if (buttonId == 1)
 			{
-				foreach (KeyValuePair<string, LevelElement> element in _levelElements) {
+				foreach (KeyValuePair<string, LevelController.LevelElement> element in _levelController.levelElements) {
 					GameObject.Destroy (element.Value.go);
 				}
-				_levelElements.Clear ();
-				//_aElementGroups.Clear ();
+				_levelController.levelElements.Clear ();
 				_levelController.aElementGroups.Clear ();
 			}
 		}
@@ -465,9 +439,9 @@ namespace PrefabWorldEditor
 			{
 				if (_editMode == EditMode.Transform)
 				{
-					if (_selectedElement.go != null) {
+					if (_levelController.selectedElement.go != null) {
 
-						activatePlacementTool (mode, _parts[_selectedElement.part]);
+						activatePlacementTool (mode, _parts[_levelController.selectedElement.part]);
 					}
 				}
 				else if (_goEditPart != null)
@@ -596,7 +570,7 @@ namespace PrefabWorldEditor
 						}
 					}
 				}
-				if (_selectedElement.go != null) {
+				if (_levelController.selectedElement.go != null) {
 					if (Input.GetKeyDown (KeyCode.Delete)) {
 						deleteSelectedElement ();
 					} else {
@@ -615,7 +589,7 @@ namespace PrefabWorldEditor
 
 			if (posChange != Vector3.zero) {
 
-				getSelectedMeshRendererBounds ();
+				_levelController.getSelectedMeshRendererBounds ();
 
 				if (_levelController.iSelectedGroupIndex != -1) {
 
@@ -625,34 +599,9 @@ namespace PrefabWorldEditor
 					int index = _levelController.iSelectedGroupIndex;
 					int i, len = _levelController.aElementGroups [index].gameObjects.Count;
 					for (i = 0; i < len; ++i) {
-						if (_levelController.aElementGroups [index].gameObjects [i] != null && _levelController.aElementGroups [index].gameObjects [i] != _selectedElement.go) {
+						if (_levelController.aElementGroups [index].gameObjects [i] != null && _levelController.aElementGroups [index].gameObjects [i] != _levelController.selectedElement.go) {
 							pos = _levelController.aElementGroups [index].gameObjects [i].transform.position + posChange;
 							_levelController.aElementGroups [index].gameObjects [i].transform.position = pos;
-						}
-					}
-					/*int index = _iSelectedGroupIndex;
-					int i, len = _aElementGroups [index].Count;
-					for (i = 0; i < len; ++i) {
-						if (_aElementGroups [index] [i] != null && _aElementGroups [index] [i] != _selectedElement.go) {
-							pos = _aElementGroups [index] [i].transform.position + posChange;
-							_aElementGroups [index] [i].transform.position = pos;
-						}
-					}*/
-				}
-			}
-		}
-
-		// ------------------------------------------------------------------------
-		private void getSelectedMeshRendererBounds()
-		{
-			if (_selectedElement.go != null) {
-				if (_selectedElement.part != PartList.End_Of_List) {
-
-					if (_selectedMeshRenderers.Count > 0) {
-						_selectedElementBounds = _selectedMeshRenderers [0].bounds;
-						int i, len = _selectedMeshRenderers.Count;
-						for (i = 1; i < len; ++i) {
-							_selectedElementBounds.Encapsulate (_selectedMeshRenderers [i].bounds);
 						}
 					}
 				}
@@ -825,9 +774,7 @@ namespace PrefabWorldEditor
 
 					// not an asset?
 					if (trfmParent.tag == "PartContainer") {
-						//Debug.Log (trfmParent.name);
-						if (_levelElements.ContainsKey(trfmParent.name)) {
-							//Debug.Log ("hit object is of type "+_parts[_levelElements[trfmParent.name].part].type);
+						if (_levelController.levelElements.ContainsKey(trfmParent.name)) {
 							_v3EditPartPos.y = trfmParent.position.y + 2f;
 						}
 					}
@@ -868,8 +815,8 @@ namespace PrefabWorldEditor
 			// Tools
 			//
 			if (_curPlacementTool != null) {
-				if (_editMode == EditMode.Transform && _selectedElement.go != null) {
-					_curPlacementTool.customUpdate (_selectedElement.go.transform.position);
+				if (_editMode == EditMode.Transform && _levelController.selectedElement.go != null) {
+					_curPlacementTool.customUpdate (_levelController.selectedElement.go.transform.position);
 				} else if (_goEditPart != null) {
 					_curPlacementTool.customUpdate (_goEditPart.transform.position);
 				}
@@ -1012,7 +959,7 @@ namespace PrefabWorldEditor
 				return;
 			}
 
-			if (_levelElements.ContainsKey (trfmParent.gameObject.name)) {
+			if (_levelController.levelElements.ContainsKey (trfmParent.gameObject.name)) {
 
 				bool isShift = (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift));
 				int groupIndex = -1;
@@ -1049,7 +996,7 @@ namespace PrefabWorldEditor
 				}
 				else
 				{
-					LevelElement element = _levelElements [trfmParent.gameObject.name];
+					LevelController.LevelElement element = _levelController.levelElements [trfmParent.gameObject.name];
 					selectAsset(_parts [element.part]);
 				}
 			}
@@ -1094,7 +1041,7 @@ namespace PrefabWorldEditor
 				return;
 			}
 
-			if (_levelElements.ContainsKey (trfmParent.gameObject.name))
+			if (_levelController.levelElements.ContainsKey (trfmParent.gameObject.name))
 			{
 				bool isShift = (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift));
 
@@ -1104,29 +1051,29 @@ namespace PrefabWorldEditor
 				}
 
 				// single object select
-				if (_selectedElement.go != trfmParent.gameObject)
+				if (_levelController.selectedElement.go != trfmParent.gameObject)
 				{
 					resetElementComponents ();
 
-					_selectedElement = _levelElements [trfmParent.gameObject.name];
-					setMeshCollider (_selectedElement.go, false);
-					setRigidBody (_selectedElement.go, false);
+					_levelController.selectedElement = _levelController.levelElements [trfmParent.gameObject.name];
+					_levelController.setMeshCollider (_levelController.selectedElement.go, false);
+					_levelController.setRigidBody (_levelController.selectedElement.go, false);
 
-					getSelectedMeshRenderers (_selectedElement.go, _levelController.iSelectedGroupIndex);
-					getSelectedMeshRendererBounds ();
+					_levelController.getSelectedMeshRenderers (_levelController.selectedElement.go, _levelController.iSelectedGroupIndex);
+					_levelController.getSelectedMeshRendererBounds ();
 
-					Part part = _parts [_selectedElement.part];
+					Part part = _parts [_levelController.selectedElement.part];
 					setMarkerScale (part);
 
-					gizmoTranslateScript.translateTarget = _selectedElement.go;
+					gizmoTranslateScript.translateTarget = _levelController.selectedElement.go;
 					gizmoTranslateScript.init();
-					gizmoRotateScript.rotateTarget = _selectedElement.go;
+					gizmoRotateScript.rotateTarget = _levelController.selectedElement.go;
 					gizmoRotateScript.init();
 
 					selectTransformTool (PweMainMenu.Instance.iSelectedTool);
 
 					PweMainMenu.Instance.showAssetInfoPanel (true);
-					showAssetInfo (_parts [_selectedElement.part]);
+					showAssetInfo (_parts [_levelController.selectedElement.part]);
 
 					PweMainMenu.Instance.showPlacementToolBox (false);
 					PweMainMenu.Instance.showDungeonToolBox (false);
@@ -1138,7 +1085,7 @@ namespace PrefabWorldEditor
 				resetEditTools ();
 			}
 
-			setMarkerActive (_selectedElement.go != null);
+			setMarkerActive (_levelController.selectedElement.go != null);
 		}
 
 		// ------------------------------------------------------------------------
@@ -1179,7 +1126,7 @@ namespace PrefabWorldEditor
 			{
 				if (_timer > _lastMouseWheelUpdate)
 				{
-					Part part = _parts [_selectedElement.part];
+					Part part = _parts [_levelController.selectedElement.part];
 
 					_lastMouseWheelUpdate = _timer + 0.2f;
 					float dir = (mousewheel > 0 ? 1 : -1);
@@ -1187,21 +1134,21 @@ namespace PrefabWorldEditor
 
 					if (Input.GetKey (KeyCode.X)) {
 						if (part.canRotate.x == 1) {
-							_selectedElement.go.transform.Rotate (Vector3.right * multiply);
+							_levelController.selectedElement.go.transform.Rotate (Vector3.right * multiply);
 						}
 					} else if (Input.GetKey (KeyCode.Y)) {
 						if (part.canRotate.y == 1) {
-							_selectedElement.go.transform.Rotate (Vector3.up * multiply);
+							_levelController.selectedElement.go.transform.Rotate (Vector3.up * multiply);
 						}
 					} else if (Input.GetKey (KeyCode.Z)) {
 						if (part.canRotate.z == 1) {
-							_selectedElement.go.transform.Rotate (Vector3.forward * multiply);
+							_levelController.selectedElement.go.transform.Rotate (Vector3.forward * multiply);
 						}
 					}
 					else if (Input.GetKey (KeyCode.C)) { // Scale
-						Vector3 scale = _selectedElement.go.transform.localScale;
+						Vector3 scale = _levelController.selectedElement.go.transform.localScale;
 						scale += new Vector3 (.025f * dir, .025f * dir, .025f * dir);
-						_selectedElement.go.transform.localScale = scale;
+						_levelController.selectedElement.go.transform.localScale = scale;
 					}
 					else {
 						toggleSelectedElement (mousewheel);
@@ -1209,22 +1156,15 @@ namespace PrefabWorldEditor
 				}
 			}
 
-			setMarkerPosition (_selectedElement.go.transform);
+			setMarkerPosition (_levelController.selectedElement.go.transform);
 		}
 
 		// ------------------------------------------------------------------------
 		private void deleteSelectedElement()
 		{
-			if (_selectedElement.go != null) {
-				if (_levelElements.ContainsKey (_selectedElement.go.name)) {
-					_levelElements.Remove (_selectedElement.go.name);
-				}
-				Destroy (_selectedElement.go);
-				_selectedElement.go = null;
-				_levelController.iSelectedGroupIndex = -1;
-			}
+			_levelController.deleteSelectedElement ();
 
-			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
+			PweMainMenu.Instance.setCubeCountText (_levelController.levelElements.Count);
 
 			resetSelectedElement ();
 			resetCurPlacementTool ();
@@ -1235,7 +1175,7 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void toggleSelectedElement(float mousewheel)
 		{
-			Part part = _parts[_selectedElement.part];
+			Part part = _parts[_levelController.selectedElement.part];
 
 			int max = _assetTypeList [part.type].Count;
 			int i, index = 0;
@@ -1259,34 +1199,34 @@ namespace PrefabWorldEditor
 			Part newPart = _assetTypeList [part.type] [index];
 			showAssetInfo (newPart);
 
-			string name = _selectedElement.go.name;
-			Vector3 pos = _selectedElement.go.transform.position;
-			Quaternion rot = _selectedElement.go.transform.rotation;
+			string name = _levelController.selectedElement.go.name;
+			Vector3 pos = _levelController.selectedElement.go.transform.position;
+			Quaternion rot = _levelController.selectedElement.go.transform.rotation;
 
-			if (_levelElements.ContainsKey (name)) {
+			if (_levelController.levelElements.ContainsKey (name)) {
 				
-				Destroy (_selectedElement.go);
+				Destroy (_levelController.selectedElement.go);
 
-				LevelElement element = _levelElements [name];
+				LevelController.LevelElement element = _levelController.levelElements [name];
 				element.part = newPart.id;
 				element.go = createPartAt (newPart.id, pos.x, pos.y, pos.z);
 				element.go.transform.rotation = rot;
 				element.go.name = name;
 
-				setMeshCollider (element.go, false);
-				setRigidBody (element.go, false);
+				_levelController.setMeshCollider (element.go, false);
+				_levelController.setRigidBody (element.go, false);
 
-				_levelElements [name] = element;
+				_levelController.levelElements [name] = element;
 
-				_selectedElement = _levelElements [name];
+				_levelController.selectedElement = _levelController.levelElements [name];
 
-				getSelectedMeshRenderers (_selectedElement.go, _levelController.iSelectedGroupIndex);
-				getSelectedMeshRendererBounds ();
+				_levelController.getSelectedMeshRenderers (_levelController.selectedElement.go, _levelController.iSelectedGroupIndex);
+				_levelController.getSelectedMeshRendererBounds ();
 
 				setMarkerScale (newPart);
 
-				gizmoTranslateScript.translateTarget = _selectedElement.go;
-				gizmoRotateScript.rotateTarget = _selectedElement.go;
+				gizmoTranslateScript.translateTarget = _levelController.selectedElement.go;
+				gizmoRotateScript.rotateTarget = _levelController.selectedElement.go;
 			}
 		}
 
@@ -1322,7 +1262,8 @@ namespace PrefabWorldEditor
 
 			_goEditPart = createPartAt(_curEditPart.id, -10, -10, -10);
 			setMarkerScale (_curEditPart);
-			setMeshCollider(_goEditPart, false);
+
+			_levelController.setMeshCollider(_goEditPart, false);
 
 			showAssetInfo (_curEditPart);
 		}
@@ -1366,101 +1307,6 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		//
-		// ------------------------------------------------------------------------
-		private void getSelectedMeshRenderers (GameObject go, int iSelectedGroupIndex)
-		{
-			_selectedMeshRenderers.Clear ();
-
-			_listOfChildren.Clear ();
-
-			int i, len;
-
-			if (iSelectedGroupIndex != -1)
-			{
-				len = _levelController.aElementGroups [iSelectedGroupIndex].gameObjects.Count;
-				for (i = 0; i < len; ++i) {
-					getChildrenRecursive (_levelController.aElementGroups [iSelectedGroupIndex].gameObjects [i]);
-				}
-			}
-			else
-			{
-				getChildrenRecursive (go);
-			}
-
-			len = _listOfChildren.Count;
-			for (i = 0; i < len; ++i) {
-				if (_listOfChildren [i].GetComponent<MeshRenderer> ()) {
-					_selectedMeshRenderers.Add(_listOfChildren [i].GetComponent<MeshRenderer> ());
-				}
-			}
-		}
-
-		// ------------------------------------------------------------------------
-		public void setMeshCollider (GameObject go, bool state) {
-
-			_listOfChildren.Clear ();
-			getChildrenRecursive (go);
-
-			int i, len = _listOfChildren.Count;
-			for (i = 0; i < len; ++i) {
-				if (_listOfChildren [i].GetComponent<Collider> ()) {
-					_listOfChildren [i].GetComponent<Collider> ().enabled = state;
-				}
-			}
-        }
-
-		// ------------------------------------------------------------------------
-		private void setMeshColliders (bool state)
-		{
-			_listOfChildren.Clear ();
-
-			foreach (KeyValuePair<string, LevelElement> element in _levelElements)
-			{
-				getChildrenRecursive (element.Value.go);
-			}
-
-			int i, len = _listOfChildren.Count;
-			for (i = 0; i < len; ++i) {
-				if (_listOfChildren [i].GetComponent<Collider> ()) {
-					_listOfChildren [i].GetComponent<Collider> ().enabled = state;
-				}
-			}
-		}
-
-		private void getChildrenRecursive(GameObject go)
-		{
-			if (go == null) {
-				return;
-			}
-
-			_listOfChildren.Add (go);
-
-			foreach (Transform child in go.transform)
-			{
-				if (child != null) {
-					_listOfChildren.Add (child.gameObject);
-					getChildrenRecursive (child.gameObject);
-				}
-			}
-		}
-
-		// ------------------------------------------------------------------------
-		public void setRigidBody (GameObject go, bool state) {
-
-			if (go.GetComponent<Rigidbody>()) {
-				go.GetComponent<Rigidbody>().useGravity = state;
-			}
-			else {
-				foreach (Transform child in go.transform) {
-					if (child.gameObject.GetComponent<Rigidbody> ()) {
-						child.gameObject.GetComponent<Rigidbody> ().useGravity = state;
-					}
-				}
-			}
-		}
-
-		// ------------------------------------------------------------------------
         private void placePart(Vector3 pos)
 		{
 			// Tools
@@ -1472,15 +1318,15 @@ namespace PrefabWorldEditor
 
 			if (_curPlacementTool == null && _curDungeonTool == null && _curRoomTool == null)
 			{
-				LevelElement element = new LevelElement ();
+				LevelController.LevelElement element = new LevelController.LevelElement ();
 				element.part = _curEditPart.id;
 				element.go = createPartAt (_curEditPart.id, pos.x, pos.y, pos.z);
 				element.go.transform.rotation = _goEditPart.transform.rotation;
 
-				setMeshCollider (element.go, true);
-				setRigidBody (element.go, _curEditPart.usesGravity);
+				_levelController.setMeshCollider (element.go, true);
+				_levelController.setRigidBody (element.go, _curEditPart.usesGravity);
 
-				_levelElements.Add (element.go.name, element);
+				_levelController.levelElements.Add (element.go.name, element);
 			}
 
 			// add tool objects
@@ -1503,7 +1349,7 @@ namespace PrefabWorldEditor
 				resetCurRoomTool ();
 			}
 
-			PweMainMenu.Instance.setCubeCountText (_levelElements.Count);
+			PweMainMenu.Instance.setCubeCountText (_levelController.levelElements.Count);
         }
 
 		// ------------------------------------------------------------------------
@@ -1519,14 +1365,14 @@ namespace PrefabWorldEditor
 					go.transform.SetParent (_container);
 					go.name = "part_" + (_iCounter++).ToString ();
 
-					setMeshCollider (go, true);
-					setRigidBody (go, _curEditPart.usesGravity);
+					_levelController.setMeshCollider (go, true);
+					_levelController.setRigidBody (go, _curEditPart.usesGravity);
 
-					LevelElement elementTool = new LevelElement ();
+					LevelController.LevelElement elementTool = new LevelController.LevelElement ();
 					elementTool.part = _curEditPart.id;
 					elementTool.go = go;
 
-					_levelElements.Add (go.name, elementTool);
+					_levelController.levelElements.Add (go.name, elementTool);
 
 					aGOs.Add (go);
 				}
@@ -1547,7 +1393,6 @@ namespace PrefabWorldEditor
 				elementGroup.density  = _curPlacementTool.density;
 				elementGroup.inverse  = _curPlacementTool.inverse;
 				_levelController.aElementGroups.Add (elementGroup);
-				//_aElementGroups.Add (aGOs);
 			}
 		}
 
@@ -1564,14 +1409,14 @@ namespace PrefabWorldEditor
 					go.transform.SetParent (_container);
 					go.name = "part_" + (_iCounter++).ToString ();
 
-					setMeshCollider (go, true);
-					setRigidBody (go, false);
+					_levelController.setMeshCollider (go, true);
+					_levelController.setRigidBody (go, false);
 
-					LevelElement elementTool = new LevelElement ();
+					LevelController.LevelElement elementTool = new LevelController.LevelElement ();
 					elementTool.part = _curDungeonTool.dungeonElements [i].part;
 					elementTool.go = go;
 
-					_levelElements.Add (go.name, elementTool);
+					_levelController.levelElements.Add (go.name, elementTool);
 
 					aGOs.Add (go);
 				}
@@ -1591,7 +1436,6 @@ namespace PrefabWorldEditor
 				elementGroup.depth   = _curDungeonTool.depth;
 				elementGroup.ceiling = _curDungeonTool.ceiling;
 				_levelController.aElementGroups.Add (elementGroup);
-				//_aElementGroups.Add (aGOs);
 			}
 		}
 
@@ -1608,14 +1452,14 @@ namespace PrefabWorldEditor
 					go.transform.SetParent (_container);
 					go.name = "part_" + (_iCounter++).ToString ();
 
-					setMeshCollider (go, true);
-					setRigidBody (go, _curEditPart.usesGravity);
+					_levelController.setMeshCollider (go, true);
+					_levelController.setRigidBody (go, _curEditPart.usesGravity);
 
-					LevelElement elementTool = new LevelElement ();
+					LevelController.LevelElement elementTool = new LevelController.LevelElement ();
 					elementTool.part = _curEditPart.id;
 					elementTool.go = go;
 
-					_levelElements.Add (go.name, elementTool);
+					_levelController.levelElements.Add (go.name, elementTool);
 
 					aGOs.Add (go);
 				}
@@ -1634,7 +1478,6 @@ namespace PrefabWorldEditor
 				elementGroup.width  = _curRoomTool.width;
 				elementGroup.height = _curRoomTool.height;
 				_levelController.aElementGroups.Add (elementGroup);
-				//_aElementGroups.Add (aGOs);
 			}
 		}
 
@@ -1804,11 +1647,7 @@ namespace PrefabWorldEditor
 		{
 			_levelController.iSelectedGroupIndex = -1;
 
-			_selectedElement = new LevelElement();
-			_selectedElement.part = PartList.End_Of_List;
-
-			_selectedMeshRenderers.Clear ();
-			_selectedElementBounds = new Bounds();
+			_levelController.resetSelectedElement ();
 
 			gizmoTranslateScript.translateTarget = null;
 			gizmoTranslateScript.gameObject.SetActive (false);
@@ -1828,12 +1667,12 @@ namespace PrefabWorldEditor
 		// ------------------------------------------------------------------------
 		private void resetElementComponents()
 		{
-			if (_selectedElement.go != null) {
+			if (_levelController.selectedElement.go != null) {
 
-				Part part = _parts [_selectedElement.part];
+				Part part = _parts [_levelController.selectedElement.part];
 
-				setMeshCollider(_selectedElement.go, true);
-				setRigidBody (_selectedElement.go, part.usesGravity);
+				_levelController.setMeshCollider(_levelController.selectedElement.go, true);
+				_levelController.setRigidBody (_levelController.selectedElement.go, part.usesGravity);
 			}
 		}
 

@@ -28,7 +28,7 @@ namespace PrefabWorldEditor
 
 		protected static GameObject _container;
 
-		protected static List<PrefabLevelEditor.LevelElement> _roomElements;
+		protected static List<LevelController.LevelElement> _roomElements;
 
 		protected static PrefabLevelEditor.Part _curPart;
 
@@ -63,7 +63,7 @@ namespace PrefabWorldEditor
 			get { return _height; }
 		}
 
-		public List<PrefabLevelEditor.LevelElement> roomElements {
+		public List<LevelController.LevelElement> roomElements {
 			get { return _roomElements; }
 		}
 
@@ -80,7 +80,7 @@ namespace PrefabWorldEditor
 
 				_container = container;
 
-				_roomElements = new List<PrefabLevelEditor.LevelElement> ();
+				_roomElements = new List<LevelController.LevelElement> ();
 
 				reset ();
 			}

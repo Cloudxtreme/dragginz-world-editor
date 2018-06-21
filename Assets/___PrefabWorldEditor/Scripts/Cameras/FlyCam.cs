@@ -84,7 +84,7 @@ namespace PrefabWorldEditor
 
 		void OnPostRender()
 		{
-			GLTools.drawBoundingBox (PrefabLevelEditor.Instance.selectedElementBounds, matLineBounds);
+			GLTools.drawBoundingBox (PrefabLevelEditor.Instance.levelController.selectedElementBounds, matLineBounds);
 		}
 	}
 }

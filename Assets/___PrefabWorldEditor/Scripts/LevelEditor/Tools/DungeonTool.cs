@@ -31,7 +31,7 @@ namespace PrefabWorldEditor
 
 		protected static GameObject _container;
 
-		protected static List<PrefabLevelEditor.LevelElement> _dungeonElements;
+		protected static List<LevelController.LevelElement> _dungeonElements;
 
 		protected static int _width;
 		protected static int _depth;
@@ -72,7 +72,7 @@ namespace PrefabWorldEditor
 			set { _ceiling = value; }
 		}
 
-		public List<PrefabLevelEditor.LevelElement> dungeonElements {
+		public List<LevelController.LevelElement> dungeonElements {
 			get { return _dungeonElements; }
 		}
 
@@ -89,7 +89,7 @@ namespace PrefabWorldEditor
 
 				_container = container;
 
-				_dungeonElements = new List<PrefabLevelEditor.LevelElement> ();
+				_dungeonElements = new List<LevelController.LevelElement> ();
 
 				reset ();
 			}

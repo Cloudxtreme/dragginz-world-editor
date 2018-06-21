@@ -56,10 +56,10 @@ namespace PrefabWorldEditor
 				go.transform.SetParent (_container.transform);
 				go.transform.localPosition = pos;
 
-				PrefabLevelEditor.Instance.setMeshCollider (go, false);
-				PrefabLevelEditor.Instance.setRigidBody (go, false);
+				PrefabLevelEditor.Instance.levelController.setMeshCollider (go, false);
+				PrefabLevelEditor.Instance.levelController.setRigidBody (go, false);
 
-				PrefabLevelEditor.LevelElement element = new PrefabLevelEditor.LevelElement ();
+				LevelController.LevelElement element = new LevelController.LevelElement ();
 				element.go = go;
 				element.part = _curPart.id;
 
