@@ -113,10 +113,36 @@ namespace PrefabWorldEditor
 			_listOfChildren = new List<GameObject> ();
 		}
 
+		// ------------------------------------------------------------------------
+		public void clearLevel()
+		{
+			foreach (KeyValuePair<string, LevelElement> element in _levelElements) {
+				GameObject.Destroy (element.Value.go);
+			}
+
+			_levelElements.Clear ();
+			_aElementGroups.Clear ();
+		}
+
+		// ------------------------------------------------------------------------
 		public void customUpdate()
 		{
 			
 		}
+
+		// ------------------------------------------------------------------------
+		public void setMeshCollider (GameObject go, bool state) {
+
+			_listOfChildren.Clear ();
+			getChildrenRecursive (go);
+
+			int i, len = _listOfChildren.Count;
+			for (i = 0; i < len; ++i) {
+				if (_listOfChildren [i].GetComponent<Collider> ()) {
+					_listOfChildren [i].GetComponent<Collider> ().enabled = state;
+				}
+			}
+		}		
 
 		// ------------------------------------------------------------------------
 		public void setMeshColliders (bool state)
@@ -152,6 +178,18 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
+		public void selectElement (string name)
+		{
+			_selectedElement = _levelElements [name];
+
+			setMeshCollider (_selectedElement.go, false);
+			setRigidBody (_selectedElement.go, false);
+
+			getSelectedMeshRenderers (_selectedElement.go, _iSelectedGroupIndex);
+			getSelectedMeshRendererBounds ();
+		}
+
+		// ------------------------------------------------------------------------
 		public void deleteSelectedElement ()
 		{
 			if (_selectedElement.go != null) {
@@ -173,12 +211,37 @@ namespace PrefabWorldEditor
 			_selectedElementBounds = new Bounds();
 		}
 
-		#endregion
+		// ------------------------------------------------------------------------
+		public void resetElementComponents()
+		{
+			if (_selectedElement.go != null) {
 
-		#region PrivateMethods
+				PrefabLevelEditor.Part part = PrefabLevelEditor.Instance.parts [_selectedElement.part];
+
+				setMeshCollider(_selectedElement.go, true);
+				setRigidBody (_selectedElement.go, part.usesGravity);
+			}
+		}
 
 		// ------------------------------------------------------------------------
-		// Private Methods
+		public void updatedSelectedObjectPosition(Vector3 posChange)
+		{
+			getSelectedMeshRendererBounds ();
+
+			if (_iSelectedGroupIndex != -1) {
+
+				Vector3 pos;
+				int index = _iSelectedGroupIndex;
+				int i, len = _aElementGroups [index].gameObjects.Count;
+				for (i = 0; i < len; ++i) {
+					if (_aElementGroups [index].gameObjects [i] != null && _aElementGroups [index].gameObjects [i] != _selectedElement.go) {
+						pos = _aElementGroups [index].gameObjects [i].transform.position + posChange;
+						_aElementGroups [index].gameObjects [i].transform.position = pos;
+					}
+				}
+			}
+		}
+
 		// ------------------------------------------------------------------------
 		public void getSelectedMeshRenderers (GameObject go, int iSelectedGroupIndex)
 		{
@@ -226,19 +289,30 @@ namespace PrefabWorldEditor
 		}
 
 		// ------------------------------------------------------------------------
-		public void setMeshCollider (GameObject go, bool state) {
-
-			_listOfChildren.Clear ();
-			getChildrenRecursive (go);
-
-			int i, len = _listOfChildren.Count;
+		public int findElementInGroup(GameObject go)
+		{
+			int index = -1;
+			int i, len = _aElementGroups.Count;
 			for (i = 0; i < len; ++i) {
-				if (_listOfChildren [i].GetComponent<Collider> ()) {
-					_listOfChildren [i].GetComponent<Collider> ().enabled = state;
+				int j, len2 = _aElementGroups [i].gameObjects.Count;
+				for (j = 0; j < len2; ++j) {
+					if (_aElementGroups [i].gameObjects [j] == go) {
+						index = i;
+						i = len;
+						break;
+					}
 				}
 			}
-		}		
 
+			return index;
+		}
+
+		#endregion
+
+		#region PrivateMethods
+
+		// ------------------------------------------------------------------------
+		// Private Methods
 		// ------------------------------------------------------------------------
 		private void getChildrenRecursive(GameObject go)
 		{
@@ -256,7 +330,6 @@ namespace PrefabWorldEditor
 				}
 			}
 		}
-
 
 		#endregion
 	}

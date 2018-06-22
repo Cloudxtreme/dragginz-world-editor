@@ -67,6 +67,7 @@
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\PlacementToolQuad.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\RoomTool.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\Tools\RoomToolDefault.cs" />
+     <Compile Include="Assets\___PrefabWorldEditor\Scripts\LevelEditor\ToolsController.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PweDungeonTools.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PweMainMenu.cs" />
      <Compile Include="Assets\___PrefabWorldEditor\Scripts\UI\PwePlacementTools.cs" />
