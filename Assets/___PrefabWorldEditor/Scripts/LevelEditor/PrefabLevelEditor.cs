@@ -67,6 +67,8 @@ namespace PrefabWorldEditor
 			Pillar_3,
 			Chunk_Rock_1,
 			Chunk_Rock_2,
+			Chunk_Rock_3,
+			Chunk_Rock_4,
 			Chunk_Stalagmite_1,
 			Chunk_Stalagmite_2,
 			Chunk_Stalagmite_3,
@@ -187,6 +189,8 @@ namespace PrefabWorldEditor
 
 			createPart(PartList.Chunk_Rock_1,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_1",        4.00f,  3.50f,  4.00f, Vector3Int.one, false, "Rock 1");
 			createPart(PartList.Chunk_Rock_2,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_2",        4.00f,  2.40f,  4.00f, Vector3Int.one, false, "Rock 2");
+			createPart(PartList.Chunk_Rock_3,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_3",        5.00f,  5.00f,  5.00f, Vector3Int.one, false, "Rock 3");
+			createPart(PartList.Chunk_Rock_4,       AssetType.Chunk, "MDC/Chunks/Chunk_Rock_4",        4.00f,  5.50f,  4.00f, Vector3Int.one, false, "Rock 4");
 			createPart(PartList.Chunk_Stalagmite_1, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_1",  2.75f,  4.50f,  2.75f, Vector3Int.one, false, "Stalagmite 1");
 			createPart(PartList.Chunk_Stalagmite_2, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_2",  4.30f,  6.00f,  3.60f, Vector3Int.one, false, "Stalagmite 2");
 			createPart(PartList.Chunk_Stalagmite_3, AssetType.Chunk, "MDC/Chunks/Chunk_Stalagmite_3",  7.25f,  8.80f,  6.25f, Vector3Int.one, false, "Stalagmite 3");
